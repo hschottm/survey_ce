@@ -140,6 +140,7 @@ CREATE TABLE `tl_survey_question` (
   `sumoption` varchar(32) NOT NULL default '',
   `sumchoices` blob NULL,
   `sum` double NOT NULL default '0',
+  `cssClass` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `pid` (`pid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

@@ -83,19 +83,19 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = array
 	(
 		'__selector__'            => array('questiontype','openended_subtype','multiplechoice_subtype', 'matrix_subtype', 'addother', 'addneutralcolumn', 'addbipolar'),
 		'default'                 => '{title_legend},title,questiontype',
-		'openended'               => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,openended_width,openended_maxlen',
-		'multiplechoice'         => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices',
-		'openendedoe_multiline'            => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,openended_rows,openended_cols,openended_maxlen',
-		'openendedoe_integer'              => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound,upper_bound',
-		'openendedoe_float'                => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound,upper_bound',
-		'openendedoe_date'                => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound_date,upper_bound_date',
-		'openendedoe_time'                => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound_time,upper_bound_time',
-		'multiplechoicemc_singleresponse'    => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices,addother,mc_style',
-		'multiplechoicemc_dichotomous'    => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},mc_style',
-		'multiplechoicemc_multipleresponse'  => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices,addother,mc_style',
-		'matrixmatrix_singleresponse'    => '{title_legend},title,author,questiontype,matrix_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{rows_legend},matrixrows;{columns_legend},matrixcolumns,addneutralcolumn;{bipolar_legend},addbipolar',
-		'matrixmatrix_multipleresponse'  => '{title_legend},title,author,questiontype,matrix_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{rows_legend},matrixrows;{columns_legend},matrixcolumns,addneutralcolumn;{bipolar_legend},addbipolar',
-		'constantsum'    => '{title_legend},title,author,questiontype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},sumchoices,inputfirst;{sum_legend},sumoption,sum',
+		'openended'               => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,openended_width,openended_maxlen;{expert_legend:hide},cssClass',
+		'multiplechoice'         => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices;{expert_legend:hide},cssClass',
+		'openendedoe_multiline'            => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,openended_rows,openended_cols,openended_maxlen;{expert_legend:hide},cssClass',
+		'openendedoe_integer'              => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound,upper_bound;{expert_legend:hide},cssClass',
+		'openendedoe_float'                => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound,upper_bound;{expert_legend:hide},cssClass',
+		'openendedoe_date'                => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound_date,upper_bound_date;{expert_legend:hide},cssClass',
+		'openendedoe_time'                => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound_time,upper_bound_time;{expert_legend:hide},cssClass',
+		'multiplechoicemc_singleresponse'    => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices,addother,mc_style;{expert_legend:hide},cssClass',
+		'multiplechoicemc_dichotomous'    => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},mc_style;{expert_legend:hide},cssClass',
+		'multiplechoicemc_multipleresponse'  => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices,addother,mc_style;{expert_legend:hide},cssClass',
+		'matrixmatrix_singleresponse'    => '{title_legend},title,author,questiontype,matrix_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{rows_legend},matrixrows;{columns_legend},matrixcolumns,addneutralcolumn;{bipolar_legend},addbipolar;{expert_legend:hide},cssClass',
+		'matrixmatrix_multipleresponse'  => '{title_legend},title,author,questiontype,matrix_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{rows_legend},matrixrows;{columns_legend},matrixcolumns,addneutralcolumn;{bipolar_legend},addbipolar;{expert_legend:hide},cssClass',
+		'constantsum'    => '{title_legend},title,author,questiontype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},sumchoices,inputfirst;{sum_legend},sumoption,sum;{expert_legend:hide},cssClass',
 	),
 
 	// Subpalettes
@@ -435,6 +435,12 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = array
 			'default'                 => 100,
 			'inputType'               => 'text',
 			'eval'                    => array('maxlength'=>10, 'mandatory' => true, 'rgxp' => 'digit', 'decodeEntities' => true)
+		),
+		'cssClass' => array
+	(
+		'label'                   => &$GLOBALS['TL_LANG']['tl_survey_question']['cssClass'],
+		'exclude'                 => true,
+		'inputType'               => 'text'
 		)
 	)
 );
@@ -589,6 +595,7 @@ class tl_survey_question extends Backend
 <form action="'.ampersand($this->Environment->request, ENCODE_AMPERSANDS).'" id="tl_add_scale" class="tl_form" method="post">
 <div class="tl_formbody_edit">
 <input type="hidden" name="FORM_SUBMIT" value="tl_add_scale" />
+<input type="hidden" name="REQUEST_TOKEN" value="' . REQUEST_TOKEN . '" />
 
 <div class="tl_tbox">
   <h3><label for="scale">'.$GLOBALS['TL_LANG']['tl_survey_question']['scale'][0].'</label></h3>

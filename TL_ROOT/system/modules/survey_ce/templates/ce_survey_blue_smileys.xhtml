@@ -4,13 +4,6 @@
 
 <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
 <?php endif; ?>
-<?php if (($this->page > 0) && ($this->page <= count($this->pages))): ?>	
-<div class="progressbar_container">
-	<div class="progressbar" style="width: <?php echo sprintf("%.1f", 100*$this->page/count($this->pages)); ?>%">
-		<span>Seite <?php echo ($this->page); ?> von <?php echo (count($this->pages)); ?></span>
-	</div> 
-</div>
-<?php endif; ?>
 <?php if (!$this->protected): ?>
 <?php if ($this->show_title || $this->show_cancel): ?>
 <div class="surveyhead">
@@ -20,8 +13,9 @@
 	<div class="middle">
 	</div>
 	<div class="right">
-		<?php if ($this->show_cancel): ?><a href="<?php echo $this->cancellink; ?>"><?php echo $this->cancel; ?></a><?php endif; ?>
+		<?php if ($this->show_cancel): ?><span class="cancellink"><a href="<?php echo $this->cancellink; ?>"><?php echo $this->cancel; ?></a></span><?php endif; ?>
 	</div>
+	<div class="clear"></div>
 </div>
 <?php endif; ?>
 <!-- indexer::stop -->
@@ -33,6 +27,7 @@
 <div class="introduction">
 	<?php echo $this->introduction; ?>
 	<input type="hidden" name="FORM_SUBMIT" value="tl_survey_form" />
+	<input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}" />
 </div>
 <?php endif; ?>
 <?php if (($this->page > count($this->pages))): ?>
@@ -43,6 +38,7 @@
 <?php if (strlen($this->pages[$this->page-1]['introduction'])): ?><div class="pageintroduction"><?php echo $this->pages[$this->page-1]['introduction']; ?></div><?php endif; ?>
 <div class="formbody">
 	<input type="hidden" name="FORM_SUBMIT" value="tl_survey" />
+	<input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}" />
 	<input type="hidden" name="page" value="<?php echo $this->page; ?>" />
 	<input type="hidden" name="survey" value="<?php echo $this->survey_id; ?>" />
 	<input type="hidden" name="pin" value="<?php echo $this->pin; ?>" />
@@ -50,6 +46,13 @@
 </div>
 <?php endif; ?>
 <?php if (!($this->page > count($this->pages))): ?>
+<?php if (($this->page > 0)): ?>	
+<div class="progressbar_container">
+<div class="progressbar" style="width: <?php echo ceil(714 * $this->page / count($this->pages)); ?>px;">
+	<span><?php echo sprintf($this->pageXofY, $this->page, count($this->pages)); ?></span>
+	</div> 
+</div>
+<?php endif; ?>
 <div class="submit_container">
 <?php if (($this->page == 0)): ?>	
 <?php if ($this->needsTAN): ?>
@@ -82,6 +85,7 @@
   <input type="submit" class="submit" name="finish" value="<?php echo $this->finish; ?>" />
 <?php endif; ?>
 	</div>
+	<div class="clear"></div>
 </div>
 <?php endif; ?>
 </form>

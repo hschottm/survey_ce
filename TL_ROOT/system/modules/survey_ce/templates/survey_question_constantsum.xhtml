@@ -1,0 +1,15 @@
+<table>
+<?php $counter = 1; ?>
+<?php foreach ($this->choices as $choice): ?>
+	<tr class="<?php echo ($counter %2 == 0) ? 'even' : 'odd'; ?>">
+<?php if ($this->blnInputFirst): ?>
+		<td class="col1"><input type="text" name="<?php echo $this->name; ?>[<?php echo $counter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $counter; ?>" class="text<?php echo $this->ctrl_class; ?>" <?php if (strlen($this->values[$counter])): ?>value="<?php echo specialchars($this->values[$counter]); ?>" <?php endif; ?>/></td>
+		<td class="col0"><label for="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $counter; ?>"><?php echo $choice; ?></label></td>
+<?php else: ?>
+		<td class="col0"><label for="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $counter; ?>"><?php echo $choice; ?></label></td>
+		<td class="col1"><input type="text" name="<?php echo $this->name; ?>[<?php echo $counter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $counter; ?>" class="text<?php echo $this->ctrl_class; ?>" <?php if (strlen($this->values[$counter])): ?>value="<?php echo specialchars($this->values[$counter]); ?>" <?php endif; ?>/></td>
+<?php endif; ?>
+	</tr>
+<?php $counter++; ?>
+<?php endforeach; ?>
+</table>

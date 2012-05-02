@@ -159,5 +159,7 @@ $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_delete'] = "Zei
 $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_new'] = "Neue Spalte";
 $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_copy'] = "Spalte duplizieren";
 $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_delete'] = "Spalte löschen";
+$GLOBALS['TL_LANG']['tl_survey_question']['cssClass']     = array('CSS-Klasse', 'Hier können Sie eine oder mehrere CSS-Klassen eingeben.');
+$GLOBALS['TL_LANG']['tl_survey_question']['expert_legend']    = 'Experten-Einstellungen';
 
 ?>

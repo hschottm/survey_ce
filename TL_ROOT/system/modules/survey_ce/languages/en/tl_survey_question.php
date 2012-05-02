@@ -94,6 +94,7 @@ $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_delete'] = "Del
 $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_new'] = "New column";
 $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_copy'] = "Duplicate column";
 $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_delete'] = "Delete column";
+$GLOBALS['TL_LANG']['tl_survey_question']['cssClass'] = array('CSS class', 'Here you can enter one or more CSS classes.');
 
 /**
 * Legends
@@ -106,5 +107,6 @@ $GLOBALS['TL_LANG']['tl_survey_question']['rows_legend']    = 'Matrix rows';
 $GLOBALS['TL_LANG']['tl_survey_question']['columns_legend']    = 'Matrix columns';
 $GLOBALS['TL_LANG']['tl_survey_question']['bipolar_legend']    = 'Bipolar attributes';
 $GLOBALS['TL_LANG']['tl_survey_question']['sum_legend']    = 'Sum options';
+$GLOBALS['TL_LANG']['tl_survey_question']['expert_legend']    = 'Expert settings';
 
 ?>

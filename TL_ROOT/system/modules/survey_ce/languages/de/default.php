@@ -19,6 +19,7 @@ $GLOBALS['TL_LANG']['CTE']['survey']['0'] = "Umfrage";
 $GLOBALS['TL_LANG']['CTE']['survey']['1'] = "Verwenden Sie diese Option, um eine Umfrage in den Artikel einzubinden.";
 $GLOBALS['TL_LANG']['MSC']['deleteAll'] = "Alle Teilnehmerdaten löschen";
 $GLOBALS['TL_LANG']['MSC']['survey_next'] = "Weiter";
+$GLOBALS['TL_LANG']['MSC']['page_x_of_y'] = 'Seite %s von %s';
 $GLOBALS['TL_LANG']['MSC']['survey_prev'] = "Zurück";
 $GLOBALS['TL_LANG']['MSC']['survey_start'] = "Umfrage starten";
 $GLOBALS['TL_LANG']['MSC']['survey_finish'] = "Umfrage beenden";

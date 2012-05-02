@@ -2,6 +2,7 @@
 
 $GLOBALS['TL_LANG']['CTE']['survey']    = array('Survey', 'includes a survey.');
 $GLOBALS['TL_LANG']['MSC']['deleteAll'] = 'Delete all participants data';
+$GLOBALS['TL_LANG']['MSC']['page_x_of_y'] = 'Page %s of %s';
 $GLOBALS['TL_LANG']['MSC']['survey_next'] = 'Next';
 $GLOBALS['TL_LANG']['MSC']['survey_prev'] = 'Previous';
 $GLOBALS['TL_LANG']['MSC']['survey_start'] = 'Start survey';

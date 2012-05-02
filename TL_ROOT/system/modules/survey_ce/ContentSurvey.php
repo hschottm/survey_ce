@@ -80,6 +80,7 @@ class ContentSurvey extends ContentElement
 			$objWidget->absoluteNumber = $this->getQuestionPosition($question['id'], $this->objSurvey->id);
 			$objWidget->pageQuestionNumber = $pagequestioncounter;
 			$objWidget->pageNumber = $pagenumber;
+			$objWidget->cssClass = ($question['cssClass'] != '' ? ' ' . $question['cssClass'] : '') . ($objWidget->absoluteNumber%2 == 0 ? ' odd' : ' even');
 			array_push($surveypage, $objWidget);
 			$pagequestioncounter++;
 			
@@ -519,6 +520,7 @@ class ContentSurvey extends ContentElement
 		$this->Template->finalsubmission = ($this->objSurvey->finalsubmission) ? $this->objSurvey->finalsubmission : $GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'];
 		$formaction = $this->Environment->request;
 
+		$this->Template->pageXofY = $GLOBALS['TL_LANG']['MSC']['page_x_of_y'];
 		$this->Template->next = $GLOBALS['TL_LANG']['MSC']['survey_next'];
 		$this->Template->prev = $GLOBALS['TL_LANG']['MSC']['survey_prev'];
 		$this->Template->start = $GLOBALS['TL_LANG']['MSC']['survey_start'];
