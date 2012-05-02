@@ -1,0 +1,203 @@
+/* Style sheet survey */
+
+.ce_survey {
+	padding: 1em;
+}
+
+.ce_survey .introduction {
+	margin-bottom: 2em;
+	padding: 3em;
+	background-color: #c3d0d8;
+	border: 1px solid #888;
+}
+
+.ce_survey .finalstatement {
+	margin-bottom: 2em;
+	padding: 3em;
+	background-color: #c3d0d8;
+	border: 1px solid #888;
+}
+
+.ce_survey .pagetitle {
+	padding: 1em 0.5em;
+	background-color: #a6bcc9;
+	font-weight: bold;
+	font-size: 130%;
+	color: #000;
+	border-bottom: 2px solid #888888;
+	border-top: 2px solid #888888;
+}
+
+.ce_survey .before {
+    vertical-align: top;
+}
+
+.ce_survey .after {
+    vertical-align: top;
+}
+
+.ce_survey .surveyhead {
+	border-top: 1px solid #888;
+	border-bottom: 1px solid #888;
+	background-color: #a6bcc9;
+	color: #000;
+	padding: 1em 0.5em;
+	overflow:auto;
+	margin-bottom: 2em;
+}
+
+.ce_survey .surveytitle {
+	font-weight: bold;
+	font-size: 130%;
+}
+
+.ce_survey .surveyhead .left {
+	width: 32%;
+	float: left;
+}
+
+.ce_survey .surveyhead .middle {
+	margin-right: 32%;
+	margin-left: 32%;
+	text-align: center;
+}
+
+.ce_survey .surveyhead .right {
+	width: 32%;
+	float: right;
+	text-align: right;
+}
+
+.ce_survey .submit_container {
+	border-top: 1px solid #888;
+	border-bottom: 1px solid #888;
+	background-color: #a6bcc9;
+	color: #000;
+	padding: 1em 0.5em;
+	overflow:auto;/* to clear floats*/
+}
+
+.ce_survey .submit_container .left {
+	float:left;
+	width:32%; 
+ }
+.ce_survey .submit_container .middle {
+	margin-right: 32%;
+	margin-left: 32%;
+	text-align: center;
+ }
+.ce_survey .submit_container .right {
+	float:right;
+	width:32%; 
+	text-align: right;
+ }
+
+.ce_survey .pageintroduction {
+	padding: 1em 0.5em;
+}
+
+.ce_survey p.error, .ce_survey .tl_error {
+	padding:2px 0 5px 20px;
+	margin:5px 0;
+	color: #e65d49;
+	font-weight: bold;
+	background: transparent url(tl_files/survey/images/exclamation.png) no-repeat left top;
+}
+
+.progressbar_container {
+	background: url(tl_files/survey/images/percentage-bg.png) no-repeat left center;
+	width: 316px;
+	height: 39px;
+	margin: 0 auto;
+}
+.progressbar {
+	background: url(tl_files/survey/images/progress.png) no-repeat left center;
+	width:  0%;
+	height:  39px;
+}
+.progressbar span {
+	visibility: hidden;
+	display: none;
+}
+
+.surveytable {
+	width:  100%;
+}
+
+.surveytable td {
+	vertical-align: top;
+}
+
+.surveytable .titlecolumn {
+	font-weight: bold;
+	text-align: right;
+}
+
+.surveytable .questioncolumn {
+}
+
+.surveyblock {
+	margin: 1em 0;
+	border-top: 1px solid #888888;
+	border-bottom: 1px solid #888888;
+	background-color: #f0f0f0;
+	color: #000;
+}
+
+.surveyblock .title {
+	border-bottom: 1px solid #888888;
+	font-weight: bold;
+	font-size: 110%;
+	background-color: #a6bcc9;
+	padding: 0.25em 0.5em;
+}
+
+.surveyblock .help { 
+	font-size: 80%; 
+	font-weight: normal;
+}
+
+.surveyblock .question {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.surveyblock .widget {
+	padding: 10px;
+}
+
+.surveyblock .mandatory {
+	font-weight: bold;
+	color: #ff0000;
+}
+
+.mc td {
+	text-align: center;
+}
+
+.constantsum input[type="text"] {
+	width: 4em;
+}
+
+.matrix table {
+	width: 100%;
+}
+
+.matrix td {
+	text-align: center;
+}
+
+.matrix td.columnheader {
+	vertical-align: bottom;
+}
+
+.matrix td.rowtext {
+	text-align: left;
+}
+
+.matrix .leftadjective,.matrix .rightadjective {
+	text-align: center;
+	vertical-align: middle;
+	background-color: #eee;
+	border: 1px solid #999;
+}

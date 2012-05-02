@@ -1,0 +1,12 @@
+<div id="tl_buttons">
+<a href="<?php echo $this->hrefBack; ?>" class="header_back" title="<?php echo $this->back; ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $this->back; ?></a>
+</div>
+<h2 class="sub_headline"><?php echo $this->heading; ?></h2>
+<table cellpadding="0" cellspacing="0" class="tl_show" summary="<?php echo $this->summary; ?>">
+<?php foreach ($this->data as $data): ?>	
+  <tr>
+    <td class="<?php echo $data["keyclass"] ?>"><span class="tl_label"><?php echo $data["key"] ?></span></td>
+    <td class="<?php echo $data["valueclass"] ?>"><?php echo $data["value"] ?></td>
+  </tr>
+<?php endforeach; ?>
+</table>

@@ -1,0 +1,78 @@
+<table>
+	<colgroup>
+		<col style="width: <?php echo $this->rowWidth; ?>" class="rowtext" />
+<?php if ($this->bipolar && $this->bipolarAside): ?>
+		<col style="width: <?php echo $this->colWidth; ?>" class="leftadjective l-<?php echo $this->col_classes['leftadjective']; ?>" />
+<?php endif; ?>
+<?php $colcounter = 1; ?>
+<?php foreach ($this->columns as $column): ?>
+		<col style="width: <?php echo $this->colWidth; ?>" class="c-<?php echo $this->col_classes[$colcounter]; ?>" />
+<?php $colcounter++; ?>
+<?php endforeach; ?>
+<?php if ($this->bipolar && $this->bipolarAside): ?>
+		<col style="width: <?php echo $this->colWidth; ?>" class="rightadjective r-<?php echo $this->col_classes['rightadjective']; ?>" />
+<?php endif; ?>
+<?php if ($this->hasNeutralColumn): ?>
+		<col style="width: <?php echo $this->colWidth; ?>" class="neutralcolumn n-<?php echo $this->col_classes['neutral']; ?>" />
+<?php endif; ?>
+	</colgroup>
+<?php if ($this->bipolar && $this->bipolarTop): ?>
+	<tr class="bipolar">
+		<td class="rowtext"></td>
+		<td class="leftadjective l-<?php echo $this->col_classes['leftadjective']; ?> c-<?php echo $this->col_classes[1]; ?>"><span><?php echo $this->leftadjective; ?></span></td>
+<?php for ($i = 2; $i < count($this->columns); $i++): ?>
+		<td class="c-<?php echo $this->col_classes[$i]; ?>"></td>
+<?php endfor; ?>
+		<td class="rightadjective r-<?php echo $this->col_classes['rightadjective']; ?> c-<?php echo $this->col_classes[count($this->columns)]; ?>"><span><?php echo $this->rightadjective; ?></span></td>
+<?php if ($this->hasNeutralColumn): ?>
+		<td class="neutralcolumn n-<?php echo $this->col_classes['neutral']; ?>"></td>
+<?php endif; ?>
+	</tr>
+<?php endif; ?>
+	<tr class="columnheader">
+		<td class="rowtext"></td>
+<?php if ($this->bipolar && $this->bipolarAside): ?>
+		<td class="leftadjective l-<?php echo $this->col_classes['leftadjective']; ?>" rowspan="<?php echo (count($this->rows)+1); ?>"><span><?php echo $this->leftadjective; ?></span></td>
+<?php endif; ?>
+<?php $colcounter = 1; ?>
+<?php foreach ($this->columns as $column): ?>
+		<td class="columnheader c-<?php echo $this->col_classes[$colcounter]; ?>"><span><?php echo $column; ?></span></td>
+<?php $colcounter++; ?>
+<?php endforeach; ?>
+<?php if ($this->bipolar && $this->bipolarAside): ?>
+		<td class="rightadjective r-<?php echo $this->col_classes['rightadjective']; ?>" rowspan="<?php echo (count($this->rows)+1); ?>"><span><?php echo $this->rightadjective; ?></span></td>
+<?php endif; ?>
+<?php if ($this->hasNeutralColumn): ?>
+		<td class="neutralcolumn n-<?php echo $this->col_classes['neutral']; ?>"><span><?php echo $this->neutralColumn; ?></span></td>
+<?php endif; ?>
+	</tr>
+<?php $rowcounter = 1; ?>
+<?php foreach ($this->rows as $row): ?>
+	<tr class="<?php echo ($rowcounter %2 == 0) ? 'even' : 'odd'; ?><?php echo ($rowcounter == 1) ? ' first' : ''; ?><?php echo ($rowcounter == count($this->rows)) ? ' last' : ''; ?>">
+		<td class="rowtext"><span><?php echo $row; ?></span></td>
+<?php $colcounter = 1; ?>
+<?php foreach ($this->columns as $column): ?>
+		<td class="c-<?php echo $this->col_classes[$colcounter]; ?>">
+<?php if ($this->singleResponse): ?>
+			<input type="radio" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="radio<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>"<?php if ($this->values[$rowcounter] == $colcounter): ?> checked="checked"<?php endif; ?> />
+<?php else: ?>
+<?php $foundvalues = is_array($this->values[$rowcounter]) ? $this->values[$rowcounter] : array(); ?>
+			<input type="checkbox" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>][<?php echo $colcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="checkbox<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>"<?php if (in_array($colcounter, $foundvalues)): ?> checked="checked"<?php endif; ?> />
+<?php endif; ?>
+		</td>
+<?php $colcounter++; ?>
+<?php endforeach; ?>
+<?php if ($this->hasNeutralColumn): ?>
+		<td class="neutralcolumn n-<?php echo $this->col_classes['neutral']; ?>">
+<?php if ($this->singleResponse): ?>
+			<input type="radio" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="radio<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>"<?php if ($this->values[$rowcounter] == $colcounter): ?> checked="checked"<?php endif; ?> />
+<?php else: ?>
+<?php $foundvalues = is_array($this->values[$rowcounter]) ? $this->values[$rowcounter] : array(); ?>
+			<input type="checkbox" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>][<?php echo $colcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="checkbox<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>"<?php if (in_array($colcounter, $foundvalues)): ?> checked="checked"<?php endif; ?> />
+<?php endif; ?>
+		</td>
+<?php endif; ?>
+	</tr>
+<?php $rowcounter++; ?>
+<?php endforeach; ?>
+</table>
