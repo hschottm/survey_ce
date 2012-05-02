@@ -1,0 +1,35 @@
+<table class="tl_cumulated multiplechoice" summary="<?php echo $this->summary; ?>">
+<thead>
+	<tr>
+		<th colspan="2"><?php echo $this->answer; ?></th>
+		<th><?php echo $this->nrOfSelections; ?></th>
+	</tr>
+</thead>
+<tbody>
+<?php $counter = 1; ?>
+<?php foreach ($this->choices as $id => $choice): ?>
+	<tr>
+		<td class="counter"><?php echo $counter; ?>.</td>
+		<td class="answer"><?php echo $choice; ?></td>
+		<td class="selections"><?php echo (($this->statistics['cumulated'][$id+1]) ? $this->statistics['cumulated'][$id+1] : 0); ?></td>
+	</tr>
+<?php $counter++; ?>
+<?php endforeach; ?>
+<?php if ($this->other): ?>
+	<tr>
+		<td class="counter"><?php echo $counter; ?>.</td>
+		<td class="answer"><?php echo $this->othertitle; ?></td>
+		<td class="selections">(<?php echo (($this->statistics['cumulated']['other']) ? count($this->statistics['cumulated']['other']) : 0); ?>)</td>
+	</tr>
+<?php if (count($this->otherchoices)): ?>
+<?php foreach ($this->otherchoices as $key => $count): ?>
+	<tr>
+		<td></td>
+		<td class="answer"><?php echo $key; ?></td>
+		<td class="selections"><?php echo $count; ?></td>
+	</tr>
+<?php endforeach; ?>
+<?php endif; ?>
+<?php endif; ?>
+</tbody>
+</table>
