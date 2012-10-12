@@ -12,7 +12,14 @@ $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = array
 		'dataContainer'               => 'Table',
 		'ctable'                      => array('tl_survey_scale'),
 		'switchToEdit'                => true,
-		'enableVersioning'            => true
+		'enableVersioning'            => true,
+		'sql' => array
+		(
+			'keys' => array
+			(
+				'id' => 'primary'
+			)
+		)
 	),
 
 	// List
@@ -79,6 +86,18 @@ $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = array
 	// Fields
 	'fields' => array
 	(
+		'id' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+		),
+		'tstamp' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'sorting' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		'title' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_scale_folder']['title'],
@@ -87,14 +106,16 @@ $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = array
 			'sorting'                 => true,
 			'flag'                    => 1,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>255)
+			'eval'                    => array('mandatory'=>true, 'maxlength'=>255),
+			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 		'description' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_scale_folder']['description'],
 			'search'                  => true,
 			'inputType'               => 'textarea',
-			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;')
+			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;'),
+			'sql'                     => "text NULL"
 		)
 	)
 );

@@ -1,9 +1,7 @@
 <?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
-$db = Database::getInstance();
-$objResult = $db->prepare("SELECT * FROM tl_survey_result WHERE pid=?")
-	->execute($this->Input->get('id'));
-$hasData = $objResult->numRows > 0;
+$found = SurveyResultModel::findByPid(\Input::get('id'));
+$hasData = (null != $found && 0 < $found->numRows) ? true : false;
 
 /**
  * Table tl_survey
@@ -17,7 +15,14 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 		'dataContainer'               => 'Table',
 		'ctable'                      => array('tl_survey_page','tl_survey_participant','tl_survey_result','tl_survey_pin_tan'),
 		'switchToEdit'                => true,
-		'enableVersioning'            => true
+		'enableVersioning'            => true,
+		'sql' => array
+		(
+			'keys' => array
+			(
+				'id' => 'primary'
+			)
+		)
 	),
 
 	// List
@@ -58,19 +63,19 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
 				'href'                => 'table=tl_survey_pin_tan',
-				'icon'                => 'system/modules/survey_ce/html/images/pintan.png'
+				'icon'                => 'system/modules/survey_ce/assets/pintan.png'
 			),
 			'participants' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_survey']['participants'],
 				'href'                => 'table=tl_survey_participant',
-				'icon'                => 'system/modules/survey_ce/html/images/participants.png'
+				'icon'                => 'system/modules/survey_ce/assets/participants.png'
 			),
 			'statistics' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_survey']['statistics'],
 				'href'                => 'key=cumulated',
-				'icon'                => 'system/modules/survey_ce/html/images/statistics.png'
+				'icon'                => 'system/modules/survey_ce/assets/statistics.png'
 			),
 			'copy' => array
 			(
@@ -113,6 +118,14 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 	// Fields
 	'fields' => array
 	(
+		'id' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+		),
+		'tstamp' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		'title' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['title'],
@@ -121,52 +134,8 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			'sorting'                 => true,
 			'flag'                    => 1,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'insertTag'=>true, 'tl_class'=>'w50')
-		),
-		'author' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['author'],
-			'default'                 => $this->User->id,
-			'exclude'                 => true,
-			'inputType'               => 'select',
-			'foreignKey'              => 'tl_user.name',
-			'eval'                    => array('tl_class'=>'w50')
-		),
-		'description' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['description'],
-			'search'                  => true,
-			'inputType'               => 'textarea',
-			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;','tl_class'=>'clr')
-		),
-		'introduction' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['introduction'],
-			'search'                  => true,
-			'inputType'               => 'textarea',
-			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;', 'rte' => 'tinyMCE')
-		),
-		'online_start' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['online_start'],
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>32, 'rgxp' => 'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard')
-		),
-		'online_end' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['online_end'],
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>32, 'rgxp' => 'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard')
-		),
-		'finalsubmission' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['finalsubmission'],
-			'default'                 => &$GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'],
-			'search'                  => true,
-			'inputType'               => 'textarea',
-			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;', 'rte' => 'tinyMCE')
+			'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'insertTag'=>true, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 		'language' => array
 		(
@@ -176,60 +145,42 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			'filter'                  => true,
 			'inputType'               => 'select',
 			'options'                 => $this->getLanguages(),
-			'eval'                    => array('includeBlankOption'=>true, 'tl_class'=>'w50')
+			'eval'                    => array('includeBlankOption'=>true, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
-		'limit_groups' => array
+		'author' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['limit_groups'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['author'],
+			'default'                 => $this->User->id,
 			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('submitOnChange'=>true, 'tl_class' => 'clr')
+			'inputType'               => 'select',
+			'foreignKey'              => 'tl_user.name',
+			'eval'                    => array('tl_class'=>'w50'),
+			'sql'                     => "smallint(5) unsigned NOT NULL default '0'"
 		),
-		'allowed_groups' => array
+		'online_start' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['allowed_groups'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'foreignKey'              => 'tl_member_group.name',
-			'eval'                    => array('multiple'=>true)
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['online_start'],
+			'search'                  => true,
+			'inputType'               => 'text',
+			'eval'                    => array('maxlength'=>32, 'rgxp' => 'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
+			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
-		'usecookie' => array
+		'online_end' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['usecookie'],
-			'filter'                  => true,
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class' => 'w50 m12')
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['online_end'],
+			'search'                  => true,
+			'inputType'               => 'text',
+			'eval'                    => array('maxlength'=>32, 'rgxp' => 'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
+			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
-		'allowback' => array
+		'description' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['allowback'],
-			'filter'                  => true,
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class'=>'w50')
-		),
-		'jumpto' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['jumpto'],
-			'exclude'                 => true,
-			'inputType'               => 'pageTree',
-			'explanation'             => 'jumpTo',
-			'eval'                    => array('fieldType'=>'radio', 'helpwizard'=>true, 'tl_class'=>'clr')
-		),
-		'show_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['show_title'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class' => 'w50 m12')
-		),
-		'show_cancel' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['show_cancel'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class' => 'w50 m12')
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['description'],
+			'search'                  => true,
+			'inputType'               => 'textarea',
+			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;','tl_class'=>'clr'),
+			'sql'                     => "text NULL"
 		),
 		'access' => array
 		(
@@ -239,8 +190,86 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			'inputType'               => 'radio',
 			'options'                 => array('anon', 'anoncode', 'nonanoncode'),
 			'reference'               => &$GLOBALS['TL_LANG']['tl_survey']['access'],
-			'eval'                    => array('helpwizard'=>true, 'submitOnChange'=>true, 'tl_class' => 'w50 m12')
-		)
+			'eval'                    => array('helpwizard'=>true, 'submitOnChange'=>true, 'tl_class' => 'w50 m12'),
+			'sql'                     => "varchar(32) NOT NULL default ''"
+		),
+		'usecookie' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['usecookie'],
+			'filter'                  => true,
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class' => 'w50 m12'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'limit_groups' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['limit_groups'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('submitOnChange'=>true, 'tl_class' => 'clr'),
+			'sql'                     => "char(1) NOT NULL default '0'"
+		),
+		'show_title' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['show_title'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class' => 'w50 m12'),
+			'sql'                     => "char(1) NOT NULL default '1'"
+		),
+		'show_cancel' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['show_cancel'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class' => 'w50 m12'),
+			'sql'                     => "char(1) NOT NULL default '1'"
+		),
+		'allowed_groups' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['allowed_groups'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'foreignKey'              => 'tl_member_group.name',
+			'eval'                    => array('multiple'=>true),
+			'sql'                     => "blob NULL"
+		),
+		'introduction' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['introduction'],
+			'search'                  => true,
+			'inputType'               => 'textarea',
+			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;', 'rte' => 'tinyMCE'),
+			'sql'                     => "text NOT NULL"
+		),
+		'finalsubmission' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['finalsubmission'],
+			'default'                 => &$GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'],
+			'search'                  => true,
+			'inputType'               => 'textarea',
+			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;', 'rte' => 'tinyMCE'),
+			'sql'                     => "text NOT NULL"
+		),
+		'allowback' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['allowback'],
+			'filter'                  => true,
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array('tl_class'=>'w50'),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'jumpto' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['jumpto'],
+			'exclude'                 => true,
+			'inputType'               => 'pageTree',
+			'explanation'             => 'jumpTo',
+			'eval'                    => array('fieldType'=>'radio', 'helpwizard'=>true, 'tl_class'=>'clr'),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 	)
 );
 
@@ -291,7 +320,7 @@ class tl_survey extends Backend
 	 */
 	public function addIcon($row, $label)
 	{
-		return sprintf('<div class="list_icon" style="background-image:url(\'system/modules/survey_ce/html/images/survey.png\');">%s</div>', $label);
+		return sprintf('<div class="list_icon" style="background-image:url(\'system/modules/survey_ce/assets/survey.png\');">%s</div>', $label);
 	}
 	
 }

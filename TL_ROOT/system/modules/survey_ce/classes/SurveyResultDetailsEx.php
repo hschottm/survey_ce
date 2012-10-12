@@ -1,4 +1,9 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
+
+/**
+ * Run in a custom namespace, so the class can be replaced
+ */
+namespace Contao;
 
 /**
  * Class SurveyResultDetailsEx
@@ -27,12 +32,12 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 	 */
 	public function exportResultsRaw(DataContainer $dc)
 	{
-		if ($this->Input->get('key') != 'exportraw')
+		if (\Input::get('key') != 'exportraw')
 		{
 			return '';
 		}
 
-		$surveyID = $this->Input->get('id');
+		$surveyID = \Input::get('id');
 		$arrQuestions = $this->Database->prepare("
 				SELECT   tl_survey_question.*,
 				         tl_survey_page.title as pagetitle,
@@ -121,7 +126,7 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 			}
 			exit;
 		}
-		$this->redirect($this->Environment->script . '?do=' . $this->Input->get('do'));
+		$this->redirect(\Environment::get('script') . '?do=' . \Input::get('do'));
 	}
 
 	/**

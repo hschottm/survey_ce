@@ -1,12 +1,17 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
- * Class SurveyQuestionOpenended
+ * Run in a custom namespace, so the class can be replaced
+ */
+namespace Contao;
+
+/**
+ * Class SurveyQuestionMatrix
  *
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class SurveyQuestionOpenended extends SurveyQuestion
+class SurveyQuestionMatrix extends SurveyQuestion
 {
 	/**
 	 * Import String library
@@ -25,7 +30,62 @@ class SurveyQuestionOpenended extends SurveyQuestion
 			if ($objResult->numRows)
 			{
 				$this->calculateAnsweredSkipped($objResult);
+				$this->calculateCumulated();
 			}
+		}
+	}
+
+	protected function calculateCumulated()
+	{
+		$cumulated = array();
+		$cumulated['other'] = array();
+		foreach ($this->arrStatistics["answers"] as $answer)
+		{
+			$arrAnswer = deserialize($answer, true);
+			if (is_array($arrAnswer))
+			{
+				foreach ($arrAnswer as $row => $answervalue)
+				{
+					if (is_array($answervalue))
+					{
+						foreach ($answervalue as $singleanswervalue)
+						{
+							$cumulated[$row][$singleanswervalue]++;
+						}
+					}
+					else
+					{
+						$cumulated[$row][$answervalue]++;
+					}
+				}
+			}
+		}
+		$this->arrStatistics['cumulated'] = $cumulated;
+	}
+
+	public function getAnswersAsHTML()
+	{
+		if (is_array($this->statistics["cumulated"]))
+		{
+			$template = new FrontendTemplate('survey_answers_matrix');
+			$template->choices = deserialize($this->arrData['matrixcolumns'], true);
+			$template->rows = deserialize($this->arrData['matrixrows'], true);
+			$template->statistics = $this->statistics;
+			$template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
+			$template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
+			$template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
+			$template->cumulated = $this->statistics["cumulated"];
+			return $template->parse();
+		}
+	}
+
+	public function __set($name, $value) 
+	{
+		switch ($name)
+		{
+			default:
+				parent::__set($name, $value);
+				break;
 		}
 	}
 
@@ -51,26 +111,34 @@ class SurveyQuestionOpenended extends SurveyQuestion
 		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1, "data" => $this->statistics["skipped"], "type" => CELL_FLOAT));
 		$row++;
 		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['answers']), "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
-		$col = 1;
-		if (is_array($this->statistics["answers"]))
+		if (is_array($this->statistics["cumulated"]))
 		{
-			foreach ($this->statistics["answers"] as $answer) 
+			$arrRows = deserialize($this->arrData['matrixrows'], true);
+			$arrChoices = deserialize($this->arrData['matrixcolumns'], true);
+			$row_counter = 1;
+			foreach ($arrRows as $id => $rowdata)
 			{
-				array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => $col++, "data" => utf8_decode($answer))); 
+				array_push($result, array("sheetname" => $sheet,"row" => $row + $row_counter, "col" => 1, "data" => utf8_decode($rowdata), "fontweight" => XLSFONT_BOLD));
+				$row_counter++;
 			}
+
+			$row_counter = 1;
+			foreach ($arrRows as $id => $rowdata)
+			{
+				$col_counter = 1;
+				foreach ($arrChoices as $choiceid => $choice)
+				{
+					if ($row_counter == 1) array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1 + $col_counter, "data" => utf8_decode($choice), "fontweight" => XLSFONT_BOLD)); 
+					array_push($result, array("sheetname" => $sheet,"row" => $row + $row_counter, "col" => 1 + $col_counter, "data" => (($this->statistics['cumulated'][$row_counter][$col_counter]) ? $this->statistics['cumulated'][$row_counter][$col_counter] : 0), "type" => CELL_FLOAT));
+					$col_counter++;
+				}
+				$row_counter++;
+			}
+
+			$row += count($arrRows);
 		}
 		$row += 2;
 		return $result;
-	}
-
-	public function __set($name, $value) 
-	{
-		switch ($name)
-		{
-			default:
-				parent::__set($name, $value);
-				break;
-		}
 	}
 }
 

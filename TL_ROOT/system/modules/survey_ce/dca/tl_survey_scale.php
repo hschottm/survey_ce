@@ -11,7 +11,14 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = array
 	(
 		'dataContainer'               => 'Table',
 		'ptable'                      => 'tl_survey_scale_folder',
-		'enableVersioning'            => true
+		'enableVersioning'            => true,
+		'sql' => array
+		(
+			'keys' => array
+			(
+				'id' => 'primary'
+			)
+		)
 	),
 
 	// List
@@ -83,6 +90,18 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = array
 	// Fields
 	'fields' => array
 	(
+		'id' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+		),
+		'tstamp' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'sorting' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		'title' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_scale']['title'],
@@ -91,14 +110,28 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = array
 			'filter'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>255)
+			'eval'                    => array('mandatory'=>true, 'maxlength'=>255),
+			'sql'                     => "varchar(255) NOT NULL default ''"
+		),
+		'pid' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'description' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_scale']['description'],
 			'search'                  => true,
 			'inputType'               => 'textarea',
-			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;')
+			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;'),
+			'sql'                     => "text NULL"
+		),
+		'scale' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_scale']['scale'],
+			'exclude'                 => true,
+			'inputType'               => 'textwizard',
+			'eval'                    => array('allowHtml'=>true, 'mandatory' => true),
+			'sql'                     => "blob NULL"
 		),
 		'language' => array
 		(
@@ -107,15 +140,9 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = array
 			'filter'                  => true,
 			'inputType'               => 'select',
 			'options'                 => $this->getLanguages(),
-			'eval'                    => array('includeBlankOption'=>true)
+			'eval'                    => array('includeBlankOption'=>true),
+			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
-		'scale' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_scale']['scale'],
-			'exclude'                 => true,
-			'inputType'               => 'textwizard',
-			'eval'                    => array('allowHtml'=>true, 'mandatory' => true)
-		)
 	)
 );
 

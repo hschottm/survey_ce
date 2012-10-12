@@ -1,4 +1,9 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
+
+/**
+ * Run in a custom namespace, so the class can be replaced
+ */
+namespace Contao;
 
 /**
  * @copyright  Helmut Schottmüller 2009-2010
@@ -22,12 +27,12 @@ class SurveyResultDetails extends Backend
 	
 	public function showDetails(DataContainer $dc)
 	{
-		if ($this->Input->get('key') != 'details')
+		if (\Input::get('key') != 'details')
 		{
 			return '';
 		}
 		$return = "";
-		$qid = $this->Input->get('id');
+		$qid = \Input::get('id');
 		$qtype = $this->Database->prepare("SELECT questiontype, pid FROM tl_survey_question WHERE id = ?")
 			->execute($qid)
 			->fetchAssoc();
@@ -39,7 +44,7 @@ class SurveyResultDetails extends Backend
 		$this->loadLanguageFile("tl_survey_question");
 		$this->Template = new BackendTemplate('be_question_result_details');
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-		$this->Template->hrefBack = $this->Environment->script . '?do=' . $this->Input->get('do') . '&amp;key=cumulated&amp;id=' . $parent['pid'];
+		$this->Template->hrefBack = \Environment::get('script') . '?do=' . \Input::get('do') . '&amp;key=cumulated&amp;id=' . $parent['pid'];
 		if ($this->classFileExists($class))
 		{
 			$this->import($class);
@@ -65,7 +70,7 @@ class SurveyResultDetails extends Backend
 	
 	public function showCumulated(DataContainer $dc)
 	{
-		if ($this->Input->get('key') != 'cumulated')
+		if (\Input::get('key') != 'cumulated')
 		{
 			return '';
 		}
@@ -73,7 +78,7 @@ class SurveyResultDetails extends Backend
 		$this->loadLanguageFile('tl_survey_question');
 		$return = "";
 		$objQuestion = $this->Database->prepare("SELECT tl_survey_question.*, tl_survey_page.title as pagetitle, tl_survey_page.pid as parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting")
-			->execute($this->Input->get('id'));
+			->execute(\Input::get('id'));
 		$data = array();
 		$abs_question_no = 0;
 		while ($row = $objQuestion->fetchAssoc())
@@ -85,7 +90,7 @@ class SurveyResultDetails extends Backend
 				$this->import($class);
 				$question = new $class();
 				$question->data = $row;
-				$strUrl = $this->Environment->script . '?do=' . $this->Input->get('do');
+				$strUrl = \Environment::get('script') . '?do=' . \Input::get('do');
 				$strUrl .= '&amp;key=details&amp;id=' . $question->id;
 				array_push($data, array(
 					'number' => $abs_question_no,
@@ -100,15 +105,15 @@ class SurveyResultDetails extends Backend
 		}
 		$this->Template = new BackendTemplate('be_survey_result_cumulated');
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-		$this->Template->hrefBack = $this->Environment->script . '?do=' . $this->Input->get('do');
-		$hrefExport = $this->Environment->script . '?do=' . $this->Input->get('do');
-		$hrefExport .= '&amp;key=export&amp;id=' . $this->Input->get('id');
+		$this->Template->hrefBack = \Environment::get('script') . '?do=' . \Input::get('do');
+		$hrefExport = \Environment::get('script') . '?do=' . \Input::get('do');
+		$hrefExport .= '&amp;key=export&amp;id=' . \Input::get('id');
 		$this->Template->export = $GLOBALS['TL_LANG']['tl_survey_result']['export'];
 		$this->Template->hrefExport = $hrefExport;
 		$this->Template->heading = specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
 		$this->Template->summary = 'cumulated results';
 		$this->Template->data = $data;
-		$this->Template->imgdetails = 'system/modules/survey_ce/html/images/details.png';
+		$this->Template->imgdetails = 'system/modules/survey_ce/assets/details.png';
 		$this->Template->lngAnswered = $GLOBALS['TL_LANG']['tl_survey_question']['answered'];
 		$this->Template->lngSkipped = $GLOBALS['TL_LANG']['tl_survey_question']['skipped'];
 		return $this->Template->parse();
@@ -116,13 +121,13 @@ class SurveyResultDetails extends Backend
 
 	public function exportResults(DataContainer $dc)
 	{
-		if ($this->Input->get('key') != 'export')
+		if (\Input::get('key') != 'export')
 		{
 			return '';
 		}
 		$this->loadLanguageFile('tl_survey_result');
 		$arrQuestions = $this->Database->prepare("SELECT tl_survey_question.*, tl_survey_page.title as pagetitle, tl_survey_page.pid as parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting")
-			->execute($this->Input->get('id'));
+			->execute(\Input::get('id'));
 		if ($arrQuestions->numRows)
 		{
 			include(TL_ROOT . "/plugins/xls_export/xls_export.php");
@@ -154,7 +159,7 @@ class SurveyResultDetails extends Backend
 			}
 
 			$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
-				->execute($this->Input->get('id'));
+				->execute(\Input::get('id'));
 			if ($objSurvey->numRows == 1)
 			{
 				$xls->sendFile($this->safefilename(htmlspecialchars_decode($objSurvey->title)) . ".xls");
@@ -165,7 +170,7 @@ class SurveyResultDetails extends Backend
 			}
 			exit;
 		}
-		$this->redirect($this->Environment->script . '?do=' . $this->Input->get('do'));
+		$this->redirect(\Environment::get('script') . '?do=' . \Input::get('do'));
 	}
 
 	protected function safefilename($filename) 

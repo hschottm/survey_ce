@@ -1,4 +1,9 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
+
+/**
+ * Run in a custom namespace, so the class can be replaced
+ */
+namespace Contao;
 
 /**
  * @copyright  Helmut Schottmüller 2009-2010

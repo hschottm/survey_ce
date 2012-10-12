@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
  * @copyright  Helmut Schottmüller 2009-2010
@@ -8,6 +8,10 @@
  * @filesource
  */
 
+/**
+ * Run in a custom namespace, so the class can be replaced
+ */
+namespace Contao;
 
 /**
  * Class ContentSurvey
@@ -57,7 +61,7 @@ class ContentSurvey extends ContentElement
 	protected function createSurveyPage($pagerow, $pagenumber, $validate = true, $goback = false)
 	{
 		$this->questionpositions = array();
-		if (!strlen($this->pin)) $this->pin = $this->Input->post('pin');
+		if (!strlen($this->pin)) $this->pin = \Input::post('pin');
 		$surveypage = array();
 		$pagequestioncounter = 1;
 		$doNotSubmit = false;
@@ -136,7 +140,7 @@ class ContentSurvey extends ContentElement
 			}
 		}
 
-		if ($validate && $this->Input->post('FORM_SUBMIT') == 'tl_survey' && !strlen($this->pin))
+		if ($validate && \Input::post('FORM_SUBMIT') == 'tl_survey' && !strlen($this->pin))
 		{
 			if ($this->objSurvey->usecookie && strlen($_COOKIE['TLsvy_' . $this->objSurvey->id]))
 			{
@@ -152,7 +156,7 @@ class ContentSurvey extends ContentElement
 		}
 
 		// save survey values
-		if ($validate && $this->Input->post('FORM_SUBMIT') == 'tl_survey' && (!$doNotSubmit || $goback))
+		if ($validate && \Input::post('FORM_SUBMIT') == 'tl_survey' && (!$doNotSubmit || $goback))
 		{
 			if (!strlen($this->pin) || !$this->isValid($this->pin))
 			{
@@ -194,7 +198,7 @@ class ContentSurvey extends ContentElement
 						break;
 				}
 			}
-			if ($this->Input->post('finish'))
+			if (\Input::post('finish'))
 			{
 				// finish the survey
 				switch ($this->objSurvey->access)
@@ -282,9 +286,9 @@ class ContentSurvey extends ContentElement
 				$this->Template->needsTAN = true;
 				$this->Template->txtTANInputDesc = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start_desc'];
 				$this->Template->txtTANInput = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start'];
-				if (strlen($this->Input->get('code')))
+				if (strlen(\Input::get('code')))
 				{
-					$this->Template->tancode = $this->Input->get('code');
+					$this->Template->tancode = \Input::get('code');
 				}
 				break;
 			case 'nonanoncode':
@@ -334,11 +338,11 @@ class ContentSurvey extends ContentElement
 		// add survey javascript
 		if (is_array($GLOBALS['TL_JAVASCRIPT']))
 		{
-			array_insert($GLOBALS['TL_JAVASCRIPT'], 1, 'system/modules/survey_ce/html/js/survey.js');
+			array_insert($GLOBALS['TL_JAVASCRIPT'], 1, 'system/modules/survey_ce/assets/js/survey.js');
 		}
 		else
 		{
-			$GLOBALS['TL_JAVASCRIPT'] = array('system/modules/survey_ce/html/js/survey.js');
+			$GLOBALS['TL_JAVASCRIPT'] = array('system/modules/survey_ce/assets/js/survey.js');
 		}
 
 		// Access control
@@ -359,7 +363,7 @@ class ContentSurvey extends ContentElement
 			}
 		}
 
-		$surveyID = (strlen($this->Input->post('survey'))) ? $this->Input->post('survey') : $this->survey;
+		$surveyID = (strlen(\Input::post('survey'))) ? \Input::post('survey') : $this->survey;
 		$this->objSurvey = $this->Database->prepare("SELECT * FROM tl_survey WHERE id=?")
 			->execute($surveyID);
 		$this->objSurvey->next();
@@ -379,7 +383,7 @@ class ContentSurvey extends ContentElement
 			->execute($surveyID)
 			->fetchAllAssoc();
 		
-		$page = ($this->Input->post('page')) ? $this->Input->post('page') : 0;
+		$page = (\Input::post('page')) ? \Input::post('page') : 0;
 		// introduction page / status
 		if ($page == 0)
 		{
@@ -387,7 +391,7 @@ class ContentSurvey extends ContentElement
 		}
 		
 		// check survey start
-		if ($this->Input->post('start'))
+		if (\Input::post('start'))
 		{
 			$page = 0;
 			switch ($this->objSurvey->access)
@@ -411,8 +415,8 @@ class ContentSurvey extends ContentElement
 					}
 					break;
 				case 'anoncode':
-					$tan = $this->Input->post('tan');
-					if ((strcmp($this->Input->post('FORM_SUBMIT'), 'tl_survey_form') == 0) && (strlen($tan)))
+					$tan = \Input::post('tan');
+					if ((strcmp(\Input::post('FORM_SUBMIT'), 'tl_survey_form') == 0) && (strlen($tan)))
 					{
 						$result = $this->svy->checkPINTAN($this->objSurvey->id, "", $tan);
 						if ($result === false)
@@ -476,9 +480,9 @@ class ContentSurvey extends ContentElement
 		$surveypage = array();
 		if (($page > 0 && $page <= count($pages)))
 		{
-			if ($this->Input->post('FORM_SUBMIT') == 'tl_survey')
+			if (\Input::post('FORM_SUBMIT') == 'tl_survey')
 			{
-				$goback = (strlen($this->Input->post("prev"))) ? true : false;
+				$goback = (strlen(\Input::post("prev"))) ? true : false;
 				$surveypage = $this->createSurveyPage($pages[$page-1], $page, true, $goback);
 			}
 		}
@@ -486,9 +490,9 @@ class ContentSurvey extends ContentElement
 		// submit successful, calculate next page and return a question list of the new page
 		if (count($surveypage) == 0)
 		{
-			if (strlen($this->Input->post("next"))) $page++;
-			if (strlen($this->Input->post("finish"))) $page++;
-			if (strlen($this->Input->post("prev"))) $page--;
+			if (strlen(\Input::post("next"))) $page++;
+			if (strlen(\Input::post("finish"))) $page++;
+			if (strlen(\Input::post("prev"))) $page--;
 
 			$surveypage = $this->createSurveyPage($pages[$page-1], $page, false);
 		}
@@ -518,7 +522,7 @@ class ContentSurvey extends ContentElement
 		$this->Template->page = $page;
 		$this->Template->introduction = $this->objSurvey->introduction;
 		$this->Template->finalsubmission = ($this->objSurvey->finalsubmission) ? $this->objSurvey->finalsubmission : $GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'];
-		$formaction = $this->Environment->request;
+		$formaction = \Environment::get('request');
 
 		$this->Template->pageXofY = $GLOBALS['TL_LANG']['MSC']['page_x_of_y'];
 		$this->Template->next = $GLOBALS['TL_LANG']['MSC']['survey_next'];

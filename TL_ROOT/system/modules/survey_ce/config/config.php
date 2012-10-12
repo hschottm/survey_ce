@@ -32,14 +32,14 @@ array_insert($GLOBALS['BE_MOD'], 3, array
 					'exporttan' => array('SurveyPINTAN', 'exportTAN'),
 					'cumulated' => array('SurveyResultDetails', 'showCumulated'),
 					'details' => array('SurveyResultDetails', 'showDetails'),
-					'icon' => 'system/modules/survey_ce/html/images/survey.png',
-					'stylesheet' => 'system/modules/survey_ce/css/survey.css'
+					'icon' => 'system/modules/survey_ce/assets/survey.png',
+					'stylesheet' => 'system/modules/survey_ce/assets/survey.css'
 				),
 			"scale" => array(
 					"tables" => array(
 							"tl_survey_scale_folder", "tl_survey_scale"
 						),
-					'icon' => 'system/modules/survey_ce/html/images/scale.png'
+					'icon' => 'system/modules/survey_ce/assets/scale.png'
 				)
 		)
 ));

@@ -1,4 +1,9 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
+
+/**
+ * Run in a custom namespace, so the class can be replaced
+ */
+namespace Contao;
 
 /**
  * @copyright  Helmut Schottmüller 2009-2010
@@ -22,7 +27,7 @@ class SurveyPINTAN extends Backend
 	
 	public function exportTAN(DataContainer $dc)
 	{
-		if ($this->Input->get('key') != 'exporttan')
+		if (\Input::get('key') != 'exporttan')
 		{
 			return '';
 		}
@@ -32,21 +37,21 @@ class SurveyPINTAN extends Backend
 
 		$this->Template->surveyPage = $this->getSurveyPageWidget();
 
-		$this->Template->hrefBack = ampersand(str_replace('&key=exporttan', '', $this->Environment->request));
+		$this->Template->hrefBack = ampersand(str_replace('&key=exporttan', '', \Environment::get('request')));
 		$this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
 		$this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['exporttan'];
-		$this->Template->request = ampersand($this->Environment->request, ENCODE_AMPERSANDS);
+		$this->Template->request = ampersand(\Environment::get('request'), ENCODE_AMPERSANDS);
 		$this->Template->submit = specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
 
 		// Create import form
-		if ($this->Input->post('FORM_SUBMIT') == 'tl_export_survey_pin_tan' && $this->blnSave)
+		if (\Input::post('FORM_SUBMIT') == 'tl_export_survey_pin_tan' && $this->blnSave)
 		{
 			$export = array();
 			$surveyPage = $this->Template->surveyPage->value;
 			$pagedata = ($surveyPage > 0) ? $this->Database->prepare("SELECT * FROM tl_page WHERE id = ?")->execute($surveyPage)->fetchAssoc() : null;
-			$domain = $this->Environment->base;
+			$domain = \Environment::get('base');
 
-			$objPINTAN = $this->Database->prepare("SELECT * FROM tl_survey_pin_tan WHERE pid = ? ORDER BY tstamp DESC, id DESC")->execute($this->Input->get('id'));
+			$objPINTAN = $this->Database->prepare("SELECT * FROM tl_survey_pin_tan WHERE pid = ? ORDER BY tstamp DESC, id DESC")->execute(\Input::get('id'));
 			while ($objPINTAN->next())
 			{
 				$row = $objPINTAN->row();
@@ -120,7 +125,7 @@ class SurveyPINTAN extends Backend
 					$intRowCounter++;
 				}
 				$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
-					->execute($this->Input->get('id'));
+					->execute(\Input::get('id'));
 				if ($objSurvey->numRows == 1)
 				{
 					$xls->sendFile($this->safefilename('TAN_' . htmlspecialchars_decode($objSurvey->title)) . ".xls");
@@ -131,7 +136,7 @@ class SurveyPINTAN extends Backend
 				}
 				exit;
 			}
-			$this->redirect(str_replace('&key=exporttan', '', $this->Environment->request));
+			$this->redirect(str_replace('&key=exporttan', '', \Environment::get('request')));
 		}
 		return $this->Template->parse();
 	}
@@ -145,7 +150,7 @@ class SurveyPINTAN extends Backend
 
 	public function createTAN(DataContainer $dc)
 	{
-		if ($this->Input->get('key') != 'createtan')
+		if (\Input::get('key') != 'createtan')
 		{
 			return '';
 		}
@@ -155,14 +160,14 @@ class SurveyPINTAN extends Backend
 
 		$this->Template->nrOfTAN = $this->getTANWidget();
 
-		$this->Template->hrefBack = ampersand(str_replace('&key=createtan', '', $this->Environment->request));
+		$this->Template->hrefBack = ampersand(str_replace('&key=createtan', '', \Environment::get('request')));
 		$this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
 		$this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'];
-		$this->Template->request = ampersand($this->Environment->request, ENCODE_AMPERSANDS);
+		$this->Template->request = ampersand(\Environment::get('request'), ENCODE_AMPERSANDS);
 		$this->Template->submit = specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
 
 		// Create import form
-		if ($this->Input->post('FORM_SUBMIT') == 'tl_export_survey_pin_tan' && $this->blnSave)
+		if (\Input::post('FORM_SUBMIT') == 'tl_export_survey_pin_tan' && $this->blnSave)
 		{
 			$nrOfTAN = $this->Template->nrOfTAN->value;
 			$this->import('Survey', 'svy');
@@ -171,9 +176,9 @@ class SurveyPINTAN extends Backend
 				$pintan = $this->svy->generatePIN_TAN();
 				// add pin/tan
 				$objResult = $this->Database->prepare("INSERT INTO tl_survey_pin_tan (tstamp, pid, pin, tan) VALUES (?, ?, ?, ?)")
-					->execute(time(), $this->Input->get('id'), $pintan["PIN"], $pintan["TAN"]);
+					->execute(time(), \Input::get('id'), $pintan["PIN"], $pintan["TAN"]);
 			}
-			$this->redirect(str_replace('&key=createtan', '', $this->Environment->request));
+			$this->redirect(str_replace('&key=createtan', '', \Environment::get('request')));
 		}
 		return $this->Template->parse();
 	}
@@ -193,7 +198,7 @@ class SurveyPINTAN extends Backend
 		}
 
 		// Valiate input
-		if ($this->Input->post('FORM_SUBMIT') == 'tl_export_survey_pin_tan')
+		if (\Input::post('FORM_SUBMIT') == 'tl_export_survey_pin_tan')
 		{
 			$widget->validate();
 
@@ -232,7 +237,7 @@ class SurveyPINTAN extends Backend
 		}
 
 		// Valiate input
-		if ($this->Input->post('FORM_SUBMIT') == 'tl_export_survey_pin_tan')
+		if (\Input::post('FORM_SUBMIT') == 'tl_export_survey_pin_tan')
 		{
 			$widget->validate();
 

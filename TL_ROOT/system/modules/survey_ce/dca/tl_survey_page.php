@@ -1,9 +1,7 @@
 <?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
-$db = Database::getInstance();
-$objResult = $db->prepare("SELECT * FROM tl_survey_result WHERE pid=?")
-	->execute($this->Input->get('id'));
-$hasData = $objResult->numRows > 0;
+$found = SurveyResultModel::findByPid(\Input::get('id'));
+$hasData = (null != $found && 0 < $found->numRows) ? true : false;
 
 if ($hasData)
 {
@@ -20,7 +18,15 @@ if ($hasData)
 			'ptable'                      => 'tl_survey',
 			'ctable'                      => array('tl_survey_question'),
 			'notEditable'                 => true,
-			'closed'                      => true
+			'closed'                      => true,
+			'sql' => array
+			(
+				'keys' => array
+				(
+					'id' => 'primary',
+					'pid' => 'index'
+				)
+			)
 		)
 	);
 }
@@ -38,7 +44,15 @@ else
 			'ptable'                      => 'tl_survey',
 			'ctable'                      => array('tl_survey_question'),
 			'switchToEdit'                => true,
-			'enableVersioning'            => true
+			'enableVersioning'            => true,
+			'sql' => array
+			(
+				'keys' => array
+				(
+					'id' => 'primary',
+					'pid' => 'index'
+				)
+			)
 		)
 	);
 }
@@ -105,6 +119,22 @@ $GLOBALS['TL_DCA']['tl_survey_page']['palettes'] = array
 // Fields
 $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = array
 (
+	'id' => array
+	(
+		'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+	),
+	'tstamp' => array
+	(
+		'sql'                     => "int(10) unsigned NOT NULL default '0'"
+	),
+	'pid' => array
+	(
+		'sql'                     => "int(10) unsigned NOT NULL default '0'"
+	),
+	'sorting' => array
+	(
+		'sql'                     => "int(10) unsigned NOT NULL default '0'"
+	),
 	'title' => array
 	(
 		'label'                   => &$GLOBALS['TL_LANG']['tl_survey_page']['title'],
@@ -113,21 +143,28 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = array
 		'filter'                  => true,
 		'flag'                    => 1,
 		'inputType'               => 'text',
-		'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'insertTag'=>true)
+		'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'insertTag'=>true),
+		'sql'                     => "varchar(255) NOT NULL default ''"
 	),
 	'description' => array
 	(
 		'label'                   => &$GLOBALS['TL_LANG']['tl_survey_page']['description'],
 		'search'                  => true,
 		'inputType'               => 'textarea',
-		'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;')
+		'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;'),
+		'sql'                     => "text NULL"
+	),
+	'language' => array
+	(
+		'sql'                     => "varchar(32) NOT NULL default ''"
 	),
 	'introduction' => array
 	(
 		'label'                   => &$GLOBALS['TL_LANG']['tl_survey_page']['introduction'],
 		'search'                  => true,
 		'inputType'               => 'textarea',
-		'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;', 'rte'=>'tinyMCE')
+		'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;', 'rte'=>'tinyMCE'),
+		'sql'                     => "text NOT NULL"
 	),
 	'page_template' => array
 	(
@@ -135,8 +172,13 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = array
 		'default'                 => 'survey_questionblock',
 		'inputType'               => 'select',
 		'options_callback'        => array('tl_survey_page', 'getSurveyTemplates'),
-		'eval'                    => array('tl_class'=>'w50')
-	)
+		'eval'                    => array('tl_class'=>'w50'),
+		'sql'                     => "varchar(255) NOT NULL default 'survey_questionblock'"
+	),
+	'pagetype' => array
+	(
+		'sql'                     => "varchar(30) NOT NULL default 'standard'"
+	),
 );
 
 
@@ -174,7 +216,7 @@ class tl_survey_page extends Backend
 		if (is_null($this->hasData))
 		{
 			$objResult = $this->Database->prepare("SELECT * FROM tl_survey_result WHERE pid=?")
-				->execute($this->Input->get('id'));
+				->execute(\Input::get('id'));
 			$this->hasData = $objResult->numRows > 0;
 		}
 		return $this->hasData;

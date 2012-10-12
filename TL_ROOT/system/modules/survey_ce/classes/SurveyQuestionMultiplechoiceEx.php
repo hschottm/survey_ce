@@ -1,15 +1,19 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
- * Class SurveyQuestionMatrixEx
+ * Run in a custom namespace, so the class can be replaced
+ */
+namespace Contao;
+
+/**
+ * Class SurveyQuestionMultiplechoiceEx
  *
  * @copyright  Georg Rehfeld 2010
  * @author     Georg Rehfeld <rehfeld@georg-rehfeld.de>
  */
-class SurveyQuestionMatrixEx extends SurveyQuestionMatrix
+class SurveyQuestionMultiplechoiceEx extends SurveyQuestionMultiplechoice
 {
 
-	protected $subquestions = array();
 	protected $choices = array();
 
 	/**
@@ -21,18 +25,22 @@ class SurveyQuestionMatrixEx extends SurveyQuestionMatrix
 	}
 
 	/**
-	 * Exports matrix question headers and all existing answers.
+	 * Exports multiple choice question headers and all existing answers.
 	 *
-	 * Matrix questions currently occupy one column for every matrix row / subquestion, which
-	 * is given out turned ccw in the header, regardless of the subtype single/multiple choice.
-	 * This is so to avoid excessive numbers of columns for the multiple choice subtype (num rows * num cols).
-	 * Instead the value cells carry the choice/s (matrix col names), either a single value
-	 * (single choice) or a delimiter '|' separated list of them (multiple choice).
-	 * Common question headers, e.g. the id, question-numbers, title are exported in merged cells
-	 * spanning all subquestion columns.
+	 * Questions of subtype mc_dichotomous occupy one column and get yes/no values as answers.
+	 *
+	 * Questions of subtype mc_singleresponse also occupy one column only and the participants
+	 * choice as answer. If there is the optinal "other answer" present and choosen, the value
+	 * will be the participants input prepended by the title of the other answer.
+	 *
+	 * Questions of subtype mc_multipleresponse occupy one column for every choice.
+	 * All possible coices are given in the header (turned ccw) and 'x' will be the value, if
+	 * choosen by the participant. The optional "other answer" gets its own column with the
+	 * participants entry as value. Common question headers, e.g. the id, question-numbers,
+	 * title are exported in merged cells spanning all choice columns.
 	 *
 	 * As a side effect the width for each column is calculated and set via the given $xls object.
-	 * Row height is currently calculated/set ONLY for the row with subquestions, which is turned
+	 * Row height is currently calculated/set ONLY for the row with subquestions/choices, which is turned
 	 * 90° ccw ... thus it is effectively also a text width calculation.
 	 *
 	 * Not setting row(/text) height explicitly in the general case is no problem in OpenOffice Calc 3.1,
@@ -46,25 +54,9 @@ class SurveyQuestionMatrixEx extends SurveyQuestionMatrix
 	 * @param array $questionNumbers  array with page and question numbers
 	 * @param array $participants  array with all participant data
 	 * @return array  the cells to be added to the export
-	 *
-	 * @TODO: eventually give out just indexes instead of choice strings to save width? Then the possible coices must be shown in the header.
 	 */
 	public function exportDetailsToExcel(&$xls, $sheet, &$row, &$col, $questionNumbers, $participants)
 	{
-/*
-print "<pre>\n";
-var_export(deserialize($this->arrData['matrixrows'], true));
-var_export(deserialize($this->arrData['matrixcolumns'], true));
-foreach ($this->statistics['participants'] as $k => $v) {
-	print "'$k' => ";
-	var_export(deserialize($v[0]['result']));
-	print "\n";
-}
-var_export($this->statistics);
-var_export($this->arrData);
-print "</pre>\n";
-die();
-*/
 		$valueCol = $col;
 		$rotateInfo = array();
 		$headerCells = $this->exportQuestionHeadersToExcel($xls, $sheet, $row, $col, $questionNumbers, $rotateInfo);
@@ -82,7 +74,7 @@ die();
 	}
 
 	/**
-	 * Exports the column headers for a question of type 'matrix'.
+	 * Exports the column headers for a question of type 'multiple choice'.
 	 *
 	 * Several rows are returned, so that the user of the Excel file is able to
 	 * use them for reference, filtering and sorting.
@@ -97,24 +89,17 @@ die();
 	 */
 	protected function exportQuestionHeadersToExcel(&$xls, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
 	{
-		$this->subquestions = deserialize($this->arrData['matrixrows'], true);
-		foreach ($this->subquestions as $k => $v)
+		$this->choices = ($this->arrData['multiplechoice_subtype'] == 'mc_dichotomous')
+			?	array(
+					0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
+					1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']
+				)
+			:	deserialize($this->arrData['choices'], true);
+		if ($this->arrData['addother'])
 		{
-			$this->subquestions[$k] = utf8_decode($this->String->decodeEntities($v));
+			$this->choices[] = preg_replace('/[-=>:\s]+$/', '', $this->arrData['othertitle']);
 		}
-		$numcols = count($this->subquestions);
-
-		$this->choices = deserialize($this->arrData['matrixcolumns'], true);
-		if ($this->arrData['addneutralcolumn'])
-		{
-			// TODO: i believe, the dash is better then the real text for the neutral column, make configurable?
-			// $this->choices[] = $this->arrData['neutralcolumn'];
-			$this->choices[] = '-';
-		}
-		foreach ($this->choices as $k => $v)
-		{
-			$this->choices[$k] = utf8_decode($this->String->decodeEntities($v));
-		}
+		$numcols = ($this->arrData['multiplechoice_subtype'] == 'mc_multipleresponse') ? count($this->choices) : 1;
 
 		$result = array();
 
@@ -146,7 +131,7 @@ die();
 			'sheetname' => $sheet, 'row' => $row, 'col' => $col,
 			'data' =>
 				utf8_decode($GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]) . ', ' .
-				utf8_decode($GLOBALS['TL_LANG']['tl_survey_question'][$this->arrData['matrix_subtype']])
+				utf8_decode($GLOBALS['TL_LANG']['tl_survey_question'][$this->arrData['multiplechoice_subtype']])
 		);
 		$row++;
 
@@ -181,46 +166,64 @@ die();
 
 		if ($numcols == 1)
 		{
-			// This is a strange case: a matrix question with just one subquestion.
-			// However, users do that (at least for testing) and have the right to do so.
-			// Just add the one and only subquestion, without rotation ...
+			$xls->setcolwidth($sheet, $col, $minColWidthTitle);
+
+			// add an empty cell, just for the formatting
 			$result[] = array(
 				'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-				'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
+				'textrotate' => XLSXF_TEXTROTATION_COUNTERCLOCKWISE, 'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
 				'borderbottom' => XLSXF_BORDER_THIN, 'borderbottomcolor' => '#000000',
-				'data' => $this->subquestions[0]
+				'data' => ''
 			);
-
-			// ... and recalculate the col width
-			$minColWidth = max(
-				($this->getLongestWordLen($this->subquestions[0]) + 3) * 256,
-				$minColWidthTitle
-			);
-			$xls->setcolwidth($sheet, $col, $minColWidth);
 			$col++;
 		}
 		else
 		{
-			// output all subquestion columns
+			// output all choice columns
 			$rotateInfo[$row] = array();
 			$narrowWidth = 2 * 640;
 			$sumWidth = 0;
-			foreach ($this->subquestions as $key => $subquestion)
+			foreach ($this->choices as $key => $choice)
 			{
 				$result[] = array(
 					'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-					'textrotate' => XLSXF_TEXTROTATION_COUNTERCLOCKWISE,
+					'textrotate' => ($this->arrData['addother'] && ($key == count($this->choices) - 1))
+						? XLSXF_TEXTROTATION_NOROTATION
+						: XLSXF_TEXTROTATION_COUNTERCLOCKWISE,
 					'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
 					'borderbottom' => XLSXF_BORDER_THIN, 'borderbottomcolor' => '#000000',
-					'data' => $subquestion
+					'data' => utf8_decode($choice),
 				);
-				// make cols as narrow as possible, but wide enough for the title in the merged cells above
-				$minColWidth = max(
-					intval($minColWidthTitle / count($this->subquestions)),
-					$narrowWidth
-				);
-				$xls->setcolwidth($sheet, $col, $minColWidth);
-				$rotateInfo[$row][$col] = $subquestion;
+				if ($this->arrData['addother']) {
+					// the "other" column will take care of a good col widht for the merged cells above,
+					// so we set the normal choice columns as narrow as possible, accounting for 1-2 lines of ccw text
+					if ($key < count($this->choices) - 1)
+					{
+						$sumWidth += $narrowWidth;
+						$xls->setcolwidth($sheet, $col, $narrowWidth);
+					}
+					else
+					{
+						// Guess a minimum column width for the "other" column
+						$minColWidth = max(
+							($this->getLongestWordLen($choice) + 3) * 256,
+							$narrowWidth,
+							$minColWidthTitle - $sumWidth
+						);
+						$xls->setcolwidth($sheet, $col, $minColWidth);
+					}
+				}
+				else
+				{
+					// only 'x' values will be given out, make cols as narrow as possible, but wide enough for the
+					// title in the merged cells above
+					$minColWidth = max(
+						intval($minColWidthTitle / count($this->choices)),
+						$narrowWidth
+					);
+					$xls->setcolwidth($sheet, $col, $minColWidth);
+				}
+				$rotateInfo[$row][$col] = $choice;
 				$col++;
 			}
 		}
@@ -264,58 +267,43 @@ die();
 			{
 				$col = $startCol;
 				$arrAnswers = deserialize($data, true);
-				if ($this->arrData['matrix_subtype'] == 'matrix_singleresponse')
+				if ($this->arrData['multiplechoice_subtype'] == 'mc_dichotomous')
 				{
-					foreach ($this->subquestions as $k => $junk)
-					{
-						$strAnswer = '';
-						if (array_key_exists($k + 1, $arrAnswers))
-						{
-							// These 1 based array keys and values Helmut used here for the answers drive me crazy!
-							// 1 based would be perfectly OK in e.g. Erlang, where almost everything is 1 based,
-							// but not in PHP, where numerical arrays are 0 based typically.
-							$choice_key = $arrAnswers[$k + 1] - 1;
-							if (array_key_exists($choice_key, $this->choices))
-							{
-								$strAnswer = $this->choices[$choice_key];
-							}
-						}
-						if (strlen($strAnswer))
-						{
-							// Set value to numeric, when the coices are e.g. school grades '1'-'5', a common case (for me).
-							// Then the user is able to work with formulars in Excel/Calc, avarage for instance.
-							$cells[] = array(
-								'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-								'type' => is_numeric($strAnswer) ? CELL_FLOAT : CELL_STRING,
-								'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
-								'data' => $strAnswer
-							);
-							// Guess a minimum column width for the answer column.
-							$minColWidth = max(
-								($this->getLongestWordLen($strAnswer) + 3) * 256,
-								$xls->getcolwidth($sheet, $col),
-								min (strlen($strAnswer) / 8 * 256, 40 * 256)
-							);
-							$xls->setcolwidth($sheet, $col, $minColWidth);
-						}
-						$col++;
-					}
+					$cells[] = array(
+						'sheetname' => $sheet, 'row' => $row, 'col' => $col,
+						'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
+						'data' => utf8_decode($this->choices[$arrAnswers['value'] - 1])
+					);
 				}
-				elseif ($this->arrData['matrix_subtype'] == 'matrix_multipleresponse')
+				elseif ($this->arrData['multiplechoice_subtype'] == 'mc_singleresponse')
 				{
-					foreach ($this->subquestions as $k => $junk)
+					$strAnswer = utf8_decode($this->choices[$arrAnswers['value'] - 1]);
+					if (($this->arrData['addother']) && ($arrAnswers['value'] == count($this->choices)))
 					{
-						$strAnswer = '';
-						if (is_array($arrAnswers[$k + 1]))
-						{
-							$arrTmp = array();
-							foreach ($arrAnswers[$k + 1] as $kk => $v)
-							{
-								$arrTmp[] = $this->choices[$kk - 1];
-							}
-							// TODO: make delimiter configurable/intelligent, though '|' is a good default, breaks in Calc
-							$strAnswer = implode(' | ', $arrTmp);
-						}
+						$strAnswer .= ': ' . utf8_decode($this->String->decodeEntities($arrAnswers['other']));
+					}
+					$cells[] = array(
+						'sheetname' => $sheet, 'row' => $row, 'col' => $col,
+						'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
+						'data' => $strAnswer
+					);
+					// Guess a minimum column width.
+					$minColWidth = max(
+						($this->getLongestWordLen($strAnswer) + 3) * 256,
+						$xls->getcolwidth($sheet, $col),
+						min (strlen($strAnswer) / 8 * 256, 40 * 256)
+					);
+					$xls->setcolwidth($sheet, $col, $minColWidth);
+				}
+				elseif ($this->arrData['multiplechoice_subtype'] == 'mc_multipleresponse')
+				{
+					foreach ($this->choices as $k => $v)
+					{
+						$strAnswer = (is_array($arrAnswers['value']) && array_key_exists($k + 1, $arrAnswers['value']))
+							? ($this->arrData['addother'] && ($k + 1 == count($this->choices)))
+								? utf8_decode($this->String->decodeEntities($arrAnswers['other']))
+								: 'x'
+							: '';
 						if (strlen($strAnswer))
 						{
 							$cells[] = array(
@@ -323,13 +311,16 @@ die();
 								'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
 								'data' => $strAnswer
 							);
-							// Guess a minimum column width for the answer column.
-							$minColWidth = max(
-								($this->getLongestWordLen($strAnswer) + 3) * 256,
-								$xls->getcolwidth($sheet, $col),
-								min (strlen($strAnswer) / 8 * 256, 40 * 256)
-							);
-							$xls->setcolwidth($sheet, $col, $minColWidth);
+							if ($strAnswer != 'x')
+							{
+								// Guess a minimum column width for the "other" column.
+								$minColWidth = max(
+									($this->getLongestWordLen($strAnswer) + 3) * 256,
+									$xls->getcolwidth($sheet, $col),
+									min (strlen($strAnswer) / 8 * 256, 40 * 256)
+								);
+								$xls->setcolwidth($sheet, $col, $minColWidth);
+							}
 						}
 						$col++;
 					}

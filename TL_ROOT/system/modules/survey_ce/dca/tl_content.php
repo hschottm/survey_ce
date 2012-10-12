@@ -12,7 +12,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['survey'] = array
 	'exclude'                 => true,
 	'inputType'               => 'radio',
 	'foreignKey'              => 'tl_survey.title',
-	'eval'                    => array('mandatory'=>true)
+	'eval'                    => array('mandatory'=>true),
+	'sql'                     => "smallint(5) unsigned NOT NULL default '0'"
 );
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['surveyTpl'] = array
@@ -21,7 +22,8 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['surveyTpl'] = array
 	'default'                 => 'ce_survey',
 	'exclude'                 => true,
 	'inputType'               => 'select',
-	'options_callback'        => array('tl_content_survey', 'getSurveyTemplates')
+	'options_callback'        => array('tl_content_survey', 'getSurveyTemplates'),
+	'sql'                     => "varchar(64) NOT NULL default ''"
 );
 
 class tl_content_survey extends tl_content

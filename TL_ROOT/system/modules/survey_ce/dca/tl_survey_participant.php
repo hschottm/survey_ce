@@ -17,6 +17,14 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = array
 		'ondelete_callback' => array
 		(
 			array('tl_survey_participant','deleteParticipant')
+		),
+		'sql' => array
+		(
+			'keys' => array
+			(
+				'id' => 'primary',
+				'pid' => 'index'
+			)
 		)
 	),
 
@@ -77,13 +85,30 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = array
 	// Fields
 	'fields' => array
 	(
+		'id' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+		),
 		'tstamp' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_participant']['tstamp'],
 			'sorting'                 => true,
 			'flag'                    => 5, // sort ASC grouped by day
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>16, 'rgxp'=>'datim', 'insertTag'=>true)
+			'eval'                    => array('mandatory'=>true, 'maxlength'=>16, 'rgxp'=>'datim', 'insertTag'=>true),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'pid' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'uid' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'pin' => array
+		(
+			'sql'                     => "varchar(16) NOT NULL default ''"
 		),
 		'lastpage' => array
 		(
@@ -93,7 +118,28 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = array
 			'length'                  => 2, // group by first 2 chars
 			'filter'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>16, 'rgxp'=>'digit')
+			'eval'                    => array('mandatory'=>true, 'maxlength'=>16, 'rgxp'=>'digit'),
+			'sql'                     => "int(10) unsigned NOT NULL default '1'"
+		),
+		'finished' => array
+		(
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'email' => array
+		(
+			'sql'                     => "varchar(255) NOT NULL default ''"
+		),
+		'firstname' => array
+		(
+			'sql'                     => "varchar(255) NOT NULL default ''"
+		),
+		'lastname' => array
+		(
+			'sql'                     => "varchar(255) NOT NULL default ''"
+		),
+		'company' => array
+		(
+			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 	)
 );

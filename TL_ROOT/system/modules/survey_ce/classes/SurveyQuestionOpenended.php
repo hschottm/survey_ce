@@ -1,12 +1,17 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
- * Class SurveyQuestionConstantsum
+ * Run in a custom namespace, so the class can be replaced
+ */
+namespace Contao;
+
+/**
+ * Class SurveyQuestionOpenended
  *
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class SurveyQuestionConstantsum extends SurveyQuestion
+class SurveyQuestionOpenended extends SurveyQuestion
 {
 	/**
 	 * Import String library
@@ -25,55 +30,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 			if ($objResult->numRows)
 			{
 				$this->calculateAnsweredSkipped($objResult);
-				$this->calculateCumulated();
 			}
-		}
-	}
-
-	protected function calculateCumulated()
-	{
-		$cumulated = array();
-		$cumulated['other'] = array();
-		foreach ($this->arrStatistics["answers"] as $answer)
-		{
-			$arrAnswer = deserialize($answer, true);
-			if (is_array($arrAnswer))
-			{
-				foreach ($arrAnswer as $answerkey => $answervalue)
-				{
-					$cumulated[$answerkey][$answervalue]++;
-				}
-			}
-		}
-		foreach ($cumulated as $key => $value)
-		{
-			ksort($value);
-			$cumulated[$key] = $value;
-		}
-		$this->arrStatistics['cumulated'] = $cumulated;
-	}
-
-	public function getAnswersAsHTML()
-	{
-		if (is_array($this->statistics["cumulated"]))
-		{
-			$template = new FrontendTemplate('survey_answers_constantsum');
-			$template->choices = deserialize($this->arrData['sumchoices'], true);
-			$template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
-			$template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
-			$template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
-			$template->cumulated = $this->statistics["cumulated"];
-			return $template->parse();
-		}
-	}
-
-	public function __set($name, $value) 
-	{
-		switch ($name)
-		{
-			default:
-				parent::__set($name, $value);
-				break;
 		}
 	}
 
@@ -99,34 +56,26 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1, "data" => $this->statistics["skipped"], "type" => CELL_FLOAT));
 		$row++;
 		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['answers']), "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
-
-		if (is_array($this->statistics["cumulated"]))
+		$col = 1;
+		if (is_array($this->statistics["answers"]))
 		{
-			$arrChoices = deserialize($this->arrData['sumchoices'], true);
-			$counter = 1;
-			foreach ($arrChoices as $id => $choice)
+			foreach ($this->statistics["answers"] as $answer) 
 			{
-				array_push($result, array("sheetname" => $sheet,"row" => $row + $counter - 1, "col" => 1, "data" => utf8_decode($choice)));
-				$counter += 2;
+				array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => $col++, "data" => utf8_decode($answer))); 
 			}
-			$counter = 1;
-			$idx = 1;
-			foreach ($arrChoices as $id => $choice)
-			{
-				$acounter = 2;
-				foreach ($this->statistics["cumulated"][$idx] as $answervalue => $nrOfAnswers)
-				{
-					array_push($result, array("sheetname" => $sheet,"row" => $row + $counter - 1, "col" => $acounter, "data" => $answervalue, "type" => CELL_FLOAT));
-					array_push($result, array("sheetname" => $sheet,"row" => $row + $counter, "col" => $acounter, "data" => (($nrOfAnswers) ? $nrOfAnswers : 0), "type" => CELL_FLOAT));
-					$acounter++;
-				}
-				$idx++;
-				$counter += 2;
-			}
-
-			$row += count($arrChoices) * 2 + 1;
 		}
+		$row += 2;
 		return $result;
+	}
+
+	public function __set($name, $value) 
+	{
+		switch ($name)
+		{
+			default:
+				parent::__set($name, $value);
+				break;
+		}
 	}
 }
 

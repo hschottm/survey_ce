@@ -1,12 +1,17 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
- * Class SurveyQuestionMatrix
+ * Run in a custom namespace, so the class can be replaced
+ */
+namespace Contao;
+
+/**
+ * Class SurveyQuestionConstantsum
  *
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class SurveyQuestionMatrix extends SurveyQuestion
+class SurveyQuestionConstantsum extends SurveyQuestion
 {
 	/**
 	 * Import String library
@@ -39,21 +44,16 @@ class SurveyQuestionMatrix extends SurveyQuestion
 			$arrAnswer = deserialize($answer, true);
 			if (is_array($arrAnswer))
 			{
-				foreach ($arrAnswer as $row => $answervalue)
+				foreach ($arrAnswer as $answerkey => $answervalue)
 				{
-					if (is_array($answervalue))
-					{
-						foreach ($answervalue as $singleanswervalue)
-						{
-							$cumulated[$row][$singleanswervalue]++;
-						}
-					}
-					else
-					{
-						$cumulated[$row][$answervalue]++;
-					}
+					$cumulated[$answerkey][$answervalue]++;
 				}
 			}
+		}
+		foreach ($cumulated as $key => $value)
+		{
+			ksort($value);
+			$cumulated[$key] = $value;
 		}
 		$this->arrStatistics['cumulated'] = $cumulated;
 	}
@@ -62,10 +62,8 @@ class SurveyQuestionMatrix extends SurveyQuestion
 	{
 		if (is_array($this->statistics["cumulated"]))
 		{
-			$template = new FrontendTemplate('survey_answers_matrix');
-			$template->choices = deserialize($this->arrData['matrixcolumns'], true);
-			$template->rows = deserialize($this->arrData['matrixrows'], true);
-			$template->statistics = $this->statistics;
+			$template = new FrontendTemplate('survey_answers_constantsum');
+			$template->choices = deserialize($this->arrData['sumchoices'], true);
 			$template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
 			$template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
 			$template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
@@ -106,33 +104,33 @@ class SurveyQuestionMatrix extends SurveyQuestion
 		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1, "data" => $this->statistics["skipped"], "type" => CELL_FLOAT));
 		$row++;
 		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['answers']), "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
+
 		if (is_array($this->statistics["cumulated"]))
 		{
-			$arrRows = deserialize($this->arrData['matrixrows'], true);
-			$arrChoices = deserialize($this->arrData['matrixcolumns'], true);
-			$row_counter = 1;
-			foreach ($arrRows as $id => $rowdata)
+			$arrChoices = deserialize($this->arrData['sumchoices'], true);
+			$counter = 1;
+			foreach ($arrChoices as $id => $choice)
 			{
-				array_push($result, array("sheetname" => $sheet,"row" => $row + $row_counter, "col" => 1, "data" => utf8_decode($rowdata), "fontweight" => XLSFONT_BOLD));
-				$row_counter++;
+				array_push($result, array("sheetname" => $sheet,"row" => $row + $counter - 1, "col" => 1, "data" => utf8_decode($choice)));
+				$counter += 2;
 			}
-
-			$row_counter = 1;
-			foreach ($arrRows as $id => $rowdata)
+			$counter = 1;
+			$idx = 1;
+			foreach ($arrChoices as $id => $choice)
 			{
-				$col_counter = 1;
-				foreach ($arrChoices as $choiceid => $choice)
+				$acounter = 2;
+				foreach ($this->statistics["cumulated"][$idx] as $answervalue => $nrOfAnswers)
 				{
-					if ($row_counter == 1) array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1 + $col_counter, "data" => utf8_decode($choice), "fontweight" => XLSFONT_BOLD)); 
-					array_push($result, array("sheetname" => $sheet,"row" => $row + $row_counter, "col" => 1 + $col_counter, "data" => (($this->statistics['cumulated'][$row_counter][$col_counter]) ? $this->statistics['cumulated'][$row_counter][$col_counter] : 0), "type" => CELL_FLOAT));
-					$col_counter++;
+					array_push($result, array("sheetname" => $sheet,"row" => $row + $counter - 1, "col" => $acounter, "data" => $answervalue, "type" => CELL_FLOAT));
+					array_push($result, array("sheetname" => $sheet,"row" => $row + $counter, "col" => $acounter, "data" => (($nrOfAnswers) ? $nrOfAnswers : 0), "type" => CELL_FLOAT));
+					$acounter++;
 				}
-				$row_counter++;
+				$idx++;
+				$counter += 2;
 			}
 
-			$row += count($arrRows);
+			$row += count($arrChoices) * 2 + 1;
 		}
-		$row += 2;
 		return $result;
 	}
 }

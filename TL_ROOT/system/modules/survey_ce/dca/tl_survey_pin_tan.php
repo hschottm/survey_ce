@@ -13,7 +13,17 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = array
 		'ptable'                      => 'tl_survey',
 		'doNotCopyRecords'            => true,
 		'closed'                      => true,
-		'enableVersioning'            => true
+		'enableVersioning'            => true,
+		'sql' => array
+		(
+			'keys' => array
+			(
+				'id' => 'primary',
+				'pid' => 'index',
+				'pin' => 'index',
+				'tan' => 'index'
+			)
+		)
 	),
 
 	// List
@@ -82,6 +92,18 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = array
 	// Fields
 	'fields' => array
 	(
+		'id' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+		),
+		'pid' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'pin' => array
+		(
+			'sql'                     => "varchar(16) NOT NULL default ''"
+		),
 		'tan' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'],
@@ -89,22 +111,25 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = array
 			'sorting'                 => true,
 			'flag'                    => 1,
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>16, 'insertTag'=>true)
+			'eval'                    => array('mandatory'=>true, 'maxlength'=>16, 'insertTag'=>true),
+			'sql'                     => "varchar(16) NOT NULL default ''"
 			),
+		'used' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'],
+			'filter'                  => true,
+			'inputType'               => 'text',
+			'eval'                    => array('mandatory'=>true, 'maxlength'=>16),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		'tstamp' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'],
 			'sorting'                 => true,
 			'flag'                    => 6, // desc, grouped by day (side effect: tstamp label is now in 'datimFormat')
 			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>16, 'insertTag'=>true)
-		),
-		'used' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'],
-			'filter'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array('mandatory'=>true, 'maxlength'=>16)
+			'eval'                    => array('mandatory'=>true, 'maxlength'=>16, 'insertTag'=>true),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'surveyPage' => array
 		(
@@ -131,11 +156,11 @@ class tl_survey_pin_tan extends Backend
 		if ($matches[3])
 		{
 			// tan is used
-			$used = '<img src="system/modules/survey_ce/html/images/tan_used.png" alt="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] . '" title="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] . '" />';
+			$used = '<img src="system/modules/survey_ce/assets/tan_used.png" alt="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] . '" title="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] . '" />';
 		}
 		else
 		{
-			$used = '<img src="system/modules/survey_ce/html/images/tan_new.png" alt="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] . '" title="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] . '" />';
+			$used = '<img src="system/modules/survey_ce/assets/tan_new.png" alt="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] . '" title="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] . '" />';
 		}
 		return sprintf('<div>%s <strong>%s</strong> (%s)</div>', $used, $matches[1], $matches[2]);
 	}
