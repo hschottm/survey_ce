@@ -101,17 +101,17 @@
 	margin:5px 0;
 	color: #e65d49;
 	font-weight: bold;
-	background: transparent url(tl_files/survey/images/exclamation.png) no-repeat left top;
+	background: transparent url(files/survey/images/exclamation.png) no-repeat left top;
 }
 
 .progressbar_container {
-	background: url(tl_files/survey/images/percentage-bg.png) no-repeat left center;
+	background: url(files/survey/images/percentage-bg.png) no-repeat left center;
 	width: 316px;
 	height: 39px;
 	margin: 0 auto;
 }
 .progressbar {
-	background: url(tl_files/survey/images/progress.png) no-repeat left center;
+	background: url(files/survey/images/progress.png) no-repeat left center;
 	width:  0%;
 	height:  39px;
 }
