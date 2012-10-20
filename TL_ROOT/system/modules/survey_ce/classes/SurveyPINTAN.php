@@ -67,9 +67,7 @@ class SurveyPINTAN extends Backend
 			}
 			if (count($export))
 			{
-				include(TL_ROOT . "/plugins/xls_export/xls_export.php");
-
-				$xls = new xlsexport();
+				$xls = new \xlsexport();
 				$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_pin_tan']['tans']);
 				$xls->addworksheet($sheet);
 

@@ -130,9 +130,7 @@ class SurveyResultDetails extends Backend
 			->execute(\Input::get('id'));
 		if ($arrQuestions->numRows)
 		{
-			include(TL_ROOT . "/plugins/xls_export/xls_export.php");
-
-			$xls = new xlsexport();
+			$xls = new \xlsexport();
 			$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
 			$xls->addworksheet($sheet);
 			$intRowCounter = 0;

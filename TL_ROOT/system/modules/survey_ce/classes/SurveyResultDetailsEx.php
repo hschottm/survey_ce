@@ -51,8 +51,7 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 		{
 			$this->loadLanguageFile('tl_survey_result');
 
-			require_once(TL_ROOT . "/plugins/xls_export/xls_export.php");
-			$xls = new xlsexport();
+			$xls = new \xlsexport();
 			//$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
 			$sheet = utf8_decode('Detaillierter Export');
 			$xls->addworksheet($sheet);
