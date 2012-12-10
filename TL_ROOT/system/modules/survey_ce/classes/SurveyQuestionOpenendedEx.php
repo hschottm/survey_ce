@@ -111,7 +111,7 @@ class SurveyQuestionOpenendedEx extends SurveyQuestionOpenended
 		);
 
 		// question title
-		$title = utf8_decode($this->String->decodeEntities($this->title)) . ($this->arrData['obligatory'] ? ' *' : '');
+		$title = utf8_decode(\String::decodeEntities($this->title)) . ($this->arrData['obligatory'] ? ' *' : '');
 		$result[] = array(
 			'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
 			'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
@@ -168,7 +168,7 @@ class SurveyQuestionOpenendedEx extends SurveyQuestionOpenended
 			}
 			if ($data)
 			{
-				$data = utf8_decode($this->String->decodeEntities($data));
+				$data = utf8_decode(\String::decodeEntities($data));
 				$cells[] = array(
 					'sheetname' => $sheet, 'row' => $row, 'col' => $col,
 					'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,

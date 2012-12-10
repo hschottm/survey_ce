@@ -81,14 +81,14 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = array
 		'copy' => array
 		(
 			'label'               => &$GLOBALS['TL_LANG']['tl_survey_page']['copy'],
-			'href'                => 'act=paste&amp;mode=copy',
+			'href'                => 'act=paste&mode=copy',
 			'icon'                => 'copy.gif',
 			'button_callback'     => array('tl_survey_page', 'copyPage')
 		),
 		'cut' => array
 		(
 			'label'               => &$GLOBALS['TL_LANG']['tl_survey_page']['cut'],
-			'href'                => 'act=paste&amp;mode=cut',
+			'href'                => 'act=paste&mode=cut',
 			'icon'                => 'cut.gif',
 			'attributes'          => 'onclick="Backend.getScrollOffset();"',
 			'button_callback'     => array('tl_survey_page', 'cutPage')
@@ -240,7 +240,7 @@ class tl_survey_page extends Backend
 		}
 		else
 		{
-			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 		}
 	}
 
@@ -262,7 +262,7 @@ class tl_survey_page extends Backend
 		}
 		else
 		{
-			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 		}
 	}
 
@@ -284,7 +284,7 @@ class tl_survey_page extends Backend
 		}
 		else
 		{
-			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 		}
 	}
 
@@ -306,7 +306,7 @@ class tl_survey_page extends Backend
 		}
 		else
 		{
-			return '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 		}
 	}
 }

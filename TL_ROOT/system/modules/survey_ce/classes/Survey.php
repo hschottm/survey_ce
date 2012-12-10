@@ -20,7 +20,6 @@ class Survey extends Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('String');
 	}
 	
 	public function getTANforPIN($id, $pin)

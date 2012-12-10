@@ -151,7 +151,7 @@ class SurveyQuestionMultiplechoiceEx extends SurveyQuestionMultiplechoice
 
 		// question title
 		($numcols > 1) && $xls->merge_cells($sheet, $row, $row, $col, $col + $numcols - 1);
-		$title = utf8_decode($this->String->decodeEntities($this->title)) . ($this->arrData['obligatory'] ? ' *' : '');
+		$title = utf8_decode(\String::decodeEntities($this->title)) . ($this->arrData['obligatory'] ? ' *' : '');
 		$result[] = array(
 			'sheetname' => $sheet, 'row' => $row, 'col' => $col,
 			'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
@@ -280,7 +280,7 @@ class SurveyQuestionMultiplechoiceEx extends SurveyQuestionMultiplechoice
 					$strAnswer = utf8_decode($this->choices[$arrAnswers['value'] - 1]);
 					if (($this->arrData['addother']) && ($arrAnswers['value'] == count($this->choices)))
 					{
-						$strAnswer .= ': ' . utf8_decode($this->String->decodeEntities($arrAnswers['other']));
+						$strAnswer .= ': ' . utf8_decode(\String::decodeEntities($arrAnswers['other']));
 					}
 					$cells[] = array(
 						'sheetname' => $sheet, 'row' => $row, 'col' => $col,
@@ -301,7 +301,7 @@ class SurveyQuestionMultiplechoiceEx extends SurveyQuestionMultiplechoice
 					{
 						$strAnswer = (is_array($arrAnswers['value']) && array_key_exists($k + 1, $arrAnswers['value']))
 							? ($this->arrData['addother'] && ($k + 1 == count($this->choices)))
-								? utf8_decode($this->String->decodeEntities($arrAnswers['other']))
+								? utf8_decode(\String::decodeEntities($arrAnswers['other']))
 								: 'x'
 							: '';
 						if (strlen($strAnswer))

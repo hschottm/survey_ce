@@ -306,7 +306,7 @@ class tl_survey extends Backend
 					->fetchEach('pid');
 				if ($survey_id[0] > 0)
 				{
-					$this->redirect($this->addToUrl('table=tl_survey_page&amp;id=' . $survey_id[0]));
+					$this->redirect($this->addToUrl('table=tl_survey_page&id=' . $survey_id[0]));
 				}
 			}
 		}
