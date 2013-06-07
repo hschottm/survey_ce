@@ -338,11 +338,11 @@ class ContentSurvey extends ContentElement
 		// add survey javascript
 		if (is_array($GLOBALS['TL_JAVASCRIPT']))
 		{
-			array_insert($GLOBALS['TL_JAVASCRIPT'], 1, 'system/modules/survey_ce/assets/js/survey.js');
+			array_insert($GLOBALS['TL_JAVASCRIPT'], 1, 'system/modules/survey_ce/assets/survey.js');
 		}
 		else
 		{
-			$GLOBALS['TL_JAVASCRIPT'] = array('system/modules/survey_ce/assets/js/survey.js');
+			$GLOBALS['TL_JAVASCRIPT'] = array('system/modules/survey_ce/assets/survey.js');
 		}
 
 		// Access control
