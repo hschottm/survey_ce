@@ -20,7 +20,7 @@ namespace Contao;
  * @author     Helmut Schottmüller <contao@aurealis.de>
  * @package    Controller
  */
-class ContentSurvey extends ContentElement
+class ContentSurvey extends \ContentElement
 {
 
 	/**
