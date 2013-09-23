@@ -161,6 +161,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = array
 	'introduction' => array
 	(
 		'label'                   => &$GLOBALS['TL_LANG']['tl_survey_page']['introduction'],
+		'default'                 => '',
 		'search'                  => true,
 		'inputType'               => 'textarea',
 		'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;', 'rte'=>'tinyMCE'),

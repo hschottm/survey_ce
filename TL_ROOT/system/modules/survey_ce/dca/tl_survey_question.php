@@ -184,6 +184,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = array
 		'question' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_question']['question'],
+			'default'                 => '',
 			'search'                  => true,
 			'inputType'               => 'textarea',
 			'eval'                    => array('mandatory'=>false, 'allowHtml'=>true, 'style'=>'height:80px;', 'rte'=>'tinyMCE', 'decodeEntities' => true),
@@ -192,6 +193,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = array
 		'introduction' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_question']['introduction'],
+			'default'                 => '',
 			'search'                  => true,
 			'inputType'               => 'textarea',
 			'eval'                    => array('allowHtml'=>true, 'style'=>'height:80px;', 'rte'=>'tinyMCE', 'decodeEntities' => true),

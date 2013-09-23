@@ -321,7 +321,7 @@ class ContentSurvey extends ContentElement
 	/**
 	 * Insert a new participant dataset
 	 */
-	protected function insertParticipant($pid, $pin, $uid = '')
+	protected function insertParticipant($pid, $pin, $uid = 0)
 	{
 		$objResult = $this->Database->prepare("INSERT INTO tl_survey_participant (tstamp, pid, pin, uid) VALUES (?, ?, ?, ?)")
 			->execute(time(), $pid, $pin, $uid);
