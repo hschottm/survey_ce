@@ -332,6 +332,11 @@ class ContentSurvey extends \ContentElement
 	 */
 	protected function compile()
 	{
+		if (TL_MODE == 'FE' && !BE_USER_LOGGED_IN && ($this->invisible || ($this->start > 0 && $this->start > time()) || ($this->stop > 0 && $this->stop < time())))
+		{
+			return '';
+		}
+
 		// Get front end user object
 		$this->import('FrontendUser', 'User');
 
@@ -343,24 +348,6 @@ class ContentSurvey extends \ContentElement
 		else
 		{
 			$GLOBALS['TL_JAVASCRIPT'] = array('system/modules/survey_ce/assets/survey.js');
-		}
-
-		// Access control
-		if ($this->protected && !BE_USER_LOGGED_IN)
-		{
-			if (!FE_USER_LOGGED_IN)
-			{
-				$this->Template->protected = true;
-				return;
-			}
-
-			$arrGroups = deserialize($this->groups);
-
-			if (is_array($arrGroups) && count(array_intersect($this->User->groups, $arrGroups)) < 1)
-			{
-				$this->Template->protected = true;
-				return;
-			}
 		}
 
 		$surveyID = (strlen(\Input::post('survey'))) ? \Input::post('survey') : $this->survey;
@@ -382,7 +369,6 @@ class ContentSurvey extends \ContentElement
 		$pages = $this->Database->prepare("SELECT * FROM tl_survey_page WHERE pid=? ORDER BY sorting")
 			->execute($surveyID)
 			->fetchAllAssoc();
-		
 		$page = (\Input::post('page')) ? \Input::post('page') : 0;
 		// introduction page / status
 		if ($page == 0)

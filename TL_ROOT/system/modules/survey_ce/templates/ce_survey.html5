@@ -1,7 +1,6 @@
 
 <div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
 <?php if ($this->headline): ?>
-
 <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
 <?php endif; ?>
 <?php if (($this->page > 0) && ($this->page <= count($this->pages))): ?>	
@@ -11,7 +10,6 @@
 	</div> 
 </div>
 <?php endif; ?>
-<?php if (!$this->protected): ?>
 <?php if ($this->show_title || $this->show_cancel): ?>
 <div class="surveyhead">
 	<div class="left">
@@ -90,8 +88,6 @@
 
 </div>
 <!-- indexer::continue -->
-<?php endif; ?>
-
 </div>
 <script type="text/javascript" charset="utf-8">
 window.addEvent('domready', function() {
