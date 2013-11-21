@@ -1,0 +1,190 @@
+/* Style sheet decent_green */
+
+.ce_survey {
+	padding: 1em;
+}
+
+.ce_survey .introduction {
+	margin-bottom: 2em;
+	padding: 3em;
+	background-color: #b8dad6;
+	border: 1px solid #888;
+}
+
+.ce_survey .finalstatement {
+	margin-bottom: 2em;
+	padding: 3em;
+	background-color: #b8dad6;
+	border: 1px solid #888;
+}
+
+.ce_survey .pagetitle {
+	padding: 1em 0.5em;
+	background-color: #aac8c3;
+	border-top: 2px solid #888888;
+	border-bottom: 2px solid #888888;
+	font-weight: bold;
+	font-size: 130%;
+	color: #000;
+}
+
+.ce_survey .before {
+	vertical-align: top;
+}
+
+.ce_survey .after {
+	vertical-align: top;
+}
+
+.ce_survey .surveyhead {
+	overflow: auto;
+	padding: 1em 0.5em;
+	background-color: #aac8c3;
+	border-top: 1px solid #888;
+	border-bottom: 1px solid #888;
+	margin-bottom: 2em;
+	color: #000;
+}
+
+.ce_survey .surveytitle {
+	font-weight: bold;
+	font-size: 130%;
+}
+
+.ce_survey .surveyhead .left {
+	width: 32%;
+	float: left;
+}
+
+.ce_survey .surveyhead .middle {
+	margin-right: 32%;
+	margin-left: 32%;
+	text-align: center;
+}
+
+.ce_survey .surveyhead .right {
+	width: 32%;
+	float: right;
+	text-align: right;
+}
+
+.ce_survey .submit_container {
+	overflow: auto;
+	padding: 1em 0.5em;
+	background-color: #aac8c3;
+	border-top: 1px solid #888;
+	border-bottom: 1px solid #888;
+	color: #000;
+}
+
+.ce_survey .submit_container .left {
+	width: 32%;
+	float: left;
+}
+
+.ce_survey .submit_container .middle {
+	margin-right: 32%;
+	margin-left: 32%;
+	text-align: center;
+}
+
+.ce_survey .submit_container .right {
+	width: 32%;
+	float: right;
+	text-align: right;
+}
+
+.ce_survey .pageintroduction {
+	padding: 1em 0.5em;
+}
+
+.ce_survey p.error,.ce_survey .tl_error {
+	padding:2px 0 5px 20px;
+	margin:5px 0;
+	font-weight: bold;
+	color: #e65d49;
+	background: transparent url(files/survey/images/exclamation.png) no-repeat left top;
+}
+
+.surveytable {
+	width: 100%;
+}
+
+.surveytable td {
+	vertical-align: top;
+}
+
+.surveytable .titlecolumn {
+	text-align: right;
+	font-weight: bold;
+}
+
+.surveytable .questioncolumn {
+	
+}
+
+.surveyblock {
+	background-color: #f0f0f0;
+	border-top: 1px solid #888888;
+	border-bottom: 1px solid #888888;
+	color: #000;
+	margin: 1em 0;
+}
+
+.surveyblock .title {
+	padding: 0.25em 0.5em;
+	background-color: #aac8c3;
+	border-bottom: 1px solid #888888;
+	font-weight: bold;
+	font-size: 110%;
+}
+
+.surveyblock .help {
+	font-weight: normal;
+	font-size: 80%;
+}
+
+.surveyblock .question {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.surveyblock .widget {
+	padding: 10px;
+}
+
+.surveyblock .mandatory {
+	font-weight: bold;
+	color: #ff0000;
+}
+
+.mc td {
+	text-align: center;
+}
+
+.constantsum input[type="text"] {
+	width: 4em;
+}
+
+.matrix table {
+	width: 100%;
+}
+
+.matrix td {
+	text-align: center;
+}
+
+.matrix td.columnheader {
+	vertical-align: bottom;
+}
+
+.matrix td.rowtext {
+	text-align: left;
+}
+
+.matrix .leftadjective,.matrix .rightadjective {
+	text-align: center;
+	vertical-align: middle;
+	background-color: #eee;
+	border: 1px solid #999;
+}
