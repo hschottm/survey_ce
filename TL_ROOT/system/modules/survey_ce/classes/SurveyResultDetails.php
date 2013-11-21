@@ -21,7 +21,7 @@ namespace Contao;
  * @author     Helmut Schottmüller <contao@aurealis.de>
  * @package    Controller
  */
-class SurveyResultDetails extends Backend
+class SurveyResultDetails extends \Backend
 {
 	protected $blnSave = true;
 	
@@ -188,3 +188,4 @@ class SurveyResultDetails extends Backend
 		return $alphabet[floor($index / 26)-1] . $alphabet[$index-(floor($index / 26)*26)];
 	}
 }
+

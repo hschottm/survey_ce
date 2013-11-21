@@ -155,4 +155,3 @@ class FormConstantSumQuestion extends FormQuestionWidget
 	}
 }
 
-?>

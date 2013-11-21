@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php 
 
 /**
  * Table tl_survey_scale
@@ -176,4 +176,3 @@ class tl_survey_scale extends Backend
 	}
 }
 
-?>

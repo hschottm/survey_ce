@@ -135,4 +135,3 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 	}
 }
 
-?>

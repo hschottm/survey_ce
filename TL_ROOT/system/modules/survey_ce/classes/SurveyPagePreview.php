@@ -11,7 +11,7 @@ namespace Contao;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class SurveyPagePreview extends Backend
+class SurveyPagePreview extends \Backend
 {
 	/**
 	 * Import String library
@@ -43,4 +43,3 @@ class SurveyPagePreview extends Backend
 
 }
 
-?>

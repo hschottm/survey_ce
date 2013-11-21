@@ -11,7 +11,7 @@ namespace Contao;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class Survey extends Backend
+class Survey extends \Backend
 {
 
 	/**
@@ -172,4 +172,3 @@ class Survey extends Backend
 	}
 }
 
-?>

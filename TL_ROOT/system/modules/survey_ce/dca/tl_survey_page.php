@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 $found = (strlen(\Input::get('id'))) ? SurveyResultModel::findByPid(\Input::get('id')) : null;
 $hasData = (null != $found && 0 < $found->numRows) ? true : false;
@@ -312,4 +312,3 @@ class tl_survey_page extends Backend
 	}
 }
 
-?>

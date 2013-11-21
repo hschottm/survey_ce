@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
  * Table tl_survey_pin_tan
@@ -166,4 +166,3 @@ class tl_survey_pin_tan extends Backend
 	}
 }
 
-?>

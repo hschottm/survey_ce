@@ -193,4 +193,3 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 	
 }
 
-?>

@@ -21,7 +21,7 @@ namespace Contao;
  * @author     Helmut Schottmüller <contao@aurealis.de>
  * @package    Controller
  */
-abstract class SurveyQuestion extends Backend
+abstract class SurveyQuestion extends \Backend
 {
 	protected $arrData;
 	protected $arrStatistics;
@@ -150,4 +150,3 @@ abstract class SurveyQuestion extends Backend
 	}
 }
 
-?>

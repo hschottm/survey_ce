@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
  * Add survey element
@@ -56,4 +56,3 @@ $GLOBALS['TL_SVY']['constantsum'] = 'FormConstantSumQuestion';
  */
 $GLOBALS['TL_CONFIG']['urlKeywords'] .= (strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '') . "code";
 
-?>

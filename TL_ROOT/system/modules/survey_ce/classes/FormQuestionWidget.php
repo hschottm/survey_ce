@@ -13,7 +13,7 @@ namespace Contao;
  * @author     Helmut Schottmüller <contao@aurealis.de>
  * @package    Controller
  */
-class FormQuestionWidget extends Widget
+class FormQuestionWidget extends \Widget
 {
 
 	/**
@@ -145,4 +145,3 @@ class FormQuestionWidget extends Widget
 	}
 }
 
-?>

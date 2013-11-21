@@ -245,4 +245,3 @@ class SurveyQuestionOpenendedEx extends SurveyQuestionOpenended
 
 }
 
-?>

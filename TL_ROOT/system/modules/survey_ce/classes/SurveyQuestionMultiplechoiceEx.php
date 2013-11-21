@@ -389,4 +389,3 @@ class SurveyQuestionMultiplechoiceEx extends SurveyQuestionMultiplechoice
 
 }
 
-?>

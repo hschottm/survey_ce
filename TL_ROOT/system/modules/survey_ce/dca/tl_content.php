@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
  * Table tl_content
@@ -46,4 +46,3 @@ class tl_content_survey extends tl_content
 	}
 }
 
-?>

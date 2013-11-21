@@ -142,4 +142,3 @@ class SurveyQuestionMatrix extends SurveyQuestion
 	}
 }
 
-?>

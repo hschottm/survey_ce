@@ -60,4 +60,3 @@ class SurveyQuestionPreview extends Backend
 
 }
 
-?>

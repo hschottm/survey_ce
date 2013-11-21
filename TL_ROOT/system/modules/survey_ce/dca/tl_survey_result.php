@@ -1,4 +1,4 @@
-<?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
+<?php
 
 /**
  * Table tl_survey_result
@@ -56,4 +56,3 @@ $GLOBALS['TL_DCA']['tl_survey_result'] = array
 	)
 );
 
-?>

@@ -79,4 +79,3 @@ class SurveyQuestionOpenended extends SurveyQuestion
 	}
 }
 
-?>

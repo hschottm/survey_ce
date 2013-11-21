@@ -21,7 +21,7 @@ namespace Contao;
  * @author     Helmut Schottmüller <contao@aurealis.de>
  * @package    Controller
  */
-class SurveyPINTAN extends Backend
+class SurveyPINTAN extends \Backend
 {
 	protected $blnSave = true;
 	
@@ -248,3 +248,4 @@ class SurveyPINTAN extends Backend
 		return $widget;
 	}
 }
+
