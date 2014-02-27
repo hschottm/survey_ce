@@ -130,43 +130,64 @@ class SurveyResultDetails extends \Backend
 			->execute(\Input::get('id'));
 		if ($arrQuestions->numRows)
 		{
-			$xls = new \xlsexport();
-			$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
-			$xls->addworksheet($sheet);
-			$intRowCounter = 0;
-			$intColCounter = 0;
+                    $objPHPExcel = new \PHPExcel();
+                    $intRowCounter = 0;
+                    $intColCounter = 0;
+                    $sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
 
-			while ($arrQuestions->next())
-			{
-				$row = $arrQuestions->row();
-				$class = "SurveyQuestion" . ucfirst($row["questiontype"]);
-				if ($this->classFileExists($class))
-				{
-					$this->import($class);
-					$question = new $class();
-					$question->data = $row;
-					$cells = $question->exportDataToExcel($sheet, $intRowCounter);
-					if (count($cells))
-					{
-						foreach ($cells as $cell)
-						{
-							$xls->setcell($cell);
-						}
-					}
-				}
-			}
-
-			$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
-				->execute(\Input::get('id'));
-			if ($objSurvey->numRows == 1)
-			{
-				$xls->sendFile($this->safefilename(htmlspecialchars_decode($objSurvey->title)) . ".xls");
-			}
-			else
-			{
-				$xls->sendFile('survey.xls');
-			}
-			exit;
+                    
+                    // Generate Data
+                    $objPHPExcel->setActiveSheetIndex(0);
+                    
+                    while ($arrQuestions->next())
+                    {
+                            $row = $arrQuestions->row();
+                            $class = "SurveyQuestion" . ucfirst($row["questiontype"]);
+                            if ($this->classFileExists($class))
+                            {
+                                    $this->import($class);
+                                    $question = new $class();
+                                    $question->data = $row;
+                                    $cells = $question->exportDataToExcel($sheet, $intRowCounter);
+                                    if (count($cells))
+                                    {
+                                            foreach ($cells as $cell)
+                                            {
+                                                    $col = $this->getCellTitle($cell['col']);
+                                                    $row = $cell['row']+1;
+                                                    
+                                                    $pos = (string)$col.$row;
+                                                    $objPHPExcel->getActiveSheet()->SetCellValue($pos,utf8_encode($cell['data']));
+                                                    $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+                                            }
+                                    }
+                            }
+                    }
+                    $objPHPExcel->getActiveSheet()->setTitle($sheet);
+                    
+                    
+                    $objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
+                            ->execute(\Input::get('id'));
+                    if ($objSurvey->numRows == 1) {
+                            $filename = $this->safefilename(htmlspecialchars_decode($objSurvey->title)) . ".xlsx";
+                    } else {
+                            $filename = "survey.xlsx";
+                    }
+                    
+                    // Set Excel Properties
+                    $objPHPExcel->getProperties()->setCreator("Contao CMS");
+                    $objPHPExcel->getProperties()->setLastModifiedBy("Contao CMS");
+                    $objPHPExcel->getProperties()->setTitle($objSurvey->title);
+                    $objPHPExcel->getProperties()->setSubject($objSurvey->title);
+                    $objPHPExcel->getProperties()->setDescription($objSurvey->title);
+                    
+                    // Download the file
+                    $objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+                    header('Content-Type: application/vnd.ms-excel');
+                    header('Content-Disposition: attachment;filename="'.$filename.'"');
+                    header('Cache-Control: max-age=0');
+                    $objWriter->save('php://output');
+                    exit;
 		}
 		$this->redirect(\Environment::get('script') . '?do=' . \Input::get('do'));
 	}
