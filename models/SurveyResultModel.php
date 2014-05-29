@@ -41,7 +41,7 @@ class SurveyResultModel extends \Model
 	 * 
 	 * @return \Model\Collection|null A collection of models or null if there are no calendars
 	 */
-	public static function findMultipleByIds($arrIds)
+	public static function findMultipleByIds($arrIds, array $arrOptions=array())
 	{
 		if (!is_array($arrIds) || empty($arrIds))
 		{
