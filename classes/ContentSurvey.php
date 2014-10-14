@@ -377,7 +377,7 @@ class ContentSurvey extends \ContentElement
 		}
 		
 		// check survey start
-		if (\Input::post('start'))
+		if (\Input::post('start') || $this->objSurvey->immediate_start == 1)
 		{
 			$page = 0;
 			switch ($this->objSurvey->access)
