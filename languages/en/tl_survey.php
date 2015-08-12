@@ -20,6 +20,7 @@ $GLOBALS['TL_LANG']['tl_survey']['usecookie']     = array('Remember participants
 $GLOBALS['TL_LANG']['tl_survey']['show_title']     = array('Show survey title', 'Always show the survey title on top of the survey.');
 $GLOBALS['TL_LANG']['tl_survey']['show_cancel']     = array('Show cancel', 'Always show an <strong>Exit this survey</strong> command on top of the survey.');
 $GLOBALS['TL_LANG']['tl_survey']['allowback']     = array('Show "Previous" button', 'Shows a "Previous" button in the survey navigation to go back to the previous page.');
+$GLOBALS['TL_LANG']['tl_survey']['immediate_start'] = array('Start survey immediately', 'Check this option if you want to show the form immediately.');
 $GLOBALS['TL_LANG']['tl_survey']['jumpto']     = array('Redirect to page', 'Select a page to redirect the survey after it was finished.');
 
 $GLOBALS['TL_LANG']['tl_survey']['new']    = array('New survey', 'Create a new survey');
