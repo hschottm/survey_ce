@@ -52,13 +52,17 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 			$this->loadLanguageFile('tl_survey_result');
 
 			$xls = new \xlsexport();
-			//$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
-			$sheet = utf8_decode('Detaillierter Export');
+			$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['detailedResults']);
 			$xls->addworksheet($sheet);
 
-			$cells = $this->exportTopLeftArea($xls, $sheet);
+			$cells = $this->exportTopLeftArea($sheet);
 			foreach ($cells as $cell)
 			{
+				if ($cell['colwidth'] > 0)
+				{
+					$xls->setcolwidth($sheet, $cell['col'], $cell['colwidth']);
+					unset($cell['colwidth']);
+				}
 				$xls->setcell($cell);
 			}
 
@@ -66,7 +70,7 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 			$colCounter = 0;
 
 			$participants = $this->fetchParticipants($surveyID);
-			$cells = $this->exportParticipantRowHeaders($xls, $sheet, $rowCounter, $colCounter, $participants);
+			$cells = $this->exportParticipantRowHeaders($sheet, $rowCounter, $colCounter, $participants);
 			foreach ($cells as $cell)
 			{
 				$xls->setcell($cell);
@@ -133,7 +137,7 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 	 *
 	 * @TODO: Quick and dirty implementation for the alpha version, make translatable / better.
 	 */
-	protected function exportTopLeftArea(&$xls, $sheet)
+	protected function exportTopLeftArea($sheet)
 	{
 		$result = array();
 
@@ -185,24 +189,24 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 
 		// Legends for the participant headers
 		$col = 0;
-		$xls->setcolwidth($sheet, $col, 6 * 256);
 		$result[] = array(
 			'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
 			'bgcolor' => '#C0C0C0', 'color' => '#000000',
 			'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
+			'colwidth' => 6*256,
 			'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id_gen'])
 		);
-		$xls->setcolwidth($sheet, $col, 5 * 256);
 		$result[] = array(
 			'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
 			'bgcolor' => '#C0C0C0', 'color' => '#000000',
+			'colwidth' => 5*256,
 			'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
 			'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_sort'])
 		);
-		$xls->setcolwidth($sheet, $col, 14 * 256);
 		$result[] = array(
 			'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
 			'bgcolor' => '#C0C0C0', 'color' => '#000000',
+			'colwidth' => 14*256,
 			'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
 			'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_date'])
 		);
@@ -212,9 +216,9 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 			'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
 			'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_lastpage'])
 		);
-		$xls->setcolwidth($sheet, $col, 14 * 256);
 		$result[] = array(
 			'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
+			'colwidth' => 14*256,
 			'bgcolor' => '#C0C0C0', 'color' => '#000000',
 			'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
 			'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_participant'])
@@ -228,7 +232,7 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 	 *
 	 * Every participant has it's own row with several header columns.
 	 */
-	protected function exportParticipantRowHeaders(&$xls, $sheet, &$rowCounter, &$colCounter, $participants)
+	protected function exportParticipantRowHeaders($sheet, &$rowCounter, &$colCounter, $participants)
 	{
 		$result = array();
 		$row = $rowCounter;

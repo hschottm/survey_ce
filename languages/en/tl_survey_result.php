@@ -4,6 +4,7 @@ $GLOBALS['TL_LANG']['tl_survey_result']['detailsHeading']   = 'Show detailed sta
 $GLOBALS['TL_LANG']['tl_survey_result']['detailsSummary']   = 'The table shows the detailed statistics of a question.';
 $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary']   = 'The table shows the cumulated results of a question.';
 $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']   = 'Cumulated results';
+$GLOBALS['TL_LANG']['tl_survey_result']['detailedResults']   = 'Detailed results';
 $GLOBALS['TL_LANG']['tl_survey_result']['answers']   = 'Answers';
 $GLOBALS['TL_LANG']['tl_survey_result']['answer']   = 'Answer';
 $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections']   = 'Number of selections';

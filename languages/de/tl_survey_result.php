@@ -19,6 +19,7 @@ $GLOBALS['TL_LANG']['tl_survey_result']['detailsHeading'] = "Statistik-Details d
 $GLOBALS['TL_LANG']['tl_survey_result']['detailsSummary'] = "Die Tabelle zeigt die Statistik-Details einer Frage an";
 $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'] = "Die Tabelle zeigt die kumulierten Ergebnisse einer Frage an";
 $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults'] = "Kumulierte Ergebnisse";
+$GLOBALS['TL_LANG']['tl_survey_result']['detailedResults']   = 'Detaillierte Ergebnisse';
 $GLOBALS['TL_LANG']['tl_survey_result']['answers'] = "Antworten";
 $GLOBALS['TL_LANG']['tl_survey_result']['answer'] = "Antwort";
 $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'] = "Anzahl der Auswahlen";

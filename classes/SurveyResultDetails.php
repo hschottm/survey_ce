@@ -24,6 +24,24 @@ namespace Contao;
 class SurveyResultDetails extends \Backend
 {
 	protected $blnSave = true;
+	protected $useXLSX = false;
+	
+	/**
+	 * Load the database object
+	 */
+	protected function __construct()
+	{
+		parent::__construct();
+		if (in_array('php_excel', $this->Config->getActiveModules()))
+		{
+			$this->useXLSX = true;
+		}
+	}
+	
+	public function useXLSX()
+	{
+		return $this->useXLSX;
+	}
 	
 	public function showDetails(DataContainer $dc)
 	{
@@ -118,6 +136,89 @@ class SurveyResultDetails extends \Backend
 		$this->Template->lngSkipped = $GLOBALS['TL_LANG']['tl_survey_question']['skipped'];
 		return $this->Template->parse();
 	}
+	
+	protected function setValueXLSX($objPHPExcel, $cell)
+	{
+		$col = $this->getCellTitle($cell['col']);
+		$row = $cell['row']+1;
+		$pos = (string)$col.$row;
+		$objPHPExcel->getActiveSheet()->SetCellValue($pos,utf8_encode($cell['data']));
+		$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+		$fill_array = array();
+		$font_array = array();
+		if ($cell['type'] > 0)
+		{
+			switch ($cell['type'])
+			{
+				case CELL_STRING:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_TEXT);
+					break;
+				case CELL_FLOAT:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00);
+					break;
+				case CELL_PICTURE:
+					break;
+				default:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+					break;
+			}
+		}
+		else
+		{
+			$objPHPExcel->getActiveSheet()->getStyle($pos)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+		}
+		if (strlen($cell['bgcolor']) > 0)
+		{
+			$fill_array = array(
+						'type' => \PHPExcel_Style_Fill::FILL_SOLID,
+						'color' => array('rgb' => str_replace('#', '', $cell['bgcolor']))
+					);
+		}
+		if (strlen($cell['color']) > 0)
+		{
+			$font_array['color'] = array('rgb' => str_replace('#', '', $cell['color']));
+		}
+		if (strlen($cell['hallign']) > 0)
+		{
+			switch ($cell['hallign'])
+			{
+				case XLSXF_HALLIGN_GENERAL:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_GENERAL);
+					break;
+				case XLSXF_HALLIGN_LEFT:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+					break;
+				case XLSXF_HALLIGN_CENTER:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+					break;
+				case XLSXF_HALLIGN_RIGHT:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+					break;
+				case XLSXF_HALLIGN_FILL:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_FILL);
+					break;
+				case XLSXF_HALLIGN_JUSTIFY:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY);
+					break;
+				case XLSXF_HALLIGN_CACROSS:
+					$objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER_CONTINUOUS);
+					break;
+			}
+		}
+		if (strlen($cell['fontweight']) > 0)
+		{
+			if ($cell['fontweight'] == XLSFONT_BOLD)
+			{
+				$font_array['bold'] = true;
+			}
+		}
+		$objPHPExcel->getActiveSheet()->getStyle($pos)->applyFromArray(
+			array(
+				'fill' => $fill_array,
+				'font' => $font_array
+			)
+		);
+	}
 
 	public function exportResults(DataContainer $dc)
 	{
@@ -130,41 +231,99 @@ class SurveyResultDetails extends \Backend
 			->execute(\Input::get('id'));
 		if ($arrQuestions->numRows)
 		{
-			$xls = new \xlsexport();
-			$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
-			$xls->addworksheet($sheet);
-			$intRowCounter = 0;
-			$intColCounter = 0;
-
-			while ($arrQuestions->next())
+			if ($this->useXLSX())
 			{
-				$row = $arrQuestions->row();
-				$class = "SurveyQuestion" . ucfirst($row["questiontype"]);
-				if ($this->classFileExists($class))
+				$objPHPExcel = new \PHPExcel();
+				$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
+				$intRowCounter = 0;
+				$intColCounter = 0;
+        // Generate Data
+				$objPHPExcel->setActiveSheetIndex(0);
+
+				while ($arrQuestions->next())
 				{
-					$this->import($class);
-					$question = new $class();
-					$question->data = $row;
-					$cells = $question->exportDataToExcel($sheet, $intRowCounter);
-					if (count($cells))
+					$row = $arrQuestions->row();
+					$class = "SurveyQuestion" . ucfirst($row["questiontype"]);
+					if ($this->classFileExists($class))
 					{
-						foreach ($cells as $cell)
+						$this->import($class);
+						$question = new $class();
+						$question->data = $row;
+						$cells = $question->exportDataToExcel($sheet, $intRowCounter);
+						if (count($cells))
 						{
-							$xls->setcell($cell);
+							foreach ($cells as $cell)
+							{
+								$this->setValueXLSX($objPHPExcel, $cell);
+							}
 						}
 					}
 				}
-			}
+				$objPHPExcel->getActiveSheet()->setTitle($sheet);
 
-			$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
-				->execute(\Input::get('id'));
-			if ($objSurvey->numRows == 1)
-			{
-				$xls->sendFile($this->safefilename(htmlspecialchars_decode($objSurvey->title)) . ".xls");
+				$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
+					->execute(\Input::get('id'));
+				if ($objSurvey->numRows == 1) 
+				{
+					$filename = $this->safefilename(htmlspecialchars_decode($objSurvey->title)) . ".xlsx";
+				} else {
+					$filename = "survey.xlsx";
+				}
+
+				// Set Excel Properties
+				$objPHPExcel->getProperties()->setCreator("Contao CMS");
+				$objPHPExcel->getProperties()->setLastModifiedBy("Contao CMS");
+				$objPHPExcel->getProperties()->setTitle($objSurvey->title);
+				$objPHPExcel->getProperties()->setSubject($objSurvey->title);
+				$objPHPExcel->getProperties()->setDescription($objSurvey->title);
+
+				// Download the file
+				$objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+				header('Content-Type: application/vnd.ms-excel');
+				header('Content-Disposition: attachment;filename="'.$filename.'"');
+				header('Cache-Control: max-age=0');
+				$objWriter->save('php://output');
+				echo "";
+				exit;
 			}
 			else
 			{
-				$xls->sendFile('survey.xls');
+				$xls = new \xlsexport();
+				$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
+				$xls->addworksheet($sheet);
+				$intRowCounter = 0;
+				$intColCounter = 0;
+
+				while ($arrQuestions->next())
+				{
+					$row = $arrQuestions->row();
+					$class = "SurveyQuestion" . ucfirst($row["questiontype"]);
+					if ($this->classFileExists($class))
+					{
+						$this->import($class);
+						$question = new $class();
+						$question->data = $row;
+						$cells = $question->exportDataToExcel($sheet, $intRowCounter);
+						if (count($cells))
+						{
+							foreach ($cells as $cell)
+							{
+								$xls->setcell($cell);
+							}
+						}
+					}
+				}
+
+				$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
+					->execute(\Input::get('id'));
+				if ($objSurvey->numRows == 1)
+				{
+					$xls->sendFile($this->safefilename(htmlspecialchars_decode($objSurvey->title)) . ".xls");
+				}
+				else
+				{
+					$xls->sendFile('survey.xls');
+				}
 			}
 			exit;
 		}
