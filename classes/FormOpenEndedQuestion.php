@@ -91,6 +91,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 	protected function setData_oe_singleline($varValue)
 	{
 		if (strlen($varValue['openended_width'])) $this->arrAttributes["size"] = specialchars($varValue['openended_width']);
+		if (strlen($varValue['openended_maxlen'])) $this->arrAttributes["maxlength"] = specialchars($varValue['openended_maxlen']);
 		if (strlen($varValue['openended_textinside'])) $this->arrAttributes["value"] = specialchars($varValue['openended_textinside']);
 		if (strlen($this->varValue)) $this->arrAttributes["value"] = specialchars($this->varValue);
 	}
