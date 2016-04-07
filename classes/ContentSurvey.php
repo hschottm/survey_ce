@@ -232,6 +232,20 @@ class ContentSurvey extends \ContentElement
 		return (($doNotSubmit || !$validate) && !$goback) ? $surveypage : array();
 	}
 
+	protected function getResultForQuestion($question_id, $survey_id)
+	{
+		$objResult = $this->Database->prepare("SELECT * FROM tl_survey_result WHERE (pid=? AND qid=? AND pin=?)")
+				->execute($survey_id, $question_id, $this->pin);
+		if ($objResult->numRows)
+		{
+			return deserialize($objResult->result);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	protected function getQuestionPosition($question_id, $survey_id)
 	{
 		if ($question_id > 0 && $survey_id > 0)
@@ -377,7 +391,7 @@ class ContentSurvey extends \ContentElement
 		}
 		
 		// check survey start
-		if (\Input::post('start') || ($this->objSurvey->immediate_start == 1 && !\Input::post('FORM_SUBMIT')))
+		if (\Input::post('start'))
 		{
 			$page = 0;
 			switch ($this->objSurvey->access)
@@ -476,9 +490,31 @@ class ContentSurvey extends \ContentElement
 		// submit successful, calculate next page and return a question list of the new page
 		if (count($surveypage) == 0)
 		{
-			if (strlen(\Input::post("next"))) $page++;
+			if (strlen(\Input::post("next"))) {
+				$res = $this->getResultForQuestion(13, $this->objSurvey->id);
+				if ($page == 1 && $res["value"] != 1)
+				{
+					$page++;
+					$page++;
+				}
+				else
+				{
+					$page++;
+				}
+			}
 			if (strlen(\Input::post("finish"))) $page++;
-			if (strlen(\Input::post("prev"))) $page--;
+			if (strlen(\Input::post("prev"))) {
+				$res = $this->getResultForQuestion(13, $this->objSurvey->id);
+				if ($page == 3 && $res["value"] != 1)
+				{
+					$page--;
+					$page--;
+				}
+				else
+				{
+					$page--;
+				}
+			}
 
 			$surveypage = $this->createSurveyPage($pages[$page-1], $page, false);
 		}
