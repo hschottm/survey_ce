@@ -177,6 +177,8 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 		$template->textBefore = $this->strTextBefore;
 		$template->textAfter = $this->strTextAfter;
 		$template->attributes = $this->getAttributes();
+		$strError = $this->getErrorAsHTML();
+		$template->blnError = (strlen($strError) ? true : false);
 		$widget = $template->parse();
 		$widget .= $this->addSubmit();
 		return $widget;
