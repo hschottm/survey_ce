@@ -171,6 +171,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
 		$template->lngNo = $GLOBALS['TL_LANG']['tl_survey_question']['no'];
 		$template->otherTitle = specialchars($this->strOtherTitle);
 		$strOptions = $template->parse();
+		$strError = $this->getErrorAsHTML();
 
 		if ($this->hasLabel())
 		{
@@ -180,7 +181,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
 							($this->mandatory ? '<span class="invisible">'.$GLOBALS['TL_LANG']['MSC']['mandatory'].' </span>' : ''),
 							$this->title,
 							($this->mandatory ? '<span class="mandatory">*</span>' : ''),
-							$this->strError,
+							$strError,
 							$this->strName,
 							$this->strTagEnding,
 							$strOptions) . $this->addSubmit();
@@ -190,11 +191,16 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
 	        return sprintf('<fieldset id="ctrl_%s" class="radio_container%s">%s<input type="hidden" name="%s" value=""%s%s</fieldset>',
 							$this->strId,
 							(($this->strClass != '') ? ' ' . $this->strClass : ''),
-							$this->strError,
+							$strError,
 							$this->strName,
 							$this->strTagEnding,
 							$strOptions) . $this->addSubmit();
 		}
+	}
+
+	public function generateWithError($blnSwitchOrder=false)
+	{
+		return $this->generate();
 	}
 
 	/**
