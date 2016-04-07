@@ -492,7 +492,7 @@ class ContentSurvey extends \ContentElement
 		{
 			if (strlen(\Input::post("next"))) {
 				$res = $this->getResultForQuestion(13, $this->objSurvey->id);
-				if ($page == 1 && $res["value"] != 1)
+				if ($page == 2 && $res["value"] != 1)
 				{
 					$page++;
 					$page++;
@@ -505,7 +505,7 @@ class ContentSurvey extends \ContentElement
 			if (strlen(\Input::post("finish"))) $page++;
 			if (strlen(\Input::post("prev"))) {
 				$res = $this->getResultForQuestion(13, $this->objSurvey->id);
-				if ($page == 3 && $res["value"] != 1)
+				if ($page == 4 && $res["value"] != 1)
 				{
 					$page--;
 					$page--;
