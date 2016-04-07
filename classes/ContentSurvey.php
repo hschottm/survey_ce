@@ -592,7 +592,7 @@ class ContentSurvey extends \ContentElement
 				$total = "Bildgebung mit Herz (150,- EUR)";
 			}
 		}
-		$qb = str_replace($qb, "#Bezahlt#", $total);
+		$qb = str_replace("#Bezahlt#", $total, $qb);
 		$this->Template->questionblock = $qb;
 		$this->Template->page = $page;
 		$this->Template->introduction = $this->objSurvey->introduction;
