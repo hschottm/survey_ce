@@ -540,7 +540,60 @@ class ContentSurvey extends \ContentElement
 		global $objPage;
 		$this->Template->cancellink = $this->generateFrontendUrl($objPage->row());
 		$this->Template->allowback = $this->objSurvey->allowback;
-		$this->Template->questionblock = $questionBlockTemplate->parse();
+		$qb = $questionBlockTemplate->parse();
+		$res_1 = $this->getResultForQuestion(13, $this->objSurvey->id);
+		$res_2 = $this->getResultForQuestion(14, $this->objSurvey->id);
+		$day1 = 0;
+		if ($res_1["value"] == 1)
+		{
+			$day1 = 200;
+		}
+		else if ($res_1["value"] == 2)
+		{
+			$day1 = 150;
+		}
+		else if ($res_1["value"] == 3)
+		{
+			$day1 = 0;
+		}
+		$day2 = 0;
+		if ($res_2["value"] == 1)
+		{
+			$day2 = 150;
+		}
+		else if ($res_2["value"] == 2)
+		{
+			$day2 = 0;
+		}
+		$total = "";
+		if ($day1 > 0 && $day2 > 0)
+		{
+			if ($day1 == 200)
+			{
+				$total = "Kombiticket Ärzte (250,- EUR) Herz-Intensiv-Kurs und Bildgebung mit Herz"
+			}
+			else
+			{
+				$total = "Kombiticket RT (200,- EUR) RT-Fortbildung und Bildgebung mit Herz"
+			}
+		}
+		else
+		{
+			if ($day1 == 200)
+			{
+				$total = "CBCT (200,- EUR)"
+			}
+			else if ($day1 == 150)
+			{
+				$total = "RT-Fortbildung (150,- EUR)"
+			}
+			else if ($day2 == 150)
+			{
+				$total = "Bildgebung mit Herz (150,- EUR)"
+			}
+		}
+		$qb = str_replace($qb, "#Bezahlt#", $total);
+		$this->Template->questionblock = $qb;
 		$this->Template->page = $page;
 		$this->Template->introduction = $this->objSurvey->introduction;
 		$this->Template->finalsubmission = ($this->objSurvey->finalsubmission) ? $this->objSurvey->finalsubmission : $GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'];
