@@ -37,7 +37,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
 		{
 			case 'surveydata':
 				parent::__set($strKey, $varValue);
-				$this->strClass = "constantsum";
+				$this->strClass = "constantsum" . ((strlen($varValue['cssClass']) ? (" " . $varValue['cssClass']) : ""));
 				$this->strSumOption = $varValue['sumoption'];
 				$this->dblSum = $varValue['sum'];
 				$this->blnInputFirst = ($varValue['inputfirst']) ? true : false;

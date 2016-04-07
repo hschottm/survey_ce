@@ -37,7 +37,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
 		{
 			case 'surveydata':
 				parent::__set($strKey, $varValue);
-				$this->strClass = "mc";
+				$this->strClass = "mc" . ((strlen($varValue['cssClass']) ? (" " . $varValue['cssClass']) : ""));
 				$this->strOtherTitle = $varValue['othertitle'];
 				$this->blnOther = ($varValue['addother']) ? true : false;
 				$this->strStyle = $varValue['mc_style'];

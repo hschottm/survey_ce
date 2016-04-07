@@ -131,6 +131,26 @@ class FormQuestionWidget extends \Widget
 	}
 
 	/**
+	 * Generate the label and return it as string
+	 *
+	 * @return string The label markup
+	 */
+	public function generateLabel()
+	{
+		if ($this->title == '' || $this->showTitle == false)
+		{
+			return '';
+		}
+
+		return sprintf('<label%s%s>%s%s%s</label>',
+			(strlen($this->strId) ? ' for="ctrl_' . $this->strId . '"' : ''),
+			(($this->strClass != '') ? ' class="' . $this->strClass . '"' : ''),
+			($this->mandatory ? '<span class="invisible">'.$GLOBALS['TL_LANG']['MSC']['mandatory'].' </span>' : ''),
+			$this->title,
+			($this->mandatory ? '<span class="mandatory">*</span>' : ''));
+	}
+
+	/**
 	 * Create a string representation of the question result
 	 * @return string
 	 */

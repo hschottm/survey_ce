@@ -38,7 +38,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 		{
 			case 'surveydata':
 				parent::__set($strKey, $varValue);
-				$this->strClass = "openended";
+				$this->strClass = "openended" . ((strlen($varValue['cssClass']) ? (" " . $varValue['cssClass']) : ""));
 				$this->strTextBefore = $varValue['openended_textbefore'];
 				$this->strTextAfter = $varValue['openended_textafter'];
 				$this->questiontype = $varValue['openended_subtype'];
