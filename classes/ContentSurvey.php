@@ -570,26 +570,26 @@ class ContentSurvey extends \ContentElement
 		{
 			if ($day1 == 200)
 			{
-				$total = "Kombiticket Ärzte (250,- EUR) Herz-Intensiv-Kurs und Bildgebung mit Herz"
+				$total = "Kombiticket Ärzte (250,- EUR) Herz-Intensiv-Kurs und Bildgebung mit Herz";
 			}
 			else
 			{
-				$total = "Kombiticket RT (200,- EUR) RT-Fortbildung und Bildgebung mit Herz"
+				$total = "Kombiticket RT (200,- EUR) RT-Fortbildung und Bildgebung mit Herz";
 			}
 		}
 		else
 		{
 			if ($day1 == 200)
 			{
-				$total = "CBCT (200,- EUR)"
+				$total = "CBCT (200,- EUR)";
 			}
 			else if ($day1 == 150)
 			{
-				$total = "RT-Fortbildung (150,- EUR)"
+				$total = "RT-Fortbildung (150,- EUR)";
 			}
 			else if ($day2 == 150)
 			{
-				$total = "Bildgebung mit Herz (150,- EUR)"
+				$total = "Bildgebung mit Herz (150,- EUR)";
 			}
 		}
 		$qb = str_replace($qb, "#Bezahlt#", $total);
