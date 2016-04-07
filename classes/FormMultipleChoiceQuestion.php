@@ -140,6 +140,10 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
 		return $varInput;
 	}
 
+	public function generateLabel()
+	{
+		return '';
+	}
 
 	/**
 	 * Generate the widget and return it as string
@@ -170,7 +174,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
 
 		if ($this->hasLabel())
 		{
-			return sprintf('<fieldset id="ctrl_%s" class="radio_container%s"><legend>%s%s%s</legend>%s<input type="hidden" name="%s" value=""%s%s</fieldset>',
+			return sprintf('<fieldset id="ctrl_%s" class="radio_container%s"><div><label>%s%s%s</label></div>%s<input type="hidden" name="%s" value=""%s%s</fieldset>',
 							$this->strId,
 							(($this->strClass != '') ? ' ' . $this->strClass : ''),
 							($this->mandatory ? '<span class="invisible">'.$GLOBALS['TL_LANG']['MSC']['mandatory'].' </span>' : ''),
