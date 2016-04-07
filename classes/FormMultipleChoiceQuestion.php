@@ -147,6 +147,8 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
 	 */
 	public function generate()
 	{
+		$strOptions = '';
+
 		$this->loadLanguageFile('tl_survey_question');
 		$template = new FrontendTemplate('survey_question_multiplechoice');
 		$template->ctrl_name = specialchars($this->strName);
@@ -164,9 +166,31 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
 		$template->lngYes = $GLOBALS['TL_LANG']['tl_survey_question']['yes'];
 		$template->lngNo = $GLOBALS['TL_LANG']['tl_survey_question']['no'];
 		$template->otherTitle = specialchars($this->strOtherTitle);
-		$widget = $template->parse();
-		$widget .= $this->addSubmit();
-		return $widget;
+		$strOptions = $template->parse();
+
+		if ($this->hasLabel())
+		{
+			return sprintf('<fieldset id="ctrl_%s" class="radio_container%s"><legend>%s%s%s</legend>%s<input type="hidden" name="%s" value=""%s%s</fieldset>',
+							$this->strId,
+							(($this->strClass != '') ? ' ' . $this->strClass : ''),
+							($this->mandatory ? '<span class="invisible">'.$GLOBALS['TL_LANG']['MSC']['mandatory'].' </span>' : ''),
+							$this->title,
+							($this->mandatory ? '<span class="mandatory">*</span>' : ''),
+							$this->strError,
+							$this->strName,
+							$this->strTagEnding,
+							$strOptions) . $this->addSubmit();
+		}
+		else
+		{
+	        return sprintf('<fieldset id="ctrl_%s" class="radio_container%s">%s<input type="hidden" name="%s" value=""%s%s</fieldset>',
+							$this->strId,
+							(($this->strClass != '') ? ' ' . $this->strClass : ''),
+							$this->strError,
+							$this->strName,
+							$this->strTagEnding,
+							$strOptions) . $this->addSubmit();
+		}
 	}
 
 	/**

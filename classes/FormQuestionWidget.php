@@ -130,6 +130,18 @@ class FormQuestionWidget extends \Widget
 		// overwrite in parent classes
 	}
 
+	public function hasLabel()
+	{
+		if ($this->title == '' || $this->showTitle == false)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
 	/**
 	 * Generate the label and return it as string
 	 *
@@ -137,7 +149,7 @@ class FormQuestionWidget extends \Widget
 	 */
 	public function generateLabel()
 	{
-		if ($this->title == '' || $this->showTitle == false)
+		if (!$this->hasLabel())
 		{
 			return '';
 		}
