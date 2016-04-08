@@ -42,17 +42,24 @@ class SurveyHelper extends \Backend
 					$strKey = $elements[1];
 					if (is_numeric($uidOrPin))
 					{
-						$found = $this->Database->prepare("SELECT tl_survey_result.* FROM tl_survey_result, tl_survey_question WHERE tl_survey_result.qid = tl_survey_question.id AND tl_survey_result.uid = ? AND tl_survey_question.alias = ?")
+						$found = $this->Database->prepare("SELECT tl_survey_question.questiontype, tl_survey_result.* FROM tl_survey_result, tl_survey_question WHERE tl_survey_result.qid = tl_survey_question.id AND tl_survey_result.uid = ? AND tl_survey_question.alias = ?")
 							->execute($uidOrPin, $strKey)
 							->fetchAssoc();
 					}
 					else
 					{
-						$found = $this->Database->prepare("SELECT tl_survey_result.* FROM tl_survey_result, tl_survey_question WHERE tl_survey_result.qid = tl_survey_question.id AND tl_survey_result.pin = ? AND tl_survey_question.alias = ?")
+						$found = $this->Database->prepare("SELECT tl_survey_question.questiontype, tl_survey_result.* FROM tl_survey_result, tl_survey_question WHERE tl_survey_result.qid = tl_survey_question.id AND tl_survey_result.pin = ? AND tl_survey_question.alias = ?")
 							->execute($uidOrPin, $strKey)
 							->fetchAssoc();
 					}
-					$strVal = $found['result'];
+					$strClass = $GLOBALS['TL_SVY']['q_'.$found['questiontype']];
+					// Continue if the class is not defined
+					if (!$this->classFileExists($strClass))
+					{
+						continue;
+					}
+					$questionObject = new $strClass($found['qid']);
+					$strVal = $questionObject->resultAsString($found['result']);
 
 					// Replace insert tags in subject
 					if (!empty($source))

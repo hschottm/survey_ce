@@ -21,6 +21,16 @@ class SurveyQuestionMatrix extends SurveyQuestion
 		parent::__construct($question_id);
 	}
 	
+	public function resultAsString($res)
+	{
+		$arrAnswer = deserialize($res, true);
+		if (is_array($arrAnswer))
+		{
+			return implode (", ", $arrAnswer);
+		}
+		return '';
+	}
+	
 	protected function calculateStatistics()
 	{
 		if (array_key_exists("id", $this->arrData) && array_key_exists("parentID", $this->arrData))

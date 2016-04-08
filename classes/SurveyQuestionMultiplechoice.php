@@ -21,6 +21,24 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 		parent::__construct($question_id);
 	}
 	
+	public function resultAsString($res)
+	{
+		$arrAnswer = deserialize($res, true);
+		if (is_array($arrAnswer['value']))
+		{
+			return implode (", ", $arrAnswer['value']);
+		}
+		else
+		{
+			$arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
+			return $arrChoices[$arrAnswer['value']-1];
+		}
+		if (strlen($arrAnswer['other']))
+		{
+			return $arrAnswer['other'];
+		}
+	}
+
 	protected function calculateStatistics()
 	{
 		if (array_key_exists("id", $this->arrData) && array_key_exists("parentID", $this->arrData))

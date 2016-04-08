@@ -21,6 +21,11 @@ class SurveyQuestionOpenended extends SurveyQuestion
 		parent::__construct($question_id);
 	}
 	
+	public function resultAsString($res)
+	{
+		return $res;
+	}
+	
 	protected function calculateStatistics()
 	{
 		if (array_key_exists("id", $this->arrData) && array_key_exists("parentID", $this->arrData))

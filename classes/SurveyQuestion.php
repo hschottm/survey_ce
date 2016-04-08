@@ -73,6 +73,11 @@ abstract class SurveyQuestion extends \Backend
 		}
 	}
 	
+	public function resultAsString($res)
+	{
+		return $res;
+	}
+	
 	public function getAnswersAsHTML()
 	{
 		if (is_array($this->statistics["answers"]))
