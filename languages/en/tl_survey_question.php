@@ -1,6 +1,7 @@
 <?php
 
 $GLOBALS['TL_LANG']['tl_survey_question']['title']   = array('Title', 'Please enter the question title.');
+$GLOBALS['TL_LANG']['tl_survey_question']['alias']   = array('Alias', 'The question alias is a unique reference to the question which can be called instead of its numeric ID.');
 $GLOBALS['TL_LANG']['tl_survey_question']['author']   = array('Author', 'Please enter the name of the author.');
 $GLOBALS['TL_LANG']['tl_survey_question']['questiontype']   = array('Question type', 'Please choose the question type.');
 $GLOBALS['TL_LANG']['tl_survey_question']['description']   = array('Description', 'Please enter the question description.');

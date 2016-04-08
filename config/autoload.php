@@ -2,12 +2,10 @@
 
 /**
  * Contao Open Source CMS
- * 
- * Copyright (C) 2005-2012 Leo Feyer
- * 
- * @package Survey_ce
- * @link    http://contao.org
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
+ *
+ * Copyright (c) 2005-2016 Leo Feyer
+ *
+ * @license LGPL-3.0+
  */
 
 
@@ -24,6 +22,7 @@ ClassLoader::addClasses(array
 	'Contao\FormOpenEndedQuestion'          => 'system/modules/survey_ce/classes/FormOpenEndedQuestion.php',
 	'Contao\FormQuestionWidget'             => 'system/modules/survey_ce/classes/FormQuestionWidget.php',
 	'Contao\Survey'                         => 'system/modules/survey_ce/classes/Survey.php',
+	'Contao\SurveyHelper'                   => 'system/modules/survey_ce/classes/SurveyHelper.php',
 	'Contao\SurveyPagePreview'              => 'system/modules/survey_ce/classes/SurveyPagePreview.php',
 	'Contao\SurveyPINTAN'                   => 'system/modules/survey_ce/classes/SurveyPINTAN.php',
 	'Contao\SurveyQuestion'                 => 'system/modules/survey_ce/classes/SurveyQuestion.php',
