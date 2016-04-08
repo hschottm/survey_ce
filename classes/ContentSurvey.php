@@ -231,7 +231,6 @@ class ContentSurvey extends \ContentElement
 					$objMailProperties->replyTo = '';
 					$objMailProperties->recipients = array();
 					$objMailProperties->messageText = '';
-					$objMailProperties->messageHtmlTmpl = '';
 					$objMailProperties->messageHtml = '';
 					$objMailProperties->attachments = array();
 					$objMailProperties->skipEmptyFields = false;
@@ -310,8 +309,25 @@ class ContentSurvey extends \ContentElement
 
 					$objMailProperties->subject = \String::decodeEntities($this->objSurvey->confirmationMailSubject);
 					$objMailProperties->messageText = \String::decodeEntities($this->objSurvey->confirmationMailText);
-					$objMailProperties->messageHtmlTmpl = $this->objSurvey->confirmationMailTemplate;
-
+					
+					$messageHtmlTmpl = '';
+					if (\Validator::isUuid($this->objSurvey->confirmationMailTemplate) || (is_numeric($this->objSurvey->confirmationMailTemplate) && $this->objSurvey->confirmationMailTemplate > 0))
+					{
+						$objFileModel = \FilesModel::findById($this->objSurvey->confirmationMailTemplate);
+						if ($objFileModel !== null)
+						{
+							$messageHtmlTmpl = $objFileModel->path;
+						}
+					}
+					if ($messageHtmlTmpl != '')
+					{
+						$fileTemplate = new \File($messageHtmlTmpl);
+						if ($fileTemplate->mime == 'text/html')
+						{
+							$messageHtml = $fileTemplate->getContent();
+							$objMailProperties->messageHtml = $messageHtml;
+						}
+					}
 					// Replace Insert tags and conditional tags
 					//$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
 
