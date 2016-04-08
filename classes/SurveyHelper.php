@@ -76,7 +76,7 @@ class SurveyHelper extends \Backend
 		{
 			$source = $this->evalConditionTags($source);
 		}
-		if ($blnIsHtml)
+		if (!$blnIsHtml)
 		{
 			$source = strip_tags($source);
 			$source = html_entity_decode($source, ENT_QUOTES, $GLOBALS['TL_CONFIG']['characterSet']);
