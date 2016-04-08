@@ -334,6 +334,7 @@ class ContentSurvey extends \ContentElement
 						}
 
 						$helper = new \SurveyHelper();
+						$replacements = array("#Bezahlt#" => $this->getTotalToPay());
 						$objMail->subject = $objMailProperties->subject;
 
 						if (!empty($objMailProperties->attachments))
@@ -347,12 +348,12 @@ class ContentSurvey extends \ContentElement
 
 						if (!empty($objMailProperties->messageText))
 						{
-							$objMail->text = $helper->replaceTags($objMailProperties->messageText, $this->pin);
+							$objMail->text = $helper->replaceTags($objMailProperties->messageText, $this->pin, $replacements);
 						}
 
 						if (!empty($objMailProperties->messageHtml))
 						{
-							$objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, true);
+							$objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, $replacements, true);
 						}
 
 						foreach ($objMailProperties->recipients as $recipient)
@@ -487,6 +488,62 @@ class ContentSurvey extends \ContentElement
 	{
 		$objResult = $this->Database->prepare("INSERT INTO tl_survey_participant (tstamp, pid, pin, uid) VALUES (?, ?, ?, ?)")
 			->execute(time(), $pid, $pin, $uid);
+	}
+	
+	protected function getTotalToPay()
+	{
+		$res_1 = $this->getResultForQuestion(13, $this->objSurvey->id);
+		$res_2 = $this->getResultForQuestion(14, $this->objSurvey->id);
+		$day1 = 0;
+		if ($res_1["value"] == 1)
+		{
+			$day1 = 200;
+		}
+		else if ($res_1["value"] == 2)
+		{
+			$day1 = 150;
+		}
+		else if ($res_1["value"] == 3)
+		{
+			$day1 = 0;
+		}
+		$day2 = 0;
+		if ($res_2["value"] == 1)
+		{
+			$day2 = 150;
+		}
+		else if ($res_2["value"] == 2)
+		{
+			$day2 = 0;
+		}
+		$total = "";
+		if ($day1 > 0 && $day2 > 0)
+		{
+			if ($day1 == 200)
+			{
+				$total = "Kombiticket Ärzte (250,- EUR) Herz-Intensiv-Kurs und Bildgebung mit Herz";
+			}
+			else
+			{
+				$total = "Kombiticket RT (200,- EUR) RT-Fortbildung und Bildgebung mit Herz";
+			}
+		}
+		else
+		{
+			if ($day1 == 200)
+			{
+				$total = "CBCT (200,- EUR)";
+			}
+			else if ($day1 == 150)
+			{
+				$total = "RT-Fortbildung (150,- EUR)";
+			}
+			else if ($day2 == 150)
+			{
+				$total = "Bildgebung mit Herz (150,- EUR)";
+			}
+		}
+		return $total;
 	}
 	
 	/**
@@ -689,58 +746,7 @@ class ContentSurvey extends \ContentElement
 		$this->Template->cancellink = $this->generateFrontendUrl($objPage->row());
 		$this->Template->allowback = $this->objSurvey->allowback;
 		$qb = $questionBlockTemplate->parse();
-		$res_1 = $this->getResultForQuestion(13, $this->objSurvey->id);
-		$res_2 = $this->getResultForQuestion(14, $this->objSurvey->id);
-		$day1 = 0;
-		if ($res_1["value"] == 1)
-		{
-			$day1 = 200;
-		}
-		else if ($res_1["value"] == 2)
-		{
-			$day1 = 150;
-		}
-		else if ($res_1["value"] == 3)
-		{
-			$day1 = 0;
-		}
-		$day2 = 0;
-		if ($res_2["value"] == 1)
-		{
-			$day2 = 150;
-		}
-		else if ($res_2["value"] == 2)
-		{
-			$day2 = 0;
-		}
-		$total = "";
-		if ($day1 > 0 && $day2 > 0)
-		{
-			if ($day1 == 200)
-			{
-				$total = "Kombiticket Ärzte (250,- EUR) Herz-Intensiv-Kurs und Bildgebung mit Herz";
-			}
-			else
-			{
-				$total = "Kombiticket RT (200,- EUR) RT-Fortbildung und Bildgebung mit Herz";
-			}
-		}
-		else
-		{
-			if ($day1 == 200)
-			{
-				$total = "CBCT (200,- EUR)";
-			}
-			else if ($day1 == 150)
-			{
-				$total = "RT-Fortbildung (150,- EUR)";
-			}
-			else if ($day2 == 150)
-			{
-				$total = "Bildgebung mit Herz (150,- EUR)";
-			}
-		}
-		$qb = str_replace("#Bezahlt#", $total, $qb);
+		$qb = str_replace("#Bezahlt#", $this->getTotalToPay(), $qb);
 		$this->Template->questionblock = $qb;
 		$this->Template->page = $page;
 		$this->Template->introduction = $this->objSurvey->introduction;

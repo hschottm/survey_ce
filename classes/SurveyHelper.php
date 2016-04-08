@@ -21,7 +21,7 @@ class SurveyHelper extends \Backend
 		$this->import('Database');
 	}
 	
-	public function replaceTags($source, $uidOrPin, $blnIsHtml = false)
+	public function replaceTags($source, $uidOrPin, $replacements, $blnIsHtml = false)
 	{
 		$source = preg_replace(array('/\{\{/', '/\}\}/'), array('__BRCL__', '__BRCR__'), $source);
 		$blnEvalSource = $this->replaceConditionTags($source);
@@ -80,6 +80,13 @@ class SurveyHelper extends \Backend
 		{
 			$source = strip_tags($source);
 			$source = html_entity_decode($source, ENT_QUOTES, $GLOBALS['TL_CONFIG']['characterSet']);
+		}
+		if (is_array($replacements))
+		{
+			foreach ($replacements as $key => $value)
+			{
+				$source = str_replace($key, $value, $source);
+			}
 		}
 		return $source;
 	}
