@@ -101,7 +101,7 @@ die();
 		$this->choices = deserialize($this->arrData['sumchoices'], true);
 		foreach ($this->choices as $k => $v)
 		{
-			$this->choices[$k] = utf8_decode(\String::decodeEntities($v));
+			$this->choices[$k] = utf8_decode(StringUtil::decodeEntities($v));
 		}
 		$numcols = count($this->choices);
 
@@ -153,7 +153,7 @@ die();
 
 		// question title
 		($numcols > 1) && $xls->merge_cells($sheet, $row, $row, $col, $col + $numcols - 1);
-		$title = utf8_decode(\String::decodeEntities($this->title)) . ($this->arrData['obligatory'] ? ' *' : '');
+		$title = utf8_decode(StringUtil::decodeEntities($this->title)) . ($this->arrData['obligatory'] ? ' *' : '');
 		$result[] = array(
 			'sheetname' => $sheet, 'row' => $row, 'col' => $col,
 			'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
@@ -341,4 +341,3 @@ die();
 	}
 
 }
-
