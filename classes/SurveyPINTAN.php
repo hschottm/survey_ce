@@ -24,7 +24,7 @@ namespace Contao;
 class SurveyPINTAN extends \Backend
 {
 	protected $blnSave = true;
-	
+
 	public function exportTAN(DataContainer $dc)
 	{
 		if (\Input::get('key') != 'exporttan')
@@ -40,7 +40,7 @@ class SurveyPINTAN extends \Backend
 		$this->Template->hrefBack = ampersand(str_replace('&key=exporttan', '', \Environment::get('request')));
 		$this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
 		$this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['exporttan'];
-		$this->Template->request = ampersand(\Environment::get('request'), ENCODE_AMPERSANDS);
+		$this->Template->request = ampersand(str_replace('&id=', '&pid=', \Environment::get('request')));
 		$this->Template->submit = specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
 
 		// Create import form
@@ -51,7 +51,7 @@ class SurveyPINTAN extends \Backend
 			$pagedata = ($surveyPage > 0) ? $this->Database->prepare("SELECT * FROM tl_page WHERE id = ?")->execute($surveyPage)->fetchAssoc() : null;
 			$domain = \Environment::get('base');
 
-			$objPINTAN = $this->Database->prepare("SELECT * FROM tl_survey_pin_tan WHERE pid = ? ORDER BY tstamp DESC, id DESC")->execute(\Input::get('id'));
+			$objPINTAN = $this->Database->prepare("SELECT * FROM tl_survey_pin_tan WHERE pid = ? ORDER BY tstamp DESC, id DESC")->execute(\Input::get('pid'));
 			while ($objPINTAN->next())
 			{
 				$row = $objPINTAN->row();
@@ -123,7 +123,7 @@ class SurveyPINTAN extends \Backend
 					$intRowCounter++;
 				}
 				$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
-					->execute(\Input::get('id'));
+					->execute(\Input::get('pid'));
 				if ($objSurvey->numRows == 1)
 				{
 					$xls->sendFile($this->safefilename('TAN_' . htmlspecialchars_decode($objSurvey->title)) . ".xls");
@@ -134,12 +134,12 @@ class SurveyPINTAN extends \Backend
 				}
 				exit;
 			}
-			$this->redirect(str_replace('&key=exporttan', '', \Environment::get('request')));
+			$this->redirect(str_replace('&pid=', '&id=', str_replace('&key=exporttan', '', \Environment::get('request'))));
 		}
 		return $this->Template->parse();
 	}
 
-	protected function safefilename($filename) 
+	protected function safefilename($filename)
 	{
 		$search = array('/ß/','/ä/','/Ä/','/ö/','/Ö/','/ü/','/Ü/','([^[:alnum:]._])');
 		$replace = array('ss','ae','Ae','oe','Oe','ue','Ue','_');
@@ -248,4 +248,3 @@ class SurveyPINTAN extends \Backend
 		return $widget;
 	}
 }
-
