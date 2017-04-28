@@ -1,13 +1,13 @@
-
+<?php if (!$this->protected): ?>
 <div class="<?php echo $this->class; ?> block"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
 <?php if ($this->headline): ?>
 <<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
 <?php endif; ?>
-<?php if (($this->page > 0) && ($this->page <= count($this->pages))): ?>	
+<?php if (($this->page > 0) && ($this->page <= count($this->pages))): ?>
 <div class="progressbar_container">
 	<div class="progressbar" style="width: <?php echo sprintf("%.1f", 100*$this->page/count($this->pages)); ?>%">
 		<span><?php echo sprintf($this->pageXofY, $this->page, count($this->pages)); ?></span>
-	</div> 
+	</div>
 </div>
 <?php endif; ?>
 <?php if ($this->show_title || $this->show_cancel): ?>
@@ -51,7 +51,7 @@
 <?php endif; ?>
 <?php if (!($this->page > count($this->pages))): ?>
 <div class="submit_container">
-<?php if (($this->page == 0)): ?>	
+<?php if (($this->page == 0)): ?>
 <?php if ($this->needsTAN): ?>
 	<div class="tl_survey_taninput">
 		<p><?php echo $this->txtTANInputDesc; ?></p><?php if (strlen($this->tanMsg)): ?>
@@ -61,18 +61,18 @@
 <?php endif; ?>
 <?php endif; ?>
 	<div class="left">
-<?php if ($this->allowback && ($this->page > 1) && ($this->page <= count($this->pages))): ?>	
+<?php if ($this->allowback && ($this->page > 1) && ($this->page <= count($this->pages))): ?>
 		<input type="submit" class="submit" name="prev" value="<?php echo $this->prev; ?>" />
 <?php endif; ?>
 	</div>
 	<div class="middle">
 	</div>
 	<div class="right">
-<?php if (($this->page == 0)): ?>	
+<?php if (($this->page == 0)): ?>
 <?php if (!$this->needsTAN): ?>
-<?php if (!$this->hideStartButtons): ?>	
+<?php if (!$this->hideStartButtons): ?>
 		<input type="submit" class="submit" name="start" value="<?php echo $this->start; ?>" />
-<?php endif; ?>	
+<?php endif; ?>
 <?php endif; ?>
 <?php endif; ?>
 <?php if (($this->page > 0) && ($this->page < count($this->pages))): ?>
@@ -95,3 +95,4 @@ window.addEvent('domready', function() {
     Survey.init();
 });
 </script>
+<?php endif; ?>

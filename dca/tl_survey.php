@@ -163,7 +163,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['online_start'],
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>32, 'rgxp' => 'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
+			'eval'                    => array('maxlength'=>32, 'rgxp' => 'datim', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		'online_end' => array
@@ -171,7 +171,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['online_end'],
 			'search'                  => true,
 			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>32, 'rgxp' => 'date', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
+			'eval'                    => array('maxlength'=>32, 'rgxp' => 'datim', 'datepicker'=>$this->getDatePickerString(), 'tl_class'=>'w50 wizard'),
 			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		'description' => array
@@ -262,7 +262,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			'eval'                    => array('tl_class'=>'w50'),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
-		'immediate_start' => array
+    'immediate_start' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['immediate_start'],
 			'filter'                  => true,
@@ -304,7 +304,7 @@ class tl_survey extends Backend
 	protected function __construct()
 	{
 		parent::__construct();
-		
+
 		// somehow dirty patch to allow going back if someone clicks back on a survey question list
 		if (strpos($this->getReferer(ENCODE_AMPERSANDS), 'tl_survey_question'))
 		{
@@ -332,6 +332,5 @@ class tl_survey extends Backend
 	{
 		return sprintf('<div class="list_icon" style="background-image:url(\'system/modules/survey_ce/assets/survey.png\');">%s</div>', $label);
 	}
-	
-}
 
+}
