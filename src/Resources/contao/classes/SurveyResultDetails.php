@@ -49,7 +49,7 @@ class SurveyResultDetails extends \Backend
 		$class = "SurveyQuestion" . ucfirst($qtype["questiontype"]);
 		$this->loadLanguageFile("tl_survey_result");
 		$this->loadLanguageFile("tl_survey_question");
-		$this->Template = new BackendTemplate('be_question_result_details');
+		$this->Template = new \BackendTemplate('be_question_result_details');
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
 		$this->Template->hrefBack = \Environment::get('script') . '?do=' . \Input::get('do') . '&amp;key=cumulated&amp;id=' . $parent['pid'];
 		if ($this->classFileExists($class))

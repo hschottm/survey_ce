@@ -132,7 +132,7 @@ class FormMatrixQuestion extends FormQuestionWidget
 		{
 			$col_classes['neutral'] = substr(standardize($this->strNeutralColumn), 0, 28);
 		}
-		$template = new FrontendTemplate('survey_question_matrix');
+		$template = new \FrontendTemplate('survey_question_matrix');
 		$template->nrOfColumns = max(1, count($this->arrColumns)) + (($this->blnNeutralColumn) ? 1 : 0) + (($this->blnBipolar && strcmp($this->strBipolarPosition, 'aside') == 0) ? 2 : 0);
 		$template->columns = $this->arrColumns;
 		$template->col_classes = $col_classes;

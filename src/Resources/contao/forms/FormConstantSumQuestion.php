@@ -119,7 +119,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
 	public function generate()
 	{
 		$this->loadLanguageFile('tl_survey_question');
-		$template = new FrontendTemplate('survey_question_constantsum');
+		$template = new \FrontendTemplate('survey_question_constantsum');
 		$template->choices = $this->arrChoices;
 		$template->blnInputFirst = $this->blnInputFirst;
 		$template->name = specialchars($this->strName);

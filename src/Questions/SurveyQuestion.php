@@ -66,7 +66,7 @@ abstract class SurveyQuestion extends \Backend
 	{
 		if (is_array($this->statistics["answers"]))
 		{
-			$template = new FrontendTemplate('survey_answers_default');
+			$template = new \FrontendTemplate('survey_answers_default');
 			$template->answers = $this->statistics['answers'];
 			return $template->parse();
 		}

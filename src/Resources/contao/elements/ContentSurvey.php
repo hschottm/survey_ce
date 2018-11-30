@@ -32,7 +32,7 @@ class ContentSurvey extends \ContentElement
 	{
 		if (TL_MODE == 'BE')
 		{
-			$objTemplate = new BackendTemplate('be_wildcard');
+			$objTemplate = new \BackendTemplate('be_wildcard');
 			$objTemplate->wildcard = '### SURVEY ###';
 
 			return $objTemplate->parse();
@@ -481,7 +481,7 @@ class ContentSurvey extends \ContentElement
 			if (strlen($pages[$page-1]['page_template'])) $this->questionblock_template = $pages[$page-1]['page_template'];
 		}
 
-		$questionBlockTemplate = new FrontEndTemplate($this->questionblock_template);
+		$questionBlockTemplate = new \FrontEndTemplate($this->questionblock_template);
 		$questionBlockTemplate->surveypage = $surveypage;
 
 		// template output

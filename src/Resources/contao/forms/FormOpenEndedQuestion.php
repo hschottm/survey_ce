@@ -164,7 +164,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 	 */
 	public function generate()
 	{
-		$template = new FrontendTemplate('survey_question_openended');
+		$template = new \FrontendTemplate('survey_question_openended');
 		$template->ctrl_name = specialchars($this->strName);
 		$template->ctrl_id = specialchars($this->strId);
 		$template->ctrl_class = (strlen($this->strClass) ? ' ' . $this->strClass : '');

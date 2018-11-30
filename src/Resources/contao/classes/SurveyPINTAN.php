@@ -22,7 +22,7 @@ class SurveyPINTAN extends \Backend
 		}
 
 		$this->loadLanguageFile("tl_survey_pin_tan");
-		$this->Template = new BackendTemplate('be_survey_export_tan');
+		$this->Template = new \BackendTemplate('be_survey_export_tan');
 
 		$this->Template->surveyPage = $this->getSurveyPageWidget();
 

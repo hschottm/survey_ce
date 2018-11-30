@@ -151,7 +151,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
 		$strOptions = '';
 
 		$this->loadLanguageFile('tl_survey_question');
-		$template = new FrontendTemplate('survey_question_multiplechoice');
+		$template = new \FrontendTemplate('survey_question_multiplechoice');
 		$template->ctrl_name = specialchars($this->strName);
 		$template->ctrl_id = specialchars($this->strId);
 		$template->ctrl_class = (strlen($this->strClass) ? ' ' . $this->strClass : '');

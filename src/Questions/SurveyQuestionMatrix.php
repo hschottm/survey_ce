@@ -64,7 +64,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
 	{
 		if (is_array($this->statistics["cumulated"]))
 		{
-			$template = new FrontendTemplate('survey_answers_matrix');
+			$template = new \FrontendTemplate('survey_answers_matrix');
 			$template->choices = deserialize($this->arrData['matrixcolumns'], true);
 			$template->rows = deserialize($this->arrData['matrixrows'], true);
 			$template->statistics = $this->statistics;
