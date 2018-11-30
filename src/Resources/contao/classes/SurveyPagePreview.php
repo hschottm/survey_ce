@@ -24,7 +24,7 @@ class SurveyPagePreview extends \Backend
 			->execute($row["pid"], $row["sorting"]);
 		$position = $objElements->numRows + 1;
 
-		$template = new FrontendTemplate('be_survey_page_preview');
+		$template = new \FrontendTemplate('be_survey_page_preview');
 		$template->page = $GLOBALS['TL_LANG']['tl_survey_page']['page'];
 		$template->position = $position;
 		$template->title = specialchars($row['title']);
