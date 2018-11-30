@@ -40,7 +40,7 @@ array_insert($GLOBALS['BE_MOD'], 3, array
 					'createtan' => array(SurveyPINTAN::class, 'createTAN'),
 					'exporttan' => array(SurveyPINTAN::class, 'exportTAN'),
 					'cumulated' => array(SurveyResultDetails::class, 'showCumulated'),
-					'details' => array(SurveyResultDetails:class, 'showDetails'),
+					'details' => array(SurveyResultDetails::class, 'showDetails'),
 					'icon' => 'bundles/hschottmsurveybundle/images/survey.png',
 					'stylesheet' => 'bundles/hschottmsurveybundle/css/survey.css'
 				),
