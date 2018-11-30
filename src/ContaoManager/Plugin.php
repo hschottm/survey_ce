@@ -9,6 +9,7 @@ use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
 use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Hschottm\SurveyBundle\HschottmSurveyBundle;
+use Hschottm\TextWizardBundle\HschottmTextWizardBundle;
 
 /**
  * Plugin for the Contao Manager.
@@ -24,7 +25,7 @@ class Plugin implements BundlePluginInterface
     {
         return [
              BundleConfig::create(HschottmSurveyBundle::class)
-              ->setLoadAfter([ContaoCoreBundle::class])
+              ->setLoadAfter([ContaoCoreBundle::class, HschottmTextWizardBundle::class])
               ->setReplace(['survey']),
          ];
     }
