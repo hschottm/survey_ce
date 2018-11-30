@@ -1,6 +1,6 @@
 <?php
 
-$found = (strlen(\Input::get('id'))) ? SurveyResultModel::findByPid(\Input::get('id')) : null;
+$found = (strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
 $hasData = (null != $found && 0 < $found->numRows) ? true : false;
 
 /**

@@ -14,6 +14,7 @@
     "php": ">=5.6.0",
     "contao/core-bundle":"~4.4",
     "contao/faq-bundle": "^4.4",
+    "hschottm/contao-textwizard": "dev-master",
     "symfony/framework-bundle": "^3.3"
   },
   "require-dev": {
