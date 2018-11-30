@@ -8,7 +8,7 @@ namespace Hschottm\SurveyBundle;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class SurveyQuestionPreview extends Backend
+class SurveyQuestionPreview extends \Backend
 {
 
 	/**
@@ -43,7 +43,7 @@ class SurveyQuestionPreview extends Backend
 			$widget = $objWidget->generate();
 		}
 
-		$template = new FrontendTemplate('be_survey_question_preview');
+		$template = new \FrontendTemplate('be_survey_question_preview');
 		$template->hidetitle = $row['hidetitle'];
 		$template->help = specialchars($row['help']);
 		$template->questionNumber = $this->getQuestionNumber($row);
