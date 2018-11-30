@@ -37,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = array
 			'fields'                  => array('sorting'),
 			'panelLayout'             => 'search,filter,limit',
 			'headerFields'            => array('title', 'tstamp', 'description'),
-			'child_record_callback'   => array('Hschottm\SurveyBundle\SurveyQuestionPreview', 'compilePreview')
+			'child_record_callback'   => array('\Hschottm\SurveyBundle\SurveyQuestionPreview', 'compilePreview')
 		),
 		'global_operations' => array
 		(
