@@ -37,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = array
 			'fields'                  => array('sorting'),
 			'panelLayout'             => 'search,filter,limit',
 			'headerFields'            => array('title', 'tstamp', 'description'),
-			'child_record_callback'   => array('SurveyQuestionPreview', 'compilePreview')
+			'child_record_callback'   => array('\Hschottm\SurveyBundle\SurveyQuestionPreview', 'compilePreview')
 		),
 		'global_operations' => array
 		(
@@ -376,11 +376,11 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = array
 			'inputType'               => 'textwizard',
 			'wizard'                  => array(array('tl_survey_question', 'addScaleWizard')),
 			'eval'                    => array(
-				'allowHtml'=>true, 
-				'decodeEntities' => true, 
+				'allowHtml'=>true,
+				'decodeEntities' => true,
 				'buttonTitles' => array(
-					'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_new'], 
-					'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_copy'], 
+					'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_new'],
+					'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_copy'],
 					'delete' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_delete']
 				)
 			),
@@ -392,11 +392,11 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = array
 			'exclude'                 => true,
 			'inputType'               => 'textwizard',
 			'eval'                    => array(
-				'allowHtml'=>true, 
-				'decodeEntities' => true, 
+				'allowHtml'=>true,
+				'decodeEntities' => true,
 				'buttonTitles' => array(
-					'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_new'], 
-					'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_copy'], 
+					'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_new'],
+					'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_copy'],
 					'delete' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_delete']
 				)
 			),
@@ -408,11 +408,11 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = array
 			'exclude'                 => true,
 			'inputType'               => 'textwizard',
 			'eval'                    => array(
-				'allowHtml'=>true, 
-				'decodeEntities' => true, 
+				'allowHtml'=>true,
+				'decodeEntities' => true,
 				'buttonTitles' => array(
-					'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_new'], 
-					'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_copy'], 
+					'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_new'],
+					'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_copy'],
 					'delete' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_delete']
 				)
 			),
@@ -542,7 +542,7 @@ class tl_survey_question extends Backend
 	{
 		return sprintf('<div class="list_icon" style="background-image:url(\'system/modules/survey_ce/assets/question.png\');">%s</div>', $label);
 	}
-	
+
 	/**
 	 * Return all questiontypes as an array
 	 * @return array
@@ -557,7 +557,7 @@ class tl_survey_question extends Backend
 		$qt["constantsum"] = $GLOBALS['TL_LANG']['tl_survey_question']['constantsum'];
 		return $qt;
 	}
-	
+
 	public function getOpenEndedSubtypes()
 	{
 		$oe = array();
@@ -592,7 +592,7 @@ class tl_survey_question extends Backend
 		$this->Database->prepare("UPDATE tl_survey_question SET complete = ?, original = ? WHERE id=?")
 			->execute(1, 1, $dc->id);
 	}
-	
+
 	public function getMCStyleOptions(DataContainer $dc)
 	{
 		$objQuestion = $this->Database->prepare("SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?")
@@ -607,7 +607,7 @@ class tl_survey_question extends Backend
 			return array('vertical', 'horizontal', 'select');
 		}
 	}
-	
+
 	public function addScaleWizard(DataContainer $dc)
 	{
 		$objQuestion = $this->Database->prepare("SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?")
@@ -699,7 +699,7 @@ class tl_survey_question extends Backend
 <div class="tl_formbody_submit">
 
 <div class="tl_submit_container">
-<input type="submit" name="save" id="save" class="tl_submit" alt="add scale" accesskey="s" value="'.specialchars($GLOBALS['TL_LANG']['tl_survey_question']['save_add_scale']).'" /> 
+<input type="submit" name="save" id="save" class="tl_submit" alt="add scale" accesskey="s" value="'.specialchars($GLOBALS['TL_LANG']['tl_survey_question']['save_add_scale']).'" />
 </div>
 
 </div>
@@ -707,4 +707,3 @@ class tl_survey_question extends Backend
 		return $result;
 	}
 }
-
