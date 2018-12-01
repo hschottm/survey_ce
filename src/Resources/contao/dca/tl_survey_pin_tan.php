@@ -156,7 +156,7 @@ class tl_survey_pin_tan extends Backend
 		if ($matches[3])
 		{
 			// tan is used
-			$used = '<img src="system/modules/survey_ce/assets/tan_used.png" alt="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] . '" title="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] . '" />';
+			$used = '<img src="bundles/hschottmsurvey/images/tan_used.png" alt="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] . '" title="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] . '" />';
 		}
 		else
 		{
@@ -165,4 +165,3 @@ class tl_survey_pin_tan extends Backend
 		return sprintf('<div>%s <strong>%s</strong> (%s)</div>', $used, $matches[1], $matches[2]);
 	}
 }
-

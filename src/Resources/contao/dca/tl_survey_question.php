@@ -540,7 +540,7 @@ class tl_survey_question extends Backend
 	 */
 	public function addIcon($row, $label)
 	{
-		return sprintf('<div class="list_icon" style="background-image:url(\'system/modules/survey_ce/assets/question.png\');">%s</div>', $label);
+		return sprintf('<div class="list_icon" style="background-image:url(\'bundles/hschottmsurvey/images/question.png\');">%s</div>', $label);
 	}
 
 	/**

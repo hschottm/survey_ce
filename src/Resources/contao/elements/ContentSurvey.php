@@ -333,7 +333,7 @@ class ContentSurvey extends \ContentElement
 		// add survey javascript
 		if (is_array($GLOBALS['TL_JAVASCRIPT']))
 		{
-			array_insert($GLOBALS['TL_JAVASCRIPT'], 1, 'system/modules/survey_ce/assets/survey.js');
+			array_insert($GLOBALS['TL_JAVASCRIPT'], 1, 'bundles/hschottmsurvey/images/survey.js');
 		}
 		else
 		{

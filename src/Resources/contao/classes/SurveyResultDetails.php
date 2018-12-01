@@ -120,7 +120,7 @@ class SurveyResultDetails extends \Backend
 		$this->Template->heading = specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
 		$this->Template->summary = 'cumulated results';
 		$this->Template->data = $data;
-		$this->Template->imgdetails = 'system/modules/survey_ce/assets/details.png';
+		$this->Template->imgdetails = 'bundles/hschottmsurvey/images/details.png';
 		$this->Template->lngAnswered = $GLOBALS['TL_LANG']['tl_survey_question']['answered'];
 		$this->Template->lngSkipped = $GLOBALS['TL_LANG']['tl_survey_question']['skipped'];
 		return $this->Template->parse();

@@ -63,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
 				'href'                => 'table=tl_survey_pin_tan',
-				'icon'                => 'system/modules/survey_ce/assets/pintan.png'
+				'icon'                => 'bundles/hschottmsurvey/images/pintan.png'
 			),
 			'participants' => array
 			(
@@ -75,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_survey']['statistics'],
 				'href'                => 'key=cumulated',
-				'icon'                => 'system/modules/survey_ce/assets/statistics.png'
+				'icon'                => 'bundles/hschottmsurvey/images/statistics.png'
 			),
 			'copy' => array
 			(
