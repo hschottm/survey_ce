@@ -2,13 +2,6 @@
 
 namespace Hschottm\SurveyBundle;
 
-/**
- * Reads and writes calendars
- *
- * @package   Models
- * @author    Helmut Schottmüller <https://github.com/hschottm>
- * @copyright Helmut Schottmüller 2012
- */
 class SurveyResultModel extends \Model
 {
 

@@ -56,9 +56,11 @@ class ContentSurvey extends \ContentElement
 		$pagequestioncounter = 1;
 		$doNotSubmit = false;
 
-		$questions = $this->Database->prepare("SELECT * FROM tl_survey_question WHERE pid=? ORDER BY sorting")
-			->execute($pagerow['id'])
-			->fetchAllAssoc();
+    $questions = \Hschottm\SurveyBundle\SurveyQuestionModel::findBy('pid', $pagerow['id'], ['order' => 'sorting']);
+
+    if (null === $questions) {
+        return [];
+    }
 
 		foreach ($questions as $question)
 		{
@@ -91,12 +93,10 @@ class ContentSurvey extends \ContentElement
 				{
 					case 'anon':
 					case 'anoncode':
-						$objResult = $this->Database->prepare("SELECT * FROM tl_survey_result WHERE (pid=? AND qid=? AND pin=?)")
-							->execute($this->objSurvey->id, $objWidget->id, $this->pin);
+            $objResult == \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $objWidget->id, $this->pin]);
 						break;
 					case 'nonanoncode':
-						$objResult = $this->Database->prepare("SELECT * FROM tl_survey_result WHERE (pid=? AND qid=? AND uid=?)")
-							->execute($this->objSurvey->id, $objWidget->id, $this->User->id);
+            $objResult = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $objWidget->id, $this->User->id]);
 						break;
 				}
 				if ($objResult->numRows)
@@ -159,8 +159,19 @@ class ContentSurvey extends \ContentElement
 				{
 					case 'anon':
 					case 'anoncode':
-						$objResult = $this->Database->prepare("DELETE FROM tl_survey_result WHERE pid=? AND qid=? AND pin=?")
-							->execute($this->objSurvey->id, $question->id, $this->pin);
+            $res = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?','qid=?','pin=?'],[$this->objSurvey->id, $question->id, $this->pin]);
+            if (null != $res)
+            {
+              if ($res instanceof Model)
+              {
+                $res->delete();
+              } else if ($res instance of Model\Collection) {
+                foreach ($res as $singleRes)
+                {
+                  $singleRes->delete();
+                }
+              }
+            }
 						$value = $question->value;
 						if (is_array($question->value))
 						{
@@ -168,13 +179,23 @@ class ContentSurvey extends \ContentElement
 						}
 						if (strlen($value))
 						{
-							$objResult = $this->Database->prepare("INSERT INTO tl_survey_result (tstamp, pid, qid, pin, result) VALUES (?, ?, ?, ?, ?)")
-								->execute(time(), $this->objSurvey->id, $question->id, $this->pin, $value);
+              $this->insertResult($this->objSurvey->id, $question->id, $this->pin, $value);
 						}
 						break;
 					case 'nonanoncode':
-						$objResult = $this->Database->prepare("DELETE FROM tl_survey_result WHERE pid=? AND qid=? AND uid=?")
-							->execute($this->objSurvey->id, $question->id, $this->User->id);
+              $res = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?','qid=?','uid=?'],[$this->objSurvey->id, $question->id, $this->User->id]);
+              if (null != $res)
+              {
+                if ($res instanceof Model)
+                {
+                  $res->delete();
+                } else if ($res instance of Model\Collection) {
+                  foreach ($res as $singleRes)
+                  {
+                    $singleRes->delete();
+                  }
+                }
+              }
 						$value = $question->value;
 						if (is_array($question->value))
 						{
@@ -182,8 +203,7 @@ class ContentSurvey extends \ContentElement
 						}
 						if (strlen($value))
 						{
-							$objResult = $this->Database->prepare("INSERT INTO tl_survey_result (tstamp, pid, qid, pin, uid, result) VALUES (?, ?, ?, ?, ?, ?)")
-								->execute(time(), $this->objSurvey->id, $question->id, $this->pin, $this->User->id, $value);
+              $this->insertResult($this->objSurvey->id, $question->id, $this->pin, $value, $this->User->id);
 						}
 						break;
 				}
@@ -195,12 +215,14 @@ class ContentSurvey extends \ContentElement
 				{
 					case 'anon':
 					case 'anoncode':
-						$objResult = $this->Database->prepare("UPDATE tl_survey_participant SET finished = ? WHERE pid = ? AND pin = ?")
-							->execute('1', $this->objSurvey->id, $this->pin);
+            $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::fetchOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
+            $participant->finished = 1;
+            $participant->save();
 						break;
 					case 'nonanoncode':
-						$objResult = $this->Database->prepare("UPDATE tl_survey_participant SET finished = ? WHERE pid = ? AND uid = ?")
-							->execute('1', $this->objSurvey->id, $this->User->id);
+            $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::fetchOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
+            $participant->finished = 1;
+            $participant->save();
 						break;
 				}
 				// HOOK: pass survey data to callback functions when survey is finished
@@ -214,8 +236,11 @@ class ContentSurvey extends \ContentElement
 				}
 				if ($this->objSurvey->jumpto)
 				{
-					$pagedata = $this->Database->prepare("SELECT * FROM tl_page WHERE id = ?")->execute($this->objSurvey->jumpto)->fetchAssoc();
-					$this->redirect($this->generateFrontendUrl($pagedata));
+          $pagedata = \PageModel::findByPk($this->surveyModel->jumpto);
+          if (null !== $pagedata)
+          {
+            $this->redirect($pagedata->getFrontendUrl());
+          }
 				}
 			}
 		}
@@ -249,10 +274,14 @@ class ContentSurvey extends \ContentElement
 	protected function isValid($pin)
 	{
 		if (strlen($pin) == 0) return false;
-		$arrData = $this->Database->prepare("SELECT * FROM tl_survey_participant WHERE pin = ? AND pid = ?")
-			->execute($pin, $this->objSurvey->id)
-			->fetchEach('id');
-		return (is_array($arrData) && count($arrData) == 1);
+    $participants = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy(['pin=?', 'pid=?'], [$pin, $this->objSurvey->id]);
+    if (null === $participants) {
+        return false;
+    }
+    if (1 === $participants->count()) {
+        return true;
+    }
+    return false;
 	}
 
 	protected function outIntroductionPage()
@@ -308,13 +337,43 @@ class ContentSurvey extends \ContentElement
 		}
 	}
 
+  protected function insertResult($pid, $qid, $pin, $result, $uid = null)
+  {
+    $newResult         = new \Hschottm\SurveyBundle\SurveyResultModel();
+    $newResult->tstamp = time();
+    $newResult->pid    = $pid;
+    $newResult->qid    = $qid;
+    $newResult->pin    = $pin;
+    $newResult->result   = $result;
+    if (null != $uid)
+    {
+      $newResult->uid = $uid;
+    }
+    $newResult->save();
+  }
+
+  protected function insertPinTan($pid, $pin, $tan, $used)
+  {
+    $newParticipant         = new \Hschottm\SurveyBundle\SurveyPinTanModel();
+    $newParticipant->tstamp = time();
+    $newParticipant->pid    = $pid;
+    $newParticipant->pin    = $pin;
+    $newParticipant->tan    = $tan;
+    $newParticipant->used   = $used;
+    $newParticipant->save();
+  }
+
 	/**
 	 * Insert a new participant dataset
 	 */
 	protected function insertParticipant($pid, $pin, $uid = 0)
 	{
-		$objResult = $this->Database->prepare("INSERT INTO tl_survey_participant (tstamp, pid, pin, uid) VALUES (?, ?, ?, ?)")
-			->execute(time(), $pid, $pin, $uid);
+    $newParticipant         = new SurveyParticipantModel();
+    $newParticipant->tstamp = time();
+    $newParticipant->pid    = $pid;
+    $newParticipant->pin    = $pin;
+    $newParticipant->uid    = $uid;
+    $newParticipant->save();
 	}
 
 	/**
@@ -333,18 +392,20 @@ class ContentSurvey extends \ContentElement
 		// add survey javascript
 		if (is_array($GLOBALS['TL_JAVASCRIPT']))
 		{
-			array_insert($GLOBALS['TL_JAVASCRIPT'], 1, 'bundles/hschottmsurvey/images/survey.js');
+			array_insert($GLOBALS['TL_JAVASCRIPT'], 1, 'bundles/hschottmsurvey/js/survey.js');
 		}
 		else
 		{
-			$GLOBALS['TL_JAVASCRIPT'] = array('system/modules/survey_ce/assets/survey.js');
+			$GLOBALS['TL_JAVASCRIPT'] = array('bundles/hschottmsurvey/js/survey.js');
 		}
 
 		$surveyID = (strlen(\Input::post('survey'))) ? \Input::post('survey') : $this->survey;
-		$this->objSurvey = $this->Database->prepare("SELECT * FROM tl_survey WHERE id=?")
-			->execute($surveyID);
-		$this->objSurvey->next();
-		$this->import('Survey', 'svy');
+		$this->objSurvey = \Hschottm\SurveyBundle\SurveyModel::findByPk($surveyId);
+    if (null === $this->objSurvey) {
+        return;
+    }
+
+		$this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 
 		// check date activation
 		if ((strlen($this->objSurvey->online_start)) && ($this->objSurvey->online_start > time())) {
@@ -356,9 +417,13 @@ class ContentSurvey extends \ContentElement
 			return;
 		}
 
-		$pages = $this->Database->prepare("SELECT * FROM tl_survey_page WHERE pid=? ORDER BY sorting")
-			->execute($surveyID)
-			->fetchAllAssoc();
+    $pages = \Hschottm\SurveyBundle\SurveyPageModel::findBy('pid', $surveyId, ['order' => 'sorting']);
+    if (null === $pages) {
+        $pages = [];
+    } else {
+        $pages = $pages->fetchAll();
+    }
+
 		$page = (\Input::post('page')) ? \Input::post('page') : 0;
 		// introduction page / status
 		if ($page == 0)
@@ -383,9 +448,7 @@ class ContentSurvey extends \ContentElement
 						$pintan = $this->svy->generatePIN_TAN();
 						if ($this->objSurvey->usecookie) setcookie('TLsvy_' . $this->objSurvey->id, $pintan["PIN"], time()+3600*24*365, "/");
 						$this->pin = $pintan["PIN"];
-						// add pin/tan
-						$objResult = $this->Database->prepare("INSERT INTO tl_survey_pin_tan (tstamp, pid, pin, tan, used) VALUES (?, ?, ?, ?, ?)")
-							->execute(time(), $this->objSurvey->id, $pintan["PIN"], $pintan["TAN"], 1);
+            $this->insertPinTan($this->objSurvey->id, $pintan["PIN"], $pintan["TAN"], 1);
 						$this->insertParticipant($this->objSurvey->id, $pintan["PIN"]);
 						$page = 1;
 					}
@@ -404,10 +467,12 @@ class ContentSurvey extends \ContentElement
 							$this->pin = $this->svy->getPINforTAN($this->objSurvey->id, $tan);
 							if ($result == 0)
 							{
-								// activate the TAN
-								$objResult = $this->Database->prepare("UPDATE tl_survey_pin_tan SET used = ? WHERE tan = ? AND pid = ?")
-									->execute(1, $tan, $this->objSurvey->id);
-
+                $res = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['tan=?', 'pid=?'], [$tan, $this->objSurvey->id]);
+                if (null != $res)
+                {
+                  $res->used = 1;
+                  $res->save();
+                }
 								// set pin
 								if ($this->objSurvey->usecookie) setcookie('TLsvy_' . $this->objSurvey->id, $this->pin, time()+3600*24*365, "/");
 								$this->insertParticipant($this->objSurvey->id, $this->pin);
@@ -434,20 +499,21 @@ class ContentSurvey extends \ContentElement
 					}
 					break;
 				case 'nonanoncode':
-					$participant = $this->Database->prepare("SELECT * FROM tl_survey_participant WHERE pid=? AND uid=?")
-						->execute($this->objSurvey->id, $this->User->id)
-						->fetchAssoc();
-					if (!$participant["uid"])
-					{
-						$pintan = $this->svy->generatePIN_TAN();
-						$this->pin = $pintan["PIN"];
-						$this->insertParticipant($this->objSurvey->id, $pintan["PIN"], $this->User->id);
-					}
-					else
-					{
-						$this->pin = $participant["pin"];
-					}
-					$page = strlen($participant["lastpage"]) ? $participant["lastpage"] : 1;
+          $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::fetchOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
+          if (null != $participant)
+          {
+            if (!$participant->uid)
+  					{
+  						$pintan = $this->svy->generatePIN_TAN();
+  						$this->pin = $pintan["PIN"];
+  						$this->insertParticipant($this->objSurvey->id, $pintan["PIN"], $this->User->id);
+  					}
+  					else
+  					{
+  						$this->pin = $participant->pin;
+  					}
+  					$page = strlen($participant->lastpage) ? $participant->lastpage : 1;
+          }
 					break;
 			}
 		}
@@ -476,8 +542,12 @@ class ContentSurvey extends \ContentElement
 		// save position of last page (for resume)
 		if ($page > 0)
 		{
-			$objResult = $this->Database->prepare("UPDATE tl_survey_participant SET lastpage = ? WHERE pid = ? AND pin = ?")
-				->execute($page, $this->objSurvey->id, $this->pin);
+      $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
+      if (null != $res)
+      {
+        $res->lastpage = $page;
+        $res->save();
+      }
 			if (strlen($pages[$page-1]['page_template'])) $this->questionblock_template = $pages[$page-1]['page_template'];
 		}
 
