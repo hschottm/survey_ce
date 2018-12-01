@@ -615,7 +615,7 @@ class tl_survey_question extends Backend
 			->execute($dc->id);
 		if (strcmp($objQuestion->multiplechoice_subtype, 'mc_singleresponse') == 0)
 		{
-			return '<a href="' . $this->addToUrl('key=scale') . '" title="' . specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]) . '" onclick="Backend.getScrollOffset();">' . $this->generateImage('system/modules/survey_ce/assets/scale.png', $GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0], 'style="vertical-align:text-bottom;"') . '</a> <a href="' . $this->addToUrl('key=scale') . '" title="' . specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]) . '" onclick="Backend.getScrollOffset();">' . specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]) . '</a>';
+			return '<a class="tl_submit" style="margin-top: 10px;" href="' . $this->addToUrl('key=scale') . '" title="' . specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]) . '" onclick="Backend.getScrollOffset();">' . specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]) . '</a>';
 		}
 		return '';
 	}
