@@ -189,7 +189,7 @@ class ContentSurvey extends \ContentElement
                 if ($res instanceof Model)
                 {
                   $res->delete();
-                } else if ($res instance of Model\Collection) {
+                } else if ($res instanceof Model\Collection) {
                   foreach ($res as $singleRes)
                   {
                     $singleRes->delete();
