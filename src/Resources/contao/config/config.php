@@ -41,14 +41,14 @@ array_insert($GLOBALS['BE_MOD'], 3, array
 					'exporttan' => array(SurveyPINTAN::class, 'exportTAN'),
 					'cumulated' => array(SurveyResultDetails::class, 'showCumulated'),
 					'details' => array(SurveyResultDetails::class, 'showDetails'),
-					'icon' => 'bundles/hschottmsurveybundle/images/survey.png',
-					'stylesheet' => 'bundles/hschottmsurveybundle/css/survey.css'
+					'icon' => 'bundles/hschottmsurvey/images/survey.png',
+					'stylesheet' => 'bundles/hschottmsurvey/css/survey.css'
 				),
 			"scale" => array(
 					"tables" => array(
 							"tl_survey_scale_folder", "tl_survey_scale"
 						),
-					'icon' => 'bundles/hschottmsurveybundle/images/scale.png'
+					'icon' => 'bundles/hschottmsurvey/images/scale.png'
 				)
 		)
 ));
