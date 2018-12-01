@@ -10,6 +10,8 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Hschottm\SurveyBundle\SurveyModel;
+
 class ContentSurvey extends \ContentElement
 {
 
@@ -236,7 +238,7 @@ class ContentSurvey extends \ContentElement
 				}
 				if ($this->objSurvey->jumpto)
 				{
-          $pagedata = \PageModel::findByPk($this->surveyModel->jumpto);
+          $pagedata = \PageModel::findByPk($this->objSurvey->jumpto);
           if (null !== $pagedata)
           {
             $this->redirect($pagedata->getFrontendUrl());
