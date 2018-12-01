@@ -1,6 +1,6 @@
 <?php
 
- namespace Hschottm\SurveyBundle;
+namespace Hschottm\SurveyBundle;
 
 class Survey extends \Backend
 {

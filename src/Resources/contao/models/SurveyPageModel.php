@@ -2,7 +2,9 @@
 
 namespace Hschottm\SurveyBundle;
 
-class SurveyPageModel extends \Model
+use Contao\Model;
+
+class SurveyPageModel extends Model
 {
 
 	/**
