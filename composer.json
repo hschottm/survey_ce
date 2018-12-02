@@ -3,7 +3,7 @@
   "description":"Contao bundle to create questionnaires and run online surveys",
   "keywords":["contao", "module", "extension", "survey", "bundle"],
   "type":"contao-bundle",
-  "license":"LGPL-3.0+, CC-BY-NC-3.0",
+  "license":["LGPL-3.0-or-later", "CC-BY-NC-SA-4.0"],
   "authors":[
     {
       "name":"Helmut Schottmüller",
@@ -13,8 +13,6 @@
   "require":{
     "php": ">=5.6.0",
     "contao/core-bundle":"~4.4",
-    "contao/faq-bundle": "^4.4",
-    "hschottm/contao-textwizard": "dev-master",
     "symfony/framework-bundle": "^3.3"
   },
   "require-dev": {
