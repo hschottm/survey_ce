@@ -69,7 +69,10 @@ class ContentSurvey extends \ContentElement
 
 		$surveyID = (strlen(\Input::post('survey'))) ? \Input::post('survey') : $this->survey;
 
-		$this->objSurvey = \Hschottm\SurveyBundle\SurveyModel::findByPk($surveyId);
+    $this->objSurvey = $this->Database->prepare("SELECT * FROM tl_survey WHERE id=?")
+			->execute($surveyID);
+    $this->objSurvey->next();
+		//$this->objSurvey = \Hschottm\SurveyBundle\SurveyModel::findByPk($surveyId);
     if (null === $this->objSurvey) {
         return;
     }
@@ -186,7 +189,6 @@ class ContentSurvey extends \ContentElement
 					break;
 			}
 		}
-
 		// check question input and save input or return a question list of the page
 		$surveypage = array();
 		if (($page > 0 && $page <= count($pages)))
@@ -574,7 +576,7 @@ class ContentSurvey extends \ContentElement
 	 */
 	protected function insertParticipant($pid, $pin, $uid = 0)
 	{
-    $newParticipant         = new SurveyParticipantModel();
+    $newParticipant         = new \Hschottm\SurveyBundle\SurveyParticipantModel();
     $newParticipant->tstamp = time();
     $newParticipant->pid    = $pid;
     $newParticipant->pin    = $pin;
