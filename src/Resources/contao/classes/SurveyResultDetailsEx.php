@@ -2,6 +2,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\DataContainer;
+use Hschottm\ExcelXLSBundle\xlsexport;
+
 /**
  * Class SurveyResultDetailsEx
  *
@@ -48,7 +51,7 @@ class SurveyResultDetailsEx extends SurveyResultDetails
 		{
 			$this->loadLanguageFile('tl_survey_result');
 
-			$xls = new \xlsexport();
+			$xls = new xlsexport();
 			$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['detailedResults']);
 			$xls->addworksheet($sheet);
 

@@ -3,6 +3,7 @@
 namespace Hschottm\SurveyBundle;
 
 use Contao\DataContainer;
+use Hschottm\ExcelXLSBundle\xlsexport;
 
 /**
  * Class SurveyPINTAN
@@ -58,7 +59,7 @@ class SurveyPINTAN extends \Backend
 			}
 			if (count($export))
 			{
-				$xls = new \xlsexport();
+				$xls = new xlsexport();
 				$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_pin_tan']['tans']);
 				$xls->addworksheet($sheet);
 
