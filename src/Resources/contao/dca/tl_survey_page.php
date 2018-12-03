@@ -75,21 +75,21 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = array
 		(
 			'label'               => &$GLOBALS['TL_LANG']['tl_survey_page']['edit'],
 			'href'                => 'table=tl_survey_question',
-			'icon'                => 'edit.gif',
+			'icon'                => 'edit.svg',
 			'button_callback'     => array('tl_survey_page', 'editPage')
 		),
 		'copy' => array
 		(
 			'label'               => &$GLOBALS['TL_LANG']['tl_survey_page']['copy'],
 			'href'                => 'act=paste&mode=copy',
-			'icon'                => 'copy.gif',
+			'icon'                => 'copy.svg',
 			'button_callback'     => array('tl_survey_page', 'copyPage')
 		),
 		'cut' => array
 		(
 			'label'               => &$GLOBALS['TL_LANG']['tl_survey_page']['cut'],
 			'href'                => 'act=paste&mode=cut',
-			'icon'                => 'cut.gif',
+			'icon'                => 'cut.svg',
 			'attributes'          => 'onclick="Backend.getScrollOffset();"',
 			'button_callback'     => array('tl_survey_page', 'cutPage')
 		),
@@ -97,7 +97,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = array
 		(
 			'label'               => &$GLOBALS['TL_LANG']['tl_survey_page']['delete'],
 			'href'                => 'act=delete',
-			'icon'                => 'delete.gif',
+			'icon'                => 'delete.svg',
 			'attributes'          => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"',
 			'button_callback'     => array('tl_survey_page', 'deletePage')
 		),
@@ -105,7 +105,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = array
 		(
 			'label'               => &$GLOBALS['TL_LANG']['tl_survey_page']['show'],
 			'href'                => 'act=show',
-			'icon'                => 'show.gif'
+			'icon'                => 'show.svg'
 		)
 	)
 );
@@ -237,7 +237,7 @@ class tl_survey_page extends Backend
 	{
 		if ($this->hasData())
 		{
-			return $this->generateImage(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
+			return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 		}
 		else
 		{
@@ -259,7 +259,7 @@ class tl_survey_page extends Backend
 	{
 		if ($this->hasData())
 		{
-			return $this->generateImage(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
+			return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 		}
 		else
 		{
@@ -281,7 +281,7 @@ class tl_survey_page extends Backend
 	{
 		if ($this->hasData())
 		{
-			return $this->generateImage(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
+			return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 		}
 		else
 		{
@@ -303,7 +303,7 @@ class tl_survey_page extends Backend
 	{
 		if ($this->hasData())
 		{
-			return $this->generateImage(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
+			return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 		}
 		else
 		{

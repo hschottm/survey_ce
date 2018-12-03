@@ -2,6 +2,8 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\DataContainer;
+
 /**
  * Class SurveyResultDetails
  *
@@ -46,7 +48,7 @@ class SurveyResultDetails extends \Backend
 		$parent = $this->Database->prepare("SELECT pid FROM tl_survey_page WHERE id = ?")
 			->execute($qtype['pid'])
 			->fetchAssoc();
-		$class = "SurveyQuestion" . ucfirst($qtype["questiontype"]);
+		$class = "Hschottm\\SurveyBundle\\SurveyQuestion" . ucfirst($qtype["questiontype"]);
 		$this->loadLanguageFile("tl_survey_result");
 		$this->loadLanguageFile("tl_survey_question");
 		$this->Template = new \BackendTemplate('be_question_result_details');
@@ -88,10 +90,12 @@ class SurveyResultDetails extends \Backend
 			->execute(\Input::get('id'));
 		$data = array();
 		$abs_question_no = 0;
+
 		while ($row = $objQuestion->fetchAssoc())
 		{
 			$abs_question_no++;
-			$class = "SurveyQuestion" . ucfirst($row['questiontype']);
+			$class = "Hschottm\\SurveyBundle\\SurveyQuestion"  . ucfirst($row['questiontype']);
+
 			if ($this->classFileExists($class))
 			{
 				$this->import($class);
@@ -110,7 +114,7 @@ class SurveyResultDetails extends \Backend
 				));
 			}
 		}
-		$this->Template = new BackendTemplate('be_survey_result_cumulated');
+		$this->Template = new \BackendTemplate('be_survey_result_cumulated');
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
 		$this->Template->hrefBack = \Environment::get('script') . '?do=' . \Input::get('do');
 		$hrefExport = \Environment::get('script') . '?do=' . \Input::get('do');

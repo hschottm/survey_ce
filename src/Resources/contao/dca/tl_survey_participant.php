@@ -14,10 +14,12 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = array
 		'doNotCopyRecords'            => true,
 		'enableVersioning'            => true,
 		'closed'                      => true,
-		'ondelete_callback' => array
-		(
-			array('tl_survey_participant','deleteParticipant')
-		),
+    'onload_callback'   => [
+        ['tl_survey_participant', 'checkPermission'],
+    ],
+    'ondelete_callback'   => [
+        ['tl_survey_participant', 'deleteParticipant'],
+    ],
 		'sql' => array
 		(
 			'keys' => array
@@ -66,14 +68,14 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_survey_participant']['delete'],
 				'href'                => 'act=delete',
-				'icon'                => 'delete.gif',
+				'icon'                => 'delete.svg',
 				'attributes'          => 'onclick="if (!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\')) return false; Backend.getScrollOffset();"'
 			),
 			'show' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_survey_participant']['show'],
 				'href'                => 'act=show',
-				'icon'                => 'show.gif'
+				'icon'                => 'show.svg'
 			)
 		)
 	),
@@ -152,32 +154,71 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = array
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  * @package    Controller
  */
-class tl_survey_participant extends Backend
+class tl_survey_participant extends \Backend
 {
 	protected $pageCount = null;
-	
+
+  /**
+   * Check permissions to edit table tl_survey_participant
+   *
+   * @throws Contao\CoreBundle\Exception\AccessDeniedException
+   */
+  public function checkPermission()
+  {
+      switch (\Input::get('act'))
+      {
+          case 'select':
+          case 'show':
+          case 'edit':
+          case 'delete':
+          case 'toggle':
+              // Allow
+              break;
+          case 'editAll':
+          case 'deleteAll':
+          case 'overrideAll':
+              /** @var Symfony\Component\HttpFoundation\Session\SessionInterface $objSession */
+              $objSession = \System::getContainer()->get('session');
+              $session = $objSession->all();
+              $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy('pid', \Input::get('id'));
+              if (null != $res && $res->numRows > 1)
+              {
+                $session['CURRENT']['IDS'] = array_values($res->fetchEach('id'));
+                $objSession->replace($session);
+              }
+              break;
+          default:
+              if (\strlen(\Input::get('act')))
+              {
+                  throw new Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "' . \Input::get('act') . '.');
+              }
+              break;
+      }
+  }
+
 	public function deleteParticipant($dc)
 	{
-		$objResult = $this->Database->prepare("SELECT * FROM " . $dc->table . " WHERE (id=?)")
-			->execute($dc->id);
-		if ($objResult->next())
-		{
-			setcookie('TLsvy_' . $objResult->pid, $objResult->pin, time()-3600, "/");
-			$objDelete = $this->Database->prepare("DELETE FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)")
-				->execute($objResult->pid, $objResult->pin);
-			$objDelete = $this->Database->prepare("DELETE FROM tl_survey_result WHERE (pid=? AND pin=?)")
-				->execute($objResult->pid, $objResult->pin);
-		}
+    $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy('id',$dc->id);
+    if (null != $res)
+    {
+      setcookie('TLsvy_' . $objResult->pid, $objResult->pin, time()-3600, "/");
+			$objDelete = $this->Database->prepare("DELETE FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)")->execute($objResult->pid, $objResult->pin);
+			$objDelete = $this->Database->prepare("DELETE FROM tl_survey_result WHERE (pid=? AND pin=?)")->execute($objResult->pid, $objResult->pin);
+    }
 	}
-	
+
 	public function getUsername($uid)
 	{
-		$data = $this->Database->prepare("SELECT * FROM tl_member WHERE (id=?)")
-			->execute($uid)
-			->fetchAssoc();
-		return trim($data["firstname"] . " " . $data["lastname"]);
+    $user = \Contao\MemberModel::findOneBy('id', $uid);
+    if (null != $user)
+    {
+      return trim($user->firstname . " " . $user->lastname);
+    }
+    else {
+      return "";
+    }
 	}
-	
+
 	public function getLabel($row, $label)
 	{
 		// we ignore the label param, the row has it all
@@ -203,18 +244,19 @@ class tl_survey_participant extends Backend
 	 * @param int
 	 * @return int
 	 */
-	protected function getPageCount($survey_id) 
+	protected function getPageCount($survey_id)
 	{
 		if (!isset($this->pageCount))
 		{
-			$objCount = $this->Database->prepare("
-					SELECT COUNT(*) AS pagecount
-					FROM   tl_survey_page
-					WHERE  pid=?
-				")->execute($survey_id);
-			$this->pageCount = $objCount->pagecount;
+      $res = \Hschottm\SurveyBundle\SurveyPageModel::findBy('pid', $survey_id);
+      if (null != $res)
+      {
+        $this->pageCount = $res->numRows;
+      }
+      else {
+        $this->pageCount = 0;
+      }
 		}
 		return $this->pageCount;
 	}
 }
-
