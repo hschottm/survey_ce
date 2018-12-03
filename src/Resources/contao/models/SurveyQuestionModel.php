@@ -31,3 +31,5 @@ class SurveyQuestionModel extends Model
       return $result;
   }
 }
+
+class_alias(SurveyQuestionModel::class, 'SurveyQuestionModel');

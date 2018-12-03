@@ -13,3 +13,5 @@ class SurveyParticipantModel extends Model
 	 */
 	protected static $strTable = 'tl_survey_participant';
 }
+
+class_alias(SurveyParticipantModel::class, 'SurveyParticipantModel');

@@ -13,3 +13,5 @@ class SurveyPageModel extends Model
 	 */
 	protected static $strTable = 'tl_survey_page';
 }
+
+class_alias(SurveyPageModel::class, 'SurveyPageModel');

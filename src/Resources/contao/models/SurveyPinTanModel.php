@@ -13,3 +13,5 @@ class SurveyPinTanModel extends Model
 	 */
 	protected static $strTable = 'tl_survey_pin_tan';
 }
+
+class_alias(SurveyPinTanModel::class, 'SurveyPinTanModel');
