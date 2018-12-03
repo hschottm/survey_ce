@@ -2,6 +2,8 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\DataContainer;
+
 /**
  * Class SurveyPINTAN
  *
@@ -143,7 +145,7 @@ class SurveyPINTAN extends \Backend
 		}
 
 		$this->loadLanguageFile("tl_survey_pin_tan");
-		$this->Template = new BackendTemplate('be_survey_create_tan');
+		$this->Template = new \BackendTemplate('be_survey_create_tan');
 
 		$this->Template->nrOfTAN = $this->getTANWidget();
 
@@ -157,7 +159,7 @@ class SurveyPINTAN extends \Backend
 		if (\Input::post('FORM_SUBMIT') == 'tl_export_survey_pin_tan' && $this->blnSave)
 		{
 			$nrOfTAN = $this->Template->nrOfTAN->value;
-			$this->import('Survey', 'svy');
+      $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 			for ($i = 0; $i < ceil($nrOfTAN); $i++)
 			{
 				$pintan = $this->svy->generatePIN_TAN();
@@ -165,7 +167,7 @@ class SurveyPINTAN extends \Backend
 				$objResult = $this->Database->prepare("INSERT INTO tl_survey_pin_tan (tstamp, pid, pin, tan) VALUES (?, ?, ?, ?)")
 					->execute(time(), \Input::get('id'), $pintan["PIN"], $pintan["TAN"]);
 			}
-			$this->redirect(str_replace('&key=createtan', '', \Environment::get('request')));
+      $this->redirect(\Backend::addToUrl("", true, ['key']));
 		}
 		return $this->Template->parse();
 	}
@@ -178,7 +180,7 @@ class SurveyPINTAN extends \Backend
 	protected function getSurveyPageWidget($value=null)
 	{
 		$this->import('tl_survey_pin_tan');
-		$widget = new PageTree($this->prepareForWidget($GLOBALS['TL_DCA']['tl_survey_pin_tan']['fields']['surveyPage'], 'surveyPage', $value, 'surveyPage', 'tl_survey_pin_tan'));
+		$widget = new \PageTree($this->prepareForWidget($GLOBALS['TL_DCA']['tl_survey_pin_tan']['fields']['surveyPage'], 'surveyPage', $value, 'surveyPage', 'tl_survey_pin_tan'));
 		if ($GLOBALS['TL_CONFIG']['showHelp'] && strlen($GLOBALS['TL_LANG']['tl_survey_pin_tan']['surveyPage'][1]))
 		{
 			$widget->help = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['surveyPage'][1];
@@ -205,7 +207,7 @@ class SurveyPINTAN extends \Backend
 	 */
 	protected function getTANWidget($value=null)
 	{
-		$widget = new TextField();
+		$widget = new \TextField();
 
 		$widget->id = 'nrOfTAN';
 		$widget->name = 'nrOfTAN';

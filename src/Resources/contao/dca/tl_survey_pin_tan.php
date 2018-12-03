@@ -160,7 +160,7 @@ class tl_survey_pin_tan extends Backend
 		}
 		else
 		{
-			$used = '<img src="system/modules/survey_ce/assets/tan_new.png" alt="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] . '" title="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] . '" />';
+			$used = '<img src="bundles/hschottmsurvey/images/tan_new.png" alt="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] . '" title="' . $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] . '" />';
 		}
 		return sprintf('<div>%s <strong>%s</strong> (%s)</div>', $used, $matches[1], $matches[2]);
 	}
