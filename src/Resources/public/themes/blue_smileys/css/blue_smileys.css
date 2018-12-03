@@ -30,16 +30,16 @@ input[type="submit"]{width:100%;color:white;background-color:#000098;border-top:
 .matrix table{width:100%;}
 .matrix td{vertical-align:middle;border-top:0px solid #ddd;border-right:0px solid #ddd;border-bottom:1px solid #ddd;border-left:0px solid #ddd;}
 .matrix td.id-1,.matrix td.id-2,.matrix td.id-3,.matrix td.id-4,.matrix td.n-x{height:36px;text-align:center;font-size:0px;color:#fff;width:6% !important;}
-.matrix .columnheader.id-1{background:url("files/survey/blue_smileys/smiley_laugh.png") center top no-repeat;}
-.matrix .columnheader.id-2{background:url("files/survey/blue_smileys/smiley_smile.png") center top no-repeat;}
-.matrix .columnheader.id-3{background:url("files/survey/blue_smileys/smiley_indifferent.png") center top no-repeat;}
-.matrix .columnheader.id-4{background:url("files/survey/blue_smileys/smiley_sad.png") center top no-repeat;}
-.matrix .columnheader .n-x{background:url("files/survey/blue_smileys/smiley_neutral.png") center top no-repeat;}
+.matrix .columnheader.id-1{background:url("../images/smiley_laugh.png") center top no-repeat;}
+.matrix .columnheader.id-2{background:url("../images/smiley_smile.png") center top no-repeat;}
+.matrix .columnheader.id-3{background:url("../images/smiley_indifferent.png") center top no-repeat;}
+.matrix .columnheader.id-4{background:url("../images/smiley_sad.png") center top no-repeat;}
+.matrix .columnheader .n-x{background:url("../images/smiley_neutral.png") center top no-repeat;}
 .matrix td.rowtext{margin-left:0;padding-left:0;width:70% !important;}
 .matrix .leftadjective,.matrix .rightadjective{text-align:center;vertical-align:middle;background-color:#DBDEF2;}
 .openended textarea{width:100%;margin-left:24px;background-color:#DBDEF2;}
 .openended input{margin-left:24px;background-color:#DBDEF2;}
 .question p.explanation{margin-bottom:12px;font-style:italic;color:#0A1F67;}
-.progressbar_container{width:714px;height:20px;margin-bottom:24px;background:url("files/survey/blue_smileys/progressbar_container.png") left center no-repeat;}
-.progressbar{text-align:center;background:url("files/survey/blue_smileys/progressbar.png") left bottom no-repeat;}
+.progressbar_container{width:714px;height:20px;margin-bottom:24px;background:url("../images/progressbar_container.png") left center no-repeat;}
+.progressbar{text-align:center;background:url("../images/progressbar.png") left bottom no-repeat;}
 .progressbar span{font-style:italic;font-size:6px;color:#8489cc;line-height:11px;}

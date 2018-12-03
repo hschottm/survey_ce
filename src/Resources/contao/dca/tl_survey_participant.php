@@ -17,9 +17,10 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = array
     'onload_callback'   => [
         ['tl_survey_participant', 'checkPermission'],
     ],
-    'ondelete_callback'   => [
-        ['tl_survey_participant', 'deleteParticipant'],
-    ],
+    'ondelete_callback' => array
+		(
+			array('tl_survey_participant', 'deleteParticipant')
+		),
 		'sql' => array
 		(
 			'keys' => array
@@ -181,7 +182,7 @@ class tl_survey_participant extends \Backend
               $objSession = \System::getContainer()->get('session');
               $session = $objSession->all();
               $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy('pid', \Input::get('id'));
-              if (null != $res && $res->numRows > 1)
+              if (null != $res && $res->count() >= 1)
               {
                 $session['CURRENT']['IDS'] = array_values($res->fetchEach('id'));
                 $objSession->replace($session);
@@ -201,9 +202,9 @@ class tl_survey_participant extends \Backend
     $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy('id',$dc->id);
     if (null != $res)
     {
-      setcookie('TLsvy_' . $objResult->pid, $objResult->pin, time()-3600, "/");
-			$objDelete = $this->Database->prepare("DELETE FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)")->execute($objResult->pid, $objResult->pin);
-			$objDelete = $this->Database->prepare("DELETE FROM tl_survey_result WHERE (pid=? AND pin=?)")->execute($objResult->pid, $objResult->pin);
+      setcookie('TLsvy_' . $res->pid, $res->pin, time()-3600, "/");
+			$objDelete = $this->Database->prepare("DELETE FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)")->execute($res->pid, $res->pin);
+			$objDelete = $this->Database->prepare("DELETE FROM tl_survey_result WHERE (pid=? AND pin=?)")->execute($res->pid, $res->pin);
     }
 	}
 
@@ -251,7 +252,7 @@ class tl_survey_participant extends \Backend
       $res = \Hschottm\SurveyBundle\SurveyPageModel::findBy('pid', $survey_id);
       if (null != $res)
       {
-        $this->pageCount = $res->numRows;
+        $this->pageCount = $res->count();
       }
       else {
         $this->pageCount = 0;

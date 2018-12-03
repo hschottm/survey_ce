@@ -667,14 +667,15 @@ class tl_survey_question extends Backend
 <a href="'.ampersand(str_replace('&key=scale', '', \Environment::get('request'))).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
 
-<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0].'</h2>'.$this->getMessages().'
+'.$this->getMessages().'
 
 <form action="'.ampersand(\Environment::get('request'), ENCODE_AMPERSANDS).'" id="tl_add_scale" class="tl_form" method="post">
 <div class="tl_formbody_edit">
 <input type="hidden" name="FORM_SUBMIT" value="tl_add_scale" />
 <input type="hidden" name="REQUEST_TOKEN" value="' . REQUEST_TOKEN . '" />
-
-<div class="tl_tbox">
+<fieldset id="pal_scale_legend" class="tl_tbox">
+  <legend>'.$GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0].'</legend>
+  <div class="widget">
   <h3><label for="scale">'.$GLOBALS['TL_LANG']['tl_survey_question']['scale'][0].'</label></h3>
   <select name="scale" id="scale" class="tl_select" onfocus="Backend.getScrollOffset();">
 		<option value="-">-</option>\n';
@@ -693,6 +694,7 @@ class tl_survey_question extends Backend
 		$result .= '  </select>'.(strlen($GLOBALS['TL_LANG']['tl_survey_question']['scale'][1]) ? '
   <p class="tl_help">'.$GLOBALS['TL_LANG']['tl_survey_question']['scale'][1].'</p>' : '').'
 </div>
+</fieldset>
 
 </div>
 

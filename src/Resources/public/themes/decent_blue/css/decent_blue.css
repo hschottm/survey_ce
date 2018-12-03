@@ -79,7 +79,7 @@
 
 .ce_survey .submit_container .left {
 	float:left;
-	width:32%; 
+	width:32%;
  }
 .ce_survey .submit_container .middle {
 	margin-right: 32%;
@@ -88,7 +88,7 @@
  }
 .ce_survey .submit_container .right {
 	float:right;
-	width:32%; 
+	width:32%;
 	text-align: right;
  }
 
@@ -101,17 +101,17 @@
 	margin:5px 0;
 	color: #e65d49;
 	font-weight: bold;
-	background: transparent url(files/survey/images/exclamation.png) no-repeat left top;
+	background: transparent url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMC8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvVFIvMjAwMS9SRUMtU1ZHLTIwMDEwOTA0L0RURC9zdmcxMC5kdGQnPjxzdmcgaGVpZ2h0PSIzMiIgc3R5bGU9Im92ZXJmbG93OnZpc2libGU7ZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAzMiAzMiIgdmlld0JveD0iMCAwIDMyIDMyIiB3aWR0aD0iMzIiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxnPjxnIGlkPSJFcnJvcl8xXyI+PGcgaWQ9IkVycm9yIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiBpZD0iQkciIHI9IjE2IiBzdHlsZT0iZmlsbDojRDcyODI4OyIvPjxwYXRoIGQ9Ik0xNC41LDI1aDN2LTNoLTNWMjV6IE0xNC41LDZ2MTNoM1Y2SDE0LjV6IiBpZD0iRXhjbGFtYXRvcnlfeDVGX1NpZ24iIHN0eWxlPSJmaWxsOiNFNkU2RTY7Ii8+PC9nPjwvZz48L2c+PC9zdmc+") no-repeat left top;
 }
 
 .progressbar_container {
-	background: url(files/survey/images/percentage-bg.png) no-repeat left center;
+	background: url("../images/percentage-bg.png") no-repeat left center;
 	width: 316px;
 	height: 39px;
 	margin: 0 auto;
 }
 .progressbar {
-	background: url(files/survey/images/progress.png) no-repeat left center;
+	background: url("../images/progress.png") no-repeat left center;
 	width:  0%;
 	height:  39px;
 }
@@ -152,8 +152,8 @@
 	padding: 0.25em 0.5em;
 }
 
-.surveyblock .help { 
-	font-size: 80%; 
+.surveyblock .help {
+	font-size: 80%;
 	font-weight: normal;
 }
 
