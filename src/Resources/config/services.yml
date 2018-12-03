@@ -7,3 +7,13 @@ services:
         Symfony\Component\DependencyInjection\ContainerAwareInterface:
             calls:
                 - ["setContainer", ["@service_container"]]
+
+    contao_news.picker.news_provider:
+        class: Hschottm\SurveyBundle\Picker\SurveyPickerProvider
+        arguments:
+            - "@knp_menu.factory"
+            - "@router"
+        calls:
+            - [setTokenStorage, ["@security.token_storage"]]
+        tags:
+            - { name: contao.picker_provider, priority: 128 }
