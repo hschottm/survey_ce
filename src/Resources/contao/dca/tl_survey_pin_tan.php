@@ -34,7 +34,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = array
 			'mode'                    => 2,
 			'fields'                  => array('tan'),
 			'flag'                    => 1,
-			'panelLayout'             => 'sort,filter,search;limit'
+			'panelLayout'             => 'filter;sort,search,limit'
 		),
 		'label' => array
 		(
