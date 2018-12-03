@@ -221,7 +221,6 @@ class ContentSurvey extends \ContentElement
       }
 			if (strlen($pages[$page-1]['page_template'])) $this->questionblock_template = $pages[$page-1]['page_template'];
 		}
-
 		$questionBlockTemplate = new \FrontEndTemplate($this->questionblock_template);
 		$questionBlockTemplate->surveypage = $surveypage;
 
