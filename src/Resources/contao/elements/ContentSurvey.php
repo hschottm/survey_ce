@@ -172,7 +172,7 @@ class ContentSurvey extends \ContentElement
 					}
 					break;
 				case 'nonanoncode':
-          $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::fetchOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
+          $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
           if (null != $participant)
           {
             if (!$participant->uid)
@@ -424,12 +424,12 @@ class ContentSurvey extends \ContentElement
 				{
 					case 'anon':
 					case 'anoncode':
-            $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::fetchOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
+            $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
             $participant->finished = 1;
             $participant->save();
 						break;
 					case 'nonanoncode':
-            $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::fetchOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
+            $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
             $participant->finished = 1;
             $participant->save();
 						break;

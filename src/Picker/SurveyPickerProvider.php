@@ -15,7 +15,7 @@ use Contao\NewsModel;
  *
  * @author Andreas Schempp <https://github.com/aschempp>
  */
-class NewsPickerProvider extends AbstractPickerProvider implements DcaPickerProviderInterface, FrameworkAwareInterface
+class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerProviderInterface, FrameworkAwareInterface
 {
     use FrameworkAwareTrait;
 
