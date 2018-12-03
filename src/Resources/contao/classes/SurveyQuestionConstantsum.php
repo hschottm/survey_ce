@@ -59,7 +59,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 	{
 		if (is_array($this->statistics["cumulated"]))
 		{
-			$template = new FrontendTemplate('survey_answers_constantsum');
+			$template = new \FrontendTemplate('survey_answers_constantsum');
 			$template->choices = deserialize($this->arrData['sumchoices'], true);
 			$template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
 			$template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];

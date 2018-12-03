@@ -114,7 +114,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 	{
 		if (is_array($this->statistics["cumulated"]))
 		{
-			$template = new FrontendTemplate('survey_answers_multiplechoice');
+			$template = new \FrontendTemplate('survey_answers_multiplechoice');
 			$template->statistics = $this->statistics;
 			$template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
 			$template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];

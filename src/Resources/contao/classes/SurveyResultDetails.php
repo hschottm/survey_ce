@@ -53,7 +53,7 @@ class SurveyResultDetails extends \Backend
 		$this->loadLanguageFile("tl_survey_question");
 		$this->Template = new \BackendTemplate('be_question_result_details');
 		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-		$this->Template->hrefBack = \Environment::get('script') . '?do=' . \Input::get('do') . '&amp;key=cumulated&amp;id=' . $parent['pid'];
+    $this->Template->hrefBack = \Backend::addToUrl("key=cumulated&amp;id=" . $qtype['pid'], true, ['key','id']);
 		if ($this->classFileExists($class))
 		{
 			$this->import($class);
@@ -101,8 +101,7 @@ class SurveyResultDetails extends \Backend
 				$this->import($class);
 				$question = new $class();
 				$question->data = $row;
-				$strUrl = \Environment::get('script') . '?do=' . \Input::get('do');
-				$strUrl .= '&amp;key=details&amp;id=' . $question->id;
+        $strUrl = \Backend::addToUrl("key=details&amp;id=" . $question->id, true, ['key','id']);
 				array_push($data, array(
 					'number' => $abs_question_no,
 					'title' => specialchars($row['title']),
@@ -115,12 +114,10 @@ class SurveyResultDetails extends \Backend
 			}
 		}
 		$this->Template = new \BackendTemplate('be_survey_result_cumulated');
-		$this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-		$this->Template->hrefBack = \Environment::get('script') . '?do=' . \Input::get('do');
-		$hrefExport = \Environment::get('script') . '?do=' . \Input::get('do');
-		$hrefExport .= '&amp;key=export&amp;id=' . \Input::get('id');
+    $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
+		$this->Template->hrefBack = \Backend::addToUrl("", true, ['key','id']);
 		$this->Template->export = $GLOBALS['TL_LANG']['tl_survey_result']['export'];
-		$this->Template->hrefExport = $hrefExport;
+    $this->Template->hrefExport = \Backend::addToUrl("key=export&amp;id=" . \Input::get('id'), true, ['key','id']);
 		$this->Template->heading = specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
 		$this->Template->summary = 'cumulated results';
 		$this->Template->data = $data;
@@ -320,7 +317,9 @@ class SurveyResultDetails extends \Backend
 			}
 			exit;
 		}
-		$this->redirect(\Environment::get('script') . '?do=' . \Input::get('do'));
+    //$href = str_replace(\Environment::get('queryString'), '', \Environment::get('requestUri')) . ((strlen(\Environment::get('queryString'))) ? '' : '?') . 'do=' . \Input::get('do');
+    $href = \Backend::addToUrl("", true, ['key','id']);
+		$this->redirect($href);
 	}
 
 	protected function safefilename($filename)

@@ -38,7 +38,7 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = array
 			'mode'                    => 2,
 			'fields'                  => array('lastpage', 'tstamp'),
 			'flag'                    => 11, // sort ASC ungrouped  on initial display
-			'panelLayout'             => 'sort,filter,limit'
+			'panelLayout'             => 'filter;sort,limit'
 		),
 		'label' => array
 		(

@@ -70,16 +70,18 @@ table.tl_cumulated {
 /* Icons header */
 .header_export
 {
-	padding:2px 0 3px 20px;
+  padding: 3px 0 3px 21px;
 	background-image:url("../images/export.png");
 	background-position:left center;
 	background-repeat:no-repeat;
+  margin-left: 15px;
 }
 
 .header_createtan
 {
-	padding:2px 0 3px 20px;
+  padding: 3px 0 3px 21px;
 	background-image:url("../images/createtan.png");
 	background-position:left center;
 	background-repeat:no-repeat;
+  margin-left: 15px;
 }
