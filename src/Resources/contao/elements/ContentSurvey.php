@@ -20,7 +20,7 @@ class ContentSurvey extends \ContentElement
 	 * @var string
 	 */
 	protected $strTemplate = 'ce_survey';
-	protected $objSurvey = null;
+	protected $surveyModel = null;
 	protected $questionblock_template = 'survey_questionblock';
 	protected $pin;
 	private $questionpositions;
@@ -89,7 +89,8 @@ class ContentSurvey extends \ContentElement
 			return;
 		}
 
-    $pages = \Hschottm\SurveyBundle\SurveyPageModel::findBy('pid', $surveyId, ['order' => 'sorting']);
+    $pages = \Hschottm\SurveyBundle\SurveyPageModel::findBy('pid', $surveyID, ['order' => 'sorting']);
+
     if (null === $pages) {
         $pages = [];
     } else {
@@ -269,8 +270,9 @@ class ContentSurvey extends \ContentElement
         return [];
     }
 
-		foreach ($questions as $question)
+		foreach ($questions as $questionModel)
 		{
+      $question = $questionModel->row();
 			$strClass = $GLOBALS['TL_SVY'][$question['questiontype']];
 			// Continue if the class is not defined
 			if (!$this->classFileExists($strClass))
