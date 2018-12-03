@@ -97,7 +97,7 @@
 }
 
 .ce_survey p.error, .ce_survey .tl_error {
-	padding:2px 0 5px 20px;
+  padding:2px 0 15px 40px;
 	margin:5px 0;
 	color: #e65d49;
 	font-weight: bold;
