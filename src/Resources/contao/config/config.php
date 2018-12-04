@@ -40,9 +40,7 @@ array_insert($GLOBALS['BE_MOD'], 3, array
 					'createtan' => array(SurveyPINTAN::class, 'createTAN'),
 					'exporttan' => array(SurveyPINTAN::class, 'exportTAN'),
 					'cumulated' => array(SurveyResultDetails::class, 'showCumulated'),
-					'details' => array(SurveyResultDetails::class, 'showDetails'),
-					'icon' => 'bundles/hschottmsurvey/images/survey.png',
-					'stylesheet' => 'bundles/hschottmsurvey/css/survey.css'
+					'details' => array(SurveyResultDetails::class, 'showDetails')
 				),
 			"scale" => array(
 					"tables" => array(
@@ -52,6 +50,11 @@ array_insert($GLOBALS['BE_MOD'], 3, array
 				)
 		)
 ));
+
+if (TL_MODE == 'BE')
+{
+	$GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/survey.css|static';
+}
 
 $GLOBALS['BE_MOD']['surveys']['survey']['exportraw'] = array(SurveyResultDetailsEx::class, 'exportResultsRaw');
 

@@ -67,6 +67,9 @@ table.tl_cumulated {
 	text-align: center;
 }
 
+#tl_navigation .group-surveys {
+    background: url(../images/survey-outline.svg) 3px 2px no-repeat;
+}
 /* Icons header */
 .header_export
 {
