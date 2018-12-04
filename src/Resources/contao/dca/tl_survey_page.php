@@ -241,7 +241,7 @@ class tl_survey_page extends Backend
 		}
 		else
 		{
-			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 		}
 	}
 
@@ -263,7 +263,7 @@ class tl_survey_page extends Backend
 		}
 		else
 		{
-			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 		}
 	}
 
@@ -285,7 +285,7 @@ class tl_survey_page extends Backend
 		}
 		else
 		{
-			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 		}
 	}
 
@@ -307,7 +307,7 @@ class tl_survey_page extends Backend
 		}
 		else
 		{
-			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+			return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 		}
 	}
 }

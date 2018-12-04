@@ -22,7 +22,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 	{
 		if (array_key_exists("id", $this->arrData) && array_key_exists("parentID", $this->arrData))
 		{
-			$objResult = $this->Database->prepare("SELECT * FROM tl_survey_result WHERE qid=? AND pid=?")
+			$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_survey_result WHERE qid=? AND pid=?")
 				->execute($this->arrData["id"], $this->arrData["parentID"]);
 			if ($objResult->numRows)
 			{
@@ -121,13 +121,13 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 			$template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
 			$template->choices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
 			$template->other = ($this->arrData['addother']) ? true : false;
-			$template->othertitle = specialchars($this->arrData['othertitle']);
+			$template->othertitle = \StringUtil::specialchars($this->arrData['othertitle']);
 			$otherchoices = array();
 			if (count($this->statistics['cumulated']['other']))
 			{
 				foreach ($this->statistics['cumulated']['other'] as $value)
 				{
-					$otherchoices[specialchars($value)]++;
+					$otherchoices[\StringUtil::specialchars($value)]++;
 				}
 			}
 			$template->otherchoices = $otherchoices;

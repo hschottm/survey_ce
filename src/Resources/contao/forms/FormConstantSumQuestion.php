@@ -122,8 +122,8 @@ class FormConstantSumQuestion extends FormQuestionWidget
 		$template = new \FrontendTemplate('survey_question_constantsum');
 		$template->choices = $this->arrChoices;
 		$template->blnInputFirst = $this->blnInputFirst;
-		$template->name = specialchars($this->strName);
-		$template->ctrl_id = specialchars($this->strId);
+		$template->name = \StringUtil::specialchars($this->strName);
+		$template->ctrl_id = \StringUtil::specialchars($this->strId);
 		$template->ctrl_class = (strlen($this->strClass) ? ' ' . $this->strClass : '');
 		$template->values = $this->varValue;
 		$widget = $template->parse();

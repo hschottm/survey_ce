@@ -21,9 +21,8 @@ class SurveyQuestionPreview extends \Backend
 
 	protected function getQuestionNumber($row)
 	{
-		$objElements = $this->Database->prepare("SELECT * FROM tl_survey_question WHERE (pid=? AND sorting <= ?)")
-			->execute($row["pid"], $row["sorting"]);
-		return $objElements->numRows;
+    $surveyQuestionCollection = \Hschottm\SurveyBundle\SurveyQuestionModel::findBy(['pid=?', 'sorting<=?'], [$row["pid"], $row["sorting"]]);
+    return (null != $surveyQuestionCollection) ? $surveyQuestionCollection->count() : 0;
 	}
 
 	/**
@@ -45,9 +44,9 @@ class SurveyQuestionPreview extends \Backend
 
 		$template = new \FrontendTemplate('be_survey_question_preview');
 		$template->hidetitle = $row['hidetitle'];
-		$template->help = specialchars($row['help']);
+		$template->help = \StringUtil::specialchars($row['help']);
 		$template->questionNumber = $this->getQuestionNumber($row);
-		$template->title = specialchars($row['title']);
+		$template->title = \StringUtil::specialchars($row['title']);
 		$template->obligatory = $row['obligatory'];
 		$template->question = $row['question'];
 		$return = $template->parse();

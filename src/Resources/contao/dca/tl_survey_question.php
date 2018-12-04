@@ -615,7 +615,7 @@ class tl_survey_question extends Backend
 			->execute($dc->id);
 		if (strcmp($objQuestion->multiplechoice_subtype, 'mc_singleresponse') == 0)
 		{
-			return '<a class="tl_submit" style="margin-top: 10px;" href="' . $this->addToUrl('key=scale') . '" title="' . specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]) . '" onclick="Backend.getScrollOffset();">' . specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]) . '</a>';
+			return '<a class="tl_submit" style="margin-top: 10px;" href="' . $this->addToUrl('key=scale') . '" title="' . \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]) . '" onclick="Backend.getScrollOffset();">' . \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]) . '</a>';
 		}
 		return '';
 	}
@@ -664,7 +664,7 @@ class tl_survey_question extends Backend
 		// Return form
 		$result = '
 <div id="tl_buttons">
-<a href="'.ampersand(str_replace('&key=scale', '', \Environment::get('request'))).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+<a href="'.ampersand(str_replace('&key=scale', '', \Environment::get('request'))).'" class="header_back" title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
 
 '.$this->getMessages().'
@@ -685,9 +685,9 @@ class tl_survey_question extends Backend
 			if (strcmp($scale['folder'], $lastfolder) != 0)
 			{
 				if (strlen($lastfolder)) $result .= '</optgroup>';
-				$result .= '<optgroup label="' . specialchars($scale['folder']) . '">';
+				$result .= '<optgroup label="' . \StringUtil::specialchars($scale['folder']) . '">';
 			}
-			$result .= '<option value="' . specialchars($id) . '">' . specialchars($scale['title']) . '</option>\n';
+			$result .= '<option value="' . \StringUtil::specialchars($id) . '">' . \StringUtil::specialchars($scale['title']) . '</option>\n';
 			$lastfolder = $scale['folder'];
 		}
 		$result .= '</optgroup>';
@@ -701,7 +701,7 @@ class tl_survey_question extends Backend
 <div class="tl_formbody_submit">
 
 <div class="tl_submit_container">
-<input type="submit" name="save" id="save" class="tl_submit" alt="add scale" accesskey="s" value="'.specialchars($GLOBALS['TL_LANG']['tl_survey_question']['save_add_scale']).'" />
+<input type="submit" name="save" id="save" class="tl_submit" alt="add scale" accesskey="s" value="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['save_add_scale']).'" />
 </div>
 
 </div>

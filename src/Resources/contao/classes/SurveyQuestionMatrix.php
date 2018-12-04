@@ -22,7 +22,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
 	{
 		if (array_key_exists("id", $this->arrData) && array_key_exists("parentID", $this->arrData))
 		{
-			$objResult = $this->Database->prepare("SELECT * FROM tl_survey_result WHERE qid=? AND pid=?")
+			$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_survey_result WHERE qid=? AND pid=?")
 				->execute($this->arrData["id"], $this->arrData["parentID"]);
 			if ($objResult->numRows)
 			{

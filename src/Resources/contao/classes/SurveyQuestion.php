@@ -21,7 +21,6 @@ abstract class SurveyQuestion extends \Backend
 	public function __construct($question_id = 0)
 	{
 		parent::__construct();
-		$this->Database = \Database::getInstance(); // fix: in the backend this variable is empty but $this->arrObjects['Database'] is an object???
 		$this->loadLanguageFile("tl_survey_question");
 		$this->loadLanguageFile("tl_survey_result");
 		$this->objQuestion = NULL;
@@ -30,7 +29,7 @@ abstract class SurveyQuestion extends \Backend
 		$this->arrStatistics["skipped"] = 0;
 		if ($question_id > 0)
 		{
-			$objQuestion = $this->Database->prepare("SELECT tl_survey_question.*, tl_survey_page.title pagetitle, tl_survey_page.pid parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_question.id = ?")
+			$objQuestion = \Database::getInstance()->prepare("SELECT tl_survey_question.*, tl_survey_page.title pagetitle, tl_survey_page.pid parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_question.id = ?")
 				->execute($question_id);
 			if ($objQuestion->numRows)
 			{

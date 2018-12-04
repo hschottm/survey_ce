@@ -87,10 +87,10 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 
 	protected function setData_oe_singleline($varValue)
 	{
-		if (strlen($varValue['openended_width'])) $this->arrAttributes["size"] = specialchars($varValue['openended_width']);
-		if (strlen($varValue['openended_maxlen'])) $this->arrAttributes["maxlength"] = specialchars($varValue['openended_maxlen']);
-		if (strlen($varValue['openended_textinside'])) $this->arrAttributes["value"] = specialchars($varValue['openended_textinside']);
-		if (strlen($this->varValue)) $this->arrAttributes["value"] = specialchars($this->varValue);
+		if (strlen($varValue['openended_width'])) $this->arrAttributes["size"] = \StringUtil::specialchars($varValue['openended_width']);
+		if (strlen($varValue['openended_maxlen'])) $this->arrAttributes["maxlength"] = \StringUtil::specialchars($varValue['openended_maxlen']);
+		if (strlen($varValue['openended_textinside'])) $this->arrAttributes["value"] = \StringUtil::specialchars($varValue['openended_textinside']);
+		if (strlen($this->varValue)) $this->arrAttributes["value"] = \StringUtil::specialchars($this->varValue);
 	}
 
 	protected function setData_oe_integer($varValue)
@@ -115,8 +115,8 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 
 	protected function setData_oe_multiline($varValue)
 	{
-		if (strlen($varValue['openended_rows'])) $this->arrAttributes["rows"] = specialchars($varValue['openended_rows']);
-		if (strlen($varValue['openended_cols'])) $this->arrAttributes["cols"] = specialchars($varValue['openended_cols']);
+		if (strlen($varValue['openended_rows'])) $this->arrAttributes["rows"] = \StringUtil::specialchars($varValue['openended_rows']);
+		if (strlen($varValue['openended_cols'])) $this->arrAttributes["cols"] = \StringUtil::specialchars($varValue['openended_cols']);
 		if (!strlen($this->varValue)) if (strlen($varValue['openended_textinside'])) $this->varValue = $varValue['openended_textinside'];
 	}
 
@@ -165,8 +165,8 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 	public function generate()
 	{
 		$template = new \FrontendTemplate('survey_question_openended');
-		$template->ctrl_name = specialchars($this->strName);
-		$template->ctrl_id = specialchars($this->strId);
+		$template->ctrl_name = \StringUtil::specialchars($this->strName);
+		$template->ctrl_id = \StringUtil::specialchars($this->strId);
 		$template->ctrl_class = (strlen($this->strClass) ? ' ' . $this->strClass : '');
 		$template->multiLine = (strcmp($this->questiontype, "oe_multiline") == 0);
 		$template->singleLine = (strcmp($this->questiontype, "oe_singleline") == 0);

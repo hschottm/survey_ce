@@ -230,8 +230,8 @@ class ContentSurvey extends \ContentElement
 		$this->Template->survey_id = $this->objSurvey->id;
 		$this->Template->show_title = $this->objSurvey->show_title;
 		$this->Template->show_cancel = ($page > 0 && count($surveypage)) ? $this->objSurvey->show_cancel : false;
-		$this->Template->surveytitle = specialchars($this->objSurvey->title);
-		$this->Template->cancel = specialchars($GLOBALS['TL_LANG']['MSC']['cancel_survey']);
+		$this->Template->surveytitle = \StringUtil::specialchars($this->objSurvey->title);
+		$this->Template->cancel = \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['cancel_survey']);
 		global $objPage;
 		$this->Template->cancellink = $this->generateFrontendUrl($objPage->row());
 		$this->Template->allowback = $this->objSurvey->allowback;

@@ -63,7 +63,7 @@ class SurveyResultDetails extends \Backend
 			$this->Template->heading = sprintf($GLOBALS['TL_LANG']['tl_survey_result']['detailsHeading'], $qid);
 			$data = array();
 			array_push($data, array("key" => 'ID:', 'value' => $question->id, 'keyclass' => 'first', 'valueclass' => 'last'));
-			array_push($data, array("key" => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0].':', 'value' => specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$question->questiontype]), 'keyclass' => 'first tl_bg', 'valueclass' => 'last tl_bg'));
+			array_push($data, array("key" => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0].':', 'value' => \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$question->questiontype]), 'keyclass' => 'first tl_bg', 'valueclass' => 'last tl_bg'));
 			array_push($data, array("key" => $GLOBALS['TL_LANG']['tl_survey_question']['title'][0].':', 'value' => $question->title, 'keyclass' => 'first', 'valueclass' => 'last'));
 			array_push($data, array("key" => $GLOBALS['TL_LANG']['tl_survey_question']['question'][0].':', 'value' => $question->question, 'keyclass' => 'first tl_bg', 'valueclass' => 'last tl_bg'));
 			array_push($data, array("key" => $GLOBALS['TL_LANG']['tl_survey_question']['answered'].':', 'value' => $question->statistics["answered"], 'keyclass' => 'first', 'valueclass' => 'last'));
@@ -105,12 +105,12 @@ class SurveyResultDetails extends \Backend
         $strUrl = \Backend::addToUrl("key=details&amp;id=" . $question->id, true, ['key','id']);
 				array_push($data, array(
 					'number' => $abs_question_no,
-					'title' => specialchars($row['title']),
-					'type' => specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$row['questiontype']]),
+					'title' => \StringUtil::specialchars($row['title']),
+					'type' => \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$row['questiontype']]),
 					'answered' => $question->statistics["answered"],
 					'skipped' => $question->statistics["skipped"],
 					'hrefdetails' => $strUrl,
-					'titledetails' => specialchars(sprintf($GLOBALS['TL_LANG']['tl_survey_result']['details'][1], $question->id))
+					'titledetails' => \StringUtil::specialchars(sprintf($GLOBALS['TL_LANG']['tl_survey_result']['details'][1], $question->id))
 				));
 			}
 		}
@@ -119,7 +119,7 @@ class SurveyResultDetails extends \Backend
 		$this->Template->hrefBack = \Backend::addToUrl("", true, ['key','id']);
 		$this->Template->export = $GLOBALS['TL_LANG']['tl_survey_result']['export'];
     $this->Template->hrefExport = \Backend::addToUrl("key=export&amp;id=" . \Input::get('id'), true, ['key','id']);
-		$this->Template->heading = specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
+		$this->Template->heading = \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
 		$this->Template->summary = 'cumulated results';
 		$this->Template->data = $data;
 		$this->Template->imgdetails = 'bundles/hschottmsurvey/images/details.png';

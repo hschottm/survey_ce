@@ -121,11 +121,10 @@ class SurveyPINTAN extends \Backend
 					$xls->setcell(array('sheetname' => $sheet, 'row' => $intRowCounter, 'col' => $intColCounter, 'data' => $intRowCounter, 'color' => 'gray', 'type' => CELL_FLOAT));
 					$intRowCounter++;
 				}
-				$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
-					->execute(\Input::get('pid'));
-				if ($objSurvey->numRows == 1)
+        $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('pid'));
+				if (null != $surveyModel)
 				{
-					$xls->sendFile(\StringUtil::sanitizeFileName('TAN_' . htmlspecialchars_decode($objSurvey->title) . ".xls"));
+					$xls->sendFile(\StringUtil::sanitizeFileName('TAN_' . htmlspecialchars_decode($surveyModel->title) . ".xls"));
 				}
 				else
 				{
@@ -154,7 +153,7 @@ class SurveyPINTAN extends \Backend
 		$this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
 		$this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'];
 		$this->Template->request = ampersand(\Environment::get('request'), ENCODE_AMPERSANDS);
-		$this->Template->submit = specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
+		$this->Template->submit = \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
 
 		// Create import form
 		if (\Input::post('FORM_SUBMIT') == 'tl_export_survey_pin_tan' && $this->blnSave)
