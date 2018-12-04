@@ -131,12 +131,6 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = array
 			'eval'                    => array('mandatory'=>true, 'maxlength'=>16, 'insertTag'=>true),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'surveyPage' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['surveyPage'],
-			'inputType'               => 'pageTree',
-			'eval'                    => array('mandatory'=>false, 'fieldType' => 'radio')
-		),
 	)
 );
 

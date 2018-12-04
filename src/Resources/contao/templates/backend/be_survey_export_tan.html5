@@ -9,7 +9,7 @@
     <input type="hidden" name="REQUEST_TOKEN" value="<?php echo REQUEST_TOKEN; ?>" />
     <fieldset id="pal_exporttan_legend" class="tl_tbox">
     <legend><?php echo $this->headline; ?></legend>
-    <div class="widget block">
+    <div class="clr widget">
       <h3><?php echo $this->surveyPage->generateLabel(); if ($this->surveyPage->required): ?><span style="color:#ff0000;">*</span><?php endif; ?></h3>
       <?php echo $this->surveyPage->generateWithError(); if ($this->surveyPage->help): ?>
       <p class="tl_help tl_tip"><?php echo $this->surveyPage->help; ?></p><?php endif; ?>

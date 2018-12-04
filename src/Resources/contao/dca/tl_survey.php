@@ -280,6 +280,12 @@ $GLOBALS['TL_DCA']['tl_survey'] = array
 			'eval'                    => array('fieldType'=>'radio', 'helpwizard'=>true, 'tl_class'=>'clr'),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
+    'surveyPage' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['surveyPage'],
+			'inputType'               => 'pageTree',
+			'eval'                    => array('mandatory'=>false, 'fieldType' => 'radio')
+		),
 	)
 );
 

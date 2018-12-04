@@ -24,27 +24,34 @@ class SurveyPINTAN extends \Backend
 			return '';
 		}
 
+    if (\Input::get('table') === 'tl_survey_pin_tan')
+    {
+      $this->redirect(\Backend::addToUrl("table=tl_survey", true, ['table']));
+      return;
+    }
+
 		$this->loadLanguageFile("tl_survey_pin_tan");
 		$this->Template = new \BackendTemplate('be_survey_export_tan');
 
 		$this->Template->surveyPage = $this->getSurveyPageWidget();
 
-		$this->Template->hrefBack = ampersand(str_replace('&key=exporttan', '', \Environment::get('request')));
+		$this->Template->hrefBack = \Backend::addToUrl("table=tl_survey_pin_tan", true, ['table','key']);
 		$this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
 		$this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['exporttan'];
 		$this->Template->request = ampersand(str_replace('&id=', '&pid=', \Environment::get('request')));
-		$this->Template->submit = specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
+		$this->Template->submit = \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
 
 		// Create import form
 		if (\Input::post('FORM_SUBMIT') == 'tl_export_survey_pin_tan' && $this->blnSave)
 		{
 			$export = array();
 			$surveyPage = $this->Template->surveyPage->value;
-			$pagedata = ($surveyPage > 0) ? $this->Database->prepare("SELECT * FROM tl_page WHERE id = ?")->execute($surveyPage)->fetchAssoc() : null;
+      $pageModel = \PageModel::findOneBy('id', $surveyPage);
+      $pagedata = (null != $pageModel) ? $pageModel->row() : null;
 			$domain = \Environment::get('base');
 
-			$objPINTAN = $this->Database->prepare("SELECT * FROM tl_survey_pin_tan WHERE pid = ? ORDER BY tstamp DESC, id DESC")->execute(\Input::get('pid'));
-			while ($objPINTAN->next())
+      $res = \Hschottm\SurveyBundle\SurveyPinTanModel::findBy('pid', \Input::get('pid'), array("order" => "tstamp DESC, id DESC"));
+			foreach ($res as $objPINTAN)
 			{
 				$row = $objPINTAN->row();
 				$line = array();
@@ -118,7 +125,7 @@ class SurveyPINTAN extends \Backend
 					->execute(\Input::get('pid'));
 				if ($objSurvey->numRows == 1)
 				{
-					$xls->sendFile($this->safefilename('TAN_' . htmlspecialchars_decode($objSurvey->title)) . ".xls");
+					$xls->sendFile(\StringUtil::sanitizeFileName('TAN_' . htmlspecialchars_decode($objSurvey->title) . ".xls"));
 				}
 				else
 				{
@@ -126,16 +133,9 @@ class SurveyPINTAN extends \Backend
 				}
 				exit;
 			}
-			$this->redirect(str_replace('&pid=', '&id=', str_replace('&key=exporttan', '', \Environment::get('request'))));
+      $this->redirect(\Backend::addToUrl("table=tl_survey_pin_tan", true, ['key','table']));
 		}
 		return $this->Template->parse();
-	}
-
-	protected function safefilename($filename)
-	{
-		$search = array('/ß/','/ä/','/Ä/','/ö/','/Ö/','/ü/','/Ü/','([^[:alnum:]._])');
-		$replace = array('ss','ae','Ae','oe','Oe','ue','Ue','_');
-		return preg_replace($search,$replace,$filename);
 	}
 
 	public function createTAN(DataContainer $dc)
@@ -164,14 +164,22 @@ class SurveyPINTAN extends \Backend
 			for ($i = 0; $i < ceil($nrOfTAN); $i++)
 			{
 				$pintan = $this->svy->generatePIN_TAN();
-				// add pin/tan
-				$objResult = $this->Database->prepare("INSERT INTO tl_survey_pin_tan (tstamp, pid, pin, tan) VALUES (?, ?, ?, ?)")
-					->execute(time(), \Input::get('id'), $pintan["PIN"], $pintan["TAN"]);
+        $this->insertPinTan(\Input::get('id'), $pintan["PIN"], $pintan["TAN"]);
 			}
       $this->redirect(\Backend::addToUrl("", true, ['key']));
 		}
 		return $this->Template->parse();
 	}
+
+  protected function insertPinTan($pid, $pin, $tan)
+  {
+    $newParticipant         = new \Hschottm\SurveyBundle\SurveyPinTanModel();
+    $newParticipant->tstamp = time();
+    $newParticipant->pid    = $pid;
+    $newParticipant->pin    = $pin;
+    $newParticipant->tan    = $tan;
+    $newParticipant->save();
+  }
 
 	/**
 	 * Return the page tree as object
@@ -180,11 +188,10 @@ class SurveyPINTAN extends \Backend
 	 */
 	protected function getSurveyPageWidget($value=null)
 	{
-		$this->import('tl_survey_pin_tan');
-		$widget = new \PageTree($this->prepareForWidget($GLOBALS['TL_DCA']['tl_survey_pin_tan']['fields']['surveyPage'], 'surveyPage', $value, 'surveyPage', 'tl_survey_pin_tan'));
-		if ($GLOBALS['TL_CONFIG']['showHelp'] && strlen($GLOBALS['TL_LANG']['tl_survey_pin_tan']['surveyPage'][1]))
+		$widget = new \PageTree(\Widget::getAttributesFromDca($GLOBALS['TL_DCA']['tl_survey']['fields']['surveyPage'], 'surveyPage', $value, 'surveyPage', 'tl_survey'));
+		if ($GLOBALS['TL_CONFIG']['showHelp'] && strlen($GLOBALS['TL_LANG']['tl_survey']['surveyPage'][1]))
 		{
-			$widget->help = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['surveyPage'][1];
+			$widget->help = $GLOBALS['TL_LANG']['tl_survey']['surveyPage'][1];
 		}
 
 		// Valiate input
