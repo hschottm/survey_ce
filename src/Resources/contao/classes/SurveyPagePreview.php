@@ -20,9 +20,8 @@ class SurveyPagePreview extends \Backend
 	 */
 	public function compilePreview($row, $blnWriteToFile=false)
 	{
-		$objElements = $this->Database->prepare("SELECT * FROM tl_survey_page WHERE (pid=? AND sorting < ?)")
-			->execute($row["pid"], $row["sorting"]);
-		$position = $objElements->numRows + 1;
+    $surveyPageCollection = \Hschottm\SurveyBundle\SurveyPageModel::findBy(['pid=?', 'sorting<?'], [$row["pid"], $row["sorting"]]);
+    $position = (null != $surveyPageCollection) ? $surveyPageCollection->count() + 1 : 1;
 
 		$template = new \FrontendTemplate('be_survey_page_preview');
 		$template->page = $GLOBALS['TL_LANG']['tl_survey_page']['page'];
