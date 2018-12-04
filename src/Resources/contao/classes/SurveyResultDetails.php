@@ -252,11 +252,10 @@ class SurveyResultDetails extends \Backend
 				}
 				$objPHPExcel->getActiveSheet()->setTitle($sheet);
 
-				$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
-					->execute(\Input::get('id'));
-				if ($objSurvey->numRows == 1)
+        $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('id'));
+				if (null != $surveyModel)
 				{
-					$filename = $this->safefilename(htmlspecialchars_decode($objSurvey->title)) . ".xlsx";
+					$filename = \StringUtil::sanitizeFileName(htmlspecialchars_decode($surveyModel->title) . ".xlsx");
 				} else {
 					$filename = "survey.xlsx";
 				}
@@ -305,11 +304,10 @@ class SurveyResultDetails extends \Backend
 					}
 				}
 
-				$objSurvey = $this->Database->prepare("SELECT title FROM tl_survey WHERE id = ?")
-					->execute(\Input::get('id'));
-				if ($objSurvey->numRows == 1)
+        $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('id'));
+        if (null != $surveyModel)
 				{
-					$xls->sendFile($this->safefilename(htmlspecialchars_decode($objSurvey->title)) . ".xls");
+					$xls->sendFile(\StringUtil::sanitizeFileName(htmlspecialchars_decode($surveyModel->title) . ".xls"));
 				}
 				else
 				{
@@ -323,12 +321,6 @@ class SurveyResultDetails extends \Backend
 		$this->redirect($href);
 	}
 
-	protected function safefilename($filename)
-	{
-		$search = array('/ß/','/ä/','/Ä/','/ö/','/Ö/','/ü/','/Ü/','([^[:alnum:]._])');
-		$replace = array('ss','ae','Ae','oe','Oe','ue','Ue','_');
-		return preg_replace($search,$replace,$filename);
-	}
 	/**
 	* Calculate the Excel cell address (A,...,Z,AA,AB,...) from a numeric index
 	*
