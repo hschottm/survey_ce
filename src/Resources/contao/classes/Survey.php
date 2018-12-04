@@ -15,33 +15,22 @@ class Survey extends \Backend
 
 	public function getTANforPIN($id, $pin)
 	{
-		$objPINTAN = $this->Database->prepare("SELECT tan FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)")
-			->execute($id, $pin);
-		return $objPINTAN->tan;
+    $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
+    return (null != $pinTanModel) ? $pinTanModel->tan : null;
 	}
 
 	public function getPINforTAN($id, $tan)
 	{
-		$objPINTAN = $this->Database->prepare("SELECT pin FROM tl_survey_pin_tan WHERE (pid=? AND tan=?)")
-			->execute($id, $tan);
-		return $objPINTAN->pin;
+    $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'tan=?'], [$id, $tan]);
+    return (null != $pinTanModel) ? $pinTanModel->pin : null;
 	}
 
 	public function getSurveyStatus($id, $pin)
 	{
-		$objParticipant = $this->Database->prepare("SELECT * FROM tl_survey_participant WHERE (pid=? AND pin=?)")
-			->execute($id, $pin);
-		if ($objParticipant->numRows)
+    $participantModel = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
+		if (null != $participantModel)
 		{
-			$objParticipant->next();
-			if ($objParticipant->finished)
-			{
-				return "finished";
-			}
-			else
-			{
-				return "started";
-			}
+      return ($participantModel->finished) ? "finished" : "started";
 		}
 		else
 		{
@@ -57,40 +46,22 @@ class Survey extends \Backend
 	{
 		if (strlen($pin))
 		{
-			$objResult = $this->Database->prepare("SELECT pin, tan, used FROM tl_survey_pin_tan WHERE pid = ? AND pin = ?")
-				->execute($id, $pin);
+      $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
 		}
 		else
 		{
-			$objResult = $this->Database->prepare("SELECT pin, tan, used FROM tl_survey_pin_tan WHERE pid = ? AND tan = ?")
-				->execute($id, $tan);
+      $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'tan=?'], [$id, $tan]);
 		}
-		if ($objResult->numRows)
-		{
-			return $objResult->used;
-		}
-		else
-		{
-			return false;
-		}
+    return (null != $pinTanModel) ? $pinTanModel->used : false;
 	}
 
 
 	public function getSurveyStatusForMember($id, $uid)
 	{
-		$objParticipant = $this->Database->prepare("SELECT * FROM tl_survey_participant WHERE (pid=? AND uid=?)")
-			->execute($id, $uid);
-		if ($objParticipant->numRows)
+    $participantModel = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$id, $uid]);
+		if (null != $participantModel)
 		{
-			$objParticipant->next();
-			if ($objParticipant->finished)
-			{
-				return "finished";
-			}
-			else
-			{
-				return "started";
-			}
+      return ($participantModel->finished) ? "finished" : "started";
 		}
 		else
 		{
@@ -124,7 +95,7 @@ class Survey extends \Backend
 	{
 		$groups = (!strlen($objSurvey->allowed_groups)) ? array() : deserialize($objSurvey->allowed_groups, true);
 		if (count($groups) == 0) return false;
-		$this->import('FrontendUser', 'User');
+		$this->import('\FrontendUser', 'User');
 		if (!$this->User->id) return false;
 		$usergroups = deserialize($this->User->groups, true);
 		if (count(array_intersect($usergroups, $groups)))
@@ -139,9 +110,8 @@ class Survey extends \Backend
 
 	public function getLastPageForPIN($id, $pin)
 	{
-		$objParticipant = $this->Database->prepare("SELECT lastpage FROM tl_survey_participant WHERE (pid=? AND pin=?)")
-			->execute($id, $pin);
-		return $objParticipant->lastpage;
+    $participantModel = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
+    return (null != $participantModel) ? $participantModel->lastpage : 0;
 	}
 
 	protected function generatePIN()

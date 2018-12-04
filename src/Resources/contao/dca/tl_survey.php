@@ -336,7 +336,7 @@ class tl_survey extends Backend
 	 */
 	public function addIcon($row, $label)
 	{
-		return sprintf('<div class="list_icon" style="background-image:url(\'bundles/hschottmsurvey/images/survey.png\');">%s</div>', $label);
+		return sprintf('<div class="list_icon" style="background-image:url(\'bundles/hschottmsurvey/images/survey-outline.svg\');">%s</div>', $label);
 	}
 
 }
