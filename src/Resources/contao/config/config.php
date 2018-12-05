@@ -2,7 +2,6 @@
 
 use Hschottm\SurveyBundle\ContentSurvey;
 use Hschottm\SurveyBundle\SurveyResultDetails;
-use Hschottm\SurveyBundle\SurveyResultDetailsEx;
 use Hschottm\SurveyBundle\SurveyPINTAN;
 use Hschottm\SurveyBundle\FormOpenEndedQuestion;
 use Hschottm\SurveyBundle\FormMultipleChoiceQuestion;
@@ -56,7 +55,7 @@ if (TL_MODE == 'BE')
 	$GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/survey.css|static';
 }
 
-$GLOBALS['BE_MOD']['surveys']['survey']['exportraw'] = array(SurveyResultDetailsEx::class, 'exportResultsRaw');
+$GLOBALS['BE_MOD']['surveys']['survey']['exportraw'] = array(SurveyResultDetails::class, 'exportResultsRaw');
 
 $GLOBALS['TL_SVY']['openended'] = FormOpenEndedQuestion::class;
 $GLOBALS['TL_SVY']['multiplechoice'] = FormMultipleChoiceQuestion::class;

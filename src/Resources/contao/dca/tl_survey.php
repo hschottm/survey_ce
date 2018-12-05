@@ -311,21 +311,6 @@ class tl_survey extends Backend
 	{
 		parent::__construct();
 
-		// somehow dirty patch to allow going back if someone clicks back on a survey question list
-		if (strpos($this->getReferer(ENCODE_AMPERSANDS), 'tl_survey_question'))
-		{
-			if (preg_match("/id=(\\d+)/", $this->getReferer(ENCODE_AMPERSANDS), $matches))
-			{
-				$page_id = $matches[1];
-				$survey_id = $this->Database->prepare("SELECT pid FROM tl_survey_page WHERE id=?")
-					->execute($page_id)
-					->fetchEach('pid');
-				if ($survey_id[0] > 0)
-				{
-					$this->redirect($this->addToUrl('table=tl_survey_page&id=' . $survey_id[0]));
-				}
-			}
-		}
 	}
 
 	/**
