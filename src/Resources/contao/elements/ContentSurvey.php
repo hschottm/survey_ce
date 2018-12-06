@@ -41,6 +41,7 @@ class ContentSurvey extends \ContentElement
 		}
 
 		$this->strTemplate = (strlen($this->surveyTpl)) ? $this->surveyTpl : $this->strTemplate;
+
 		return parent::generate();
 	}
 

@@ -3,7 +3,11 @@
 namespace Hschottm\SurveyBundle;
 
 use Contao\DataContainer;
+
 use Hschottm\ExcelXLSBundle\xlsexport;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 /**
  * Class SurveyResultDetails
@@ -24,7 +28,7 @@ class SurveyResultDetails extends \Backend
 	protected function __construct()
 	{
 		parent::__construct();
-		if (in_array('php_excel', $this->Config->getActiveModules()))
+    if (class_exists(Spreadsheet))
 		{
 			$this->useXLSX = true;
 		}
@@ -224,7 +228,7 @@ class SurveyResultDetails extends \Backend
 		{
 			if ($this->useXLSX())
 			{
-				$objPHPExcel = new \PHPExcel();
+				$objPHPExcel = new Spreadsheet();
 				$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
 				$intRowCounter = 0;
 				$intColCounter = 0;
@@ -268,7 +272,7 @@ class SurveyResultDetails extends \Backend
 				$objPHPExcel->getProperties()->setDescription($objSurvey->title);
 
 				// Download the file
-				$objWriter = new \PHPExcel_Writer_Excel2007($objPHPExcel);
+				$objWriter = new Xlsx($objPHPExcel);
 				header('Content-Type: application/vnd.ms-excel');
 				header('Content-Disposition: attachment;filename="'.$filename.'"');
 				header('Cache-Control: max-age=0');
