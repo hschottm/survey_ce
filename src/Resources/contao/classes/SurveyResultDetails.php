@@ -7,6 +7,8 @@ use Contao\DataContainer;
 use Hschottm\ExcelXLSBundle\xlsexport;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Hschottm\SurveyBundle\ExcelExporterPhpSpreadsheet;
+use Hschottm\SurveyBundle\ExcelExporterPhpExcel;
 
 
 /**
@@ -226,101 +228,40 @@ class SurveyResultDetails extends \Backend
 			->execute(\Input::get('id'));
 		if ($arrQuestions->numRows)
 		{
-			if ($this->useXLSX())
-			{
-				$objPHPExcel = new Spreadsheet();
-				$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
-				$intRowCounter = 0;
-				$intColCounter = 0;
-        // Generate Data
-				$objPHPExcel->setActiveSheetIndex(0);
+      if ($this->useXLSX())
+      {
+        $exporter = new ExcelExporterPhpSpreadsheet(ExcelExporter::EXPORT_TYPE_XLSX);
+      }
+      else {
+        $exporter = new ExcelExporterPhpExcel(ExcelExporter::EXPORT_TYPE_XLS);
+      }
+      $sheet = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults'];
+      $intRowCounter = 0;
+      $intColCounter = 0;
+      $exporter->addSheet($sheet);
+      while ($arrQuestions->next())
+      {
+        $row = $arrQuestions->row();
+        $class = "SurveyQuestion" . ucfirst($row["questiontype"]);
+        if ($this->classFileExists($class))
+        {
+          $this->import($class);
+          $question = new $class();
+          $question->data = $row;
+          $question->exportDataToExcel($exporter, $sheet, $intRowCounter);
+        }
+      }
 
-				while ($arrQuestions->next())
-				{
-					$row = $arrQuestions->row();
-					$class = "SurveyQuestion" . ucfirst($row["questiontype"]);
-					if ($this->classFileExists($class))
-					{
-						$this->import($class);
-						$question = new $class();
-						$question->data = $row;
-						$cells = $question->exportDataToExcel($sheet, $intRowCounter);
-						if (count($cells))
-						{
-							foreach ($cells as $cell)
-							{
-								$this->setValueXLSX($objPHPExcel, $cell);
-							}
-						}
-					}
-				}
-				$objPHPExcel->getActiveSheet()->setTitle($sheet);
-
-        $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('id'));
-				if (null != $surveyModel)
-				{
-					$filename = \StringUtil::sanitizeFileName(htmlspecialchars_decode($surveyModel->title) . ".xlsx");
-				} else {
-					$filename = "survey.xlsx";
-				}
-
-				// Set Excel Properties
-				$objPHPExcel->getProperties()->setCreator("Contao CMS");
-				$objPHPExcel->getProperties()->setLastModifiedBy("Contao CMS");
-				$objPHPExcel->getProperties()->setTitle($objSurvey->title);
-				$objPHPExcel->getProperties()->setSubject($objSurvey->title);
-				$objPHPExcel->getProperties()->setDescription($objSurvey->title);
-
-				// Download the file
-				$objWriter = new Xlsx($objPHPExcel);
-				header('Content-Type: application/vnd.ms-excel');
-				header('Content-Disposition: attachment;filename="'.$filename.'"');
-				header('Cache-Control: max-age=0');
-				$objWriter->save('php://output');
-				echo "";
-				exit;
-			}
-			else
-			{
-				$xls = new xlsexport();
-				$sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
-				$xls->addworksheet($sheet);
-				$intRowCounter = 0;
-				$intColCounter = 0;
-
-				while ($arrQuestions->next())
-				{
-					$row = $arrQuestions->row();
-					$class = "SurveyQuestion" . ucfirst($row["questiontype"]);
-					if ($this->classFileExists($class))
-					{
-						$this->import($class);
-						$question = new $class();
-						$question->data = $row;
-						$cells = $question->exportDataToExcel($sheet, $intRowCounter);
-						if (count($cells))
-						{
-							foreach ($cells as $cell)
-							{
-								$xls->setcell($cell);
-							}
-						}
-					}
-				}
-
-        $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('id'));
-        if (null != $surveyModel)
-				{
-					$xls->sendFile(\StringUtil::sanitizeFileName(htmlspecialchars_decode($surveyModel->title) . ".xls"));
-				}
-				else
-				{
-					$xls->sendFile('survey.xls');
-				}
-			}
-			exit;
-		}
-    //$href = str_replace(\Environment::get('queryString'), '', \Environment::get('requestUri')) . ((strlen(\Environment::get('queryString'))) ? '' : '?') . 'do=' . \Input::get('do');
+      $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('id'));
+      if (null != $surveyModel)
+      {
+        $filename = $surveyModel->title;
+      } else {
+        $filename = "survey";
+      }
+      $exporter->setFilename($filename);
+      $exporter->sendFile($objSurvey->title, $objSurvey->title, $objSurvey->title, "Contao CMS", "Contao CMS");
+    }
     $href = \Backend::addToUrl("", true, ['key','id']);
 		$this->redirect($href);
 	}

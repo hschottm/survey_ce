@@ -82,28 +82,28 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 		}
 	}
 
-	public function exportDataToExcel($sheet, &$row)
+  public function exportDataToExcel(&$exporter, $sheet, &$row)
 	{
-		$result = array();
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => "ID", "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1, "data" => $this->id, "type" => CELL_FLOAT));
+    $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => "ID", ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
+    $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->id, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
 		$row++;
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0]), "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype])));
+    $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
+    $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]]);
 		$row++;
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_question']['title'][0]), "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1, "data" => utf8_decode($this->title)));
+    $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['title'][0], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
+    $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->title]);
 		$row++;
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_question']['question'][0]), "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1, "data" => utf8_decode(strip_tags($this->question))));
+    $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['question'][0], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
+    $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => strip_tags($this->question)]);
 		$row++;
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_question']['answered']), "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1, "data" => $this->statistics["answered"], "type" => CELL_FLOAT));
+    $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answered'], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
+    $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->statistics["answered"], ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
 		$row++;
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_question']['skipped']), "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 1, "data" => $this->statistics["skipped"], "type" => CELL_FLOAT));
+    $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['skipped'], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
+    $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->statistics["skipped"], ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
 		$row++;
-		array_push($result, array("sheetname" => $sheet,"row" => $row, "col" => 0, "data" => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['answers']), "bgcolor" => $this->titlebgcolor, "color" => $this->titlecolor, "fontweight" => XLSFONT_BOLD));
+
+    $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
 
 		if (is_array($this->statistics["cumulated"]))
 		{
@@ -111,7 +111,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 			$counter = 1;
 			foreach ($arrChoices as $id => $choice)
 			{
-				array_push($result, array("sheetname" => $sheet,"row" => $row + $counter - 1, "col" => 1, "data" => utf8_decode($choice)));
+        $exporter->setCellValue($sheet, $row + $counter - 1, 1, [ExcelExporter::DATA => $choice]);
 				$counter += 2;
 			}
 			$counter = 1;
@@ -121,8 +121,8 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 				$acounter = 2;
 				foreach ($this->statistics["cumulated"][$idx] as $answervalue => $nrOfAnswers)
 				{
-					array_push($result, array("sheetname" => $sheet,"row" => $row + $counter - 1, "col" => $acounter, "data" => $answervalue, "type" => CELL_FLOAT));
-					array_push($result, array("sheetname" => $sheet,"row" => $row + $counter, "col" => $acounter, "data" => (($nrOfAnswers) ? $nrOfAnswers : 0), "type" => CELL_FLOAT));
+          $exporter->setCellValue($sheet, $row + $counter - 1, $acounter, [ExcelExporter::DATA => $answervalue, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
+          $exporter->setCellValue($sheet, $row + $counter, $acounter, [ExcelExporter::DATA => (($nrOfAnswers) ? $nrOfAnswers : 0), ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
 					$acounter++;
 				}
 				$idx++;
@@ -131,7 +131,6 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
 			$row += count($arrChoices) * 2 + 1;
 		}
-		return $result;
 	}
 
   /**
