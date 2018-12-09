@@ -34,7 +34,7 @@ class ExcelExporterPhpExcel extends ExcelExporter
       {
         $celldata[self::DATA] = utf8_decode($celldata[self::DATA]);
       }
-      $this->sheets[$this->getCell($row, $col)] = $celldata;
+      $this->sheets[$sheet][$this->getCell($row, $col)] = $celldata;
       return true;
     }
     else {

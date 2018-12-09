@@ -1,12 +1,18 @@
 <?php
 
-$GLOBALS['TL_LANG']['tl_survey_participant']['show']   = array('Participant survey data details', 'Show survey data details of participant ID %s');
-$GLOBALS['TL_LANG']['tl_survey_participant']['delete'] = array('Delete participant survey data', 'Delete survey data of participant ID %s');
-$GLOBALS['TL_LANG']['tl_survey_participant']['tstamp'] = array('Modification date', 'Date of participants last modification');
-$GLOBALS['TL_LANG']['tl_survey_participant']['lastpage'] = array('Last page', 'Last page number a participant has visited');
-$GLOBALS['TL_LANG']['tl_survey_participant']['exportraw'] = array('Detailed export', 'Detailed export with all participant answers. Sortable and filterable.');
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	      https://github.com/hschottm/survey_ce
+ */
 
-$GLOBALS['TL_LANG']['tl_survey_participant']['finished']   = 'finished';
-$GLOBALS['TL_LANG']['tl_survey_participant']['running']   = 'started';
+$GLOBALS['TL_LANG']['tl_survey_participant']['show'] = ['Participant survey data details', 'Show survey data details of participant ID %s'];
+$GLOBALS['TL_LANG']['tl_survey_participant']['delete'] = ['Delete participant survey data', 'Delete survey data of participant ID %s'];
+$GLOBALS['TL_LANG']['tl_survey_participant']['tstamp'] = ['Modification date', 'Date of participants last modification'];
+$GLOBALS['TL_LANG']['tl_survey_participant']['lastpage'] = ['Last page', 'Last page number a participant has visited'];
+$GLOBALS['TL_LANG']['tl_survey_participant']['exportraw'] = ['Detailed export', 'Detailed export with all participant answers. Sortable and filterable.'];
 
-?>
+$GLOBALS['TL_LANG']['tl_survey_participant']['finished'] = 'finished';
+$GLOBALS['TL_LANG']['tl_survey_participant']['running'] = 'started';

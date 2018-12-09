@@ -38,13 +38,7 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
         $celldata[$key] = $value;
       }
       if (!array_key_exists(self::CELLTYPE, $celldata)) $celldata[self::CELLTYPE] = self::CELLTYPE_STRING;
-      /*
-      if ($this->type === self::EXPORT_TYPE_XLS && $celldata[self::CELLTYPE] === self::CELLTYPE_STRING)
-      {
-        $celldata[self::DATA] = utf8_decode($celldata[self::DATA]);
-      }
-      */
-      $this->sheets[$this->getCell($row, $col)] = $celldata;
+      $this->sheets[$sheet][$this->getCell($row, $col)] = $celldata;
       return true;
     }
     else {
@@ -63,7 +57,7 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
 
   protected function send()
   {
-    $objWriter = new Xlsx($objPHPExcel);
+    $objWriter = new Xlsx($this->spreadsheet);
     header('Content-Type: application/vnd.ms-excel');
     header('Content-Disposition: attachment;filename="'.\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xlsx"');
     header('Cache-Control: max-age=0');
@@ -82,7 +76,7 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
     }
 
     $worksheet->setCellValue($pos, $cell[self::DATA]);
-    $worksheet->getColumnDimension($col)->setAutoSize(true);
+    $worksheet->getColumnDimension($this->getColumnIndex($col))->setAutoSize(true);
 
     $fill_array = array();
     $font_array = array();
@@ -120,25 +114,25 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
       switch ($cell[self::ALIGNMENT])
       {
         case self::ALIGNMENT_H_GENERAL:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_GENERAL);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_GENERAL);
             break;
           case self::ALIGNMENT_H_LEFT:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
             break;
           case self::ALIGNMENT_H_CENTER:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
             break;
           case self::ALIGNMENT_H_RIGHT:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
             break;
           case self::ALIGNMENT_H_FILL:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_FILL);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_FILL);
             break;
           case self::ALIGNMENT_H_JUSTIFY:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_JUSTIFY);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_JUSTIFY);
             break;
           case self::ALIGNMENT_H_CENTER_CONT:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER_CONTINUOUS);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER_CONTINUOUS);
             break;
       }
     }

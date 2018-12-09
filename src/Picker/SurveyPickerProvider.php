@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	      https://github.com/hschottm/survey_ce
+ */
+
 namespace Hschottm\SurveyBundle\Picker;
 
 use Contao\CoreBundle\Framework\FrameworkAwareInterface;
@@ -32,7 +40,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
      */
     public function supportsContext($context)
     {
-        return 'link' === $context;// && $this->getUser()->hasAccess('news', 'modules');
+        return 'link' === $context; // && $this->getUser()->hasAccess('news', 'modules');
     }
 
     /**
@@ -40,7 +48,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
      */
     public function supportsValue(PickerConfig $config)
     {
-        return false;// !== strpos($config->getValue(), '{{news_url::');
+        return false; // !== strpos($config->getValue(), '{{news_url::');
     }
 
     /**
@@ -89,16 +97,16 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
         }
 
         $value = str_replace(['{{news_url::', '}}'], '', $config->getValue());
-/*
-        if (null !== ($newsArchiveId = $this->getNewsArchiveId($value))) {
-            $params['table'] = 'tl_news';
-            $params['id'] = $newsArchiveId;
-        }
-*/
+        /*
+                if (null !== ($newsArchiveId = $this->getNewsArchiveId($value))) {
+                    $params['table'] = 'tl_news';
+                    $params['id'] = $newsArchiveId;
+                }
+        */
         return $params;
     }
 
-    /**
+    /*
      * Returns the news archive ID.
      *
      * @param int $id

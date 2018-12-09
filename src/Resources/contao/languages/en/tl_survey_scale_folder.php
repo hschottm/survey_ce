@@ -1,13 +1,19 @@
 <?php
 
-$GLOBALS['TL_LANG']['tl_survey_scale_folder']['title']   = array('Title', 'Please enter the folder title.');
-$GLOBALS['TL_LANG']['tl_survey_scale_folder']['description']   = array('Description', 'Please enter the folder description.');
-$GLOBALS['TL_LANG']['tl_survey_scale_folder']['tstamp']   = array('Last change', 'Date and time of the last change.');
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	      https://github.com/hschottm/survey_ce
+ */
 
-$GLOBALS['TL_LANG']['tl_survey_scale_folder']['new']    = array('New folder', 'Create a new folder');
-$GLOBALS['TL_LANG']['tl_survey_scale_folder']['show']   = array('Folder details', 'Show details of folder ID %s');
-$GLOBALS['TL_LANG']['tl_survey_scale_folder']['edit']   = array('Edit scales', 'Edit scales of folder ID %s');
-$GLOBALS['TL_LANG']['tl_survey_scale_folder']['copy']   = array('Duplicate folder', 'Duplicate folder ID %s');
-$GLOBALS['TL_LANG']['tl_survey_scale_folder']['delete'] = array('Delete folder', 'Delete folder ID %s');
+$GLOBALS['TL_LANG']['tl_survey_scale_folder']['title'] = ['Title', 'Please enter the folder title.'];
+$GLOBALS['TL_LANG']['tl_survey_scale_folder']['description'] = ['Description', 'Please enter the folder description.'];
+$GLOBALS['TL_LANG']['tl_survey_scale_folder']['tstamp'] = ['Last change', 'Date and time of the last change.'];
 
-?>
+$GLOBALS['TL_LANG']['tl_survey_scale_folder']['new'] = ['New folder', 'Create a new folder'];
+$GLOBALS['TL_LANG']['tl_survey_scale_folder']['show'] = ['Folder details', 'Show details of folder ID %s'];
+$GLOBALS['TL_LANG']['tl_survey_scale_folder']['edit'] = ['Edit scales', 'Edit scales of folder ID %s'];
+$GLOBALS['TL_LANG']['tl_survey_scale_folder']['copy'] = ['Duplicate folder', 'Duplicate folder ID %s'];
+$GLOBALS['TL_LANG']['tl_survey_scale_folder']['delete'] = ['Delete folder', 'Delete folder ID %s'];

@@ -1,34 +1,46 @@
 <?php
 
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	      https://github.com/hschottm/survey_ce
+ */
+
 namespace Hschottm\SurveyBundle;
 
 class SurveyPagePreview extends \Backend
 {
-	/**
-	 * Import String library
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-	}
+    /**
+     * Import String library.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
-	/**
-	 * Compile format definitions and return them as string
-	 * @param array
-	 * @param boolean
-	 * @return string
-	 */
-	public function compilePreview($row, $blnWriteToFile=false)
-	{
-    $surveyPageCollection = \Hschottm\SurveyBundle\SurveyPageModel::findBy(['pid=?', 'sorting<?'], [$row["pid"], $row["sorting"]]);
-    $position = (null != $surveyPageCollection) ? $surveyPageCollection->count() + 1 : 1;
+    /**
+     * Compile format definitions and return them as string.
+     *
+     * @param array
+     * @param bool
+     * @param mixed $row
+     * @param mixed $blnWriteToFile
+     *
+     * @return string
+     */
+    public function compilePreview($row, $blnWriteToFile = false)
+    {
+        $surveyPageCollection = \Hschottm\SurveyBundle\SurveyPageModel::findBy(['pid=?', 'sorting<?'], [$row['pid'], $row['sorting']]);
+        $position = (null !== $surveyPageCollection) ? $surveyPageCollection->count() + 1 : 1;
 
-		$template = new \FrontendTemplate('be_survey_page_preview');
-		$template->page = $GLOBALS['TL_LANG']['tl_survey_page']['page'];
-		$template->position = $position;
-		$template->title = \StringUtil::specialchars($row['title']);
-		$template->description = \StringUtil::specialchars($row['description']);
-		return $template->parse();
-	}
+        $template = new \FrontendTemplate('be_survey_page_preview');
+        $template->page = $GLOBALS['TL_LANG']['tl_survey_page']['page'];
+        $template->position = $position;
+        $template->title = \StringUtil::specialchars($row['title']);
+        $template->description = \StringUtil::specialchars($row['description']);
 
+        return $template->parse();
+    }
 }
