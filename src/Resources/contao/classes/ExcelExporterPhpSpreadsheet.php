@@ -76,7 +76,7 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
     }
 
     $worksheet->setCellValue($pos, $cell[self::DATA]);
-    $worksheet->getColumnDimension($this->getColumnIndex($col))->setAutoSize(true);
+    $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setAutoSize(true);
 
     $fill_array = array();
     $font_array = array();
