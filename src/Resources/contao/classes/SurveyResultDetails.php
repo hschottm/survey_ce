@@ -11,7 +11,6 @@
 namespace Hschottm\SurveyBundle;
 
 use Contao\DataContainer;
-use Hschottm\ExcelXLSBundle\xlsexport;
 
 /**
  * Class SurveyResultDetails.
@@ -24,7 +23,7 @@ use Hschottm\ExcelXLSBundle\xlsexport;
 class SurveyResultDetails extends \Backend
 {
     protected $blnSave = true;
-    protected $useXLSX = false;
+    protected $usePhpSpreadsheet = false;
 
     /**
      * Load the database object.
@@ -33,13 +32,13 @@ class SurveyResultDetails extends \Backend
     {
         parent::__construct();
         if (class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet')) {
-            //$this->useXLSX = true;
+            $this->usePhpSpreadsheet = true;
         }
     }
 
-    public function useXLSX()
+    public function usePhpSpreadsheet()
     {
-        return $this->useXLSX;
+        return $this->usePhpSpreadsheet;
     }
 
     public function showDetails(DataContainer $dc)
@@ -139,7 +138,7 @@ class SurveyResultDetails extends \Backend
         $arrQuestions = $this->Database->prepare('SELECT tl_survey_question.*, tl_survey_page.title as pagetitle, tl_survey_page.pid as parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
             ->execute(\Input::get('id'));
         if ($arrQuestions->numRows) {
-            if ($this->useXLSX()) {
+            if ($this->usePhpSpreadsheet()) {
                 $exporter = new ExcelExporterPhpSpreadsheet(ExcelExporter::EXPORT_TYPE_XLSX);
             } else {
                 $exporter = new ExcelExporterXLSExport(ExcelExporter::EXPORT_TYPE_XLS);
