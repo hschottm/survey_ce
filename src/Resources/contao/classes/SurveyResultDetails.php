@@ -33,7 +33,7 @@ class SurveyResultDetails extends \Backend
     {
         parent::__construct();
         if (class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet')) {
-            $this->useXLSX = true;
+            //$this->useXLSX = true;
         }
     }
 

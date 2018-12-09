@@ -6,6 +6,7 @@ use Hschottm\SurveyBundle\ExcelExporter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class ExcelExporterPhpSpreadsheet extends ExcelExporter
 {

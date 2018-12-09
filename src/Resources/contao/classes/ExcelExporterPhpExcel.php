@@ -62,44 +62,47 @@ class ExcelExporterPhpExcel extends ExcelExporter
   protected function setCellSpreadsheet($sheet, $cell)
   {
     $pos = $this->getCell($cell[self::ROW]+1, $cell[self::COL]);
-    $worksheet = $this->spreadsheet->getSheetByName($sheet);
-    if (null == $worksheet)
+    $found = false;
+    foreach ($this->spreadsheet->worksheets as $sheetarray)
     {
-      $worksheet = $this->spreadsheet->addSheet(new Worksheet($this->spreadsheet, $sheet));
+      if ($sheetarray['sheetname'] === utf8_decode($sheet)) $found = true;
     }
 
-    $worksheet->setCellValue($pos, $cell[self::DATA]);
-    $worksheet->getColumnDimension($col)->setAutoSize(true);
-
-    $fill_array = array();
-    $font_array = array();
+    if (!$found)
+    {
+      $this->spreadsheet->addworksheet(utf8_decode($sheet));
+    }
+    $data = [
+      "sheetname" => utf8_decode($sheet),
+      "row" => $cell[self::ROW],
+      "col" => $cell[self::COL],
+      "data" => $cell[self::DATA]
+    ];
+    $this->spreadsheet->setcell($data);
 
     switch ($cell[self::CELLTYPE])
     {
       case CELLTYPE_STRING:
-        $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
+        $data['type'] = CELL_STRING;
         break;
       case CELLTYPE_FLOAT:
-        $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_00);
+        $data['type'] = CELL_FLOAT;
         break;
       case CELLTYPE_PICTURE:
+        $data['type'] = CELL_PICTURE;
         break;
       case CELLTYPE_INTEGER:
       default:
-        $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
         break;
     }
 
     if (array_key_exists(self::BGCOLOR, $cell))
     {
-      $fill_array = array(
-            'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-            'color' => array('rgb' => str_replace('#', '', $cell[self::BGCOLOR]))
-      );
+      $data['bgcolor'] = $cell[self::BGCOLOR];
     }
     if (array_key_exists(self::COLOR, $cell))
     {
-      $font_array['color'] = array('rgb' => str_replace('#', '', $cell[self::COLOR]));
+      $data['color'] = $cell[self::COLOR];
     }
 
     if (array_key_exists(self::ALIGNMENT, $cell))
@@ -107,25 +110,25 @@ class ExcelExporterPhpExcel extends ExcelExporter
       switch ($cell[self::ALIGNMENT])
       {
         case self::ALIGNMENT_H_GENERAL:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_GENERAL);
+            $data['hallign'] = XLSXF_HALLIGN_GENERAL;
             break;
           case self::ALIGNMENT_H_LEFT:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+            $data['hallign'] = XLSXF_HALLIGN_LEFT;
             break;
           case self::ALIGNMENT_H_CENTER:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $data['hallign'] = XLSXF_HALLIGN_CENTER;
             break;
           case self::ALIGNMENT_H_RIGHT:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $data['hallign'] = XLSXF_HALLIGN_RIGHT;
             break;
           case self::ALIGNMENT_H_FILL:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_FILL);
+            $data['hallign'] = XLSXF_HALLIGN_FILL;
             break;
           case self::ALIGNMENT_H_JUSTIFY:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_JUSTIFY);
+            $data['hallign'] = XLSXF_HALLIGN_JUSTIFY;
             break;
           case self::ALIGNMENT_H_CENTER_CONT:
-            $worksheet->->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER_CONTINUOUS);
+            $data['hallign'] = XLSXF_HALLIGN_CACROSS;
             break;
       }
     }
@@ -135,17 +138,22 @@ class ExcelExporterPhpExcel extends ExcelExporter
       switch ($cell[self::FONTWEIGHT])
       {
         case self::FONTWEIGHT_BOLD:
-          $font_array['bold'] = true;
+          $data['fontweight'] = XLSFONT_BOLD;
           break;
       }
     }
 
-    $worksheet->getStyle($pos)->applyFromArray(
-      array(
-        'fill' => $fill_array,
-        'font' => $font_array
-      )
-    );
+    if (array_key_exists(self::FONTSTYLE, $cell))
+    {
+      switch ($cell[self::FONTSTYLE])
+      {
+        case self::FONTSTYLE_ITALIC:
+          $data['fontstyle'] = XLSFONT_STYLE_ITALIC;
+          break;
+      }
+    }
+
+    $this->spreadsheet->setcell($data);
   }
 
 }

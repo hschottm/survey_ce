@@ -28,6 +28,8 @@ abstract class ExcelExporter
     const FONTWEIGHT = 'fw';
     const FONTWEIGHT_BOLD = 'b';
     const FONTWEIGHT_NORMAL = 'n';
+    const FONTSTYLE = 'fs';
+    const FONTSTYLE_ITALIC = 'i';
     const ALIGNMENT = 'align';
     const ALIGNMENT_H_GENERAL = 'hgeneral';
     const ALIGNMENT_H_LEFT = 'hleft';
