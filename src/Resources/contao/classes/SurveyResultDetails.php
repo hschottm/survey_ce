@@ -142,7 +142,7 @@ class SurveyResultDetails extends \Backend
             if ($this->useXLSX()) {
                 $exporter = new ExcelExporterPhpSpreadsheet(ExcelExporter::EXPORT_TYPE_XLSX);
             } else {
-                $exporter = new ExcelExporterPhpExcel(ExcelExporter::EXPORT_TYPE_XLS);
+                $exporter = new ExcelExporterXLSExport(ExcelExporter::EXPORT_TYPE_XLS);
             }
             $sheet = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults'];
             $intRowCounter = 0;

@@ -5,7 +5,7 @@ namespace Hschottm\SurveyBundle;
 use Hschottm\SurveyBundle\ExcelExporter;
 use Hschottm\ExcelXLSBundle\xlsexport;
 
-class ExcelExporterPhpExcel extends ExcelExporter
+class ExcelExporterXLSExport extends ExcelExporter
 {
   public function __construct($type = self::EXPORT_TYPE_XLS)
   {
