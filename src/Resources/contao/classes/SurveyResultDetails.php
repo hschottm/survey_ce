@@ -9,6 +9,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Hschottm\SurveyBundle\ExcelExporterPhpSpreadsheet;
 use Hschottm\SurveyBundle\ExcelExporterPhpExcel;
+use Hschottm\SurveyBundle\ExcelExporter;
 
 
 /**
@@ -30,7 +31,7 @@ class SurveyResultDetails extends \Backend
 	protected function __construct()
 	{
 		parent::__construct();
-    if (class_exists(Spreadsheet))
+    if (class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet'))
 		{
 			$this->useXLSX = true;
 		}

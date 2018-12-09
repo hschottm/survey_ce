@@ -81,7 +81,7 @@ abstract class ExcelExporter
     {
       if (array_key_exists($this->getCell($row, $col), $this->sheets[$sheet]))
       {
-        return $this->sheets[$this->getCell($row, $col)]
+        return $this->sheets[$this->getCell($row, $col)];
       }
     }
     return null;

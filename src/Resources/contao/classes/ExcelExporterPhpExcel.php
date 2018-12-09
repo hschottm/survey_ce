@@ -7,6 +7,11 @@ use Hschottm\ExcelXLSBundle\xlsexport;
 
 class ExcelExporterPhpExcel extends ExcelExporter
 {
+  public function __construct($type = self::EXPORT_TYPE_XLS)
+  {
+    parent::__construct($type);
+  }
+
   public function createSpreadsheet()
   {
     $this->spreadsheet = new xlsexport();
@@ -56,7 +61,6 @@ class ExcelExporterPhpExcel extends ExcelExporter
 
   protected function setCellSpreadsheet($sheet, $cell)
   {
-    /*
     $pos = $this->getCell($cell[self::ROW]+1, $cell[self::COL]);
     $worksheet = $this->spreadsheet->getSheetByName($sheet);
     if (null == $worksheet)
@@ -142,7 +146,6 @@ class ExcelExporterPhpExcel extends ExcelExporter
         'font' => $font_array
       )
     );
-    */
   }
 
 }

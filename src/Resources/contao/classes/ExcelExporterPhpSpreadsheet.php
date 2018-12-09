@@ -9,6 +9,11 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ExcelExporterPhpSpreadsheet extends ExcelExporter
 {
+  public function __construct($type = self::EXPORT_TYPE_XLS)
+  {
+    parent::__construct($type);
+  }
+
   public function createSpreadsheet()
   {
     /*
