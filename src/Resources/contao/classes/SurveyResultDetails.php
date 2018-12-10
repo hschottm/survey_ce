@@ -20,8 +20,8 @@ use Hschottm\SurveyBundle\Export\ExcelExporterXLSExport;
  *
  * Provide methods to handle the detail view of survey question results
  *
- * @copyright  Helmut Schottmüller 2009-2010
- * @author     Helmut Schottmüller <contao@aurealis.de>
+ * @copyright  Helmut Schottmüller 2009-2018
+ * @author     Helmut Schottmüller <https://github.com/hschottm>
  */
 class SurveyResultDetails extends \Backend
 {
@@ -206,11 +206,16 @@ class SurveyResultDetails extends \Backend
         if ($arrQuestions->numRows) {
             $this->loadLanguageFile('tl_survey_result');
 
-            $xls = new xlsexport();
-            $sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['detailedResults']);
-            $xls->addworksheet($sheet);
+            if ($this->usePhpSpreadsheet()) {
+                $exporter = new ExcelExporterPhpSpreadsheet(ExcelExporter::EXPORT_TYPE_XLSX);
+            } else {
+                $exporter = new ExcelExporterXLSExport(ExcelExporter::EXPORT_TYPE_XLS);
+            }
+            $sheet = $GLOBALS['TL_LANG']['tl_survey_result']['detailedResults'];
+            $exporter->addSheet($sheet);
 
-            $cells = $this->exportTopLeftArea($sheet);
+            $this->exportTopLeftArea($exporter, $sheet);
+            /*
             foreach ($cells as $cell) {
                 if ($cell['colwidth'] > 0) {
                     $xls->setcolwidth($sheet, $cell['col'], $cell['colwidth']);
@@ -218,15 +223,13 @@ class SurveyResultDetails extends \Backend
                 }
                 $xls->setcell($cell);
             }
+            */
 
             $rowCounter = 8; // questionheaders will occupy that many rows
             $colCounter = 0;
 
             $participants = $this->fetchParticipants($surveyID);
-            $cells = $this->exportParticipantRowHeaders($sheet, $rowCounter, $colCounter, $participants);
-            foreach ($cells as $cell) {
-                $xls->setcell($cell);
-            }
+            $this->exportParticipantRowHeaders($exporter, $sheet, $rowCounter, $colCounter, $participants);
 
             // init question counters
             $page_no = 0;
@@ -253,25 +256,23 @@ class SurveyResultDetails extends \Backend
 
                 $rowCounter = 0; // reset rowCounter for the question headers
 
-                $class = 'SurveyQuestion'.ucfirst($row['questiontype']).'Ex';
+                $class = 'Hschottm\SurveyBundle\SurveyQuestion'.ucfirst($row['questiontype']);
                 if ($this->classFileExists($class)) {
                     $this->import($class);
                     $question = new $class();
                     $question->data = $row;
-                    $cells = $question->exportDetailsToExcel($xls, $sheet, $rowCounter, $colCounter, $questionCounters, $participants);
-                    foreach ($cells as $cell) {
-                        $xls->setcell($cell);
-                    }
+                    $question->exportDetailsToExcel($exporter, $sheet, $rowCounter, $colCounter, $questionCounters, $participants);
                 }
             }
 
-            $objSurvey = $this->Database->prepare('SELECT title FROM tl_survey WHERE id = ?')
-                ->execute($surveyID);
-            if (1 === $objSurvey->numRows) {
-                $xls->sendFile(\StringUtil::sanitizeFileName(htmlspecialchars_decode($objSurvey->title).'_detail.xls'));
+            $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', $surveyID);
+            if (null !== $surveyModel) {
+                $filename = $surveyModel->title . '_detail';
             } else {
-                $xls->sendFile('survey_detail.xls');
+                $filename = 'survey_detail';
             }
+            $exporter->setFilename($filename);
+            $exporter->sendFile($surveyModel->title, $surveyModel->title, $surveyModel->title, 'Contao CMS', 'Contao CMS');
             exit;
         }
         $this->redirect(\Environment::get('script').'?do='.\Input::get('do'));
@@ -329,79 +330,6 @@ class SurveyResultDetails extends \Backend
         return $result;
     }
 
-    protected function setValueXLSX($objPHPExcel, $cell)
-    {
-        $col = $this->getCellTitle($cell['col']);
-        $row = $cell['row'] + 1;
-        $pos = (string) $col.$row;
-        $objPHPExcel->getActiveSheet()->SetCellValue($pos, utf8_encode($cell['data']));
-        $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-        $fill_array = [];
-        $font_array = [];
-        if ($cell['type'] > 0) {
-            switch ($cell['type']) {
-                case CELL_STRING:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_TEXT);
-                    break;
-                case CELL_FLOAT:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER_00);
-                    break;
-                case CELL_PICTURE:
-                    break;
-                default:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
-                    break;
-            }
-        } else {
-            $objPHPExcel->getActiveSheet()->getStyle($pos)->getNumberFormat()->setFormatCode(\PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
-        }
-        if (\strlen($cell['bgcolor']) > 0) {
-            $fill_array = [
-                        'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-                        'color' => ['rgb' => str_replace('#', '', $cell['bgcolor'])],
-                    ];
-        }
-        if (\strlen($cell['color']) > 0) {
-            $font_array['color'] = ['rgb' => str_replace('#', '', $cell['color'])];
-        }
-        if (\strlen($cell['hallign']) > 0) {
-            switch ($cell['hallign']) {
-                case XLSXF_HALLIGN_GENERAL:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_GENERAL);
-                    break;
-                case XLSXF_HALLIGN_LEFT:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    break;
-                case XLSXF_HALLIGN_CENTER:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-                    break;
-                case XLSXF_HALLIGN_RIGHT:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
-                    break;
-                case XLSXF_HALLIGN_FILL:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_FILL);
-                    break;
-                case XLSXF_HALLIGN_JUSTIFY:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_JUSTIFY);
-                    break;
-                case XLSXF_HALLIGN_CACROSS:
-                    $objPHPExcel->getActiveSheet()->getStyle($pos)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER_CONTINUOUS);
-                    break;
-            }
-        }
-        if (\strlen($cell['fontweight']) > 0) {
-            if (XLSFONT_BOLD === $cell['fontweight']) {
-                $font_array['bold'] = true;
-            }
-        }
-        $objPHPExcel->getActiveSheet()->getStyle($pos)->applyFromArray(
-            [
-                'fill' => $fill_array,
-                'font' => $font_array,
-            ]
-        );
-    }
-
     /**
      * Exports some basic information in the unused top left area.
      *
@@ -409,92 +337,120 @@ class SurveyResultDetails extends \Backend
      *
      * @param mixed $sheet
      */
-    protected function exportTopLeftArea($sheet)
+    protected function exportTopLeftArea(&$exporter, $sheet)
     {
         $result = [];
 
         // Legends for the question headers
         $row = 0;
         $col = 4;
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'hallign' => XLSXF_HALLIGN_RIGHT,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id'].':'),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'hallign' => XLSXF_HALLIGN_RIGHT,
-                'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_nr'].':'),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'hallign' => XLSXF_HALLIGN_RIGHT,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_pg_nr'].':'),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'hallign' => XLSXF_HALLIGN_RIGHT,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_type'].':'),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'hallign' => XLSXF_HALLIGN_RIGHT,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_answered'].':'),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'hallign' => XLSXF_HALLIGN_RIGHT,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_skipped'].':'),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'hallign' => XLSXF_HALLIGN_RIGHT,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_title'].':'),
-        ];
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id'].':',
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_nr'].':',
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_pg_nr'].':',
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_type'].':',
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_answered'].':',
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_skipped'].':',
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_title'].':',
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
 
         // Legends for the participant headers
         $col = 0;
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
-            'colwidth' => 6 * 256,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id_gen']),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'colwidth' => 5 * 256,
-            'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_sort']),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'colwidth' => 14 * 256,
-            'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_date']),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_lastpage']),
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
-            'colwidth' => 14 * 256,
-            'bgcolor' => '#C0C0C0', 'color' => '#000000',
-            'fontweight' => XLSFONT_BOLD, 'textwrap' => 1,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_result']['ex_question_participant']),
-        ];
+        $exporter->setCellValue($sheet, $row, $col++, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id_gen'],
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::TEXTWRAP => true,
+          ExcelExporter::COLWIDTH => 6 * 256,
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row, $col++, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_sort'],
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::TEXTWRAP => true,
+          ExcelExporter::COLWIDTH => 5 * 256,
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row, $col++, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_date'],
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::TEXTWRAP => true,
+          ExcelExporter::COLWIDTH => 14 * 256,
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row, $col++, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_lastpage'],
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::TEXTWRAP => true,
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
+
+        $exporter->setCellValue($sheet, $row, $col++, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_participant'],
+          ExcelExporter::BGCOLOR => '#C0C0C0',
+          ExcelExporter::COLOR => '#000000',
+          ExcelExporter::TEXTWRAP => true,
+          ExcelExporter::COLWIDTH => 14 * 256,
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+        ]);
 
         return $result;
     }
@@ -507,7 +463,7 @@ class SurveyResultDetails extends \Backend
      * @param mixed $sheet
      * @param mixed $participants
      */
-    protected function exportParticipantRowHeaders($sheet, &$rowCounter, &$colCounter, $participants)
+    protected function exportParticipantRowHeaders(&$exporter, $sheet, &$rowCounter, &$colCounter, $participants)
     {
         $result = [];
         $row = $rowCounter;
@@ -518,26 +474,26 @@ class SurveyResultDetails extends \Backend
                     continue;
                 }
                 $cell = [
-                    'sheetname' => $sheet, 'row' => $row, 'col' => $col++,
-                    'data' => $v,
+                  ExcelExporter::DATA => $v
                 ];
+
                 switch ($k) {
                     case 'id':
                     case 'count':
                     case 'lastpage':
-                        $cell['type'] = CELL_FLOAT;
+                        $cell[Exporter::CELLTYPE] = Exporter::CELLTYPE_FLOAT;
                         break;
 
                     case 'display':
                         if ($participant['finished']) {
-                            $cell['fontweight'] = XLSFONT_BOLD;
+                          $cell[Exporter::FONTWEIGHT] = Exporter::FONTWEIGHT_BOLD;
                         }
 
                         // no break
                     default:
                         break;
                 }
-                $result[] = $cell;
+                $exporter->setCellValue($sheet, $row, $col++, $cell);
             }
             ++$row;
         }
@@ -545,20 +501,5 @@ class SurveyResultDetails extends \Backend
         $colCounter = $col;
 
         return $result;
-    }
-
-    /**
-     * Calculate the Excel cell address (A,...,Z,AA,AB,...) from a numeric index.
-     *
-     * @param mixed $index
-     */
-    private function getCellTitle($index)
-    {
-        $alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-        if ($index < 26) {
-            return $alphabet[$index];
-        }
-
-        return $alphabet[floor($index / 26) - 1].$alphabet[$index - (floor($index / 26) * 26)];
     }
 }

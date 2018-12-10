@@ -38,6 +38,35 @@ abstract class ExcelExporter
     const ALIGNMENT_H_FILL = 'hfill';
     const ALIGNMENT_H_JUSTIFY = 'hjustify';
     const ALIGNMENT_H_CENTER_CONT = 'hcentercont';
+    const TEXTWRAP = 'tw';
+    const COLWIDTH = 'cw';
+    const COLWIDTH_AUTO = 'a';
+    const MERGE = 'merge';
+    const BORDERBOTTOM = 'bb';
+    const BORDERBOTTOMCOLOR = 'bbc';
+    const BORDERTOP = 'bt';
+    const BORDERTOPCOLOR = 'btc';
+    const BORDERLEFT = 'bl';
+    const BORDERLEFTCOLOR = 'blc';
+    const BORDERRIGHT = 'br';
+    const BORDERRIGHTCOLOR = 'brc';
+    const BORDER_NONE	= 'bn';
+    const BORDER_DASHDOT	= 'bdd';
+    const BORDER_DASHDOTDOT	 = 'bddd';
+    const BORDER_DASHED	= 'bda';
+    const BORDER_DOTTED	= 'bdo';
+    const BORDER_DOUBLE	= 'bdou';
+    const BORDER_HAIR	= 'bh';
+    const BORDER_MEDIUM	= 'bm';
+    const BORDER_MEDIUMDASHDOT = 'mdd';
+    const BORDER_MEDIUMDASHDOTDOT	= 'mddd';
+    const BORDER_MEDIUMDASHED	= 'md';
+    const BORDER_SLANTDASHDOT	= 'sdd';
+    const BORDER_THICK = 'bt';
+    const BORDER_THIN = 'bti';
+    const TEXTROTATE = 'tr';
+    const TEXTROTATE_CLOCKWISE = 'trc';
+    const TEXTROTATE_COUNTERCLOCKWISE = 'trcc';
 
     protected $spreadsheet;
     protected $sheets = [];
@@ -60,9 +89,73 @@ abstract class ExcelExporter
         return $alphabet[floor($index / 26) - 1].$alphabet[$index - (floor($index / 26) * 26)];
     }
 
+    protected function columnToIndex($col)
+    {
+      $index = 0;
+      $pow = strlen($col)-1;
+      $alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+      for ($i = 0; $i <= strlen($col); $i++)
+      {
+          $index += pow(26, $pow) * (array_search(strtoupper($col[$i]) + 1);
+          $pow--;
+      }
+      return $index-1;
+    }
+
     public function getCell($row, $col)
     {
         return $this->getColumnIndex($col).(string) $row;
+    }
+
+    protected function getRowFromCell($cell)
+    {
+      $col = '';
+      $row = '';
+      for ($i = 0; $i < strlen($cell); $i++)
+      {
+        $char = $cell[$i];
+        if (ctype_alpha($char))
+        {
+          $col .= $char;
+        }
+        else {
+          $row .= $char;
+        }
+      }
+      return (int)$row - 1;
+    }
+
+    protected function getColFromCell($cell)
+    {
+      $col = '';
+      $row = '';
+      for ($i = 0; $i < strlen($cell); $i++)
+      {
+        $char = $cell[$i];
+        if (ctype_alpha($char))
+        {
+          $col .= $char;
+        }
+        else {
+          $row .= $char;
+        }
+      }
+      return $this->columnToIndex($col);
+    }
+
+    public function getArrayFromRange($range)
+    {
+      $separator = strpos($range, ':');
+      if ($separator === false)
+      {
+        // single cell
+        return array($this->getRowFromCell($range), $this->getColFromCell($range));
+      }
+      else {
+        // cell range
+        $res = explode(':', $range);
+        return array($this->getRowFromCell($res[0]), $this->getColFromCell($res[0]), $this->getRowFromCell($res[1]), $this->getColFromCell($res[1]));
+      }
     }
 
     public function addSheet($name)
