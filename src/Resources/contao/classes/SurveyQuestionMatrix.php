@@ -10,6 +10,8 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Hschottm\SurveyBundle\Export\ExcelExporter;
+
 /**
  * Class SurveyQuestionMatrix.
  *

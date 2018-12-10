@@ -1,8 +1,8 @@
 <?php
 
-namespace Hschottm\SurveyBundle;
+namespace Hschottm\SurveyBundle\Export;
 
-use Hschottm\SurveyBundle\ExcelExporter;
+use Hschottm\SurveyBundle\Export\ExcelExporter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;

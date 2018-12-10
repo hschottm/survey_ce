@@ -8,7 +8,7 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
-namespace Hschottm\SurveyBundle;
+namespace Hschottm\SurveyBundle\Export;
 
 abstract class ExcelExporter
 {

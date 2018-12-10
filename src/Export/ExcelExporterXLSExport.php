@@ -1,8 +1,8 @@
 <?php
 
-namespace Hschottm\SurveyBundle;
+namespace Hschottm\SurveyBundle\Export;
 
-use Hschottm\SurveyBundle\ExcelExporter;
+use Hschottm\SurveyBundle\Export\ExcelExporter;
 use Hschottm\ExcelXLSBundle\xlsexport;
 
 class ExcelExporterXLSExport extends ExcelExporter

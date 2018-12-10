@@ -11,6 +11,9 @@
 namespace Hschottm\SurveyBundle;
 
 use Contao\DataContainer;
+use Hschottm\SurveyBundle\Export\ExcelExporter;
+use Hschottm\SurveyBundle\Export\ExcelExporterPhpSpreadsheet;
+use Hschottm\SurveyBundle\Export\ExcelExporterXLSExport;
 
 /**
  * Class SurveyResultDetails.
