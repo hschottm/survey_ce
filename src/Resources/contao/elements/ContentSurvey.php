@@ -544,8 +544,6 @@ class ContentSurvey extends \ContentElement
         							$objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, [], true);
         						}
 
-                    \System::log($objMailProperties->messageText, __METHOD__, TL_GENERAL);
-
         						foreach ($objMailProperties->recipients as $recipient)
         						{
         							$objMail->sendTo($recipient);

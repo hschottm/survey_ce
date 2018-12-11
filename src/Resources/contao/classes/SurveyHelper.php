@@ -52,7 +52,7 @@ class SurveyHelper extends \Backend
 						continue;
 					}
 					$questionObject = new $strClass($found['qid']);
-					$strVal = $questionObject->resultAsString($found['result']);
+          $strVal = $questionObject->resultAsString($found['result']);
 
 					// Replace insert tags in subject
 					if (!empty($source))
