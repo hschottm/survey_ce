@@ -339,7 +339,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
         // question title
         $data = [
-          ExcelExporter::DATA => \StringUtil::decodeEntities($this->title)).($this->arrData['obligatory'] ? ' *' : '',
+          ExcelExporter::DATA => \StringUtil::decodeEntities($this->title)).($this->arrData['obligatory'] ? ' *' : ''),
           ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_STRING,
           ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
           ExcelExporter::TEXTWRAP => true
