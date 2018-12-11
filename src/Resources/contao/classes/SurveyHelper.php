@@ -14,7 +14,7 @@ class SurveyHelper extends \Backend
 		$this->import('\Database');
 	}
 
-	public function replaceTags($source, $uidOrPin, $replacements, $blnIsHtml = false)
+	public function replaceTags($source, $uidOrPin, $replacements = array(), $blnIsHtml = false)
 	{
 		$source = preg_replace(array('/\{\{/', '/\}\}/'), array('__BRCL__', '__BRCR__'), $source);
 		$blnEvalSource = $this->replaceConditionTags($source);

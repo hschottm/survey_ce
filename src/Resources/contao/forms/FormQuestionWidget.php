@@ -120,7 +120,7 @@ class FormQuestionWidget extends \Widget
                 return $this->absoluteNumber;
                 break;
             case 'showTitle':
-                return false === $this->hidetitle;
+                return false == $this->hidetitle;
                 break;
             case 'help':
                 return $this->help;
@@ -145,7 +145,7 @@ class FormQuestionWidget extends \Widget
 
     public function hasLabel()
     {
-        if ('' === $this->title || false === $this->showTitle) {
+        if ('' == $this->title || false == $this->showTitle) {
             return false;
         }
 

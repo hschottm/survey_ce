@@ -376,6 +376,6 @@ class SurveyQuestionConstantsum extends SurveyQuestion
   		{
   			return implode (", ", $arrAnswer);
   		}
-  		retrun '';
+  		return '';
   	}
 }

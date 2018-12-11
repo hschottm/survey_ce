@@ -95,7 +95,7 @@ class ContentSurvey extends \ContentElement
 
         $page = (\Input::post('page')) ? \Input::post('page') : 0;
         // introduction page / status
-        if (0 === $page) {
+        if (0 == $page) {
             $this->outIntroductionPage();
         }
 
@@ -120,13 +120,14 @@ class ContentSurvey extends \ContentElement
                     break;
                 case 'anoncode':
                     $tan = \Input::post('tan');
-                    if ((0 === strcmp(\Input::post('FORM_SUBMIT'), 'tl_survey_form')) && (\strlen($tan))) {
+                    if ((0 == strcmp(\Input::post('FORM_SUBMIT'), 'tl_survey_form')) && (\strlen($tan))) {
                         $result = $this->svy->checkPINTAN($this->objSurvey->id, '', $tan);
                         if (false === $result) {
                             $this->Template->tanMsg = $GLOBALS['TL_LANG']['ERR']['survey_wrong_tan'];
                         } else {
                             $this->pin = $this->svy->getPINforTAN($this->objSurvey->id, $tan);
-                            if (0 === $result) {
+
+                            if (0 == $result) {
                                 $res = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['tan=?', 'pid=?'], [$tan, $this->objSurvey->id]);
                                 if (null !== $res) {
                                     $res->used = 1;
@@ -140,7 +141,7 @@ class ContentSurvey extends \ContentElement
                                 $page = 1;
                             } else {
                                 $status = $this->svy->getSurveyStatus($this->objSurvey->id, $this->pin);
-                                if (0 === strcmp($status, 'finished')) {
+                                if (0 == strcmp($status, 'finished')) {
                                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                                     $this->Template->hideStartButtons = true;
                                 } else {
@@ -177,7 +178,7 @@ class ContentSurvey extends \ContentElement
         }
 
         // submit successful, calculate next page and return a question list of the new page
-        if (0 === \count($surveypage)) {
+        if (0 == \count($surveypage)) {
             if (\strlen(\Input::post('next'))) {
                 $page++;
             }
@@ -269,7 +270,7 @@ class ContentSurvey extends \ContentElement
             $objWidget->absoluteNumber = $this->getQuestionPosition($question['id'], $this->objSurvey->id);
             $objWidget->pageQuestionNumber = $pagequestioncounter;
             $objWidget->pageNumber = $pagenumber;
-            $objWidget->cssClass = ('' !== $question['cssClass'] ? ' '.$question['cssClass'] : '').(0 === $objWidget->absoluteNumber % 2 ? ' odd' : ' even');
+            $objWidget->cssClass = ('' !== $question['cssClass'] ? ' '.$question['cssClass'] : '').(0 == $objWidget->absoluteNumber % 2 ? ' odd' : ' even');
             array_push($surveypage, $objWidget);
             ++$pagequestioncounter;
 
@@ -283,13 +284,13 @@ class ContentSurvey extends \ContentElement
                 switch ($this->objSurvey->access) {
                     case 'anon':
                     case 'anoncode':
-            $objResult === \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $objWidget->id, $this->pin]);
+                        $objResult = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $objWidget->id, $this->pin]);
                         break;
                     case 'nonanoncode':
-            $objResult = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $objWidget->id, $this->User->id]);
+                        $objResult = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $objWidget->id, $this->User->id]);
                         break;
                 }
-                if ($objResult->numRows) {
+                if (null !== $objResult && $objResult->count()) {
                     $objWidget->value = deserialize($objResult->result);
                 }
             }
@@ -333,16 +334,16 @@ class ContentSurvey extends \ContentElement
                 switch ($this->objSurvey->access) {
                     case 'anon':
                     case 'anoncode':
-            $res = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $question->id, $this->pin]);
-            if (null !== $res) {
-                if ($res instanceof Model) {
-                    $res->delete();
-                } elseif ($res instanceof Model\Collection) {
-                    foreach ($res as $singleRes) {
-                        $singleRes->delete();
-                    }
-                }
-            }
+                      $res = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $question->id, $this->pin]);
+                      if (null !== $res) {
+                        if ($res instanceof Model) {
+                          $res->delete();
+                        } elseif ($res instanceof Model\Collection) {
+                          foreach ($res as $singleRes) {
+                            $singleRes->delete();
+                          }
+                        }
+                      }
                         $value = $question->value;
                         if (\is_array($question->value)) {
                             $value = serialize($question->value);
@@ -521,7 +522,7 @@ class ContentSurvey extends \ContentElement
         						}
 
         						$helper = new \Hschottm\SurveyBundle\SurveyHelper();
-        						$replacements = array("#Bezahlt#" => $this->getTotalToPay());
+
         						$objMail->subject = $objMailProperties->subject;
 
         						if (!empty($objMailProperties->attachments))
@@ -535,13 +536,15 @@ class ContentSurvey extends \ContentElement
 
         						if (!empty($objMailProperties->messageText))
         						{
-        							$objMail->text = $helper->replaceTags($objMailProperties->messageText, $this->pin, $replacements);
+        							$objMail->text = $helper->replaceTags($objMailProperties->messageText, $this->pin, []);
         						}
 
         						if (!empty($objMailProperties->messageHtml))
         						{
-        							$objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, $replacements, true);
+        							$objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, [], true);
         						}
+
+                    \System::log($objMailProperties->messageText, __METHOD__, TL_GENERAL);
 
         						foreach ($objMailProperties->recipients as $recipient)
         						{
@@ -596,7 +599,7 @@ class ContentSurvey extends \ContentElement
      **/
     protected function isValid($pin)
     {
-        if (0 === \strlen($pin)) {
+        if (0 == \strlen($pin)) {
             return false;
         }
         $participants = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy(['pin=?', 'pid=?'], [$pin, $this->objSurvey->id]);
@@ -618,7 +621,7 @@ class ContentSurvey extends \ContentElement
                 if ($this->objSurvey->usecookie) {
                     $status = $this->svy->getSurveyStatus($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id]);
                 }
-                if (0 === strcmp($status, 'finished')) {
+                if (0 == strcmp($status, 'finished')) {
                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                     $this->Template->hideStartButtons = true;
                 }
@@ -643,7 +646,7 @@ class ContentSurvey extends \ContentElement
                     }
                 } else {
                     $status = $this->svy->getSurveyStatusForMember($this->objSurvey->id, $this->User->id);
-                    if (0 === strcmp($status, 'finished')) {
+                    if (0 == strcmp($status, 'finished')) {
                         $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                         $this->Template->hideStartButtons = true;
                     }

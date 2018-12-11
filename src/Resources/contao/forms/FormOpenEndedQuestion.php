@@ -128,8 +128,8 @@ class FormOpenEndedQuestion extends FormQuestionWidget
         $template->ctrl_name = \StringUtil::specialchars($this->strName);
         $template->ctrl_id = \StringUtil::specialchars($this->strId);
         $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
-        $template->multiLine = (0 === strcmp($this->questiontype, 'oe_multiline'));
-        $template->singleLine = (0 === strcmp($this->questiontype, 'oe_singleline'));
+        $template->multiLine = (0 == strcmp($this->questiontype, 'oe_multiline'));
+        $template->singleLine = (0 == strcmp($this->questiontype, 'oe_singleline'));
         $template->value = $this->varValue;
         $template->textBefore = $this->strTextBefore;
         $template->textAfter = $this->strTextAfter;

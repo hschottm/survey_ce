@@ -15,6 +15,10 @@ use Hschottm\SurveyBundle\FormMultipleChoiceQuestion;
 use Hschottm\SurveyBundle\FormOpenEndedQuestion;
 use Hschottm\SurveyBundle\SurveyPINTAN;
 use Hschottm\SurveyBundle\SurveyResultDetails;
+use Hschottm\SurveyBundle\SurveyQuestionOpenended;
+use Hschottm\SurveyBundle\SurveyQuestionMultiplechoice;
+use Hschottm\SurveyBundle\SurveyQuestionMatrix;
+use Hschottm\SurveyBundle\SurveyQuestionConstantsum;
 
 /*
  * Add survey element
@@ -67,10 +71,10 @@ $GLOBALS['TL_SVY']['multiplechoice'] = FormMultipleChoiceQuestion::class;
 $GLOBALS['TL_SVY']['matrix'] = FormMatrixQuestion::class;
 $GLOBALS['TL_SVY']['constantsum'] = FormConstantSumQuestion::class;
 
-$GLOBALS['TL_SVY']['q_openended'] = 'SurveyQuestionOpenended';
-$GLOBALS['TL_SVY']['q_multiplechoice'] = 'SurveyQuestionMultiplechoice';
-$GLOBALS['TL_SVY']['q_matrix'] = 'SurveyQuestionMatrix';
-$GLOBALS['TL_SVY']['q_constantsum'] = 'SurveyQuestionConstantsum';
+$GLOBALS['TL_SVY']['q_openended'] = SurveyQuestionOpenended::class;
+$GLOBALS['TL_SVY']['q_multiplechoice'] = SurveyQuestionMultiplechoice::class;
+$GLOBALS['TL_SVY']['q_matrix'] = SurveyQuestionMatrix::class;
+$GLOBALS['TL_SVY']['q_constantsum'] = SurveyQuestionConstantsum::class;
 
 /*
  * Set the member URL parameter as url keyword

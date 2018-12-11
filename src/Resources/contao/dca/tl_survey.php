@@ -9,7 +9,7 @@
  */
 
 $found = (\strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
-$hasData = (null !== $found && 0 < $found->numRows) ? true : false;
+$hasData = (null !== $found && 0 < $found->count()) ? true : false;
 
 /*
  * Table tl_survey
