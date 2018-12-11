@@ -74,7 +74,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
     /**
      * Exports question headers and all existing answers.
      *
-     * As a side effect the width for each column is calculated and set via the given $xls object.
+     * As a side effect the width for each column is calculated and set via the given $exporter object.
      * Row height is currently calculated/set ONLY for the row with subquestions/choices (neccessary
      * for matrix questions etc, here only test strings are given out for the testing), which is turned
      * 90° ccw ... thus it is effectively also a text width calculation.
@@ -83,7 +83,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
      * which does a good job here by default. However Excel 95/97 seems to do it worse,
      * I can't test that currently. "Set optimal row height" might help users of Excel.
      *
-     * @param object &$xls            the excel object to call methods on
+     * @param object &$exporter       instance of the Excel exporter object
      * @param string $sheet           name of the worksheet
      * @param int    &$row            row to put a cell in
      * @param int    &$col            col to put a cell in
@@ -97,17 +97,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
         $rotateInfo = [];
         $headerCells = $this->exportQuestionHeadersToExcel($exporter, $sheet, $row, $col, $questionNumbers, $rotateInfo);
         $resultCells = $this->exportDetailResults($exporter, $sheet, $row, $col, $participants);
-
-/*
-        foreach ($rotateInfo as $intRow => $arrText) {
-            foreach ($arrText as $intCol => $strText) {
-                $this->setRowHeightForRotatedText($xls, $sheet, $intRow, $intCol, $strText);
-            }
-        }
-        */
-
         ++$col;
-
         return array_merge($headerCells, $resultCells);
     }
 
@@ -128,7 +118,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
      * Several rows are returned, so that the user of the Excel file is able to
      * use them for reference, filtering and sorting.
      *
-     * @param object &$xls            the excel object to call methods on
+     * @param object &$exporter       instance of the Excel exporter object
      * @param string $sheet           name of the worksheet
      * @param int    &$row            in/out row to put a cell in
      * @param int    &$col            in/out col to put a cell in
@@ -184,14 +174,6 @@ class SurveyQuestionOpenended extends SurveyQuestion
           ExcelExporter::TEXTWRAP => true
         ]);
 
-        // Guess a minimum column width for the title.
-        /*
-        $minColWidth = max(
-            ($this->getLongestWordLen($title) + 3) * 256,
-            $xls->getcolwidth($sheet, $col)
-        );
-        $xls->setcolwidth($sheet, $col, $minColWidth);
-        */
         // empty cell used in other question types, for the formatting
         $exporter->setCellValue($sheet, $row++, $col, [
           ExcelExporter::DATA => '',
@@ -210,7 +192,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
      *
      * Sets column widthes as a side effect.
      *
-     * @param object &$xls         the excel object to call methods on
+     * @param object &$exporter    instance of the Excel exporter object
      * @param string $sheet        name of the worksheet
      * @param int    &$row         row to put a cell in
      * @param int    &$col         col to put a cell in
@@ -239,77 +221,10 @@ class SurveyQuestionOpenended extends SurveyQuestion
                   ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
                   ExcelExporter::TEXTWRAP => true
                 ]);
-                // Guess a minimum column width.
-                /*
-                $minColWidth = max(
-                    ($this->getLongestWordLen($data) + 3) * 256,
-                    $xls->getcolwidth($sheet, $col),
-                    min(\strlen($data) / 8 * 256, 40 * 256)
-                );
-                $xls->setcolwidth($sheet, $col, $minColWidth);
-                */
             }
             ++$row;
         }
 
         return $cells;
-    }
-
-    /**
-     * Guesses and sets a height for the given row containing rotatet text (90° cw or ccw).
-     *
-     * The guess assumes the default font and is based on the existing col width.
-     *
-     * @param object &$xls  the excel object to call methods on
-     * @param string $sheet name of the worksheet
-     * @param int    $row   row to calculate/set the height for
-     * @param int    $col   col to consider in the calculation (it's current width)
-     * @param string $text  the text in the cell
-     *
-     * @TODO: refactor out into superclass SurveyQuestion
-     * @TODO: define constants or dcaconfig.php settings for the hardcoded values
-     */
-    protected function setRowHeightForRotatedText(&$exporter, $sheet, $row, $col, $text)
-    {
-        // 1 line of rotated text needs ~ 640 colwidth units.
-        /*
-        $hscale = 110;
-        $minRowHeight = max(
-            ($this->getLongestWordLen($text) + 3) * $hscale,
-            (int) ((utf8_strlen($text) + 3) * $hscale / round($xls->getcolwidth($sheet, $col) / 640)),
-            $xls->getrowheight($sheet, $row)
-        );
-        $xls->setrowheight($sheet, $row, $minRowHeight);
-        */
-    }
-
-    /**
-     * Returns the length of the longest word in the given string.
-     *
-     * @param: string $strString  the input string to process
-     * @return: int  the lenght of the longest word
-     *
-     * @TODO: refactor out into superclass SurveyQuestion
-     * @TODO: make chars to split on configurable via dcaconfig.php ?
-     *
-     * @param mixed $strString
-     */
-    protected function getLongestWordLen($strString)
-    {
-        $result = 0;
-        $strString = strip_tags($strString);
-        // split on some typical punktion chars too, even though Excel/Calc does not break lines
-        // on these, else e.g. a comma separated list (without spaces) would be considered as a
-        // very long line and lead to a much too wide column.
-        $strString = preg_replace('/[-,;:!|\.\?\t\n\r\/\\\\]+/', ' ', $strString);
-        $arrChunks = preg_split('/\s+/', $strString);
-        foreach ($arrChunks as $strChunk) {
-            $len = utf8_strlen($strChunk);
-            if ($len > $result) {
-                $result = $len;
-            }
-        }
-
-        return $result;
     }
 }

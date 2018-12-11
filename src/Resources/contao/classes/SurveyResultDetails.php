@@ -62,7 +62,7 @@ class SurveyResultDetails extends \Backend
         $this->loadLanguageFile('tl_survey_question');
         $this->Template = new \BackendTemplate('be_question_result_details');
         $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-        $this->Template->hrefBack = \Backend::addToUrl('key=cumulated&amp;id='.$qtype['pid'], true, ['key', 'id']);
+        $this->Template->hrefBack = \Backend::addToUrl('key=cumulated&amp;id='.$parent['pid'], true, ['key', 'id']);
         if ($this->classFileExists($class)) {
             $this->import($class);
             $question = new $class($qid);

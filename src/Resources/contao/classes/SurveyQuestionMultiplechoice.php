@@ -125,7 +125,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
      * participants entry as value. Common question headers, e.g. the id, question-numbers,
      * title are exported in merged cells spanning all choice columns.
      *
-     * As a side effect the width for each column is calculated and set via the given $xls object.
+     * As a side effect the width for each column is calculated and set via the given $expoerter object.
      * Row height is currently calculated/set ONLY for the row with subquestions/choices, which is turned
      * 90° ccw ... thus it is effectively also a text width calculation.
      *
@@ -133,7 +133,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
      * which does a good job here by default. However Excel 95/97 seems to do it worse,
      * I can't test that currently. "Set optimal row height" might help users of Excel.
      *
-     * @param object &$xls            the excel object to call methods on
+     * @param object &$exporter       instance of the Excel exporter object
      * @param string $sheet           name of the worksheet
      * @param int    &$row            row to put a cell in
      * @param int    &$col            col to put a cell in
@@ -149,13 +149,6 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $headerCells = $this->exportQuestionHeadersToExcel($exporter, $sheet, $row, $col, $questionNumbers, $rotateInfo);
         $resultCells = $this->exportDetailResults($exporter, $sheet, $row, $valueCol, $participants);
 
-/*
-        foreach ($rotateInfo as $intRow => $arrText) {
-            foreach ($arrText as $intCol => $strText) {
-                $this->setRowHeightForRotatedText($xls, $sheet, $intRow, $intCol, $strText);
-            }
-        }
-*/
         return array_merge($headerCells, $resultCells);
     }
 
@@ -238,7 +231,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
      * Several rows are returned, so that the user of the Excel file is able to
      * use them for reference, filtering and sorting.
      *
-     * @param object &$xls            the excel object to call methods on
+     * @param object &$exporter       instance of the Excel exporter object
      * @param string $sheet           name of the worksheet
      * @param int    &$row            in/out row to put a cell in
      * @param int    &$col            in/out col to put a cell in
@@ -362,7 +355,6 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
           ];
           $exporter->setCellValue($sheet, $row, $col, $data);
 
-            //$xls->setcolwidth($sheet, $col, $minColWidthTitle);
             ++$col;
         } else {
             // output all choice columns
@@ -379,32 +371,6 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                 ExcelExporter::BORDERBOTTOMCOLOR => '#000000',
               ];
               $exporter->setCellValue($sheet, $row, $col, $data);
-/*
-                if ($this->arrData['addother']) {
-                    // the "other" column will take care of a good col widht for the merged cells above,
-                    // so we set the normal choice columns as narrow as possible, accounting for 1-2 lines of ccw text
-                    if ($key < \count($this->choices) - 1) {
-                        $sumWidth += $narrowWidth;
-                        $xls->setcolwidth($sheet, $col, $narrowWidth);
-                    } else {
-                        // Guess a minimum column width for the "other" column
-                        $minColWidth = max(
-                            ($this->getLongestWordLen($choice) + 3) * 256,
-                            $narrowWidth,
-                            $minColWidthTitle - $sumWidth
-                        );
-                        $xls->setcolwidth($sheet, $col, $minColWidth);
-                    }
-                } else {
-                    // only 'x' values will be given out, make cols as narrow as possible, but wide enough for the
-                    // title in the merged cells above
-                    $minColWidth = max(
-                        (int) ($minColWidthTitle / \count($this->choices)),
-                        $narrowWidth
-                    );
-                    $xls->setcolwidth($sheet, $col, $minColWidth);
-                }
-                $rotateInfo[$row][$col] = $choice;*/
                 ++$col;
             }
         }
@@ -418,7 +384,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
      *
      * Sets some column widthes as a side effect.
      *
-     * @param object &$xls         the excel object to call methods on
+     * @param object &$exporter    instance of the Excel exporter object
      * @param string $sheet        name of the worksheet
      * @param int    &$row         row to put a cell in
      * @param int    &$col         col to put a cell in
@@ -451,7 +417,12 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     ExcelExporter::TEXTWRAP => true
                   ]);
                 } elseif ('mc_singleresponse' === $this->arrData['multiplechoice_subtype']) {
-                    $strAnswer = $this->choices[$arrAnswers['value'] - 1];
+                    $emptyAnswer = false;
+                    foreach ($this->choices as $choice)
+                    {
+                      if (strlen($choice) == 0) $emptyAnswer = true;
+                    }
+                    $strAnswer = (($emptyAnswer) ? ($arrAnswers['value'] . ' - ') : '') . $this->choices[$arrAnswers['value'] - 1];
                     if (($this->arrData['addother']) && ($arrAnswers['value'] === \count($this->choices))) {
                         $strAnswer .= ': '.\StringUtil::decodeEntities($arrAnswers['other']);
                     }
@@ -460,16 +431,6 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                       ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
                       ExcelExporter::TEXTWRAP => true
                     ]);
-
-                    // Guess a minimum column width.
-                    /*
-                    $minColWidth = max(
-                        ($this->getLongestWordLen($strAnswer) + 3) * 256,
-                        $xls->getcolwidth($sheet, $col),
-                        min(\strlen($strAnswer) / 8 * 256, 40 * 256)
-                    );
-                    $xls->setcolwidth($sheet, $col, $minColWidth);
-                    */
                 } elseif ('mc_multipleresponse' === $this->arrData['multiplechoice_subtype']) {
                     foreach ($this->choices as $k => $v) {
                         $strAnswer = (\is_array($arrAnswers['value']) && array_key_exists($k + 1, $arrAnswers['value']))
@@ -483,17 +444,6 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                             ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
                             ExcelExporter::TEXTWRAP => true
                           ]);
-                            if ('x' !== $strAnswer) {
-                                // Guess a minimum column width for the "other" column.
-                                /*
-                                $minColWidth = max(
-                                    ($this->getLongestWordLen($strAnswer) + 3) * 256,
-                                    $xls->getcolwidth($sheet, $col),
-                                    min(\strlen($strAnswer) / 8 * 256, 40 * 256)
-                                );
-                                $xls->setcolwidth($sheet, $col, $minColWidth);
-                                */
-                            }
                         }
                         ++$col;
                     }
@@ -503,63 +453,5 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         }
 
         return $cells;
-    }
-
-    /**
-     * Guesses and sets a height for the given row containing rotatet text (90° cw or ccw).
-     *
-     * The guess assumes the default font and is based on the existing col width.
-     *
-     * @param object &$xls  the excel object to call methods on
-     * @param string $sheet name of the worksheet
-     * @param int    $row   row to calculate/set the height for
-     * @param int    $col   col to consider in the calculation (it's current width)
-     * @param string $text  the text to consider in calculation
-     *
-     * @TODO: refactor out into superclass SurveyQuestion
-     * @TODO: define constants or dcaconfig.php settings for the hardcoded values
-     */
-    protected function setRowHeightForRotatedText(&$xls, $sheet, $row, $col, $text)
-    {
-        // 1 line of rotated text needs ~ 640 colwidth units.
-        /*
-        $hscale = 110;
-        $minRowHeight = max(
-            ($this->getLongestWordLen($text) + 3) * $hscale,
-            (int) ((utf8_strlen($text) + 3) * $hscale / round($xls->getcolwidth($sheet, $col) / 640)),
-            $xls->getrowheight($sheet, $row)
-        );
-        $xls->setrowheight($sheet, $row, $minRowHeight);
-        */
-    }
-
-    /**
-     * Returns the length of the longest word in the given string.
-     *
-     * @param: string $strString  the input string to process
-     * @return: int  the lenght of the longest word
-     *
-     * @TODO: refactor out into superclass SurveyQuestion
-     * @TODO: make chars to split on configurable via dcaconfig.php ?
-     *
-     * @param mixed $strString
-     */
-    protected function getLongestWordLen($strString)
-    {
-        $result = 0;
-        $strString = strip_tags($strString);
-        // split on some typical punktion chars too, even though Excel/Calc does not break lines
-        // on these, else e.g. a comma separated list (without spaces) would be considered as a
-        // very long line and lead to a much too wide column.
-        $strString = preg_replace('/[-,;:!|\.\?\t\n\r\/\\\\]+/', ' ', $strString);
-        $arrChunks = preg_split('/\s+/', $strString);
-        foreach ($arrChunks as $strChunk) {
-            $len = utf8_strlen($strChunk);
-            if ($len > $result) {
-                $result = $len;
-            }
-        }
-
-        return $result;
     }
 }
