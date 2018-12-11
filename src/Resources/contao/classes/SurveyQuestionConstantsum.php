@@ -209,7 +209,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
     {
         $this->choices = deserialize($this->arrData['sumchoices'], true);
         foreach ($this->choices as $k => $v) {
-            $this->choices[$k] = \String::decodeEntities($v);
+            $this->choices[$k] = \StringUtil::decodeEntities($v);
         }
         $numcols = \count($this->choices);
         $result = [];
@@ -286,7 +286,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
         // question title
         $data = [
-          ExcelExporter::DATA => \String::decodeEntities($this->title)).($this->arrData['obligatory'] ? ' *' : '',
+          ExcelExporter::DATA => \StringUtil::decodeEntities($this->title)).($this->arrData['obligatory'] ? ' *' : '',
           ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_STRING,
           ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
           ExcelExporter::TEXTWRAP => true

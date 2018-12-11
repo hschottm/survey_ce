@@ -92,17 +92,19 @@ class SurveyQuestionOpenended extends SurveyQuestion
      *
      * @return array the cells to be added to the export
      */
-    public function exportDetailsToExcel(&$xls, $sheet, &$row, &$col, $questionNumbers, $participants)
+    public function exportDetailsToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, $participants)
     {
         $rotateInfo = [];
-        $headerCells = $this->exportQuestionHeadersToExcel($xls, $sheet, $row, $col, $questionNumbers, $rotateInfo);
-        $resultCells = $this->exportDetailResults($xls, $sheet, $row, $col, $participants);
+        $headerCells = $this->exportQuestionHeadersToExcel($exporter, $sheet, $row, $col, $questionNumbers, $rotateInfo);
+        $resultCells = $this->exportDetailResults($exporter, $sheet, $row, $col, $participants);
 
+/*
         foreach ($rotateInfo as $intRow => $arrText) {
             foreach ($arrText as $intCol => $strText) {
                 $this->setRowHeightForRotatedText($xls, $sheet, $intRow, $intCol, $strText);
             }
         }
+        */
 
         ++$col;
 
@@ -135,64 +137,70 @@ class SurveyQuestionOpenended extends SurveyQuestion
      *
      * @return array the cells to be added to the export
      */
-    protected function exportQuestionHeadersToExcel(&$xls, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
+    protected function exportQuestionHeadersToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
     {
         $result = [];
 
         // ID and question numbers
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'data' => $this->id, 'type' => CELL_FLOAT,
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'fontstyle' => XLSFONT_STYLE_ITALIC,
-            'data' => $questionNumbers['abs_question_no'], 'type' => CELL_FLOAT,
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'fontweight' => XLSFONT_BOLD, 'hallign' => XLSXF_HALLIGN_CENTER,
-            'data' => $questionNumbers['page_no'].'.'.$questionNumbers['rel_question_no'],
-        ];
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $this->id,
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT
+        ]);
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $questionNumbers['abs_question_no'],
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT,
+          ExcelExporter::FONTSTYLE => ExcelExporter::FONTSTYLE_ITALIC
+        ]);
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $questionNumbers['page_no'].'.'.$questionNumbers['rel_question_no'],
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT,
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER
+        ]);
 
         // question type
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]),
-        ];
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]
+        ]);
 
         // answered and skipped info, retrieves all answers as a side effect
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'data' => $this->statistics['answered'], 'type' => CELL_FLOAT,
-        ];
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'data' => $this->statistics['skipped'], 'type' => CELL_FLOAT,
-        ];
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $this->statistics['answered'],
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT
+        ]);
+
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => $this->statistics['skipped'],
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT
+        ]);
 
         // question title
-        $title = utf8_decode(StringUtil::decodeEntities($this->title)).($this->arrData['obligatory'] ? ' *' : '');
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
-            'data' => $title,
-        ];
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => \StringUtil::decodeEntities($this->title)).($this->arrData['obligatory'] ? ' *' : '',
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_STRING,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
+          ExcelExporter::TEXTWRAP => true
+        ]);
+
         // Guess a minimum column width for the title.
+        /*
         $minColWidth = max(
             ($this->getLongestWordLen($title) + 3) * 256,
             $xls->getcolwidth($sheet, $col)
         );
         $xls->setcolwidth($sheet, $col, $minColWidth);
-
+        */
         // empty cell used in other question types, for the formatting
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row++, 'col' => $col,
-            'textrotate' => XLSXF_TEXTROTATION_COUNTERCLOCKWISE,
-            'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
-            'borderbottom' => XLSXF_BORDER_THIN, 'borderbottomcolor' => '#000000',
-            'data' => '',
-        ];
+        $exporter->setCellValue($sheet, $row++, $col, [
+          ExcelExporter::DATA => '',
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
+          ExcelExporter::TEXTWRAP => true,
+          ExcelExporter::TEXTROTATE => ($this->arrData['addother'] && ($key === \count($this->choices) - 1)) ? ExcelExporter::TEXTROTATE_NONE : ExcelExporter::TEXTROTATE_COUNTERCLOCKWISE,
+          ExcelExporter::BORDERBOTTOM => ExcelExporter::BORDER_THIN,
+          ExcelExporter::BORDERBOTTOMCOLOR => '#000000',
+        ]);
 
         return $result;
     }
@@ -212,7 +220,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
      *
      * @TODO: make alignment and max colwidth configurable in dcaconfig.php ?
      */
-    protected function exportDetailResults(&$xls, $sheet, &$row, &$col, $participants)
+    protected function exportDetailResults(&$exporter, $sheet, &$row, &$col, $participants)
     {
         $cells = [];
         foreach ($participants as $key => $value) {
@@ -226,18 +234,20 @@ class SurveyQuestionOpenended extends SurveyQuestion
             }
             if ($data) {
                 $data = utf8_decode(StringUtil::decodeEntities($data));
-                $cells[] = [
-                    'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-                    'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
-                    'data' => $data,
-                ];
+                $exporter->setCellValue($sheet, $row, $col, [
+                  ExcelExporter::DATA => $data,
+                  ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
+                  ExcelExporter::TEXTWRAP => true
+                ]);
                 // Guess a minimum column width.
+                /*
                 $minColWidth = max(
                     ($this->getLongestWordLen($data) + 3) * 256,
                     $xls->getcolwidth($sheet, $col),
                     min(\strlen($data) / 8 * 256, 40 * 256)
                 );
                 $xls->setcolwidth($sheet, $col, $minColWidth);
+                */
             }
             ++$row;
         }
@@ -259,9 +269,10 @@ class SurveyQuestionOpenended extends SurveyQuestion
      * @TODO: refactor out into superclass SurveyQuestion
      * @TODO: define constants or dcaconfig.php settings for the hardcoded values
      */
-    protected function setRowHeightForRotatedText(&$xls, $sheet, $row, $col, $text)
+    protected function setRowHeightForRotatedText(&$exporter, $sheet, $row, $col, $text)
     {
         // 1 line of rotated text needs ~ 640 colwidth units.
+        /*
         $hscale = 110;
         $minRowHeight = max(
             ($this->getLongestWordLen($text) + 3) * $hscale,
@@ -269,6 +280,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
             $xls->getrowheight($sheet, $row)
         );
         $xls->setrowheight($sheet, $row, $minRowHeight);
+        */
     }
 
     /**

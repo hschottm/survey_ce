@@ -139,7 +139,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
      *
      * @TODO: eventually give out just indexes instead of choice strings to save width? Then the possible coices must be shown in the header.
      */
-    public function exportDetailsToExcel(&$xls, $sheet, &$row, &$col, $questionNumbers, $participants)
+    public function exportDetailsToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, $participants)
     {
         /*
         print "<pre>\n";
@@ -157,15 +157,16 @@ class SurveyQuestionMatrix extends SurveyQuestion
         */
         $valueCol = $col;
         $rotateInfo = [];
-        $headerCells = $this->exportQuestionHeadersToExcel($xls, $sheet, $row, $col, $questionNumbers, $rotateInfo);
-        $resultCells = $this->exportDetailResults($xls, $sheet, $row, $valueCol, $participants);
+        $headerCells = $this->exportQuestionHeadersToExcel($exporter, $sheet, $row, $col, $questionNumbers, $rotateInfo);
+        $resultCells = $this->exportDetailResults($exporter, $sheet, $row, $valueCol, $participants);
 
+/*
         foreach ($rotateInfo as $intRow => $arrText) {
             foreach ($arrText as $intCol => $strText) {
                 $this->setRowHeightForRotatedText($xls, $sheet, $intRow, $intCol, $strText);
             }
         }
-
+*/
         return array_merge($headerCells, $resultCells);
     }
 
@@ -217,11 +218,11 @@ class SurveyQuestionMatrix extends SurveyQuestion
      *
      * @return array the cells to be added to the export
      */
-    protected function exportQuestionHeadersToExcel(&$xls, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
+    protected function exportQuestionHeadersToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
     {
         $this->subquestions = deserialize($this->arrData['matrixrows'], true);
         foreach ($this->subquestions as $k => $v) {
-            $this->subquestions[$k] = utf8_decode(StringUtil::decodeEntities($v));
+            $this->subquestions[$k] = \StringUtil::decodeEntities($v);
         }
         $numcols = \count($this->subquestions);
 
@@ -232,88 +233,121 @@ class SurveyQuestionMatrix extends SurveyQuestion
             $this->choices[] = '-';
         }
         foreach ($this->choices as $k => $v) {
-            $this->choices[$k] = utf8_decode(StringUtil::decodeEntities($v));
+            $this->choices[$k] = \StringUtil::decodeEntities($v);
         }
 
         $result = [];
 
         // ID and question numbers
-        ($numcols > 1) && $xls->merge_cells($sheet, $row, $row, $col, $col + $numcols - 1);
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-            'data' => $this->id, 'type' => CELL_FLOAT,
+        $data = [
+          ExcelExporter::DATA => $this->id,
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT
         ];
+        if ($numcols > 1)
+        {
+          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+        }
+        $exporter->setCellValue($sheet, $row, $col, $data);
+
         ++$row;
-        ($numcols > 1) && $xls->merge_cells($sheet, $row, $row, $col, $col + $numcols - 1);
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-            'fontstyle' => XLSFONT_STYLE_ITALIC,
-            'data' => $questionNumbers['abs_question_no'], 'type' => CELL_FLOAT,
+        $data = [
+          ExcelExporter::DATA => $questionNumbers['abs_question_no'],
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT,
+          ExcelExporter::FONTSTYLE => ExcelExporter::FONTSTYLE_ITALIC
         ];
+        if ($numcols > 1)
+        {
+          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+        }
+        $exporter->setCellValue($sheet, $row, $col, $data);
+
         ++$row;
-        ($numcols > 1) && $xls->merge_cells($sheet, $row, $row, $col, $col + $numcols - 1);
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-            'fontweight' => XLSFONT_BOLD, 'hallign' => XLSXF_HALLIGN_CENTER,
-            'data' => $questionNumbers['page_no'].'.'.$questionNumbers['rel_question_no'],
+        $data = [
+          ExcelExporter::DATA => $questionNumbers['page_no'].'.'.$questionNumbers['rel_question_no'],
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT,
+          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER
         ];
+        if ($numcols > 1)
+        {
+          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+        }
+        $exporter->setCellValue($sheet, $row, $col, $data);
+
         ++$row;
 
         // question type
-        ($numcols > 1) && $xls->merge_cells($sheet, $row, $row, $col, $col + $numcols - 1);
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-            'data' => utf8_decode($GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]).', '.
-                utf8_decode($GLOBALS['TL_LANG']['tl_survey_question'][$this->arrData['matrix_subtype']]),
+        $data = [
+          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype].', '.
+              $GLOBALS['TL_LANG']['tl_survey_question'][$this->arrData['matrix_subtype']]
         ];
+        if ($numcols > 1)
+        {
+          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+        }
+        $exporter->setCellValue($sheet, $row, $col, $data);
         ++$row;
 
         // answered and skipped info, retrieves all answers as a side effect
-        ($numcols > 1) && $xls->merge_cells($sheet, $row, $row, $col, $col + $numcols - 1);
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-            'data' => $this->statistics['answered'], 'type' => CELL_FLOAT,
+        $data = [
+          ExcelExporter::DATA => $this->statistics['answered'],
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT
         ];
+        if ($numcols > 1)
+        {
+          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+        }
+        $exporter->setCellValue($sheet, $row, $col, $data);
+
         ++$row;
-        ($numcols > 1) && $xls->merge_cells($sheet, $row, $row, $col, $col + $numcols - 1);
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-            'data' => $this->statistics['skipped'], 'type' => CELL_FLOAT,
+        $data = [
+          ExcelExporter::DATA => $this->statistics['skipped'],
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT
         ];
+        if ($numcols > 1)
+        {
+          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+        }
+        $exporter->setCellValue($sheet, $row, $col, $data);
+
         ++$row;
 
         // question title
-        ($numcols > 1) && $xls->merge_cells($sheet, $row, $row, $col, $col + $numcols - 1);
-        $title = utf8_decode(StringUtil::decodeEntities($this->title)).($this->arrData['obligatory'] ? ' *' : '');
-        $result[] = [
-            'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-            'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
-            'data' => $title,
+        $data = [
+          ExcelExporter::DATA => \StringUtil::decodeEntities($this->title)).($this->arrData['obligatory'] ? ' *' : '',
+          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_STRING,
+          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
+          ExcelExporter::TEXTWRAP => true
         ];
-        // Guess a minimum column width for the title
-        $minColWidthTitle = max(
-            ($this->getLongestWordLen($title) + 3) * 256,
-            $xls->getcolwidth($sheet, $col)
-        );
+        if ($numcols > 1)
+        {
+          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+        }
+        $exporter->setCellValue($sheet, $row, $col, $data);
+
         ++$row;
 
         if (1 === $numcols) {
             // This is a strange case: a matrix question with just one subquestion.
             // However, users do that (at least for testing) and have the right to do so.
             // Just add the one and only subquestion, without rotation ...
-            $result[] = [
-                'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-                'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
-                'borderbottom' => XLSXF_BORDER_THIN, 'borderbottomcolor' => '#000000',
-                'data' => $this->subquestions[0],
+            $data = [
+              ExcelExporter::DATA => $this->subquestions[0],
+              ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
+              ExcelExporter::TEXTWRAP => true,
+              ExcelExporter::BORDERBOTTOM => ExcelExporter::BORDER_THIN,
+              ExcelExporter::BORDERBOTTOMCOLOR => '#000000',
             ];
+            $exporter->setCellValue($sheet, $row, $col, $data);
 
             // ... and recalculate the col width
+            /*
             $minColWidth = max(
                 ($this->getLongestWordLen($this->subquestions[0]) + 3) * 256,
                 $minColWidthTitle
             );
             $xls->setcolwidth($sheet, $col, $minColWidth);
+            */
             ++$col;
         } else {
             // output all subquestion columns
@@ -321,20 +355,25 @@ class SurveyQuestionMatrix extends SurveyQuestion
             $narrowWidth = 2 * 640;
             $sumWidth = 0;
             foreach ($this->subquestions as $key => $subquestion) {
-                $result[] = [
-                    'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-                    'textrotate' => XLSXF_TEXTROTATION_COUNTERCLOCKWISE,
-                    'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
-                    'borderbottom' => XLSXF_BORDER_THIN, 'borderbottomcolor' => '#000000',
-                    'data' => $subquestion,
-                ];
+              $data = [
+                ExcelExporter::DATA => $subquestion,
+                ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
+                ExcelExporter::TEXTWRAP => true,
+                ExcelExporter::TEXTROTATE => ExcelExporter::TEXTROTATE_COUNTERCLOCKWISE,
+                ExcelExporter::BORDERBOTTOM => ExcelExporter::BORDER_THIN,
+                ExcelExporter::BORDERBOTTOMCOLOR => '#000000',
+              ];
+              $exporter->setCellValue($sheet, $row, $col, $data);
+
                 // make cols as narrow as possible, but wide enough for the title in the merged cells above
+                /*
                 $minColWidth = max(
                     (int) ($minColWidthTitle / \count($this->subquestions)),
                     $narrowWidth
                 );
                 $xls->setcolwidth($sheet, $col, $minColWidth);
                 $rotateInfo[$row][$col] = $subquestion;
+                */
                 ++$col;
             }
         }
@@ -358,7 +397,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
      *
      * @TODO: make alignment and max colwidth configurable in dcaconfig.php ?
      */
-    protected function exportDetailResults(&$xls, $sheet, &$row, &$col, $participants)
+    protected function exportDetailResults(&$exporter, $sheet, &$row, &$col, $participants)
     {
         $cells = [];
         $startCol = $col;
@@ -389,19 +428,22 @@ class SurveyQuestionMatrix extends SurveyQuestion
                         if (\strlen($strAnswer)) {
                             // Set value to numeric, when the coices are e.g. school grades '1'-'5', a common case (for me).
                             // Then the user is able to work with formulars in Excel/Calc, avarage for instance.
-                            $cells[] = [
-                                'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-                                'type' => is_numeric($strAnswer) ? CELL_FLOAT : CELL_STRING,
-                                'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
-                                'data' => $strAnswer,
-                            ];
+                            $exporter->setCellValue($sheet, $row, $col, [
+                              ExcelExporter::DATA => $strAnswer,
+                              ExcelExporter::CELLTYPE => is_numeric($strAnswer) ? ExcelExporter::CELLTYPE_FLOAT : ExcelExporter::CELLTYPE_STRING,
+                              ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
+                              ExcelExporter::TEXTWRAP => true
+                            ]);
+
                             // Guess a minimum column width for the answer column.
+                            /*
                             $minColWidth = max(
                                 ($this->getLongestWordLen($strAnswer) + 3) * 256,
                                 $xls->getcolwidth($sheet, $col),
                                 min(\strlen($strAnswer) / 8 * 256, 40 * 256)
                             );
                             $xls->setcolwidth($sheet, $col, $minColWidth);
+                            */
                         }
                         ++$col;
                     }
@@ -417,18 +459,22 @@ class SurveyQuestionMatrix extends SurveyQuestion
                             $strAnswer = implode(' | ', $arrTmp);
                         }
                         if (\strlen($strAnswer)) {
-                            $cells[] = [
-                                'sheetname' => $sheet, 'row' => $row, 'col' => $col,
-                                'textwrap' => 1, 'hallign' => XLSXF_HALLIGN_CENTER,
-                                'data' => $strAnswer,
-                            ];
+                          $exporter->setCellValue($sheet, $row, $col, [
+                            ExcelExporter::DATA => $strAnswer,
+                            ExcelExporter::CELLTYPE => is_numeric($strAnswer) ? ExcelExporter::CELLTYPE_FLOAT : ExcelExporter::CELLTYPE_STRING,
+                            ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
+                            ExcelExporter::TEXTWRAP => true
+                          ]);
+
                             // Guess a minimum column width for the answer column.
+                            /*
                             $minColWidth = max(
                                 ($this->getLongestWordLen($strAnswer) + 3) * 256,
                                 $xls->getcolwidth($sheet, $col),
                                 min(\strlen($strAnswer) / 8 * 256, 40 * 256)
                             );
                             $xls->setcolwidth($sheet, $col, $minColWidth);
+                            */
                         }
                         ++$col;
                     }
@@ -457,6 +503,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
     protected function setRowHeightForRotatedText(&$xls, $sheet, $row, $col, $text)
     {
         // 1 line of rotated text needs ~ 640 colwidth units.
+        /*
         $hscale = 110;
         $minRowHeight = max(
             ($this->getLongestWordLen($text) + 3) * $hscale,
@@ -464,6 +511,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
             $xls->getrowheight($sheet, $row)
         );
         $xls->setrowheight($sheet, $row, $minRowHeight);
+        */
     }
 
     /**
