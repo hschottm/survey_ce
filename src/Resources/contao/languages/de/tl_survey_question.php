@@ -10,6 +10,8 @@
 
 $GLOBALS['TL_LANG']['tl_survey_question']['title']['0'] = 'Titel';
 $GLOBALS['TL_LANG']['tl_survey_question']['title']['1'] = 'Bitte geben Sie den Titel der Frage ein.';
+$GLOBALS['TL_LANG']['tl_survey_question']['alias']['0'] = "Alias";
+$GLOBALS['TL_LANG']['tl_survey_question']['alias']['1'] = "Der Fragenalias ist eine eindeutige Referenz, die anstelle der numerischen Fragen-ID aufgerufen werden kann.";
 $GLOBALS['TL_LANG']['tl_survey_question']['author']['0'] = 'Autor';
 $GLOBALS['TL_LANG']['tl_survey_question']['author']['1'] = 'Bitte geben Sie den Namen des Autors ein.';
 $GLOBALS['TL_LANG']['tl_survey_question']['questiontype']['0'] = 'Fragentyp';

@@ -227,4 +227,9 @@ class SurveyQuestionOpenended extends SurveyQuestion
 
         return $cells;
     }
+
+    public function resultAsString($res)
+  	{
+  		return $res;
+  	}
 }

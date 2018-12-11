@@ -93,9 +93,9 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
     'palettes' => [
         '__selector__' => ['access', 'limit_groups'],
         'default' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end',
-        'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{misc_legend},allowback,immediate_start,jumpto',
-        'anoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{misc_legend},allowback,immediate_start,jumpto',
-        'nonanoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie,limit_groups;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{misc_legend},allowback,immediate_start,jumpto',
+        'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail;{misc_legend},allowback,immediate_start,jumpto',
+        'anoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail;{misc_legend},allowback,immediate_start,jumpto',
+        'nonanoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie,limit_groups;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail;{misc_legend},allowback,immediate_start,jumpto',
     ],
 
     // Palettes
@@ -256,6 +256,166 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
     ],
 ];
 
+$GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'sendConfirmationMail';
+$GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'addConfirmationMailAttachments';
+
+array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']),
+	array('sendConfirmationMail' => 'confirmationMailRecipientField,confirmationMailRecipient,confirmationMailSender,confirmationMailReplyto,confirmationMailSubject,confirmationMailText,confirmationMailTemplate,addConfirmationMailAttachments')
+);
+array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']),
+	array('addConfirmationMailAttachments' => 'confirmationMailAttachments')
+);
+
+$GLOBALS['TL_DCA']['tl_survey']['fields']['sendConfirmationMail'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['sendConfirmationMail'],
+	'exclude'                 => true,
+	'filter'                  => true,
+	'inputType'               => 'checkbox',
+	'eval'                    => array('helpwizard'=>true,'submitOnChange'=>true),
+	'sql'                     => "char(1) NOT NULL default ''"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailRecipientField'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['confirmationMailRecipientField'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'select',
+	'options_callback'        => array('tl_survey', 'getEmailFormFields'),
+	'eval'                    => array('chosen'=>true, 'mandatory'=>true, 'maxlength'=>64, 'tl_class'=>'w50'),
+	'sql'                     => "varchar(64) NOT NULL default ''"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailRecipient'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['confirmationMailRecipient'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'text',
+	'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
+	'sql'                     => "varchar(255) NOT NULL default ''"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailSender'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['confirmationMailSender'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'text',
+	'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
+	'sql'                     => "varchar(255) NOT NULL default ''"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailReplyto'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['confirmationMailReplyto'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'text',
+	'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
+	'sql'                     => "varchar(255) NOT NULL default ''"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailSubject'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['confirmationMailSubject'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'text',
+	'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'tl_class'=>'w50'),
+	'sql'                     => "varchar(255) NOT NULL default ''"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailText'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['confirmationMailText'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'textarea',
+	'eval'                    => array('mandatory'=>true, 'rows'=>15, 'allowHTML'=>false, 'tl_class' => 'clr'),
+	'sql'                     => "text NULL"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailTemplate'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['confirmationMailTemplate'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'fileTree',
+	'eval'                    => array('helpwizard'=>false,'files'=>true, 'fieldType'=>'radio', 'extensions' => 'htm,html,txt,tpl'),
+	'sql'                     => "binary(16) NULL"
+);
+
+$GLOBALS['TL_DCA']['tl_survey']['fields']['sendFormattedMail'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['sendFormattedMail'],
+	'exclude'                 => true,
+	'filter'                  => true,
+	'inputType'               => 'checkbox',
+	'eval'                    => array('submitOnChange'=>true),
+	'sql'                     => "char(1) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_survey']['fields']['formattedMailRecipient'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['recipient'],
+	'exclude'                 => true,
+	'search'                  => true,
+	'inputType'               => 'text',
+	'eval'                    => array('mandatory'=>true, 'rgxp'=>'extnd', 'tl_class'=>'w50'),
+	'sql'                     => "text NULL"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['formattedMailSubject'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['subject'],
+	'exclude'                 => true,
+	'search'                  => true,
+	'inputType'               => 'text',
+	'eval'                    => array('mandatory'=>true, 'maxlength'=>255, 'decodeEntities'=>true, 'tl_class'=>'w50'),
+	'sql'                     => "varchar(255) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_survey']['fields']['formattedMailText'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['formattedMailText'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'textarea',
+	'eval'                    => array('rows'=>15, 'allowHTML'=>false, 'tl_class' => 'clr'),
+	'sql'                     => "text NULL"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['formattedMailTemplate'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['formattedMailTemplate'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'fileTree',
+	'eval'                    => array('helpwizard'=>false,'files'=>true, 'fieldType'=>'radio', 'extensions' => 'htm,html,txt,tpl'),
+	'sql'                     => "binary(16) NULL"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['formattedMailSkipEmpty'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['skipEmtpy'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'checkbox',
+	'sql'                     => "char(1) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_survey']['fields']['addConfirmationMailAttachments'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['addConfirmationMailAttachments'],
+	'exclude'                 => true,
+	'filter'                  => true,
+	'inputType'               => 'checkbox',
+	'eval'                    => array('submitOnChange'=>true),
+	'sql'                     => "char(1) NOT NULL default ''"
+);
+$GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailAttachments'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAttachments'],
+	'exclude'                 => true,
+	'filter'                  => false,
+	'inputType'               => 'fileTree',
+	'eval'                    => array('fieldType'=>'checkbox', 'files'=>true, 'filesOnly'=>true, 'multiple' => true, 'mandatory'=>true),
+	'sql'                     => "blob NULL"
+);
+
+
 if ($hasData) {
     $GLOBALS['TL_DCA']['tl_survey']['fields']['access']['eval']['disabled'] = 'disabled';
 }
@@ -292,4 +452,27 @@ class tl_survey extends Backend
     {
         return sprintf('<div class="list_icon" style="background-image:url(\'bundles/hschottmsurvey/images/survey-outline.svg\');">%s</div>', $label);
     }
+
+    public function getEmailFormFields()
+  	{
+  		$fields = array();
+
+  		// Get all form fields which can be used to define recipient of confirmation mail
+  		$objFields = \Database::getInstance()->prepare("SELECT tl_survey_question.id,tl_survey_question.title FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? AND tl_survey_question.questiontype=? ORDER BY tl_survey_question.title ASC")
+  			->execute(\Input::get('id'), 'openended');
+
+  		$fields[] = '-';
+  		while ($objFields->next())
+  		{
+  			$k = $objFields->id;
+  			if (strlen($k))
+  			{
+  				$v = $objFields->title;
+  				$v = strlen($v) ? $v.' ['.$k.']' : $k;
+  				$fields[$k] =$v;
+  			}
+  		}
+
+  		return $fields;
+  	}
 }

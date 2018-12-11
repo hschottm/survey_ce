@@ -448,4 +448,14 @@ class SurveyQuestionMatrix extends SurveyQuestion
 
         return $cells;
     }
+
+    public function resultAsString($res)
+  	{
+  		$arrAnswer = deserialize($res, true);
+  		if (is_array($arrAnswer))
+  		{
+  			return implode (", ", $arrAnswer);
+  		}
+  		return '';
+  	}
 }

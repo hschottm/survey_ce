@@ -129,4 +129,9 @@ abstract class SurveyQuestion extends \Backend
             }
         }
     }
+
+    public function resultAsString($res)
+  	{
+  		return $res;
+  	}
 }

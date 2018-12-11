@@ -78,20 +78,20 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
     // Palettes
     'palettes' => [
         '__selector__' => ['questiontype', 'openended_subtype', 'multiplechoice_subtype', 'matrix_subtype', 'addother', 'addneutralcolumn', 'addbipolar'],
-        'default' => '{title_legend},title,questiontype',
-        'openended' => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,openended_width,openended_maxlen;{expert_legend:hide},cssClass',
-        'multiplechoice' => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices;{expert_legend:hide},cssClass',
-        'openendedoe_multiline' => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,openended_rows,openended_cols,openended_maxlen;{expert_legend:hide},cssClass',
-        'openendedoe_integer' => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound,upper_bound;{expert_legend:hide},cssClass',
-        'openendedoe_float' => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound,upper_bound;{expert_legend:hide},cssClass',
-        'openendedoe_date' => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound_date,upper_bound_date;{expert_legend:hide},cssClass',
-        'openendedoe_time' => '{title_legend},title,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound_time,upper_bound_time;{expert_legend:hide},cssClass',
-        'multiplechoicemc_singleresponse' => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices,addother,mc_style;{expert_legend:hide},cssClass',
-        'multiplechoicemc_dichotomous' => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},mc_style;{expert_legend:hide},cssClass',
-        'multiplechoicemc_multipleresponse' => '{title_legend},title,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices,addother,mc_style;{expert_legend:hide},cssClass',
-        'matrixmatrix_singleresponse' => '{title_legend},title,author,questiontype,matrix_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{rows_legend},matrixrows;{columns_legend},matrixcolumns,addneutralcolumn;{bipolar_legend},addbipolar;{expert_legend:hide},cssClass',
-        'matrixmatrix_multipleresponse' => '{title_legend},title,author,questiontype,matrix_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{rows_legend},matrixrows;{columns_legend},matrixcolumns,addneutralcolumn;{bipolar_legend},addbipolar;{expert_legend:hide},cssClass',
-        'constantsum' => '{title_legend},title,author,questiontype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},sumchoices,inputfirst;{sum_legend},sumoption,sum;{expert_legend:hide},cssClass',
+        'default' => '{title_legend},title,alias,questiontype',
+        'openended' => '{title_legend},title,alias,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,openended_width,openended_maxlen;{expert_legend:hide},cssClass',
+        'multiplechoice' => '{title_legend},title,alias,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices;{expert_legend:hide},cssClass',
+        'openendedoe_multiline' => '{title_legend},title,alias,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,openended_rows,openended_cols,openended_maxlen;{expert_legend:hide},cssClass',
+        'openendedoe_integer' => '{title_legend},title,alias,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound,upper_bound;{expert_legend:hide},cssClass',
+        'openendedoe_float' => '{title_legend},title,alias,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound,upper_bound;{expert_legend:hide},cssClass',
+        'openendedoe_date' => '{title_legend},title,alias,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound_date,upper_bound_date;{expert_legend:hide},cssClass',
+        'openendedoe_time' => '{title_legend},title,alias,author,questiontype,openended_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},openended_textbefore,openended_textafter,openended_textinside,lower_bound_time,upper_bound_time;{expert_legend:hide},cssClass',
+        'multiplechoicemc_singleresponse' => '{title_legend},title,alias,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices,addother,mc_style;{expert_legend:hide},cssClass',
+        'multiplechoicemc_dichotomous' => '{title_legend},title,alias,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},mc_style;{expert_legend:hide},cssClass',
+        'multiplechoicemc_multipleresponse' => '{title_legend},title,alias,author,questiontype,multiplechoice_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},choices,addother,mc_style;{expert_legend:hide},cssClass',
+        'matrixmatrix_singleresponse' => '{title_legend},title,alias,author,questiontype,matrix_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{rows_legend},matrixrows;{columns_legend},matrixcolumns,addneutralcolumn;{bipolar_legend},addbipolar;{expert_legend:hide},cssClass',
+        'matrixmatrix_multipleresponse' => '{title_legend},title,alias,author,questiontype,matrix_subtype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{rows_legend},matrixrows;{columns_legend},matrixcolumns,addneutralcolumn;{bipolar_legend},addbipolar;{expert_legend:hide},cssClass',
+        'constantsum' => '{title_legend},title,alias,author,questiontype,description,hidetitle,help,language;{question_legend},question;{obligatory_legend},obligatory;{specific_legend},sumchoices,inputfirst;{sum_legend},sumoption,sum;{expert_legend:hide},cssClass',
     ],
 
     // Subpalettes
@@ -115,6 +115,14 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
         'sorting' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
+        'alias' => array
+    		(
+    			'label'                   => &$GLOBALS['TL_LANG']['tl_survey_question']['alias'],
+    			'inputType'               => 'text',
+    			'eval'                    => array('rgxp' => 'alias', 'maxlength' => 128, 'tl_class'=>'w50'),
+    			'save_callback'           => array(array('tl_survey_question', 'generateAlias')),
+    			'sql'                     => "varchar(128) NOT NULL default ''"
+    		),
         'questiontype' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['questiontype'],
             'default' => 'openended',
@@ -532,6 +540,30 @@ class tl_survey_question extends Backend
 
         return $mc;
     }
+
+    public function generateAlias($varValue, $dc)
+  	{
+  		$autoAlias = false;
+
+  		// Generiere einen Alias wenn es keinen gibt
+  		if ($varValue == '') {
+  			$autoAlias = true;
+  			$varValue = StringUtil::generateAlias($dc->activeRecord->title);
+  		}
+  		// Die gewünschte Tabelle zuweisen, aus der ein auto- Alias generiert werden soll.
+  		// Input::get('table') lassen, wenn die Tabelle dynamisch zugeordnet werden soll.
+  		$table = Input::get('table') ? Input::get('table') : 'tl_survey_question';
+  		$objAlias = $this->Database->prepare("SELECT id FROM " . $table . " WHERE alias=?")->execute($varValue);
+  		// Überprüfe ob der Alias bereits existiert.
+  		if ($objAlias->numRows > 1 && !$autoAlias) {
+  			throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
+  		}
+  		// wenn alias bereits existiert, füge eine ID hinzu.
+  		if ($objAlias->numRows && $autoAlias) {
+  			$varValue .= '-' . $dc->id;
+  		}
+  		return $varValue;
+  	}
 
     public function setCompleteStatus(DataContainer $dc)
     {

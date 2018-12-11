@@ -67,6 +67,11 @@ $GLOBALS['TL_SVY']['multiplechoice'] = FormMultipleChoiceQuestion::class;
 $GLOBALS['TL_SVY']['matrix'] = FormMatrixQuestion::class;
 $GLOBALS['TL_SVY']['constantsum'] = FormConstantSumQuestion::class;
 
+$GLOBALS['TL_SVY']['q_openended'] = 'SurveyQuestionOpenended';
+$GLOBALS['TL_SVY']['q_multiplechoice'] = 'SurveyQuestionMultiplechoice';
+$GLOBALS['TL_SVY']['q_matrix'] = 'SurveyQuestionMatrix';
+$GLOBALS['TL_SVY']['q_constantsum'] = 'SurveyQuestionConstantsum';
+
 /*
  * Set the member URL parameter as url keyword
  */
