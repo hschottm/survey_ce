@@ -220,7 +220,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
         ++$row;
@@ -232,7 +232,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
         ++$row;
@@ -245,7 +245,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
         ++$row;
@@ -256,7 +256,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
         ++$row;
@@ -268,7 +268,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
         ++$row;
@@ -279,7 +279,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
         ++$row;
@@ -293,7 +293,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
         ++$row;

@@ -97,7 +97,7 @@ abstract class ExcelExporter
       $alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
       for ($i = 0; $i <= strlen($col); $i++)
       {
-          $index += pow(26, $pow) * (array_search(strtoupper($col[$i]) + 1);
+          $index += pow(26, $pow) * (array_search(strtoupper($col[$i])) + 1);
           $pow--;
       }
       return $index-1;

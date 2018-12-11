@@ -269,7 +269,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
 
@@ -281,7 +281,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
 
@@ -294,7 +294,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
 
@@ -307,7 +307,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
 
@@ -320,7 +320,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
 
@@ -331,7 +331,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
 
@@ -346,7 +346,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         ];
         if ($numcols > 1)
         {
-          $data[ExcelExporter::MERGE] = $this->getCell($row, $col) . ":" . $this->getCell($row, $col + $numcols - 1);
+          $data[ExcelExporter::MERGE] = $exporter->getCell($row, $col) . ":" . $exporter->getCell($row, $col + $numcols - 1);
         }
         $exporter->setCellValue($sheet, $row, $col, $data);
 
@@ -474,7 +474,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     foreach ($this->choices as $k => $v) {
                         $strAnswer = (\is_array($arrAnswers['value']) && array_key_exists($k + 1, $arrAnswers['value']))
                             ? ($this->arrData['addother'] && ($k + 1 === \count($this->choices)))
-                                ? StringUtil::decodeEntities($arrAnswers['other'])
+                                ? \StringUtil::decodeEntities($arrAnswers['other'])
                                 : 'x'
                             : '';
                         if (\strlen($strAnswer)) {

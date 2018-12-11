@@ -481,12 +481,12 @@ class SurveyResultDetails extends \Backend
                     case 'id':
                     case 'count':
                     case 'lastpage':
-                        $cell[Exporter::CELLTYPE] = Exporter::CELLTYPE_FLOAT;
+                        $cell[ExcelExporter::CELLTYPE] = ExcelExporter::CELLTYPE_FLOAT;
                         break;
 
                     case 'display':
                         if ($participant['finished']) {
-                          $cell[Exporter::FONTWEIGHT] = Exporter::FONTWEIGHT_BOLD;
+                          $cell[ExcelExporter::FONTWEIGHT] = ExcelExporter::FONTWEIGHT_BOLD;
                         }
 
                         // no break

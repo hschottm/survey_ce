@@ -15,6 +15,20 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
     parent::__construct($type);
   }
 
+  public function webColorToARGB($color)
+  {
+    $col = str_replace('#', '', $color);
+    if (strlen($col) == 6)
+    {
+      return "ff" . $col;
+    }
+    else if (strlen($color) == 8)
+    {
+      return $col;
+    }
+    return "ff000000";
+  }
+
   public function createSpreadsheet()
   {
     /*
@@ -145,7 +159,7 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
           $worksheet->getStyle($pos)->getAlignment()->setTextRotation(90);
           break;
         case self::TEXTROTATE_COUNTERCLOCKWISE:
-          $worksheet->getStyle($pos)->getAlignment()->setTextRotation(270);
+          $worksheet->getStyle($pos)->getAlignment()->setTextRotation(-90);
           break;
         case self::TEXTROTATE_NONE:
           break;
@@ -228,7 +242,7 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
 
     if (array_key_exists(self::BORDERBOTTOMCOLOR, $cell))
     {
-      $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor($cell[self::BORDERBOTTOMCOLOR]);
+      $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERBOTTOMCOLOR])));
     }
 
     if (array_key_exists(self::BORDERTOP, $cell))
@@ -282,7 +296,7 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
 
     if (array_key_exists(self::BORDERTOPCOLOR, $cell))
     {
-      $worksheet->getStyle($pos)->getBorders()->getTop()->setColor($cell[self::BORDERTOPCOLOR]);
+      $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERTOPCOLOR])));
     }
 
     if (array_key_exists(self::BORDERLEFT, $cell))
@@ -336,7 +350,7 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
 
     if (array_key_exists(self::BORDERLEFTCOLOR, $cell))
     {
-      $worksheet->getStyle($pos)->getBorders()->getLeft()->setColor($cell[self::BORDERLEFTCOLOR]);
+      $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERLEFTCOLOR])));
     }
 
     if (array_key_exists(self::BORDERRIGHT, $cell))
@@ -390,7 +404,7 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
 
     if (array_key_exists(self::BORDERRIGHTCOLOR, $cell))
     {
-      $worksheet->getStyle($pos)->getBorders()->getRight()->setColor($cell[self::BORDERRIGHTCOLOR]);
+      $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERRIGHTCOLOR])));
     }
 
     if (array_key_exists(self::MERGE, $cell))
