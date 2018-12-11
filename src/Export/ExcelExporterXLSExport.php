@@ -143,6 +143,8 @@ class ExcelExporterXLSExport extends ExcelExporter
         case self::TEXTROTATE_COUNTERCLOCKWISE:
           $data['textrotate'] = XLSXF_TEXTROTATION_COUNTERCLOCKWISE;
           break;
+        case self::TEXTROTATE_NONE:
+          break;
       }
     }
 
@@ -170,46 +172,46 @@ class ExcelExporterXLSExport extends ExcelExporter
     {
       switch ($cell[self::BORDERBOTTOM])
       {
-        case self::BORDER_THIN
+        case self::BORDER_THIN:
           $data['borderbottom'] = XLSXF_BORDER_THIN;
           break;
-        case self::BORDER_HAIR
+        case self::BORDER_HAIR:
           $data['borderbottom'] = XLSXF_BORDER_HAIR;
           break;
-        case self::BORDER_THICK
+        case self::BORDER_THICK:
           $data['borderbottom'] = XLSXF_BORDER_THICK;
           break;
-        case self::BORDER_DOTTED
+        case self::BORDER_DOTTED:
           $data['borderbottom'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_DOUBLE
+        case self::BORDER_DOUBLE:
           $data['borderbottom'] = XLSXF_BORDER_DOUBLE;
           break;
-        case self::BORDER_MEDIUM
+        case self::BORDER_MEDIUM:
           $data['borderbottom'] = XLSXF_BORDER_MEDIUM;
           break;
-        case self::BORDER_DASHED
+        case self::BORDER_DASHED:
           $data['borderbottom'] = XLSXF_BORDER_DASHED;
           break;
-        case self::BORDER_DASHDOT
+        case self::BORDER_DASHDOT:
           $data['borderbottom'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_DASHDOTDOT
+        case self::BORDER_DASHDOTDOT:
           $data['borderbottom'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHED
+        case self::BORDER_MEDIUMDASHED:
           $data['borderbottom'] = XLSXF_BORDER_DASHED;
           break;
-        case self::BORDER_SLANTDASHDOT
+        case self::BORDER_SLANTDASHDOT:
           $data['borderbottom'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHDOT
+        case self::BORDER_MEDIUMDASHDOT:
           $data['borderbottom'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHDOTDOT
+        case self::BORDER_MEDIUMDASHDOTDOT:
           $data['borderbottom'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_NONE
+        case self::BORDER_NONE:
           $data['borderbottom'] = XLSXF_BORDER_NOBORDER;
           break;
       }
@@ -224,46 +226,46 @@ class ExcelExporterXLSExport extends ExcelExporter
     {
       switch ($cell[self::BORDERTOP])
       {
-        case self::BORDER_THIN
+        case self::BORDER_THIN:
           $data['bordertop'] = XLSXF_BORDER_THIN;
           break;
-        case self::BORDER_HAIR
+        case self::BORDER_HAIR:
           $data['bordertop'] = XLSXF_BORDER_HAIR;
           break;
-        case self::BORDER_THICK
+        case self::BORDER_THICK:
           $data['bordertop'] = XLSXF_BORDER_THICK;
           break;
-        case self::BORDER_DOTTED
+        case self::BORDER_DOTTED:
           $data['bordertop'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_DOUBLE
+        case self::BORDER_DOUBLE:
           $data['bordertop'] = XLSXF_BORDER_DOUBLE;
           break;
-        case self::BORDER_MEDIUM
+        case self::BORDER_MEDIUM:
           $data['bordertop'] = XLSXF_BORDER_MEDIUM;
           break;
-        case self::BORDER_DASHED
+        case self::BORDER_DASHED:
           $data['bordertop'] = XLSXF_BORDER_DASHED;
           break;
-        case self::BORDER_DASHDOT
+        case self::BORDER_DASHDOT:
           $data['bordertop'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_DASHDOTDOT
+        case self::BORDER_DASHDOTDOT:
           $data['bordertop'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHED
+        case self::BORDER_MEDIUMDASHED:
           $data['bordertop'] = XLSXF_BORDER_DASHED;
           break;
-        case self::BORDER_SLANTDASHDOT
+        case self::BORDER_SLANTDASHDOT:
           $data['bordertop'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHDOT
+        case self::BORDER_MEDIUMDASHDOT:
           $data['bordertop'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHDOTDOT
+        case self::BORDER_MEDIUMDASHDOTDOT:
           $data['bordertop'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_NONE
+        case self::BORDER_NONE:
           $data['bordertop'] = XLSXF_BORDER_NOBORDER;
           break;
       }
@@ -278,46 +280,46 @@ class ExcelExporterXLSExport extends ExcelExporter
     {
       switch ($cell[self::BORDERLEFT])
       {
-        case self::BORDER_THIN
+        case self::BORDER_THIN:
           $data['borderleft'] = XLSXF_BORDER_THIN;
           break;
-        case self::BORDER_HAIR
+        case self::BORDER_HAIR:
           $data['borderleft'] = XLSXF_BORDER_HAIR;
           break;
-        case self::BORDER_THICK
+        case self::BORDER_THICK:
           $data['borderleft'] = XLSXF_BORDER_THICK;
           break;
-        case self::BORDER_DOTTED
+        case self::BORDER_DOTTED:
           $data['borderleft'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_DOUBLE
+        case self::BORDER_DOUBLE:
           $data['borderleft'] = XLSXF_BORDER_DOUBLE;
           break;
-        case self::BORDER_MEDIUM
+        case self::BORDER_MEDIUM:
           $data['borderleft'] = XLSXF_BORDER_MEDIUM;
           break;
-        case self::BORDER_DASHED
+        case self::BORDER_DASHED:
           $data['borderleft'] = XLSXF_BORDER_DASHED;
           break;
-        case self::BORDER_DASHDOT
+        case self::BORDER_DASHDOT:
           $data['borderleft'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_DASHDOTDOT
+        case self::BORDER_DASHDOTDOT:
           $data['borderleft'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHED
+        case self::BORDER_MEDIUMDASHED:
           $data['borderleft'] = XLSXF_BORDER_DASHED;
           break;
-        case self::BORDER_SLANTDASHDOT
+        case self::BORDER_SLANTDASHDOT:
           $data['borderleft'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHDOT
+        case self::BORDER_MEDIUMDASHDOT:
           $data['borderleft'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHDOTDOT
+        case self::BORDER_MEDIUMDASHDOTDOT:
           $data['borderleft'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_NONE
+        case self::BORDER_NONE:
           $data['borderleft'] = XLSXF_BORDER_NOBORDER;
           break;
       }
@@ -332,46 +334,46 @@ class ExcelExporterXLSExport extends ExcelExporter
     {
       switch ($cell[self::BORDERRIGHT])
       {
-        case self::BORDER_THIN
+        case self::BORDER_THIN:
           $data['borderright'] = XLSXF_BORDER_THIN;
           break;
-        case self::BORDER_HAIR
+        case self::BORDER_HAIR:
           $data['borderright'] = XLSXF_BORDER_HAIR;
           break;
-        case self::BORDER_THICK
+        case self::BORDER_THICK:
           $data['borderright'] = XLSXF_BORDER_THICK;
           break;
-        case self::BORDER_DOTTED
+        case self::BORDER_DOTTED:
           $data['borderright'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_DOUBLE
+        case self::BORDER_DOUBLE:
           $data['borderright'] = XLSXF_BORDER_DOUBLE;
           break;
-        case self::BORDER_MEDIUM
+        case self::BORDER_MEDIUM:
           $data['borderright'] = XLSXF_BORDER_MEDIUM;
           break;
-        case self::BORDER_DASHED
+        case self::BORDER_DASHED:
           $data['borderright'] = XLSXF_BORDER_DASHED;
           break;
-        case self::BORDER_DASHDOT
+        case self::BORDER_DASHDOT:
           $data['borderright'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_DASHDOTDOT
+        case self::BORDER_DASHDOTDOT:
           $data['borderright'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHED
+        case self::BORDER_MEDIUMDASHED:
           $data['borderright'] = XLSXF_BORDER_DASHED;
           break;
-        case self::BORDER_SLANTDASHDOT
+        case self::BORDER_SLANTDASHDOT:
           $data['borderright'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHDOT
+        case self::BORDER_MEDIUMDASHDOT:
           $data['borderright'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_MEDIUMDASHDOTDOT
+        case self::BORDER_MEDIUMDASHDOTDOT:
           $data['borderright'] = XLSXF_BORDER_DOTTED;
           break;
-        case self::BORDER_NONE
+        case self::BORDER_NONE:
           $data['borderright'] = XLSXF_BORDER_NOBORDER;
           break;
       }

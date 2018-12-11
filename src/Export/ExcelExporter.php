@@ -67,6 +67,7 @@ abstract class ExcelExporter
     const TEXTROTATE = 'tr';
     const TEXTROTATE_CLOCKWISE = 'trc';
     const TEXTROTATE_COUNTERCLOCKWISE = 'trcc';
+    const TEXTROTATE_NONE = 'tr0';
 
     protected $spreadsheet;
     protected $sheets = [];
