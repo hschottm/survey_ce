@@ -95,9 +95,9 @@ abstract class ExcelExporter
       $index = 0;
       $pow = strlen($col)-1;
       $alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-      for ($i = 0; $i <= strlen($col); $i++)
+      for ($i = 0; $i < strlen($col); $i++)
       {
-          $index += pow(26, $pow) * (array_search(strtoupper($col[$i])) + 1);
+          $index += pow(26, $pow) * (array_search(strtoupper($col[$i]), $alphabet) + 1);
           $pow--;
       }
       return $index-1;
@@ -105,7 +105,7 @@ abstract class ExcelExporter
 
     public function getCell($row, $col)
     {
-        return $this->getColumnIndex($col).(string) $row;
+        return $this->getColumnIndex($col).(string) ($row+1);
     }
 
     protected function getRowFromCell($cell)

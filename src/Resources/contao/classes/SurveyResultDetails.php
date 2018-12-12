@@ -35,7 +35,7 @@ class SurveyResultDetails extends \Backend
     {
         parent::__construct();
         if (class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet')) {
-            $this->usePhpSpreadsheet = true;
+//            $this->usePhpSpreadsheet = true;
         }
     }
 
@@ -474,7 +474,8 @@ class SurveyResultDetails extends \Backend
                     continue;
                 }
                 $cell = [
-                  ExcelExporter::DATA => $v
+                  ExcelExporter::DATA => $v,
+                  ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO
                 ];
 
                 switch ($k) {

@@ -38,6 +38,10 @@ class ExcelExporterPhpSpreadsheet extends ExcelExporter
     }
     */
     $this->spreadsheet = new Spreadsheet();
+    if ($this->spreadsheet->getSheetCount() > 0)
+    {
+      $this->spreadsheet->removeSheetByIndex(0);
+    }
   }
 
   public function setCellValue($sheet, $row, $col, $data)

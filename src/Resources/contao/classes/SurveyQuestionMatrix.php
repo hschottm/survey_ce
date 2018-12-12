@@ -60,8 +60,8 @@ class SurveyQuestionMatrix extends SurveyQuestion
 
     public function exportDataToExcel(&$exporter, $sheet, &$row)
     {
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => 'ID', ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
-        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->id, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
+        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => 'ID', ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD, ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO]);
+        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->id, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT, ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO]);
         ++$row;
         $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
         $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]]);
@@ -81,12 +81,13 @@ class SurveyQuestionMatrix extends SurveyQuestion
 
         $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
 
+        $col = 2;
         if (\is_array($this->statistics['cumulated'])) {
             $arrRows = deserialize($this->arrData['matrixrows'], true);
             $arrChoices = deserialize($this->arrData['matrixcolumns'], true);
             $row_counter = 1;
             foreach ($arrRows as $id => $rowdata) {
-                $exporter->setCellValue($sheet, $row + $row_counter, 1, [ExcelExporter::DATA => $rowdata, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
+                $exporter->setCellValue($sheet, $row + $row_counter, $col, [ExcelExporter::DATA => $rowdata, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
                 ++$row_counter;
             }
 
@@ -95,10 +96,10 @@ class SurveyQuestionMatrix extends SurveyQuestion
                 $col_counter = 1;
                 foreach ($arrChoices as $choiceid => $choice) {
                     if (1 === $row_counter) {
-                        $exporter->setCellValue($sheet, $row, 1 + $col_counter, [ExcelExporter::DATA => $choice, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
+                        $exporter->setCellValue($sheet, $row, $col + $col_counter, [ExcelExporter::DATA => $choice, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
                     }
 
-                    $exporter->setCellValue($sheet, $row + $row_counter, 1 + $col_counter, [ExcelExporter::DATA => (($this->statistics['cumulated'][$row_counter][$col_counter]) ? $this->statistics['cumulated'][$row_counter][$col_counter] : 0), ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
+                    $exporter->setCellValue($sheet, $row + $row_counter, $col + $col_counter, [ExcelExporter::DATA => (($this->statistics['cumulated'][$row_counter][$col_counter]) ? $this->statistics['cumulated'][$row_counter][$col_counter] : 0), ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
                     ++$col_counter;
                 }
                 ++$row_counter;
@@ -411,14 +412,17 @@ class SurveyQuestionMatrix extends SurveyQuestion
                 } elseif ('matrix_multipleresponse' === $this->arrData['matrix_subtype']) {
                   $emptyAnswer = false;
                   foreach ($this->subquestions as $k => $junk) {
-                      $strAnswer = '';
-                      if (array_key_exists($k + 1, $arrAnswers)) {
-                          $choice_key = $arrAnswers[$k + 1] - 1;
-                          if (array_key_exists($choice_key, $this->choices)) {
-                              $strAnswer = $this->choices[$choice_key];
+                      foreach ($this->subquestions as $k => $junk) {
+                          $strAnswer = '';
+                          if (\is_array($arrAnswers[$k + 1])) {
+                              $arrTmp = [];
+                              foreach ($arrAnswers[$k + 1] as $kk => $v) {
+                                  $arrTmp[] = $this->choices[$kk - 1];
+                              }
+                              $strAnswer = implode(' | ', $arrTmp);
                           }
+                          if (strlen($strAnswer) == 0) $emptyAnswer = true;
                       }
-                      if (strlen($strAnswer) == 0) $emptyAnswer = true;
                     }
                     foreach ($this->subquestions as $k => $junk) {
                         $strAnswer = '';

@@ -57,8 +57,8 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
     public function exportDataToExcel(&$exporter, $sheet, &$row)
     {
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => 'ID', ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
-        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->id, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
+        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => 'ID', ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD, ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO]);
+        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->id, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT, ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO]);
         ++$row;
         $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
         $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]]);
@@ -78,17 +78,20 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
         $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
 
+        $col = 2;
         if (\is_array($this->statistics['cumulated'])) {
             $arrChoices = deserialize($this->arrData['sumchoices'], true);
             $counter = 1;
             foreach ($arrChoices as $id => $choice) {
-                $exporter->setCellValue($sheet, $row + $counter - 1, 1, [ExcelExporter::DATA => $choice]);
-                $counter += 2;
+                $exporter->setCellValue($sheet, $row + $counter - 1, $col, [ExcelExporter::DATA => $choice]);
+                $counter++;
+                $exporter->setCellValue($sheet, $row + $counter - 1, $col, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['nr_of_selections']]);
+                $counter++;
             }
             $counter = 1;
             $idx = 1;
             foreach ($arrChoices as $id => $choice) {
-                $acounter = 2;
+                $acounter = 3;
                 foreach ($this->statistics['cumulated'][$idx] as $answervalue => $nrOfAnswers) {
                     $exporter->setCellValue($sheet, $row + $counter - 1, $acounter, [ExcelExporter::DATA => $answervalue, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
                     $exporter->setCellValue($sheet, $row + $counter, $acounter, [ExcelExporter::DATA => (($nrOfAnswers) ? $nrOfAnswers : 0), ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);

@@ -41,8 +41,8 @@ class SurveyQuestionOpenended extends SurveyQuestion
 
     public function exportDataToExcel(&$exporter, $sheet, &$row)
     {
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => 'ID', ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
-        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->id, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
+        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => 'ID', ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD, ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO]);
+        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->id, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT, ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO]);
         ++$row;
         $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
         $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]]);
@@ -62,7 +62,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
 
         $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
 
-        $col = 1;
+        $col = 2;
         if (\is_array($this->statistics['answers'])) {
             foreach ($this->statistics['answers'] as $answer) {
                 $exporter->setCellValue($sheet, $row, $col++, [ExcelExporter::DATA => $answer]);
@@ -215,7 +215,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
                 $data = $this->statistics['participants'][$key][0]['result'];
             }
             if ($data) {
-                $data = utf8_decode(StringUtil::decodeEntities($data));
+                $data = \StringUtil::decodeEntities($data);
                 $exporter->setCellValue($sheet, $row, $col, [
                   ExcelExporter::DATA => $data,
                   ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,

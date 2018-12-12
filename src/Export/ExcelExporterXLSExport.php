@@ -400,7 +400,6 @@ class ExcelExporterXLSExport extends ExcelExporter
           break;
       }
     }
-
     $this->spreadsheet->setcell($data);
   }
 

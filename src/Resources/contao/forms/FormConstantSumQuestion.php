@@ -143,7 +143,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
         }
         $sum = 0.0;
         foreach ($varInput as $value) {
-            if (0 === \strlen($value)) {
+            if (0 == \strlen($value)) {
                 $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_constantsum'], $this->title));
 
                 return $varInput;
@@ -152,7 +152,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
         }
         switch ($this->strSumOption) {
             case 'exact':
-                if ($sum !== $this->dblSum) {
+                if ($sum != $this->dblSum) {
                     $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['sumnotexact'], $this->title, $this->dblSum));
 
                     return $varInput;
