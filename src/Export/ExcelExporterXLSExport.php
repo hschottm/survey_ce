@@ -2,10 +2,10 @@
 
 namespace Hschottm\SurveyBundle\Export;
 
-use Hschottm\SurveyBundle\Export\ExcelExporter;
+use Hschottm\SurveyBundle\Export\Exporter;
 use Hschottm\ExcelXLSBundle\xlsexport;
 
-class ExcelExporterXLSExport extends ExcelExporter
+class ExcelExporterXLSExport extends Exporter
 {
   public function __construct($type = self::EXPORT_TYPE_XLS)
   {

@@ -11,9 +11,8 @@
 namespace Hschottm\SurveyBundle;
 
 use Contao\DataContainer;
-use Hschottm\SurveyBundle\Export\ExcelExporter;
-use Hschottm\SurveyBundle\Export\ExcelExporterPhpSpreadsheet;
-use Hschottm\SurveyBundle\Export\ExcelExporterXLSExport;
+use Hschottm\SurveyBundle\Export\Exporter;
+use Hschottm\SurveyBundle\Export\ExportHelper;
 
 /**
  * Class SurveyResultDetails.
@@ -26,7 +25,6 @@ use Hschottm\SurveyBundle\Export\ExcelExporterXLSExport;
 class SurveyResultDetails extends \Backend
 {
     protected $blnSave = true;
-    protected $usePhpSpreadsheet = false;
 
     /**
      * Load the database object.
@@ -34,14 +32,6 @@ class SurveyResultDetails extends \Backend
     protected function __construct()
     {
         parent::__construct();
-        if (class_exists('\PhpOffice\PhpSpreadsheet\Spreadsheet')) {
-//            $this->usePhpSpreadsheet = true;
-        }
-    }
-
-    public function usePhpSpreadsheet()
-    {
-        return $this->usePhpSpreadsheet;
     }
 
     public function showDetails(DataContainer $dc)
@@ -141,11 +131,7 @@ class SurveyResultDetails extends \Backend
         $arrQuestions = $this->Database->prepare('SELECT tl_survey_question.*, tl_survey_page.title as pagetitle, tl_survey_page.pid as parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
             ->execute(\Input::get('id'));
         if ($arrQuestions->numRows) {
-            if ($this->usePhpSpreadsheet()) {
-                $exporter = new ExcelExporterPhpSpreadsheet(ExcelExporter::EXPORT_TYPE_XLSX);
-            } else {
-                $exporter = new ExcelExporterXLSExport(ExcelExporter::EXPORT_TYPE_XLS);
-            }
+            $exporter = ExportHelper::getExporter();
             $sheet = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults'];
             $intRowCounter = 0;
             $intColCounter = 0;
@@ -206,24 +192,11 @@ class SurveyResultDetails extends \Backend
         if ($arrQuestions->numRows) {
             $this->loadLanguageFile('tl_survey_result');
 
-            if ($this->usePhpSpreadsheet()) {
-                $exporter = new ExcelExporterPhpSpreadsheet(ExcelExporter::EXPORT_TYPE_XLSX);
-            } else {
-                $exporter = new ExcelExporterXLSExport(ExcelExporter::EXPORT_TYPE_XLS);
-            }
+            $exporter = ExportHelper::getExporter();
             $sheet = $GLOBALS['TL_LANG']['tl_survey_result']['detailedResults'];
             $exporter->addSheet($sheet);
 
             $this->exportTopLeftArea($exporter, $sheet);
-            /*
-            foreach ($cells as $cell) {
-                if ($cell['colwidth'] > 0) {
-                    $xls->setcolwidth($sheet, $cell['col'], $cell['colwidth']);
-                    unset($cell['colwidth']);
-                }
-                $xls->setcell($cell);
-            }
-            */
 
             $rowCounter = 8; // questionheaders will occupy that many rows
             $colCounter = 0;
@@ -346,110 +319,110 @@ class SurveyResultDetails extends \Backend
         $col = 4;
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id'].':',
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id'].':',
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_nr'].':',
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_nr'].':',
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_pg_nr'].':',
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_pg_nr'].':',
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_type'].':',
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_type'].':',
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_answered'].':',
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_answered'].':',
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_skipped'].':',
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_skipped'].':',
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_title'].':',
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_title'].':',
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         // Legends for the participant headers
         $col = 0;
         $exporter->setCellValue($sheet, $row, $col++, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id_gen'],
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::TEXTWRAP => true,
-          ExcelExporter::COLWIDTH => 6 * 256,
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id_gen'],
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::TEXTWRAP => true,
+          Exporter::COLWIDTH => 6 * 256,
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row, $col++, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_sort'],
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::TEXTWRAP => true,
-          ExcelExporter::COLWIDTH => 5 * 256,
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_sort'],
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::TEXTWRAP => true,
+          Exporter::COLWIDTH => 5 * 256,
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row, $col++, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_date'],
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::TEXTWRAP => true,
-          ExcelExporter::COLWIDTH => 14 * 256,
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_date'],
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::TEXTWRAP => true,
+          Exporter::COLWIDTH => 14 * 256,
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row, $col++, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_lastpage'],
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::TEXTWRAP => true,
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_lastpage'],
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::TEXTWRAP => true,
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         $exporter->setCellValue($sheet, $row, $col++, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_participant'],
-          ExcelExporter::BGCOLOR => '#C0C0C0',
-          ExcelExporter::COLOR => '#000000',
-          ExcelExporter::TEXTWRAP => true,
-          ExcelExporter::COLWIDTH => 14 * 256,
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_RIGHT
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_participant'],
+          Exporter::BGCOLOR => '#C0C0C0',
+          Exporter::COLOR => '#000000',
+          Exporter::TEXTWRAP => true,
+          Exporter::COLWIDTH => 14 * 256,
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
         return $result;
@@ -474,20 +447,20 @@ class SurveyResultDetails extends \Backend
                     continue;
                 }
                 $cell = [
-                  ExcelExporter::DATA => $v,
-                  ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO
+                  Exporter::DATA => $v,
+                  Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO
                 ];
 
                 switch ($k) {
                     case 'id':
                     case 'count':
                     case 'lastpage':
-                        $cell[ExcelExporter::CELLTYPE] = ExcelExporter::CELLTYPE_FLOAT;
+                        $cell[Exporter::CELLTYPE] = Exporter::CELLTYPE_FLOAT;
                         break;
 
                     case 'display':
                         if ($participant['finished']) {
-                          $cell[ExcelExporter::FONTWEIGHT] = ExcelExporter::FONTWEIGHT_BOLD;
+                          $cell[Exporter::FONTWEIGHT] = Exporter::FONTWEIGHT_BOLD;
                         }
 
                         // no break

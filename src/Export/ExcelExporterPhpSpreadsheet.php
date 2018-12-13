@@ -2,13 +2,13 @@
 
 namespace Hschottm\SurveyBundle\Export;
 
-use Hschottm\SurveyBundle\Export\ExcelExporter;
+use Hschottm\SurveyBundle\Export\Exporter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-class ExcelExporterPhpSpreadsheet extends ExcelExporter
+class ExcelExporterPhpSpreadsheet extends Exporter
 {
   public function __construct($type = self::EXPORT_TYPE_XLS)
   {

@@ -10,7 +10,7 @@
 
 namespace Hschottm\SurveyBundle;
 
-use Hschottm\SurveyBundle\Export\ExcelExporter;
+use Hschottm\SurveyBundle\Export\Exporter;
 
 /**
  * Class SurveyQuestionOpenended.
@@ -41,31 +41,31 @@ class SurveyQuestionOpenended extends SurveyQuestion
 
     public function exportDataToExcel(&$exporter, $sheet, &$row)
     {
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => 'ID', ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD, ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO]);
-        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->id, ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT, ExcelExporter::COLWIDTH => ExcelExporter::COLWIDTH_AUTO]);
+        $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => 'ID', Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
+        $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $this->id, Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
         ++$row;
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
-        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]]);
+        $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
+        $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]]);
         ++$row;
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['title'][0], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
-        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->title]);
+        $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['title'][0], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
+        $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $this->title]);
         ++$row;
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['question'][0], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
-        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => strip_tags($this->question)]);
+        $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['question'][0], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
+        $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => strip_tags($this->question)]);
         ++$row;
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answered'], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
-        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->statistics['answered'], ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
+        $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answered'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
+        $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $this->statistics['answered'], Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
         ++$row;
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['skipped'], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
-        $exporter->setCellValue($sheet, $row, 1, [ExcelExporter::DATA => $this->statistics['skipped'], ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT]);
+        $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['skipped'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
+        $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $this->statistics['skipped'], Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
         ++$row;
 
-        $exporter->setCellValue($sheet, $row, 0, [ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], ExcelExporter::BGCOLOR => $this->titlebgcolor, ExcelExporter::COLOR => $this->titlecolor, ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD]);
+        $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
 
         $col = 2;
         if (\is_array($this->statistics['answers'])) {
             foreach ($this->statistics['answers'] as $answer) {
-                $exporter->setCellValue($sheet, $row, $col++, [ExcelExporter::DATA => $answer]);
+                $exporter->setCellValue($sheet, $row, $col++, [Exporter::DATA => $answer]);
             }
         }
         $row += 2;
@@ -133,55 +133,55 @@ class SurveyQuestionOpenended extends SurveyQuestion
 
         // ID and question numbers
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $this->id,
-          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT
+          Exporter::DATA => $this->id,
+          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $questionNumbers['abs_question_no'],
-          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT,
-          ExcelExporter::FONTSTYLE => ExcelExporter::FONTSTYLE_ITALIC
+          Exporter::DATA => $questionNumbers['abs_question_no'],
+          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
+          Exporter::FONTSTYLE => Exporter::FONTSTYLE_ITALIC
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $questionNumbers['page_no'].'.'.$questionNumbers['rel_question_no'],
-          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT,
-          ExcelExporter::FONTWEIGHT => ExcelExporter::FONTWEIGHT_BOLD,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER
+          Exporter::DATA => $questionNumbers['page_no'].'.'.$questionNumbers['rel_question_no'],
+          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
+          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER
         ]);
 
         // question type
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]
+          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]
         ]);
 
         // answered and skipped info, retrieves all answers as a side effect
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $this->statistics['answered'],
-          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT
+          Exporter::DATA => $this->statistics['answered'],
+          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => $this->statistics['skipped'],
-          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_FLOAT
+          Exporter::DATA => $this->statistics['skipped'],
+          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
         ]);
 
         // question title
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => \StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
-          ExcelExporter::CELLTYPE => ExcelExporter::CELLTYPE_STRING,
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
-          ExcelExporter::TEXTWRAP => true
+          Exporter::DATA => \StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
+          Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
+          Exporter::TEXTWRAP => true
         ]);
 
         // empty cell used in other question types, for the formatting
         $exporter->setCellValue($sheet, $row++, $col, [
-          ExcelExporter::DATA => '',
-          ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
-          ExcelExporter::TEXTWRAP => true,
-          ExcelExporter::TEXTROTATE => ($this->arrData['addother'] && ($key === \count($this->choices) - 1)) ? ExcelExporter::TEXTROTATE_NONE : ExcelExporter::TEXTROTATE_COUNTERCLOCKWISE,
-          ExcelExporter::BORDERBOTTOM => ExcelExporter::BORDER_THIN,
-          ExcelExporter::BORDERBOTTOMCOLOR => '#000000',
+          Exporter::DATA => '',
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
+          Exporter::TEXTWRAP => true,
+          Exporter::TEXTROTATE => ($this->arrData['addother'] && ($key === \count($this->choices) - 1)) ? Exporter::TEXTROTATE_NONE : Exporter::TEXTROTATE_COUNTERCLOCKWISE,
+          Exporter::BORDERBOTTOM => Exporter::BORDER_THIN,
+          Exporter::BORDERBOTTOMCOLOR => '#000000',
         ]);
 
         return $result;
@@ -217,9 +217,9 @@ class SurveyQuestionOpenended extends SurveyQuestion
             if ($data) {
                 $data = \StringUtil::decodeEntities($data);
                 $exporter->setCellValue($sheet, $row, $col, [
-                  ExcelExporter::DATA => $data,
-                  ExcelExporter::ALIGNMENT => ExcelExporter::ALIGNMENT_H_CENTER,
-                  ExcelExporter::TEXTWRAP => true
+                  Exporter::DATA => $data,
+                  Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
+                  Exporter::TEXTWRAP => true
                 ]);
             }
             ++$row;

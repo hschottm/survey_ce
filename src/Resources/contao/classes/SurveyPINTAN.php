@@ -11,7 +11,8 @@
 namespace Hschottm\SurveyBundle;
 
 use Contao\DataContainer;
-use Hschottm\ExcelXLSBundle\xlsexport;
+use Hschottm\SurveyBundle\Export\Exporter;
+use Hschottm\SurveyBundle\Export\ExportHelper;
 
 /**
  * Class SurveyPINTAN.
@@ -69,61 +70,115 @@ class SurveyPINTAN extends \Backend
                 $export[] = $line;
             }
             if (\count($export)) {
-                $xls = new xlsexport();
-                $sheet = utf8_decode($GLOBALS['TL_LANG']['tl_survey_pin_tan']['tans']);
-                $xls->addworksheet($sheet);
+                $exporter = ExportHelper::getExporter();
+                $sheet = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tans'];
+                $exporter->addSheet($sheet);
 
                 // Headers
                 $intRowCounter = 0;
                 $intColCounter = 0;
 
-                $data = utf8_decode($GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'][0]);
-                $xls->setcell(['sheetname' => $sheet, 'row' => $intRowCounter, 'col' => $intColCounter, 'fontweight' => XLSFONT_BOLD, 'data' => $data]);
+                $exporter->setCellValue(
+                  $sheet,
+                  $intRowCounter,
+                  $intColCounter,
+                  [
+                    Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'][0],
+                    Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD
+                  ]
+                );
                 ++$intColCounter;
 
-                $data = utf8_decode($GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'][0]);
-                $xls->setcell(['sheetname' => $sheet, 'row' => $intRowCounter, 'col' => $intColCounter, 'fontweight' => XLSFONT_BOLD, 'color' => 'gray', 'data' => $data]);
-                $xls->setcolwidth($sheet, $intColCounter, max(\strlen(date($GLOBALS['TL_CONFIG']['datimFormat'])) + 1, \strlen($data) + 1) * 256);
+                $exporter->setCellValue(
+                  $sheet,
+                  $intRowCounter,
+                  $intColCounter,
+                  [
+                    Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'][0],
+                    Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+                    Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO,
+                    Exporter::COLOR => '#666666'
+                  ]
+                );
                 ++$intColCounter;
 
-                $data = utf8_decode($GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'][0]);
-                $xls->setcell(['sheetname' => $sheet, 'row' => $intRowCounter, 'col' => $intColCounter, 'fontweight' => XLSFONT_BOLD, 'data' => $data]);
+                $exporter->setCellValue(
+                  $sheet,
+                  $intRowCounter,
+                  $intColCounter,
+                  [
+                    Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'][0],
+                    Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD
+                  ]
+                );
                 ++$intColCounter;
 
                 if (null !== $pagedata) {
-                    $data = utf8_decode($GLOBALS['TL_LANG']['tl_survey_pin_tan']['url']);
-                    $xls->setcell(['sheetname' => $sheet, 'row' => $intRowCounter, 'col' => $intColCounter, 'fontweight' => XLSFONT_BOLD, 'data' => $data]);
-                    $xls->setcolwidth($sheet, $intColCounter, max(\strlen($data) + 1, \strlen($export[0]['url']) + 1) * 256);
+                    $exporter->setCellValue(
+                      $sheet,
+                      $intRowCounter,
+                      $intColCounter,
+                      [
+                        Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['url'],
+                        Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+                        Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO
+                      ]
+                    );
                     ++$intColCounter;
                 }
 
-                $data = utf8_decode($GLOBALS['TL_LANG']['tl_survey_pin_tan']['sort']);
-                $xls->setcell(['sheetname' => $sheet, 'row' => $intRowCounter, 'col' => $intColCounter, 'fontweight' => XLSFONT_BOLD, 'color' => 'gray', 'data' => $data]);
-                $xls->setcolwidth($sheet, $intColCounter, (\strlen($data) + 1) * 256);
+                $exporter->setCellValue(
+                  $sheet,
+                  $intRowCounter,
+                  $intColCounter,
+                  [
+                    Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['sort'],
+                    Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+                    Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO,
+                    Exporter::COLOR => '#666666'
+                  ]
+                );
 
                 // Data
                 $intRowCounter = 1;
                 foreach ($export as $line) {
                     $intColCounter = 0;
                     foreach ($line as $key => $data) {
-                        $cell = ['sheetname' => $sheet, 'row' => $intRowCounter, 'col' => $intColCounter, 'data' => $data];
+                        $celldata = [
+                          Exporter::DATA => $data
+                        ];
                         if ('tstamp' === $key) {
-                            $cell['color'] = 'gray';
+                            $celldata[Exporter::COLOR] = '#666666';
                         } elseif ('used' === $key && $data) {
-                            $cell['bgcolor'] = 'red';
+                            $celldata[Exporter::BGCOLOR] = '#ff0000';
                         }
-                        $xls->setcell($cell);
+                        $exporter->setCellValue(
+                          $sheet,
+                          $intRowCounter,
+                          $intColCounter,
+                          $celldata
+                        );
                         ++$intColCounter;
                     }
-                    $xls->setcell(['sheetname' => $sheet, 'row' => $intRowCounter, 'col' => $intColCounter, 'data' => $intRowCounter, 'color' => 'gray', 'type' => CELL_FLOAT]);
+                    $exporter->setCellValue(
+                      $sheet,
+                      $intRowCounter,
+                      $intColCounter,
+                      [
+                        Exporter::DATA => $intRowCounter,
+                        Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
+                        Exporter::COLOR => '#666666'
+                      ]
+                    );
                     ++$intRowCounter;
                 }
                 $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('pid'));
                 if (null !== $surveyModel) {
-                    $xls->sendFile(\StringUtil::sanitizeFileName('TAN_'.htmlspecialchars_decode($surveyModel->title).'.xls'));
+                  $exporter->setFilename('TAN_'.$surveyModel->title);
                 } else {
-                    $xls->sendFile('TAN.xls');
+                  $exporter->setFilename('TAN');
                 }
+                $exporter->sendFile("TAN", "TAN", "TAN", 'Contao CMS', 'Contao CMS');
                 exit;
             }
             $this->redirect(\Backend::addToUrl('table=tl_survey_pin_tan', true, ['key', 'table']));
