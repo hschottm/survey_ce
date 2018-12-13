@@ -15,11 +15,12 @@ class CSVExporter extends Exporter
   {
     parent::__construct($type);
     $this->tempName = tempnam(sys_get_temp_dir(), 'CSV_EXPORT');
+    unlink($this->tempName);
   }
 
   public function createSpreadsheet()
   {
-    $this->spreadsheet = new CsvWriter($this->tempName, ',', '"', '', true, true);
+    $this->spreadsheet = new CsvWriter($this->tempName, ',');
   }
 
   public function setCellValue($sheet, $row, $col, $data)
@@ -62,7 +63,7 @@ class CSVExporter extends Exporter
   {
     $this->spreadsheet->open();
     foreach ($this->data as $row)
-    {
+    {;
       $this->spreadsheet->write($row);
     }
     $this->spreadsheet->close();

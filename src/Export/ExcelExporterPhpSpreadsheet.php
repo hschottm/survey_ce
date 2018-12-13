@@ -173,7 +173,7 @@ class ExcelExporterPhpSpreadsheet extends Exporter
 
     if (array_key_exists(self::TEXTWRAP, $cell))
     {
-      if ($cell[self::TEXTWRAP]) $data['textwrap'] = '1';
+      $worksheet->getStyle($pos)->getAlignment()->setWrapText(true);
     }
 
     if (array_key_exists(self::FONTWEIGHT, $cell))
@@ -181,7 +181,7 @@ class ExcelExporterPhpSpreadsheet extends Exporter
       switch ($cell[self::FONTWEIGHT])
       {
         case self::FONTWEIGHT_BOLD:
-          $font_array['bold'] = true;
+          $worksheet->getStyle($pos)->getFont()->setBold(true);
           break;
       }
     }
