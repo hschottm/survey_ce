@@ -13,7 +13,8 @@
   "require":{
     "php": ">=5.6.0",
     "contao/core-bundle":"~4.4",
-    "symfony/framework-bundle": "^3.3"
+    "symfony/framework-bundle": "^3.3",
+    "sonata-project/exporter": "^1.0"
   },
   "require-dev": {
       "contao/manager-plugin": "^2.0",
