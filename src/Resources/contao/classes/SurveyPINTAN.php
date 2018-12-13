@@ -152,6 +152,10 @@ class SurveyPINTAN extends \Backend
                         } elseif ('used' === $key && $data) {
                             $celldata[Exporter::BGCOLOR] = '#ff0000';
                         }
+                        if ($intColCounter == 0)
+                        {
+                          $celldata[Exporter::CELLTYPE] = Exporter::CELLTYPE_STRING;
+                        }
                         $exporter->setCellValue(
                           $sheet,
                           $intRowCounter,

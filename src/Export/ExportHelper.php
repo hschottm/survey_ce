@@ -27,5 +27,6 @@ class ExportHelper
     } else {
       $exporter = new CSVExporter();
     }
+    return $exporter;
   }
 }

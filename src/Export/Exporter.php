@@ -10,7 +10,7 @@
 
 namespace Hschottm\SurveyBundle\Export;
 
-abstract class ExcelExporter
+abstract class Exporter
 {
     const EXPORT_TYPE_XLS = 'xls';
     const EXPORT_TYPE_XLSX = 'xlsx';

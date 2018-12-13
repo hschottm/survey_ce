@@ -117,14 +117,12 @@ class ExcelExporterPhpSpreadsheet extends Exporter
 
     if (array_key_exists(self::BGCOLOR, $cell))
     {
-      $fill_array = array(
-            'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-            'color' => array('rgb' => str_replace('#', '', $cell[self::BGCOLOR]))
-      );
+      $worksheet->getStyle($pos)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+      $worksheet->getStyle($pos)->getFill()->getStartColor()->setARGB(str_replace('#', 'FF', $cell[self::BGCOLOR]));
     }
     if (array_key_exists(self::COLOR, $cell))
     {
-      $font_array['color'] = array('rgb' => str_replace('#', '', $cell[self::COLOR]));
+      $worksheet->getStyle($pos)->getFont()->getColor()->setARGB(str_replace('#', 'FF', $cell[self::COLOR]));
     }
 
     if (array_key_exists(self::ALIGNMENT, $cell))
@@ -187,13 +185,6 @@ class ExcelExporterPhpSpreadsheet extends Exporter
           break;
       }
     }
-
-    $worksheet->getStyle($pos)->applyFromArray(
-      array(
-        'fill' => $fill_array,
-        'font' => $font_array
-      )
-    );
 
     if (array_key_exists(self::BORDERBOTTOM, $cell))
     {
