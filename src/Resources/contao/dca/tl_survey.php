@@ -8,8 +8,8 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
-$found = (\strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
-$hasData = (null !== $found && 0 < $found->count()) ? true : false;
+ $found = (\strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
+ $hasData = (null !== $found && 0 < $found->count()) ? true : false;
 
 /*
  * Table tl_survey
