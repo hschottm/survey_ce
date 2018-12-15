@@ -297,7 +297,7 @@ class tl_survey_page extends Backend
     protected function hasData()
     {
         if (null === $this->hasData) {
-          $resultModel = \Hschottm\SurveyBundle\SurveyResultModel::findBy('pid=?', \Input::get('id'));
+          $resultModel = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?'], [\Input::get('id')]);
           $this->hasData = null !== $resultModel && $resultModel->count() > 0;
         }
 
