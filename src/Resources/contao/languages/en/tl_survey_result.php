@@ -18,7 +18,7 @@ $GLOBALS['TL_LANG']['tl_survey_result']['answer'] = 'Answer';
 $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'] = 'Number of selections';
 
 $GLOBALS['TL_LANG']['tl_survey_result']['details'] = ['Show details', 'Show details of Question ID %s'];
-$GLOBALS['TL_LANG']['tl_survey_result']['export'] = 'Export survey results to Excel';
+$GLOBALS['TL_LANG']['tl_survey_result']['export'] = 'Export survey results';
 $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id'] = 'Question ID';
 $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_nr'] = 'Question #';
 $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_pg_nr'] = 'Page#.Question#';
