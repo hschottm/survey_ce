@@ -96,8 +96,7 @@ class SurveyPINTAN extends \Backend
                   [
                     Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'][0],
                     Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-                    Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO,
-                    Exporter::COLOR => '#666666'
+                    Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO
                   ]
                 );
                 ++$intColCounter;
@@ -134,8 +133,7 @@ class SurveyPINTAN extends \Backend
                   [
                     Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['sort'],
                     Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-                    Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO,
-                    Exporter::COLOR => '#666666'
+                    Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO
                   ]
                 );
 
@@ -147,11 +145,6 @@ class SurveyPINTAN extends \Backend
                         $celldata = [
                           Exporter::DATA => $data
                         ];
-                        if ('tstamp' === $key) {
-                            $celldata[Exporter::COLOR] = '#666666';
-                        } elseif ('used' === $key && $data) {
-                            $celldata[Exporter::BGCOLOR] = '#ff0000';
-                        }
                         if ($intColCounter == 0)
                         {
                           $celldata[Exporter::CELLTYPE] = Exporter::CELLTYPE_STRING;
@@ -170,8 +163,7 @@ class SurveyPINTAN extends \Backend
                       $intColCounter,
                       [
                         Exporter::DATA => $intRowCounter,
-                        Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
-                        Exporter::COLOR => '#666666'
+                        Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
                       ]
                     );
                     ++$intRowCounter;
