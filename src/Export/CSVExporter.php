@@ -20,7 +20,7 @@ class CSVExporter extends Exporter
 
   public function createSpreadsheet()
   {
-    $this->spreadsheet = new CsvWriter($this->tempName, ',');
+    $this->spreadsheet = new CsvWriter($this->tempName, ',', '"', '\\', false);
   }
 
   public function setCellValue($sheet, $row, $col, $data)
