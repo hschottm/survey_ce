@@ -1,106 +1,109 @@
 <?php
 
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	      https://github.com/hschottm/survey_ce
+ */
+
 namespace Hschottm\SurveyBundle\Export;
 
-use Hschottm\SurveyBundle\Export\Exporter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ExcelExporterPhpSpreadsheet extends Exporter
 {
-  public function __construct($type = self::EXPORT_TYPE_XLS)
-  {
-    parent::__construct($type);
-  }
+    public function __construct($type = self::EXPORT_TYPE_XLS)
+    {
+        parent::__construct($type);
+    }
 
-  public function webColorToARGB($color)
-  {
-    $col = str_replace('#', '', $color);
-    if (strlen($col) == 6)
+    public function webColorToARGB($color)
     {
-      return "ff" . $col;
-    }
-    else if (strlen($color) == 8)
-    {
-      return $col;
-    }
-    return "ff000000";
-  }
+        $col = str_replace('#', '', $color);
+        if (6 === \strlen($col)) {
+            return 'ff'.$col;
+        }
+        if (8 === \strlen($color)) {
+            return $col;
+        }
 
-  public function createSpreadsheet()
-  {
-    /*
-    if ($this->type === self::EXPORT_TYPE_XLS)
-    {
-      $this->spreadsheet = new xlsexport();
+        return 'ff000000';
     }
-    */
-    $this->spreadsheet = new Spreadsheet();
-    if ($this->spreadsheet->getSheetCount() > 0)
-    {
-      $this->spreadsheet->removeSheetByIndex(0);
-    }
-  }
 
-  public function setCellValue($sheet, $row, $col, $data)
-  {
-    if (array_key_exists($sheet, $this->sheets))
+    public function createSpreadsheet()
     {
-      $celldata = array(
+        /*
+        if ($this->type === self::EXPORT_TYPE_XLS)
+        {
+          $this->spreadsheet = new xlsexport();
+        }
+        */
+        $this->spreadsheet = new Spreadsheet();
+        if ($this->spreadsheet->getSheetCount() > 0) {
+            $this->spreadsheet->removeSheetByIndex(0);
+        }
+    }
+
+    public function setCellValue($sheet, $row, $col, $data)
+    {
+        if (array_key_exists($sheet, $this->sheets)) {
+            $celldata = [
         self::ROW => $row,
-        self::COL => $col
-      );
-      foreach ($data as $key => $value)
-      {
-        $celldata[$key] = $value;
-      }
-      if (!array_key_exists(self::CELLTYPE, $celldata)) $celldata[self::CELLTYPE] = self::CELLTYPE_STRING;
-      $this->sheets[$sheet][$this->getCell($row, $col)] = $celldata;
-      return true;
+        self::COL => $col,
+      ];
+            foreach ($data as $key => $value) {
+                $celldata[$key] = $value;
+            }
+            if (!array_key_exists(self::CELLTYPE, $celldata)) {
+                $celldata[self::CELLTYPE] = self::CELLTYPE_STRING;
+            }
+            $this->sheets[$sheet][$this->getCell($row, $col)] = $celldata;
+
+            return true;
+        }
+
+        return false;
     }
-    else {
-      return false;
-    }
-  }
 
-  protected function setSpreadsheetProperties($title = "", $subject = "", $description = "", $creator = "", $modificator = "")
-  {
-    $this->spreadsheet->getProperties()->setCreator($creator);
-    $this->spreadsheet->getProperties()->setLastModifiedBy($creator);
-    $this->spreadsheet->getProperties()->setTitle($title);
-    $this->spreadsheet->getProperties()->setSubject($subject);
-    $this->spreadsheet->getProperties()->setDescription($description);
-  }
-
-  protected function send()
-  {
-    $objWriter = new Xlsx($this->spreadsheet);
-    header('Content-Type: application/vnd.ms-excel');
-    header('Content-Disposition: attachment;filename="'.\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xlsx"');
-    header('Cache-Control: max-age=0');
-    $objWriter->save('php://output');
-    echo "";
-    exit;
-  }
-
-  protected function setCellSpreadsheet($sheet, $cell)
-  {
-    $pos = $this->getCell($cell[self::ROW]+1, $cell[self::COL]);
-    $worksheet = $this->spreadsheet->getSheetByName($sheet);
-    if (null == $worksheet)
+    protected function setSpreadsheetProperties($title = '', $subject = '', $description = '', $creator = '', $modificator = '')
     {
-      $worksheet = $this->spreadsheet->addSheet(new Worksheet($this->spreadsheet, $sheet));
+        $this->spreadsheet->getProperties()->setCreator($creator);
+        $this->spreadsheet->getProperties()->setLastModifiedBy($creator);
+        $this->spreadsheet->getProperties()->setTitle($title);
+        $this->spreadsheet->getProperties()->setSubject($subject);
+        $this->spreadsheet->getProperties()->setDescription($description);
     }
 
-    $worksheet->setCellValue($pos, $cell[self::DATA]);
-
-    $fill_array = array();
-    $font_array = array();
-
-    switch ($cell[self::CELLTYPE])
+    protected function send()
     {
+        $objWriter = new Xlsx($this->spreadsheet);
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xlsx"');
+        header('Cache-Control: max-age=0');
+        $objWriter->save('php://output');
+        echo '';
+        exit;
+    }
+
+    protected function setCellSpreadsheet($sheet, $cell)
+    {
+        $pos = $this->getCell($cell[self::ROW] + 1, $cell[self::COL]);
+        $worksheet = $this->spreadsheet->getSheetByName($sheet);
+        if (null === $worksheet) {
+            $worksheet = $this->spreadsheet->addSheet(new Worksheet($this->spreadsheet, $sheet));
+        }
+
+        $worksheet->setCellValue($pos, $cell[self::DATA]);
+
+        $fill_array = [];
+        $font_array = [];
+
+        switch ($cell[self::CELLTYPE]) {
       case CELLTYPE_STRING:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
         break;
@@ -115,20 +118,16 @@ class ExcelExporterPhpSpreadsheet extends Exporter
         break;
     }
 
-    if (array_key_exists(self::BGCOLOR, $cell))
-    {
-      $worksheet->getStyle($pos)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-      $worksheet->getStyle($pos)->getFill()->getStartColor()->setARGB(str_replace('#', 'FF', $cell[self::BGCOLOR]));
-    }
-    if (array_key_exists(self::COLOR, $cell))
-    {
-      $worksheet->getStyle($pos)->getFont()->getColor()->setARGB(str_replace('#', 'FF', $cell[self::COLOR]));
-    }
+        if (array_key_exists(self::BGCOLOR, $cell)) {
+            $worksheet->getStyle($pos)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+            $worksheet->getStyle($pos)->getFill()->getStartColor()->setARGB(str_replace('#', 'FF', $cell[self::BGCOLOR]));
+        }
+        if (array_key_exists(self::COLOR, $cell)) {
+            $worksheet->getStyle($pos)->getFont()->getColor()->setARGB(str_replace('#', 'FF', $cell[self::COLOR]));
+        }
 
-    if (array_key_exists(self::ALIGNMENT, $cell))
-    {
-      switch ($cell[self::ALIGNMENT])
-      {
+        if (array_key_exists(self::ALIGNMENT, $cell)) {
+            switch ($cell[self::ALIGNMENT]) {
         case self::ALIGNMENT_H_GENERAL:
             $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_GENERAL);
             break;
@@ -151,12 +150,10 @@ class ExcelExporterPhpSpreadsheet extends Exporter
             $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER_CONTINUOUS);
             break;
       }
-    }
+        }
 
-    if (array_key_exists(self::TEXTROTATE, $cell))
-    {
-      switch ($cell[self::TEXTROTATE])
-      {
+        if (array_key_exists(self::TEXTROTATE, $cell)) {
+            switch ($cell[self::TEXTROTATE]) {
         case self::TEXTROTATE_CLOCKWISE:
           $worksheet->getStyle($pos)->getAlignment()->setTextRotation(90);
           break;
@@ -169,27 +166,22 @@ class ExcelExporterPhpSpreadsheet extends Exporter
           $worksheet->getStyle($pos)->getAlignment()->setTextRotation($cell[self::TEXTROTATE]);
           break;
       }
-    }
+        }
 
-    if (array_key_exists(self::TEXTWRAP, $cell))
-    {
-      $worksheet->getStyle($pos)->getAlignment()->setWrapText(true);
-    }
+        if (array_key_exists(self::TEXTWRAP, $cell)) {
+            $worksheet->getStyle($pos)->getAlignment()->setWrapText(true);
+        }
 
-    if (array_key_exists(self::FONTWEIGHT, $cell))
-    {
-      switch ($cell[self::FONTWEIGHT])
-      {
+        if (array_key_exists(self::FONTWEIGHT, $cell)) {
+            switch ($cell[self::FONTWEIGHT]) {
         case self::FONTWEIGHT_BOLD:
           $worksheet->getStyle($pos)->getFont()->setBold(true);
           break;
       }
-    }
+        }
 
-    if (array_key_exists(self::BORDERBOTTOM, $cell))
-    {
-      switch ($cell[self::BORDERBOTTOM])
-      {
+        if (array_key_exists(self::BORDERBOTTOM, $cell)) {
+            switch ($cell[self::BORDERBOTTOM]) {
         case self::BORDER_THIN:
           $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
           break;
@@ -233,17 +225,14 @@ class ExcelExporterPhpSpreadsheet extends Exporter
           $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE);
           break;
       }
-    }
+        }
 
-    if (array_key_exists(self::BORDERBOTTOMCOLOR, $cell))
-    {
-      $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERBOTTOMCOLOR])));
-    }
+        if (array_key_exists(self::BORDERBOTTOMCOLOR, $cell)) {
+            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERBOTTOMCOLOR])));
+        }
 
-    if (array_key_exists(self::BORDERTOP, $cell))
-    {
-      switch ($cell[self::BORDERTOP])
-      {
+        if (array_key_exists(self::BORDERTOP, $cell)) {
+            switch ($cell[self::BORDERTOP]) {
         case self::BORDER_THIN:
           $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
           break;
@@ -287,17 +276,14 @@ class ExcelExporterPhpSpreadsheet extends Exporter
           $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE);
           break;
       }
-    }
+        }
 
-    if (array_key_exists(self::BORDERTOPCOLOR, $cell))
-    {
-      $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERTOPCOLOR])));
-    }
+        if (array_key_exists(self::BORDERTOPCOLOR, $cell)) {
+            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERTOPCOLOR])));
+        }
 
-    if (array_key_exists(self::BORDERLEFT, $cell))
-    {
-      switch ($cell[self::BORDERLEFT])
-      {
+        if (array_key_exists(self::BORDERLEFT, $cell)) {
+            switch ($cell[self::BORDERLEFT]) {
         case self::BORDER_THIN:
           $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
           break;
@@ -341,17 +327,14 @@ class ExcelExporterPhpSpreadsheet extends Exporter
           $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE);
           break;
       }
-    }
+        }
 
-    if (array_key_exists(self::BORDERLEFTCOLOR, $cell))
-    {
-      $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERLEFTCOLOR])));
-    }
+        if (array_key_exists(self::BORDERLEFTCOLOR, $cell)) {
+            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERLEFTCOLOR])));
+        }
 
-    if (array_key_exists(self::BORDERRIGHT, $cell))
-    {
-      switch ($cell[self::BORDERRIGHT])
-      {
+        if (array_key_exists(self::BORDERRIGHT, $cell)) {
+            switch ($cell[self::BORDERRIGHT]) {
         case self::BORDER_THIN:
           $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
           break;
@@ -395,28 +378,22 @@ class ExcelExporterPhpSpreadsheet extends Exporter
           $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE);
           break;
       }
-    }
+        }
 
-    if (array_key_exists(self::BORDERRIGHTCOLOR, $cell))
-    {
-      $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERRIGHTCOLOR])));
-    }
+        if (array_key_exists(self::BORDERRIGHTCOLOR, $cell)) {
+            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERRIGHTCOLOR])));
+        }
 
-    if (array_key_exists(self::MERGE, $cell))
-    {
-      $worksheet->mergeCells($cell[self::MERGE]);
-    }
+        if (array_key_exists(self::MERGE, $cell)) {
+            $worksheet->mergeCells($cell[self::MERGE]);
+        }
 
-    if (array_key_exists(self::COLWIDTH, $cell))
-    {
-      if ($cell[self::COLWIDTH] === self::COLWIDTH_AUTO)
-      {
-        $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setAutoSize(true);
-      }
-      else {
-        $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setWidth($cell[self::COLWIDTH]);
-      }
+        if (array_key_exists(self::COLWIDTH, $cell)) {
+            if (self::COLWIDTH_AUTO === $cell[self::COLWIDTH]) {
+                $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setAutoSize(true);
+            } else {
+                $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setWidth($cell[self::COLWIDTH]);
+            }
+        }
     }
-  }
-
 }
