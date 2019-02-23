@@ -98,7 +98,6 @@ class ContentSurvey extends \ContentElement
         if (0 == $page) {
             $this->outIntroductionPage();
         }
-
         // check survey start
         if (\Input::post('start') || (1 === $this->objSurvey->immediate_start && !\Input::post('FORM_SUBMIT'))) {
             $page = 0;
@@ -154,18 +153,17 @@ class ContentSurvey extends \ContentElement
                     }
                     break;
                 case 'nonanoncode':
-          $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
-          if (null !== $participant) {
-              if (!$participant->uid) {
-                  $pintan = $this->svy->generatePIN_TAN();
-                  $this->pin = $pintan['PIN'];
-                  $this->insertParticipant($this->objSurvey->id, $pintan['PIN'], $this->User->id);
-              } else {
-                  $this->pin = $participant->pin;
-              }
-              $page = \strlen($participant->lastpage) ? $participant->lastpage : 1;
-          }
-                    break;
+                  $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
+                  if (null === $participant) {
+                    $pintan = $this->svy->generatePIN_TAN();
+                    $this->pin = $pintan['PIN'];
+                    $this->insertParticipant($this->objSurvey->id, $pintan['PIN'], $this->User->id);
+                  }
+                  else {
+                    $this->pin = $participant->pin;
+                  }
+                  $page = \strlen($participant->lastpage) ? $participant->lastpage : 1;
+                  break;
             }
         }
         // check question input and save input or return a question list of the page
@@ -300,7 +298,7 @@ class ContentSurvey extends \ContentElement
             if (isset($GLOBALS['TL_HOOKS']['surveyQuestionsValidated']) && \is_array($GLOBALS['TL_HOOKS']['surveyQuestionsValidated'])) {
                 foreach ($GLOBALS['TL_HOOKS']['surveyQuestionsValidated'] as $callback) {
                     $this->import($callback[0]);
-                    $this->{$callback[0]}->{$callback[1]}($surveypage, $pagerow);
+                    $this->$callback[0]->$callback[1]($surveypage, $pagerow);
                 }
             }
         } else {
@@ -308,7 +306,7 @@ class ContentSurvey extends \ContentElement
             if (isset($GLOBALS['TL_HOOKS']['surveyQuestionsLoaded']) && \is_array($GLOBALS['TL_HOOKS']['surveyQuestionsLoaded'])) {
                 foreach ($GLOBALS['TL_HOOKS']['surveyQuestionsLoaded'] as $callback) {
                     $this->import($callback[0]);
-                    $this->{$callback[0]}->{$callback[1]}($surveypage, $pagerow);
+                    $this->$callback[0]->$callback[1]($surveypage, $pagerow);
                 }
             }
         }
@@ -392,7 +390,7 @@ class ContentSurvey extends \ContentElement
                 if (isset($GLOBALS['TL_HOOKS']['surveyFinished']) && \is_array($GLOBALS['TL_HOOKS']['surveyFinished'])) {
                     foreach ($GLOBALS['TL_HOOKS']['surveyFinished'] as $callback) {
                         $this->import($callback[0]);
-                        $this->{$callback[0]}->{$callback[1]}($this->objSurvey->row());
+                        $this->$callback[0]->$callback[1]($this->objSurvey->row());
                     }
                 }
 
