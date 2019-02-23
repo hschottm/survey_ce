@@ -300,7 +300,7 @@ class ContentSurvey extends \ContentElement
             if (isset($GLOBALS['TL_HOOKS']['surveyQuestionsValidated']) && \is_array($GLOBALS['TL_HOOKS']['surveyQuestionsValidated'])) {
                 foreach ($GLOBALS['TL_HOOKS']['surveyQuestionsValidated'] as $callback) {
                     $this->import($callback[0]);
-                    $this->$callback[0]->$callback[1]($surveypage, $pagerow);
+                    $this->{$callback[0]}->{$callback[1]}($surveypage, $pagerow);
                 }
             }
         } else {
@@ -308,7 +308,7 @@ class ContentSurvey extends \ContentElement
             if (isset($GLOBALS['TL_HOOKS']['surveyQuestionsLoaded']) && \is_array($GLOBALS['TL_HOOKS']['surveyQuestionsLoaded'])) {
                 foreach ($GLOBALS['TL_HOOKS']['surveyQuestionsLoaded'] as $callback) {
                     $this->import($callback[0]);
-                    $this->$callback[0]->$callback[1]($surveypage, $pagerow);
+                    $this->{$callback[0]}->{$callback[1]}($surveypage, $pagerow);
                 }
             }
         }
@@ -392,7 +392,7 @@ class ContentSurvey extends \ContentElement
                 if (isset($GLOBALS['TL_HOOKS']['surveyFinished']) && \is_array($GLOBALS['TL_HOOKS']['surveyFinished'])) {
                     foreach ($GLOBALS['TL_HOOKS']['surveyFinished'] as $callback) {
                         $this->import($callback[0]);
-                        $this->$callback[0]->$callback[1]($this->objSurvey->row());
+                        $this->{$callback[0]}->{$callback[1]}($this->objSurvey->row());
                     }
                 }
 
