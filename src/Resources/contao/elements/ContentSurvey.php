@@ -99,7 +99,7 @@ class ContentSurvey extends \ContentElement
             $this->outIntroductionPage();
         }
         // check survey start
-        if (\Input::post('start') || (1 === $this->objSurvey->immediate_start && !\Input::post('FORM_SUBMIT'))) {
+        if (\Input::post('start') || (1 == $this->objSurvey->immediate_start && !\Input::post('FORM_SUBMIT'))) {
             $page = 0;
             switch ($this->objSurvey->access) {
                 case 'anon':
