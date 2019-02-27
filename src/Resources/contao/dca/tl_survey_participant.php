@@ -178,6 +178,7 @@ class tl_survey_participant extends \Backend
             setcookie('TLsvy_'.$res->pid, $res->pin, time() - 3600, '/');
             $objDelete = $this->Database->prepare('DELETE FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
             $objDelete = $this->Database->prepare('DELETE FROM tl_survey_result WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
+            $objDelete = $this->Database->prepare('DELETE FROM tl_survey_navigation WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
         }
     }
 

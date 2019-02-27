@@ -30,7 +30,7 @@ class ContentSurvey extends \ContentElement
      */
     public function generate()
     {
-        if (TL_MODE === 'BE') {
+        if (TL_MODE == 'BE') {
             $objTemplate = new \BackendTemplate('be_wildcard');
             $objTemplate->wildcard = '### SURVEY ###';
 
@@ -47,7 +47,7 @@ class ContentSurvey extends \ContentElement
      */
     protected function compile()
     {
-        if (TL_MODE === 'FE' && !BE_USER_LOGGED_IN && ($this->invisible || ($this->start > 0 && $this->start > time()) || ($this->stop > 0 && $this->stop < time()))) {
+        if (TL_MODE == 'FE' && !BE_USER_LOGGED_IN && ($this->invisible || ($this->start > 0 && $this->start > time()) || ($this->stop > 0 && $this->stop < time()))) {
             return '';
         }
 
@@ -67,7 +67,7 @@ class ContentSurvey extends \ContentElement
             ->execute($surveyID);
         $this->objSurvey->next();
         //$this->objSurvey = \Hschottm\SurveyBundle\SurveyModel::findByPk($surveyId);
-        if (null === $this->objSurvey) {
+        if (null == $this->objSurvey) {
             return;
         }
 
@@ -87,7 +87,7 @@ class ContentSurvey extends \ContentElement
 
         $pages = \Hschottm\SurveyBundle\SurveyPageModel::findBy('pid', $surveyID, ['order' => 'sorting']);
 
-        if (null === $pages) {
+        if (null == $pages) {
             $pages = [];
         } else {
             $pages = $pages->fetchAll();
@@ -103,7 +103,7 @@ class ContentSurvey extends \ContentElement
             $page = 0;
             switch ($this->objSurvey->access) {
                 case 'anon':
-                    if (($this->objSurvey->usecookie) && \strlen($_COOKIE['TLsvy_'.$this->objSurvey->id]) && false !== $this->svy->checkPINTAN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id])) {
+                    if (($this->objSurvey->usecookie) && \strlen($_COOKIE['TLsvy_'.$this->objSurvey->id]) && false != $this->svy->checkPINTAN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id])) {
                         $page = $this->svy->getLastPageForPIN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id]);
                         $this->pin = $_COOKIE['TLsvy_'.$this->objSurvey->id];
                     } else {
@@ -121,14 +121,14 @@ class ContentSurvey extends \ContentElement
                     $tan = \Input::post('tan');
                     if ((0 == strcmp(\Input::post('FORM_SUBMIT'), 'tl_survey_form')) && (\strlen($tan))) {
                         $result = $this->svy->checkPINTAN($this->objSurvey->id, '', $tan);
-                        if (false === $result) {
+                        if (false == $result) {
                             $this->Template->tanMsg = $GLOBALS['TL_LANG']['ERR']['survey_wrong_tan'];
                         } else {
                             $this->pin = $this->svy->getPINforTAN($this->objSurvey->id, $tan);
 
                             if (0 == $result) {
                                 $res = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['tan=?', 'pid=?'], [$tan, $this->objSurvey->id]);
-                                if (null !== $res) {
+                                if (null != $res) {
                                     $res->used = 1;
                                     $res->save();
                                 }
@@ -154,7 +154,7 @@ class ContentSurvey extends \ContentElement
                     break;
                 case 'nonanoncode':
                   $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
-                  if (null === $participant) {
+                  if (null == $participant) {
                     $pintan = $this->svy->generatePIN_TAN();
                     $this->pin = $pintan['PIN'];
                     $this->insertParticipant($this->objSurvey->id, $pintan['PIN'], $this->User->id);
@@ -169,13 +169,14 @@ class ContentSurvey extends \ContentElement
         // check question input and save input or return a question list of the page
         $surveypage = [];
         if (($page > 0 && $page <= \count($pages))) {
-            if ('tl_survey' === \Input::post('FORM_SUBMIT')) {
+            if ('tl_survey' == \Input::post('FORM_SUBMIT')) {
                 $goback = (\strlen(\Input::post('prev'))) ? true : false;
                 $surveypage = $this->createSurveyPage($pages[$page - 1], $page, true, $goback);
             }
         }
 
         // submit successful, calculate next page and return a question list of the new page
+        $previouspage = $page;
         if (0 == \count($surveypage)) {
             if (\strlen(\Input::post('next'))) {
                 $page++;
@@ -184,16 +185,24 @@ class ContentSurvey extends \ContentElement
                 $page++;
             }
             if (\strlen(\Input::post('prev'))) {
-                $page--;
+                $res = \Hschottm\SurveyBundle\SurveyNavigationModel::findOneBy(['pid=?', 'pin=?', 'uid=?', 'topage=?'], [$this->objSurvey->id, $this->pin, (strlen($this->User->id) == 0) ? 0 : $this->User->id, $page], ['order' => 'tstamp DESC']);
+                if (null != $res) {
+                  $page = $res->frompage;
+                }
+                else {
+                  $page--;
+                }
             }
 
             $surveypage = $this->createSurveyPage($pages[$page - 1], $page, false);
         }
 
+        $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id, $previouspage, $page);
+
         // save position of last page (for resume)
         if ($page > 0) {
             $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
-            if (null !== $res) {
+            if (null != $res) {
                 $res->lastpage = $page;
                 $res->save();
             }
@@ -251,7 +260,7 @@ class ContentSurvey extends \ContentElement
 
         $questions = \Hschottm\SurveyBundle\SurveyQuestionModel::findBy('pid', $pagerow['id'], ['order' => 'sorting']);
 
-        if (null === $questions) {
+        if (null == $questions) {
             return [];
         }
 
@@ -268,7 +277,7 @@ class ContentSurvey extends \ContentElement
             $objWidget->absoluteNumber = $this->getQuestionPosition($question['id'], $this->objSurvey->id);
             $objWidget->pageQuestionNumber = $pagequestioncounter;
             $objWidget->pageNumber = $pagenumber;
-            $objWidget->cssClass = ('' !== $question['cssClass'] ? ' '.$question['cssClass'] : '').(0 == $objWidget->absoluteNumber % 2 ? ' odd' : ' even');
+            $objWidget->cssClass = ('' != $question['cssClass'] ? ' '.$question['cssClass'] : '').(0 == $objWidget->absoluteNumber % 2 ? ' odd' : ' even');
             array_push($surveypage, $objWidget);
             ++$pagequestioncounter;
 
@@ -288,7 +297,7 @@ class ContentSurvey extends \ContentElement
                         $objResult = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $objWidget->id, $this->User->id]);
                         break;
                 }
-                if (null !== $objResult && $objResult->count()) {
+                if (null != $objResult && $objResult->count()) {
                     $objWidget->value = deserialize($objResult->result);
                 }
             }
@@ -311,7 +320,7 @@ class ContentSurvey extends \ContentElement
             }
         }
 
-        if ($validate && 'tl_survey' === \Input::post('FORM_SUBMIT') && !\strlen($this->pin)) {
+        if ($validate && 'tl_survey' == \Input::post('FORM_SUBMIT') && !\strlen($this->pin)) {
             if ($this->objSurvey->usecookie && \strlen($_COOKIE['TLsvy_'.$this->objSurvey->id])) {
                 // restore lost PIN from cookie
                 $this->pin = $_COOKIE['TLsvy_'.$this->objSurvey->id];
@@ -323,7 +332,7 @@ class ContentSurvey extends \ContentElement
         }
 
         // save survey values
-        if ($validate && 'tl_survey' === \Input::post('FORM_SUBMIT') && (!$doNotSubmit || $goback)) {
+        if ($validate && 'tl_survey' == \Input::post('FORM_SUBMIT') && (!$doNotSubmit || $goback)) {
             if (!\strlen($this->pin) || !$this->isValid($this->pin)) {
                 global $objPage;
                 $this->redirect($this->generateFrontendUrl($objPage->row()));
@@ -333,10 +342,12 @@ class ContentSurvey extends \ContentElement
                     case 'anon':
                     case 'anoncode':
                       $res = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $question->id, $this->pin]);
-                      if (null !== $res) {
-                        if ($res instanceof Model) {
+                      if (null != $res) {
+                        $modelinstance = "Model";
+                        $collectioninstance = "Model\Collection";
+                        if ($res instanceof $modelinstance) {
                           $res->delete();
-                        } elseif ($res instanceof Model\Collection) {
+                        } elseif ($res instanceof $collectioninstance) {
                           foreach ($res as $singleRes) {
                             $singleRes->delete();
                           }
@@ -351,16 +362,18 @@ class ContentSurvey extends \ContentElement
                         }
                         break;
                     case 'nonanoncode':
-              $res = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $question->id, $this->User->id]);
-              if (null !== $res) {
-                  if ($res instanceof Model) {
-                      $res->delete();
-                  } elseif ($res instanceof Model\Collection) {
-                      foreach ($res as $singleRes) {
-                          $singleRes->delete();
-                      }
-                  }
-              }
+                        $res = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $question->id, $this->User->id]);
+                        $modelinstance = "Model";
+                        $collectioninstance = "Model\Collection";
+                        if (null != $res) {
+                            if ($res instanceof $modelinstance) {
+                                $res->delete();
+                            } elseif ($res instanceof $collectioninstance) {
+                                foreach ($res as $singleRes) {
+                                    $singleRes->delete();
+                                }
+                            }
+                        }
                         $value = $question->value;
                         if (\is_array($question->value)) {
                             $value = serialize($question->value);
@@ -422,7 +435,7 @@ class ContentSurvey extends \ContentElement
         					if (strlen($this->objSurvey->confirmationMailRecipientField))
         					{
                     $res = \Hschottm\SurveyBundle\SurveyResultModel::findOneBy(['qid=?', 'pin=?'], [$this->objSurvey->confirmationMailRecipientField, $this->pin]);
-                    if (null !== $res) {
+                    if (null != $res) {
                       if (strlen($res->result))
           						{
           							$arrRecipient = trimsplit(',', $res->result);
@@ -460,7 +473,7 @@ class ContentSurvey extends \ContentElement
         								{
         									$objFileModel = \FilesModel::findById($varFile);
 
-        									if ($objFileModel !== null)
+        									if ($objFileModel != null)
         									{
         										$objFile = new \File($objFileModel->path);
         										if ($objFile->size)
@@ -484,7 +497,7 @@ class ContentSurvey extends \ContentElement
         					if (\Validator::isUuid($this->objSurvey->confirmationMailTemplate) || (is_numeric($this->objSurvey->confirmationMailTemplate) && $this->objSurvey->confirmationMailTemplate > 0))
         					{
         						$objFileModel = \FilesModel::findById($this->objSurvey->confirmationMailTemplate);
-        						if ($objFileModel !== null)
+        						if ($objFileModel != null)
         						{
         							$messageHtmlTmpl = $objFileModel->path;
         						}
@@ -560,7 +573,7 @@ class ContentSurvey extends \ContentElement
 
                 if ($this->objSurvey->jumpto) {
                     $pagedata = \PageModel::findByPk($this->objSurvey->jumpto);
-                    if (null !== $pagedata) {
+                    if (null != $pagedata) {
                         $this->redirect($pagedata->getFrontendUrl());
                     }
                 }
@@ -599,10 +612,10 @@ class ContentSurvey extends \ContentElement
             return false;
         }
         $participants = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy(['pin=?', 'pid=?'], [$pin, $this->objSurvey->id]);
-        if (null === $participants) {
+        if (null == $participants) {
             return false;
         }
-        if (1 === $participants->count()) {
+        if (1 == $participants->count()) {
             return true;
         }
 
@@ -659,7 +672,7 @@ class ContentSurvey extends \ContentElement
         $newResult->qid = $qid;
         $newResult->pin = $pin;
         $newResult->result = $result;
-        if (null !== $uid) {
+        if (null != $uid) {
             $newResult->uid = $uid;
         }
         $newResult->save();
@@ -691,5 +704,24 @@ class ContentSurvey extends \ContentElement
         $newParticipant->pin = $pin;
         $newParticipant->uid = $uid;
         $newParticipant->save();
+    }
+
+    /**
+     * Insert a new navigation step
+     *
+     * @param mixed $pid
+     * @param mixed $pin
+     * @param mixed $uid
+     */
+    protected function insertNavigation($pid, $pin, $uid = 0, $from = 0, $to = 0)
+    {
+        $newNavigation = new \Hschottm\SurveyBundle\SurveyNavigationModel();
+        $newNavigation->tstamp = time();
+        $newNavigation->pid = $pid;
+        $newNavigation->pin = $pin;
+        $newNavigation->uid = $uid;
+        $newNavigation->frompage = $from;
+        $newNavigation->topage = $to;
+        $newNavigation->save();
     }
 }
