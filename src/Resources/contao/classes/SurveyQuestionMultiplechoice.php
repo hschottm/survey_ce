@@ -49,7 +49,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
             $template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
             $template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
-            $template->choices = (0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+            $template->choices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
             $template->other = ($this->arrData['addother']) ? true : false;
             $template->othertitle = \StringUtil::specialchars($this->arrData['othertitle']);
             $otherchoices = [];
@@ -87,7 +87,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
         $exporter->setCellValue($sheet, $row + 1, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['nrOfSelections'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
 
-        $arrChoices = (0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        $arrChoices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
         $col = 2;
         foreach ($arrChoices as $id => $choice) {
             $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice]);
@@ -242,7 +242,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
      */
     protected function exportQuestionHeadersToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
     {
-        $this->choices = ('mc_dichotomous' === $this->arrData['multiplechoice_subtype'])
+        $this->choices = ('mc_dichotomous' == $this->arrData['multiplechoice_subtype'])
             ? [
                     0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
                     1 => $GLOBALS['TL_LANG']['tl_survey_question']['no'],
@@ -251,7 +251,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         if ($this->arrData['addother']) {
             $this->choices[] = preg_replace('/[-=>:\s]+$/', '', $this->arrData['othertitle']);
         }
-        $numcols = ('mc_multipleresponse' === $this->arrData['multiplechoice_subtype']) ? \count($this->choices) : 1;
+        $numcols = ('mc_multipleresponse' == $this->arrData['multiplechoice_subtype']) ? \count($this->choices) : 1;
 
         $result = [];
 
@@ -345,7 +345,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
         ++$row;
 
-        if (1 === $numcols) {
+        if (1 == $numcols) {
           $data = [
             Exporter::DATA => '',
             Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
@@ -366,7 +366,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                 Exporter::DATA => $choice,
                 Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
                 Exporter::TEXTWRAP => true,
-                Exporter::TEXTROTATE => ($this->arrData['addother'] && ($key === \count($this->choices) - 1)) ? Exporter::TEXTROTATE_NONE : Exporter::TEXTROTATE_COUNTERCLOCKWISE,
+                Exporter::TEXTROTATE => ($this->arrData['addother'] && ($key == \count($this->choices) - 1)) ? Exporter::TEXTROTATE_NONE : Exporter::TEXTROTATE_COUNTERCLOCKWISE,
                 Exporter::BORDERBOTTOM => Exporter::BORDER_THIN,
                 Exporter::BORDERBOTTOMCOLOR => '#000000',
               ];
@@ -410,20 +410,20 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             if ($data) {
                 $col = $startCol;
                 $arrAnswers = deserialize($data, true);
-                if ('mc_dichotomous' === $this->arrData['multiplechoice_subtype']) {
+                if ('mc_dichotomous' == $this->arrData['multiplechoice_subtype']) {
                   $exporter->setCellValue($sheet, $row, $col, [
                     Exporter::DATA => $this->choices[$arrAnswers['value'] - 1],
                     Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
                     Exporter::TEXTWRAP => true
                   ]);
-                } elseif ('mc_singleresponse' === $this->arrData['multiplechoice_subtype']) {
+                } elseif ('mc_singleresponse' == $this->arrData['multiplechoice_subtype']) {
                     $emptyAnswer = false;
                     foreach ($this->choices as $choice)
                     {
                       if (strlen($choice) == 0) $emptyAnswer = true;
                     }
                     $strAnswer = (($emptyAnswer) ? ($arrAnswers['value'] . ' - ') : '') . $this->choices[$arrAnswers['value'] - 1];
-                    if (($this->arrData['addother']) && ($arrAnswers['value'] === \count($this->choices))) {
+                    if (($this->arrData['addother']) && ($arrAnswers['value'] == \count($this->choices))) {
                         $strAnswer .= ': '.\StringUtil::decodeEntities($arrAnswers['other']);
                     }
                     $exporter->setCellValue($sheet, $row, $col, [
@@ -431,10 +431,10 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                       Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
                       Exporter::TEXTWRAP => true
                     ]);
-                } elseif ('mc_multipleresponse' === $this->arrData['multiplechoice_subtype']) {
+                } elseif ('mc_multipleresponse' == $this->arrData['multiplechoice_subtype']) {
                     foreach ($this->choices as $k => $v) {
                         $strAnswer = (\is_array($arrAnswers['value']) && array_key_exists($k + 1, $arrAnswers['value']))
-                            ? ($this->arrData['addother'] && ($k + 1 === \count($this->choices)))
+                            ? ($this->arrData['addother'] && ($k + 1 == \count($this->choices)))
                                 ? \StringUtil::decodeEntities($arrAnswers['other'])
                                 : 'x'
                             : '';

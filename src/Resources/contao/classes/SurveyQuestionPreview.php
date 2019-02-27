@@ -63,6 +63,6 @@ class SurveyQuestionPreview extends \Backend
     {
         $surveyQuestionCollection = \Hschottm\SurveyBundle\SurveyQuestionModel::findBy(['pid=?', 'sorting<=?'], [$row['pid'], $row['sorting']]);
 
-        return (null !== $surveyQuestionCollection) ? $surveyQuestionCollection->count() : 0;
+        return (null != $surveyQuestionCollection) ? $surveyQuestionCollection->count() : 0;
     }
 }

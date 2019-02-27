@@ -281,7 +281,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         $exporter->setCellValue($sheet, $row, $col, $data);
         ++$row;
 
-        if (1 === $numcols) {
+        if (1 == $numcols) {
             // This is a strange case: a constant sum question with just one choice.
             // However, users do that (at least for testing) and have the right to do so.
             // Just add the one and only choice, without rotation ...

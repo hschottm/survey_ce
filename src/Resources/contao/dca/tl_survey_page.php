@@ -9,7 +9,7 @@
  */
 
  $found = (\strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
- $hasData = (null !== $found && 0 < $found->count()) ? true : false;
+ $hasData = (null != $found && 0 < $found->count()) ? true : false;
 
 if ($hasData) {
     /*
@@ -296,9 +296,9 @@ class tl_survey_page extends Backend
 
     protected function hasData()
     {
-        if (null === $this->hasData) {
+        if (null == $this->hasData) {
           $resultModel = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?'], [\Input::get('id')]);
-          $this->hasData = null !== $resultModel && $resultModel->count() > 0;
+          $this->hasData = null != $resultModel && $resultModel->count() > 0;
         }
 
         return $this->hasData;

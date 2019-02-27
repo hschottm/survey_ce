@@ -36,7 +36,7 @@ class SurveyResultDetails extends \Backend
 
     public function showDetails(DataContainer $dc)
     {
-        if ('details' !== \Input::get('key')) {
+        if ('details' != \Input::get('key')) {
             return '';
         }
         $return = '';
@@ -76,7 +76,7 @@ class SurveyResultDetails extends \Backend
 
     public function showCumulated(DataContainer $dc)
     {
-        if ('cumulated' !== \Input::get('key')) {
+        if ('cumulated' != \Input::get('key')) {
             return '';
         }
         $this->loadLanguageFile('tl_survey_result');
@@ -124,7 +124,7 @@ class SurveyResultDetails extends \Backend
 
     public function exportResults(DataContainer $dc)
     {
-        if ('export' !== \Input::get('key')) {
+        if ('export' != \Input::get('key')) {
             return '';
         }
         $this->loadLanguageFile('tl_survey_result');
@@ -148,7 +148,7 @@ class SurveyResultDetails extends \Backend
             }
 
             $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('id'));
-            if (null !== $surveyModel) {
+            if (null != $surveyModel) {
                 $filename = $surveyModel->title;
             } else {
                 $filename = 'survey';
@@ -175,7 +175,7 @@ class SurveyResultDetails extends \Backend
      */
     public function exportResultsRaw(DataContainer $dc)
     {
-        if ('exportraw' !== \Input::get('key')) {
+        if ('exportraw' != \Input::get('key')) {
             return '';
         }
 
@@ -216,7 +216,7 @@ class SurveyResultDetails extends \Backend
                 // increase question numbering counters
                 ++$abs_question_no;
                 ++$rel_question_no;
-                if ($last_page_id !== $row['pid']) {
+                if ($last_page_id != $row['pid']) {
                     // page id has changed, increase page no, reset question no on page
                     ++$page_no;
                     $rel_question_no = 1;
@@ -239,7 +239,7 @@ class SurveyResultDetails extends \Backend
             }
 
             $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', $surveyID);
-            if (null !== $surveyModel) {
+            if (null != $surveyModel) {
                 $filename = $surveyModel->title . '_detail';
             } else {
                 $filename = 'survey_detail';
@@ -279,7 +279,7 @@ class SurveyResultDetails extends \Backend
         $count = 0;
         while ($objParticipant->next()) {
             ++$count;
-            if (0 !== strcmp($access['access'], 'nonanoncode')) {
+            if (0 != strcmp($access['access'], 'nonanoncode')) {
                 $pin_uid = $objParticipant->pin;
                 $display = $objParticipant->pin;
             } else {
@@ -443,7 +443,7 @@ class SurveyResultDetails extends \Backend
         foreach ($participants as $key => $participant) {
             $col = $colCounter;
             foreach ($participant as $k => $v) {
-                if ('finished' === $k) {
+                if ('finished' == $k) {
                     continue;
                 }
                 $cell = [

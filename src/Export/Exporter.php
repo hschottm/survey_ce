@@ -98,7 +98,7 @@ abstract class Exporter
     public function getArrayFromRange($range)
     {
         $separator = strpos($range, ':');
-        if (false === $separator) {
+        if (false == $separator) {
             // single cell
             return [$this->getRowFromCell($range), $this->getColFromCell($range)];
         }
@@ -153,10 +153,10 @@ abstract class Exporter
 
     public function sendFile($title = '', $subject = '', $description = '', $creator = '', $modificator = '')
     {
-        if (null === $this->spreadsheet) {
+        if (null == $this->spreadsheet) {
             $this->createSpreadsheet();
         }
-        if (null !== $this->spreadsheet) {
+        if (null != $this->spreadsheet) {
             foreach ($this->sheets as $sheet_title => $sheet) {
                 foreach ($sheet as $cellpos => $celldata) {
                     $this->setCellSpreadsheet($sheet_title, $celldata);

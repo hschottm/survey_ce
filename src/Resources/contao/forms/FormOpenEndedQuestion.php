@@ -78,7 +78,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 
             case 'value':
                 $this->varValue = $varValue;
-                if (0 !== strcmp($this->questiontype, 'oe_multiline')) {
+                if (0 != strcmp($this->questiontype, 'oe_multiline')) {
                     $this->arrAttributes['value'] = $varValue;
                 }
 

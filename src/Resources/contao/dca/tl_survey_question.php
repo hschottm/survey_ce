@@ -576,7 +576,7 @@ class tl_survey_question extends Backend
         $objQuestion = $this->Database->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?')
             ->limit(1)
             ->execute($dc->id);
-        if (0 === strcmp($objQuestion->multiplechoice_subtype, 'mc_multipleresponse')) {
+        if (0 == strcmp($objQuestion->multiplechoice_subtype, 'mc_multipleresponse')) {
             return ['vertical', 'horizontal'];
         }
 
@@ -588,7 +588,7 @@ class tl_survey_question extends Backend
         $objQuestion = $this->Database->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?')
             ->limit(1)
             ->execute($dc->id);
-        if (0 === strcmp($objQuestion->multiplechoice_subtype, 'mc_singleresponse')) {
+        if (0 == strcmp($objQuestion->multiplechoice_subtype, 'mc_singleresponse')) {
             return '<a class="tl_submit" style="margin-top: 10px;" href="'.$this->addToUrl('key=scale').'" title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]).'" onclick="Backend.getScrollOffset();">'.\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]).'</a>';
         }
 
@@ -604,7 +604,7 @@ class tl_survey_question extends Backend
      */
     public function addScale(DataContainer $dc)
     {
-        if ('scale' !== \Input::get('key')) {
+        if ('scale' != \Input::get('key')) {
             return '';
         }
 
@@ -621,8 +621,8 @@ class tl_survey_question extends Backend
         }
 
         // Add scale
-        if ('tl_add_scale' === \Input::post('FORM_SUBMIT')) {
-            if ((!\Input::post('scale') || 0 === strcmp(\Input::post('scale'), '-'))) {
+        if ('tl_add_scale' == \Input::post('FORM_SUBMIT')) {
+            if ((!\Input::post('scale') || 0 == strcmp(\Input::post('scale'), '-'))) {
                 $_SESSION['TL_ERROR'][] = $GLOBALS['TL_LANG']['ERR']['selectoption'];
                 $this->reload();
             }
@@ -654,7 +654,7 @@ class tl_survey_question extends Backend
 		<option value="-">-</option>\n';
         $lastfolder = '';
         foreach ($arrScales as $id => $scale) {
-            if (0 !== strcmp($scale['folder'], $lastfolder)) {
+            if (0 != strcmp($scale['folder'], $lastfolder)) {
                 if (\strlen($lastfolder)) {
                     $result .= '</optgroup>';
                 }

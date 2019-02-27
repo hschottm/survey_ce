@@ -106,22 +106,22 @@ class SurveyHelper extends \Backend
 			// Replace tags
 			foreach ($arrTags as $strTag)
 			{
-				if (strncmp($strTag, '{if', 3) === 0)
+				if (strncmp($strTag, '{if', 3) == 0)
 				{
 					$strReturn .= preg_replace('/\{if (.*)\}/i', '<?php if ($1): ?>', $strTag);
 					$blnEval = true;
 				}
-				elseif (strncmp($strTag, '{elseif', 7) === 0)
+				elseif (strncmp($strTag, '{elseif', 7) == 0)
 				{
 					$strReturn .= preg_replace('/\{elseif (.*)\}/i', '<?php elseif ($1): ?>', $strTag);
 					$blnEval = true;
 				}
-				elseif (strncmp($strTag, '{else', 5) === 0)
+				elseif (strncmp($strTag, '{else', 5) == 0)
 				{
 					$strReturn .= '<?php else: ?>';
 					$blnEval = true;
 				}
-				elseif (strncmp($strTag, '{endif', 6) === 0)
+				elseif (strncmp($strTag, '{endif', 6) == 0)
 				{
 					$strReturn .= '<?php endif; ?>';
 					$blnEval = true;
@@ -162,7 +162,7 @@ class SurveyHelper extends \Backend
 		ob_end_clean();
 
 		// Throw an exception if there is an eval() error
-		if ($blnEval === false)
+		if ($blnEval == false)
 		{
 			throw new \Exception("Error eval() in Formdata::evalConditionTags ($strReturn)");
 		}

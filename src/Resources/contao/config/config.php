@@ -60,7 +60,7 @@ array_insert($GLOBALS['BE_MOD'], 3, [
         ],
 ]);
 
-if (TL_MODE === 'BE') {
+if (TL_MODE == 'BE') {
     $GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/survey.css|static';
 }
 

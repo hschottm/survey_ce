@@ -24,20 +24,20 @@ class Survey extends \Backend
     {
         $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
 
-        return (null !== $pinTanModel) ? $pinTanModel->tan : null;
+        return (null != $pinTanModel) ? $pinTanModel->tan : null;
     }
 
     public function getPINforTAN($id, $tan)
     {
         $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'tan=?'], [$id, $tan]);
 
-        return (null !== $pinTanModel) ? $pinTanModel->pin : null;
+        return (null != $pinTanModel) ? $pinTanModel->pin : null;
     }
 
     public function getSurveyStatus($id, $pin)
     {
         $participantModel = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
-        if (null !== $participantModel) {
+        if (null != $participantModel) {
             return ($participantModel->finished) ? 'finished' : 'started';
         }
 
@@ -61,13 +61,13 @@ class Survey extends \Backend
             $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'tan=?'], [$id, $tan]);
         }
 
-        return (null !== $pinTanModel) ? $pinTanModel->used : false;
+        return (null != $pinTanModel) ? $pinTanModel->used : false;
     }
 
     public function getSurveyStatusForMember($id, $uid)
     {
         $participantModel = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$id, $uid]);
-        if (null !== $participantModel) {
+        if (null != $participantModel) {
             return ($participantModel->finished) ? 'finished' : 'started';
         }
 
@@ -77,7 +77,7 @@ class Survey extends \Backend
     public function isUserAllowedToTakeSurvey(&$objSurvey)
     {
         $groups = (!\strlen($objSurvey->allowed_groups)) ? [] : deserialize($objSurvey->allowed_groups, true);
-        if (0 === \count($groups)) {
+        if (0 == \count($groups)) {
             return false;
         }
         $this->import('\FrontendUser', 'User');
@@ -96,7 +96,7 @@ class Survey extends \Backend
     {
         $participantModel = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
 
-        return (null !== $participantModel) ? $participantModel->lastpage : 0;
+        return (null != $participantModel) ? $participantModel->lastpage : 0;
     }
 
     public function generatePIN_TAN()

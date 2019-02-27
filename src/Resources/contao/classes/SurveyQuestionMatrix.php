@@ -95,7 +95,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
             foreach ($arrRows as $id => $rowdata) {
                 $col_counter = 1;
                 foreach ($arrChoices as $choiceid => $choice) {
-                    if (1 === $row_counter) {
+                    if (1 == $row_counter) {
                         $exporter->setCellValue($sheet, $row, $col + $col_counter, [Exporter::DATA => $choice, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
                     }
 
@@ -307,7 +307,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
 
         ++$row;
 
-        if (1 === $numcols) {
+        if (1 == $numcols) {
             // This is a strange case: a matrix question with just one subquestion.
             // However, users do that (at least for testing) and have the right to do so.
             // Just add the one and only subquestion, without rotation ...
@@ -375,7 +375,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
             if ($data) {
                 $col = $startCol;
                 $arrAnswers = deserialize($data, true);
-                if ('matrix_singleresponse' === $this->arrData['matrix_subtype']) {
+                if ('matrix_singleresponse' == $this->arrData['matrix_subtype']) {
                   $emptyAnswer = false;
                   foreach ($this->subquestions as $k => $junk) {
                       $strAnswer = '';
@@ -409,7 +409,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
                         }
                         ++$col;
                     }
-                } elseif ('matrix_multipleresponse' === $this->arrData['matrix_subtype']) {
+                } elseif ('matrix_multipleresponse' == $this->arrData['matrix_subtype']) {
                   $emptyAnswer = false;
                   foreach ($this->subquestions as $k => $junk) {
                       foreach ($this->subquestions as $k => $junk) {

@@ -136,7 +136,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
      */
     protected function validator($varInput)
     {
-        if (!\is_array($varInput) || 0 === \count($varInput)) {
+        if (!\is_array($varInput) || 0 == \count($varInput)) {
             $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_constantsum'], $this->title));
 
             return $varInput;

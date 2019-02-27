@@ -28,11 +28,11 @@ class SurveyPINTAN extends \Backend
 
     public function exportTAN(DataContainer $dc)
     {
-        if ('exporttan' !== \Input::get('key')) {
+        if ('exporttan' != \Input::get('key')) {
             return '';
         }
 
-        if ('tl_survey_pin_tan' === \Input::get('table')) {
+        if ('tl_survey_pin_tan' == \Input::get('table')) {
             $this->redirect(\Backend::addToUrl('table=tl_survey', true, ['table']));
 
             return;
@@ -50,11 +50,11 @@ class SurveyPINTAN extends \Backend
         $this->Template->submit = \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
 
         // Create import form
-        if ('tl_export_survey_pin_tan' === \Input::post('FORM_SUBMIT') && $this->blnSave) {
+        if ('tl_export_survey_pin_tan' == \Input::post('FORM_SUBMIT') && $this->blnSave) {
             $export = [];
             $surveyPage = $this->Template->surveyPage->value;
             $pageModel = \PageModel::findOneBy('id', $surveyPage);
-            $pagedata = (null !== $pageModel) ? $pageModel->row() : null;
+            $pagedata = (null != $pageModel) ? $pageModel->row() : null;
             $domain = \Environment::get('base');
 
             $res = \Hschottm\SurveyBundle\SurveyPinTanModel::findBy('pid', \Input::get('pid'), ['order' => 'tstamp DESC, id DESC']);
@@ -64,7 +64,7 @@ class SurveyPINTAN extends \Backend
                 $line['tan'] = $row['tan'];
                 $line['tstamp'] = date($GLOBALS['TL_CONFIG']['datimFormat'], $row['tstamp']);
                 $line['used'] = $row['used'] ? 1 : 0;
-                if (null !== $pagedata) {
+                if (null != $pagedata) {
                     $line['url'] = ampersand($domain.$this->generateFrontendUrl($pagedata, '/code/'.$row['tan']));
                 }
                 $export[] = $line;
@@ -112,7 +112,7 @@ class SurveyPINTAN extends \Backend
                 );
                 ++$intColCounter;
 
-                if (null !== $pagedata) {
+                if (null != $pagedata) {
                     $exporter->setCellValue(
                       $sheet,
                       $intRowCounter,
@@ -169,7 +169,7 @@ class SurveyPINTAN extends \Backend
                     ++$intRowCounter;
                 }
                 $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('pid'));
-                if (null !== $surveyModel) {
+                if (null != $surveyModel) {
                   $exporter->setFilename('TAN_'.$surveyModel->title);
                 } else {
                   $exporter->setFilename('TAN');
@@ -185,7 +185,7 @@ class SurveyPINTAN extends \Backend
 
     public function createTAN(DataContainer $dc)
     {
-        if ('createtan' !== \Input::get('key')) {
+        if ('createtan' != \Input::get('key')) {
             return '';
         }
 
@@ -201,7 +201,7 @@ class SurveyPINTAN extends \Backend
         $this->Template->submit = \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
 
         // Create import form
-        if ('tl_export_survey_pin_tan' === \Input::post('FORM_SUBMIT') && $this->blnSave) {
+        if ('tl_export_survey_pin_tan' == \Input::post('FORM_SUBMIT') && $this->blnSave) {
             $nrOfTAN = $this->Template->nrOfTAN->value;
             $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
             for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
@@ -240,7 +240,7 @@ class SurveyPINTAN extends \Backend
         }
 
         // Valiate input
-        if ('tl_export_survey_pin_tan' === \Input::post('FORM_SUBMIT')) {
+        if ('tl_export_survey_pin_tan' == \Input::post('FORM_SUBMIT')) {
             $widget->validate();
 
             if ($widget->hasErrors()) {
@@ -279,7 +279,7 @@ class SurveyPINTAN extends \Backend
         }
 
         // Valiate input
-        if ('tl_export_survey_pin_tan' === \Input::post('FORM_SUBMIT')) {
+        if ('tl_export_survey_pin_tan' == \Input::post('FORM_SUBMIT')) {
             $widget->validate();
 
             if ($widget->hasErrors()) {

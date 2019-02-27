@@ -25,10 +25,10 @@ class ExcelExporterPhpSpreadsheet extends Exporter
     public function webColorToARGB($color)
     {
         $col = str_replace('#', '', $color);
-        if (6 === \strlen($col)) {
+        if (6 == \strlen($col)) {
             return 'ff'.$col;
         }
-        if (8 === \strlen($color)) {
+        if (8 == \strlen($color)) {
             return $col;
         }
 
@@ -38,7 +38,7 @@ class ExcelExporterPhpSpreadsheet extends Exporter
     public function createSpreadsheet()
     {
         /*
-        if ($this->type === self::EXPORT_TYPE_XLS)
+        if ($this->type == self::EXPORT_TYPE_XLS)
         {
           $this->spreadsheet = new xlsexport();
         }
@@ -94,7 +94,7 @@ class ExcelExporterPhpSpreadsheet extends Exporter
     {
         $pos = $this->getCell($cell[self::ROW] + 1, $cell[self::COL]);
         $worksheet = $this->spreadsheet->getSheetByName($sheet);
-        if (null === $worksheet) {
+        if (null == $worksheet) {
             $worksheet = $this->spreadsheet->addSheet(new Worksheet($this->spreadsheet, $sheet));
         }
 
@@ -389,7 +389,7 @@ class ExcelExporterPhpSpreadsheet extends Exporter
         }
 
         if (array_key_exists(self::COLWIDTH, $cell)) {
-            if (self::COLWIDTH_AUTO === $cell[self::COLWIDTH]) {
+            if (self::COLWIDTH_AUTO == $cell[self::COLWIDTH]) {
                 $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setAutoSize(true);
             } else {
                 $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setWidth($cell[self::COLWIDTH]);

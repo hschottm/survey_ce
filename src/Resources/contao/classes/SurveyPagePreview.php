@@ -33,7 +33,7 @@ class SurveyPagePreview extends \Backend
     public function compilePreview($row, $blnWriteToFile = false)
     {
         $surveyPageCollection = \Hschottm\SurveyBundle\SurveyPageModel::findBy(['pid=?', 'sorting<?'], [$row['pid'], $row['sorting']]);
-        $position = (null !== $surveyPageCollection) ? $surveyPageCollection->count() + 1 : 1;
+        $position = (null != $surveyPageCollection) ? $surveyPageCollection->count() + 1 : 1;
 
         $template = new \FrontendTemplate('be_survey_page_preview');
         $template->page = $GLOBALS['TL_LANG']['tl_survey_page']['page'];

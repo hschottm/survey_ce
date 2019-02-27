@@ -26,12 +26,12 @@ class SurveyQuestionModel extends Model
         $framework = System::getContainer()->get('contao.framework');
         /** @var SurveyQuestionModel $questionModel */
         $questionModel = $framework->getAdapter(static::class)->findByPk($id);
-        if (null === $questionModel) {
+        if (null == $questionModel) {
             return null;
         }
         $result = $questionModel->row();
         $pageModel = $framework->getAdapter(SurveyPageModel::class)->findByPk($questionModel->pid);
-        if (null !== $pageModel) {
+        if (null != $pageModel) {
             $result['pagetitle'] = $pageModel->title;
             $result['parentID'] = $pageModel->pid;
         }

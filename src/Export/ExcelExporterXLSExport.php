@@ -37,7 +37,7 @@ class ExcelExporterXLSExport extends Exporter
             if (!array_key_exists(self::CELLTYPE, $celldata)) {
                 $celldata[self::CELLTYPE] = self::CELLTYPE_STRING;
             }
-            if (self::CELLTYPE_STRING === $celldata[self::CELLTYPE]) {
+            if (self::CELLTYPE_STRING == $celldata[self::CELLTYPE]) {
                 $celldata[self::DATA] = utf8_decode($celldata[self::DATA]);
             }
             $this->sheets[$sheet][$this->getCell($row, $col)] = $celldata;
@@ -70,7 +70,7 @@ class ExcelExporterXLSExport extends Exporter
         $pos = $this->getCell($cell[self::ROW] + 1, $cell[self::COL]);
         $found = false;
         foreach ($this->spreadsheet->worksheets as $sheetarray) {
-            if ($sheetarray['sheetname'] === utf8_decode($sheet)) {
+            if ($sheetarray['sheetname'] == utf8_decode($sheet)) {
                 $found = true;
             }
         }

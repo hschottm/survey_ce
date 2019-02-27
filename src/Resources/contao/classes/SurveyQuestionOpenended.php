@@ -179,7 +179,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
           Exporter::DATA => '',
           Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
           Exporter::TEXTWRAP => true,
-          Exporter::TEXTROTATE => ($this->arrData['addother'] && ($key === \count($this->choices) - 1)) ? Exporter::TEXTROTATE_NONE : Exporter::TEXTROTATE_COUNTERCLOCKWISE,
+          Exporter::TEXTROTATE => ($this->arrData['addother'] && ($key == \count($this->choices) - 1)) ? Exporter::TEXTROTATE_NONE : Exporter::TEXTROTATE_COUNTERCLOCKWISE,
           Exporter::BORDERBOTTOM => Exporter::BORDER_THIN,
           Exporter::BORDERBOTTOMCOLOR => '#000000',
         ]);

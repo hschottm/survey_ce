@@ -128,20 +128,20 @@ class FormMatrixQuestion extends FormQuestionWidget
             $col_classes['neutral'] = substr(standardize($this->strNeutralColumn), 0, 28);
         }
         $template = new \FrontendTemplate('survey_question_matrix');
-        $template->nrOfColumns = max(1, \count($this->arrColumns)) + (($this->blnNeutralColumn) ? 1 : 0) + (($this->blnBipolar && 0 === strcmp($this->strBipolarPosition, 'aside')) ? 2 : 0);
+        $template->nrOfColumns = max(1, \count($this->arrColumns)) + (($this->blnNeutralColumn) ? 1 : 0) + (($this->blnBipolar && 0 == strcmp($this->strBipolarPosition, 'aside')) ? 2 : 0);
         $template->columns = $this->arrColumns;
         $template->col_classes = $col_classes;
         $template->rows = $this->arrRows;
         $template->rowWidth = '40%';
         $template->colWidth = floor(60.0 / ($template->nrOfColumns * 1.0)).'%';
         $template->bipolar = $this->blnBipolar;
-        $template->bipolarTop = 0 === strcmp($this->strBipolarPosition, 'top');
-        $template->bipolarAside = 0 === strcmp($this->strBipolarPosition, 'aside');
+        $template->bipolarTop = 0 == strcmp($this->strBipolarPosition, 'top');
+        $template->bipolarAside = 0 == strcmp($this->strBipolarPosition, 'aside');
         $template->leftadjective = \StringUtil::specialchars($this->strAdjective1);
         $template->rightadjective = \StringUtil::specialchars($this->strAdjective2);
         $template->hasNeutralColumn = $this->blnNeutralColumn;
         $template->neutralColumn = \StringUtil::specialchars($this->strNeutralColumn);
-        $template->singleResponse = 0 === strcmp($this->questiontype, 'matrix_singleresponse');
+        $template->singleResponse = 0 == strcmp($this->questiontype, 'matrix_singleresponse');
         $template->multipleResponse = !$template->singleResponse;
         $template->ctrl_name = \StringUtil::specialchars($this->strName);
         $template->ctrl_id = \StringUtil::specialchars($this->strId);
@@ -168,8 +168,8 @@ class FormMatrixQuestion extends FormQuestionWidget
             $columncounter = 1;
             $foundvalues = \is_array($this->varValue[$rowcounter]) ? $this->varValue[$rowcounter] : [];
             foreach ($this->arrColumns as $column) {
-                if (0 === strcmp($this->questiontype, 'matrix_singleresponse')) {
-                    if ($this->varValue[$rowcounter] === $columncounter) {
+                if (0 == strcmp($this->questiontype, 'matrix_singleresponse')) {
+                    if ($this->varValue[$rowcounter] == $columncounter) {
                         array_push($choices, $column);
                     }
                 } else {
@@ -180,8 +180,8 @@ class FormMatrixQuestion extends FormQuestionWidget
                 ++$columncounter;
             }
             if ($this->blnNeutralColumn) {
-                if (0 === strcmp($this->questiontype, 'matrix_singleresponse')) {
-                    if ($this->varValue[$rowcounter] === $columncounter) {
+                if (0 == strcmp($this->questiontype, 'matrix_singleresponse')) {
+                    if ($this->varValue[$rowcounter] == $columncounter) {
                         array_push($choices, $this->strNeutralColumn);
                     } else {
                         if (\in_array($columncounter, $foundvalues, true)) {
@@ -209,12 +209,12 @@ class FormMatrixQuestion extends FormQuestionWidget
      */
     protected function validator($varInput)
     {
-        if ((0 === strcmp($this->questiontype, 'matrix_singleresponse')) && $this->mandatory && !\is_array($varInput)) {
+        if ((0 == strcmp($this->questiontype, 'matrix_singleresponse')) && $this->mandatory && !\is_array($varInput)) {
             $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_matrix'], $this->title));
 
             return $varInput;
         }
-        if (\count($varInput) !== \count($this->arrRows) && $this->mandatory) {
+        if (\count($varInput) != \count($this->arrRows) && $this->mandatory) {
             $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_matrix'], $this->title));
 
             return $varInput;
