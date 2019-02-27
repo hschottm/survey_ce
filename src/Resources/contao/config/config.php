@@ -19,6 +19,8 @@ use Hschottm\SurveyBundle\SurveyQuestionOpenended;
 use Hschottm\SurveyBundle\SurveyQuestionMultiplechoice;
 use Hschottm\SurveyBundle\SurveyQuestionMatrix;
 use Hschottm\SurveyBundle\SurveyQuestionConstantsum;
+use Hschottm\SurveyBundle\ConditionWizard;
+
 
 /*
  * Add survey element
@@ -63,6 +65,11 @@ array_insert($GLOBALS['BE_MOD'], 3, [
 if (TL_MODE == 'BE') {
     $GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/survey.css|static';
 }
+
+array_insert($GLOBALS['BE_FFL'], 15, array
+(
+	'conditionwizard'    => ConditionWizard::class
+));
 
 $GLOBALS['BE_MOD']['surveys']['survey']['exportraw'] = [SurveyResultDetails::class, 'exportResultsRaw'];
 

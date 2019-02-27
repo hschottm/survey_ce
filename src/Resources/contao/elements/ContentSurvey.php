@@ -179,7 +179,22 @@ class ContentSurvey extends \ContentElement
         $previouspage = $page;
         if (0 == \count($surveypage)) {
             if (\strlen(\Input::post('next'))) {
-                $page++;
+                $pageid = $this->evaluateConditions($pages[$page-1]);
+                if (null == $pageid)
+                {
+                  $page++;
+                }
+                else
+                {
+                  foreach ($pages as $idx => $p)
+                  {
+                    if ($p['id'] == $pageid)
+                    {
+                      $page = $idx + 1;
+                    }
+                  }
+                }
+                $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id, $previouspage, $page);
             }
             if (\strlen(\Input::post('finish'))) {
                 $page++;
@@ -196,8 +211,6 @@ class ContentSurvey extends \ContentElement
 
             $surveypage = $this->createSurveyPage($pages[$page - 1], $page, false);
         }
-
-        $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id, $previouspage, $page);
 
         // save position of last page (for resume)
         if ($page > 0) {
@@ -236,6 +249,78 @@ class ContentSurvey extends \ContentElement
         $this->Template->finish = $GLOBALS['TL_LANG']['MSC']['survey_finish'];
         $this->Template->pin = $this->pin;
         $this->Template->action = ampersand($formaction);
+    }
+
+    protected function evaluateConditions($page)
+    {
+      $conditions = [];
+      $conditionModel = \Hschottm\SurveyBundle\SurveyConditionModel::findBy(['pid=?'], [$page['id']]);
+      if (null != $conditionModel) {
+        $conditions = $conditionModel->fetchAll();
+      }
+      foreach ($conditions as $condition)
+      {
+        if ($condition['qid'] == 0)
+        {
+          return $condition['pageid'];
+        }
+        else
+        {
+          $res = $this->getResultForQuestion($condition['qid']);
+          $questionModel = \Hschottm\SurveyBundle\SurveyQuestionModel::findOneBy('id', $condition['qid']);
+          if (null != $res)
+          {
+            // check if condition is valid
+            if ($condition['relation'] == '=')
+            {
+              if ($res['value'] == $condition['condition'])
+              {
+                return $condition['pageid'];
+              }
+            } else if ($condition['relation'] == '>') {
+              if ($res['value'] > $condition['condition'])
+              {
+                return $condition['pageid'];
+              }
+            } else if ($condition['relation'] == '<') {
+              if ($res['value'] < $condition['condition'])
+              {
+                return $condition['pageid'];
+              }
+            } else if ($condition['relation'] == '<=') {
+              if ($res['value'] <= $condition['condition'])
+              {
+                return $condition['pageid'];
+              }
+            } else if ($condition['relation'] == '>=') {
+              if ($res['value'] >= $condition['condition'])
+              {
+                return $condition['pageid'];
+              }
+            } else if ($condition['relation'] == '!=') {
+              if ($res['value'] != $condition['condition'])
+              {
+                return $condition['pageid'];
+              }
+            }
+          }
+        }
+      }
+      return null;
+    }
+
+    protected function getResultForQuestion($question_id)
+    {
+      $objResult = $this->Database->prepare("SELECT * FROM tl_survey_result WHERE (pid=? AND qid=? AND pin=?)")
+                      ->execute($this->objSurvey->id, $question_id, $this->pin);
+      if ($objResult->numRows)
+      {
+              return deserialize($objResult->result);
+      }
+      else
+      {
+              return null;
+      }
     }
 
     /**

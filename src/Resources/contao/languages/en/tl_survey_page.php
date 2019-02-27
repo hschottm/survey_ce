@@ -13,6 +13,7 @@ $GLOBALS['TL_LANG']['tl_survey_page']['description'] = ['Description', 'Please e
 $GLOBALS['TL_LANG']['tl_survey_page']['tstamp'] = ['Last change', 'Date and time of the last change.'];
 $GLOBALS['TL_LANG']['tl_survey_page']['introduction'] = ['Introduction', 'Please enter a page introduction. The introduction will be shown at the beginning of the page.'];
 $GLOBALS['TL_LANG']['tl_survey_page']['page_template'] = ['Page template', 'Here you can select the page template.'];
+$GLOBALS['TL_LANG']['tl_survey_page']['conditions'] = ['Jump conditions', 'If you do not want to continue with the next page, define jump conditions to continue with a another page.'];
 
 $GLOBALS['TL_LANG']['tl_survey_page']['new'] = ['New page', 'Create a new page'];
 $GLOBALS['TL_LANG']['tl_survey_page']['show'] = ['Show details', 'Show details of page ID %s'];
@@ -28,4 +29,5 @@ $GLOBALS['TL_LANG']['tl_survey_page']['page'] = 'Page';
 */
 $GLOBALS['TL_LANG']['tl_survey_page']['title_legend'] = 'Title and description';
 $GLOBALS['TL_LANG']['tl_survey_page']['intro_legend'] = 'Introduction';
+$GLOBALS['TL_LANG']['tl_survey_page']['condition_legend'] = 'Jump conditions';
 $GLOBALS['TL_LANG']['tl_survey_page']['template_legend'] = 'Template settings';

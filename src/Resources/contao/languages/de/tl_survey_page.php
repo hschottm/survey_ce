@@ -33,4 +33,6 @@ $GLOBALS['TL_LANG']['tl_survey_page']['delete']['1'] = 'Seite ID %s löschen';
 $GLOBALS['TL_LANG']['tl_survey_page']['page'] = 'Seite';
 $GLOBALS['TL_LANG']['tl_survey_page']['title_legend'] = 'Titel und Beschreibung';
 $GLOBALS['TL_LANG']['tl_survey_page']['intro_legend'] = 'Einleitender Text';
+$GLOBALS['TL_LANG']['tl_survey_page']['condition_legend'] = 'Sprungbedingungen';
 $GLOBALS['TL_LANG']['tl_survey_page']['template_legend'] = 'Template-Einstellungen';
+$GLOBALS['TL_LANG']['tl_survey_page']['conditions'] = ['Sprungbedingungen', 'Wenn Sie nicht mit der nächsten Seite fortfahren wollen, können Sie hier Sprungbedingungen definieren, um mit einer anderen Seite fortzufahren.'];

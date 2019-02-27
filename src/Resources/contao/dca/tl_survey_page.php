@@ -100,7 +100,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
 
 // Palettes
 $GLOBALS['TL_DCA']['tl_survey_page']['palettes'] = [
-    'default' => '{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
+    'default' => '{title_legend},title,description;{intro_legend},introduction;{condition_legend},conditions;{template_legend},page_template',
 ];
 
 // Fields
@@ -144,6 +144,14 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
         'inputType' => 'textarea',
         'eval' => ['allowHtml' => true, 'style' => 'height:80px;', 'rte' => 'tinyMCE'],
         'sql' => 'text NOT NULL',
+    ],
+    'conditions' => [
+        'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['conditions'],
+        'default' => '',
+        'search' => true,
+        'inputType' => 'conditionwizard',
+        'eval' => [],
+        'sql' => "varchar(1) NOT NULL default ''",
     ],
     'page_template' => [
         'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['page_template'],
