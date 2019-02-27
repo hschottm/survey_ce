@@ -11,7 +11,7 @@
 $GLOBALS['TL_DCA']['tl_survey_condition'] = [
     // Config
     'config' => [
-        'ptable' => 'tl_survey',
+        'ptable' => 'tl_survey_page',
         'doNotCopyRecords' => true,
         'sql' => [
             'keys' => [
