@@ -161,12 +161,6 @@ class SurveyHelper extends \Backend
 		$strReturn = ob_get_contents();
 		ob_end_clean();
 
-		// Throw an exception if there is an eval() error
-		if ($blnEval == false)
-		{
-			throw new \Exception("Error eval() in Formdata::evalConditionTags ($strReturn)");
-		}
-
 		// Return the evaled code
 		return $strReturn;
 	}
