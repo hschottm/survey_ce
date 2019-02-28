@@ -357,7 +357,7 @@ class ContentSurvey extends \ContentElement
         $questions = \Hschottm\SurveyBundle\SurveyQuestionModel::findBy('pid', $pagerow['id'], ['order' => 'sorting']);
 
         if (null == $questions) {
-            return [];
+            $questions = [];
         }
 
         foreach ($questions as $questionModel) {
