@@ -282,17 +282,17 @@ class ContentSurvey extends \ContentElement
               // check if condition is valid
               if ($condition['relation'] == '=')
               {
-                $applies = $applies && ($res['value'] == $condition['condition'])
+                $applies = $applies && ($res['value'] == $condition['condition']);
               } else if ($condition['relation'] == '>') {
-                $applies = $applies && ($res['value'] > $condition['condition'])
+                $applies = $applies && ($res['value'] < $condition['condition']);
               } else if ($condition['relation'] == '<') {
-                $applies = $applies && ($res['value'] < $condition['condition'])
+                $applies = $applies && ($res['value'] < $condition['condition']);
               } else if ($condition['relation'] == '<=') {
-                $applies = $applies && ($res['value'] <= $condition['condition'])
+                $applies = $applies && ($res['value'] <= $condition['condition']);
               } else if ($condition['relation'] == '>=') {
-                $applies = $applies && ($res['value'] >= $condition['condition'])
+                $applies = $applies && ($res['value'] >= $condition['condition']);
               } else if ($condition['relation'] == '!=') {
-                $applies = $applies && ($res['value'] != $condition['condition'])
+                $applies = $applies && ($res['value'] != $condition['condition']);
               }
             }
           }
