@@ -32,6 +32,9 @@ $GLOBALS['TL_DCA']['tl_survey_condition'] = [
         'pid' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
+        'grp' => [
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
         'qid' => [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],

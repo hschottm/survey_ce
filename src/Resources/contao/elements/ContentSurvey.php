@@ -258,52 +258,49 @@ class ContentSurvey extends \ContentElement
       if (null != $conditionModel) {
         $conditions = $conditionModel->fetchAll();
       }
+      $groups = [];
       foreach ($conditions as $condition)
       {
-        if ($condition['qid'] == 0)
+        $groups[$condition['grp']][] = $condition;
+      }
+
+      foreach ($groups as $group)
+      {
+        $applies = true;
+        foreach ($group as $condition)
         {
-          return $condition['pageid'];
-        }
-        else
-        {
-          $res = $this->getResultForQuestion($condition['qid']);
-          $questionModel = \Hschottm\SurveyBundle\SurveyQuestionModel::findOneBy('id', $condition['qid']);
-          if (null != $res)
+          if ($condition['qid'] == 0)
           {
-            // check if condition is valid
-            if ($condition['relation'] == '=')
+            return $condition['pageid'];
+          }
+          else
+          {
+            $res = $this->getResultForQuestion($condition['qid']);
+            $questionModel = \Hschottm\SurveyBundle\SurveyQuestionModel::findOneBy('id', $condition['qid']);
+            if (null != $res)
             {
-              if ($res['value'] == $condition['condition'])
+              // check if condition is valid
+              if ($condition['relation'] == '=')
               {
-                return $condition['pageid'];
-              }
-            } else if ($condition['relation'] == '>') {
-              if ($res['value'] > $condition['condition'])
-              {
-                return $condition['pageid'];
-              }
-            } else if ($condition['relation'] == '<') {
-              if ($res['value'] < $condition['condition'])
-              {
-                return $condition['pageid'];
-              }
-            } else if ($condition['relation'] == '<=') {
-              if ($res['value'] <= $condition['condition'])
-              {
-                return $condition['pageid'];
-              }
-            } else if ($condition['relation'] == '>=') {
-              if ($res['value'] >= $condition['condition'])
-              {
-                return $condition['pageid'];
-              }
-            } else if ($condition['relation'] == '!=') {
-              if ($res['value'] != $condition['condition'])
-              {
-                return $condition['pageid'];
+                $applies = $applies && ($res['value'] == $condition['condition'])
+              } else if ($condition['relation'] == '>') {
+                $applies = $applies && ($res['value'] > $condition['condition'])
+              } else if ($condition['relation'] == '<') {
+                $applies = $applies && ($res['value'] < $condition['condition'])
+              } else if ($condition['relation'] == '<=') {
+                $applies = $applies && ($res['value'] <= $condition['condition'])
+              } else if ($condition['relation'] == '>=') {
+                $applies = $applies && ($res['value'] >= $condition['condition'])
+              } else if ($condition['relation'] == '!=') {
+                $applies = $applies && ($res['value'] != $condition['condition'])
               }
             }
           }
+        }
+        if ($applies)
+        {
+          $condition = array_shift($group);
+          return $condition['pageid'];
         }
       }
       return null;
