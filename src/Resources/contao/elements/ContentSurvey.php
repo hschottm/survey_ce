@@ -282,9 +282,23 @@ class ContentSurvey extends \ContentElement
               // check if condition is valid
               if ($condition['relation'] == '=')
               {
-                $applies = $applies && ($res['value'] == $condition['condition']);
+                if ($questionModel->questiontype == 'multiplechoice')
+                {
+                  if (is_array($res['value']))
+                  {
+                    $applies = $applies && in_array($condition['condition'], $res['value']);
+                  }
+                  else
+                  {
+                    $applies = $applies && ($res['value'] == $condition['condition']);
+                  }
+                }
+                else
+                {
+                  $applies = $applies && ($res['value'] == $condition['condition']);
+                }
               } else if ($condition['relation'] == '>') {
-                $applies = $applies && ($res['value'] < $condition['condition']);
+                $applies = $applies && ($res['value'] > $condition['condition']);
               } else if ($condition['relation'] == '<') {
                 $applies = $applies && ($res['value'] < $condition['condition']);
               } else if ($condition['relation'] == '<=') {
