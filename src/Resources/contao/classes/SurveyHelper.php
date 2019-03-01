@@ -62,7 +62,6 @@ class SurveyHelper extends \Backend
 					break;
 			}
 		}
-
 		$source = preg_replace(array('/__BRCL__/', '/__BRCR__/'), array('{{', '}}'), $source);
 		$source = $this->replaceInsertTags($source, false);
 		if ($blnEvalSource)
@@ -154,8 +153,7 @@ class SurveyHelper extends \Backend
 		}
 
 		$strReturn = str_replace('?><br />', '?>', $strBuffer);
-
-		// Eval the code
+    // Eval the code
 		ob_start();
 		$blnEval = eval("?>" . $strReturn);
 		$strReturn = ob_get_contents();

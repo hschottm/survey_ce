@@ -225,6 +225,17 @@ class ContentSurvey extends \ContentElement
         }
         $questionBlockTemplate = new \FrontEndTemplate($this->questionblock_template);
         $questionBlockTemplate->surveypage = $surveypage;
+                if (is_array($pages))
+                {
+                        $helper = new \Hschottm\SurveyBundle\SurveyHelper();
+
+			foreach ($pages as $pageidx => $pagerow)
+                        {
+                                $replacements = [];
+                                $pagerow['introduction'] = $helper->replaceTags($pagerow['introduction'], $this->pin, $replacements, true);
+                                $pages[$pageidx] = $pagerow;
+                        }
+                }
 
         // template output
         $this->Template->pages = $pages;
@@ -236,8 +247,14 @@ class ContentSurvey extends \ContentElement
         global $objPage;
         $this->Template->cancellink = $this->generateFrontendUrl($objPage->row());
         $this->Template->allowback = $this->objSurvey->allowback;
-        $this->Template->questionblock = $questionBlockTemplate->parse();
-        $this->Template->page = $page;
+
+                $qb = $questionBlockTemplate->parse();
+                $replacements = [];
+                $qb = $helper->replaceTags($qb, $this->pin, $replacements, true);
+                $this->Template->questionblock = $qb;
+
+
+	$this->Template->page = $page;
         $this->Template->introduction = $this->objSurvey->introduction;
         $this->Template->finalsubmission = ($this->objSurvey->finalsubmission) ? $this->objSurvey->finalsubmission : $GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'];
         $formaction = \Environment::get('request');
@@ -263,7 +280,6 @@ class ContentSurvey extends \ContentElement
       {
         $groups[$condition['grp']][] = $condition;
       }
-
       foreach ($groups as $group)
       {
         $applies = true;
@@ -282,21 +298,21 @@ class ContentSurvey extends \ContentElement
               // check if condition is valid
               if ($condition['relation'] == '=')
               {
-                if ($questionModel->questiontype == 'multiplechoice')
-                {
-                  if (is_array($res['value']))
-                  {
-                    $applies = $applies && in_array($condition['condition'], $res['value']);
-                  }
-                  else
-                  {
-                    $applies = $applies && ($res['value'] == $condition['condition']);
-                  }
-                }
-                else
-                {
-                  $applies = $applies && ($res['value'] == $condition['condition']);
-                }
+		if ($questionModel->questiontype == 'multiplechoice')
+		{
+			if (is_array($res['value']))
+			{
+				$applies = $applies && in_array($condition['condition'], $res['value']);
+			}
+			else
+			{
+		                $applies = $applies && ($res['value'] == $condition['condition']);
+			}
+		}
+		else
+		{
+	                $applies = $applies && ($res['value'] == $condition['condition']);
+		}
               } else if ($condition['relation'] == '>') {
                 $applies = $applies && ($res['value'] > $condition['condition']);
               } else if ($condition['relation'] == '<') {
@@ -480,6 +496,7 @@ class ContentSurvey extends \ContentElement
                         break;
                 }
             }
+
             if (\Input::post('finish')) {
                 // finish the survey
                 switch ($this->objSurvey->access) {
@@ -555,7 +572,6 @@ class ContentSurvey extends \ContentElement
         						}
         					}
         					$objMailProperties->recipients = $arrRecipient;
-
         					// Check if we want custom attachments... (Thanks to Torben Schwellnus)
         					if ($this->objSurvey->addConfirmationMailAttachments)
         					{
@@ -612,7 +628,6 @@ class ContentSurvey extends \ContentElement
 
         					// Send Mail
         					$blnConfirmationSent = false;
-
         					if (!empty($objMailProperties->recipients))
         					{
         						$objMail = new \Email();
@@ -657,15 +672,165 @@ class ContentSurvey extends \ContentElement
         							$blnConfirmationSent = true;
         						}
         					}
-
-        					if ($blnConfirmationSent && isset($intNewId) && intval($intNewId) > 0)
-        					{
-        						//$arrUpd = array('confirmationSent' => '1', 'confirmationDate' => $timeNow);
-        						//$res = \Database::getInstance()->prepare("UPDATE tl_formdata %s WHERE id=?")
-        						//	->set($arrUpd)
-        						//	->execute($intNewId);
-        					}
         				}
+
+                if ($this->objSurvey->sendConfirmationMailAlternate)
+                {
+                  $condition = true;
+                  if ($this->objSurvey->confirmationMailAlternateCondition)
+                  {
+                    if ($helper->replaceTags(sprintf("{if %s}1{endif}", \StringUtil::decodeEntities($this->objSurvey->confirmationMailAlternateCondition)), $this->pin, []) == '1')
+                    {
+                      $condition = true;
+                    }
+                    else {
+                      $condition = false;
+                    }
+                  }
+                  if ($condition)
+                  {
+                    $objMailProperties = new \stdClass();
+          					$objMailProperties->subject = '';
+          					$objMailProperties->sender = '';
+          					$objMailProperties->senderName = '';
+          					$objMailProperties->replyTo = '';
+          					$objMailProperties->recipients = array();
+          					$objMailProperties->messageText = '';
+          					$objMailProperties->messageHtml = '';
+          					$objMailProperties->attachments = array();
+
+          					// Set the sender as given in form configuration
+          					list($senderName, $sender) = \StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateSender);
+          					$objMailProperties->sender = $sender;
+          					$objMailProperties->senderName = $senderName;
+
+          					// Set the 'reply to' address, if given in form configuration
+          					if (!empty($this->objSurvey->confirmationMailAlternateReplyto))
+          					{
+          						list($replyToName, $replyTo) = \StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateReplyto);
+          						$objMailProperties->replyTo = (strlen($replyToName) ? $replyToName . ' <' . $replyTo . '>' : $replyTo);
+          					}
+
+          					// Set recipient(s)
+                    $arrRecipient = [];
+          					if (!empty($this->objSurvey->confirmationMailAlternateRecipient))
+          					{
+          						$varRecipient = $this->objSurvey->confirmationMailAlternateRecipient;
+          						$arrRecipient = array_merge($arrRecipient, trimsplit(',', $varRecipient));
+          					}
+          					$arrRecipient = array_filter(array_unique($arrRecipient));
+
+          					if (!empty($arrRecipient))
+          					{
+          						foreach ($arrRecipient as $kR => $recipient)
+          						{
+          							list($recipientName, $recipient) = \StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
+          							$arrRecipient[$kR] = (strlen($recipientName) ? $recipientName . ' <' . $recipient . '>' : $recipient);
+          						}
+          					}
+          					$objMailProperties->recipients = $arrRecipient;
+          					// Check if we want custom attachments... (Thanks to Torben Schwellnus)
+          					if ($this->objSurvey->addConfirmationMailAlternateAttachments)
+          					{
+          						if($this->objSurvey->confirmationMailAlternateAttachments)
+          						{
+          							$arrCustomAttachments = deserialize($this->objSurvey->confirmationMailAlternateAttachments, true);
+
+          							if (!empty($arrCustomAttachments))
+          							{
+          								foreach ($arrCustomAttachments as $varFile)
+          								{
+          									$objFileModel = \FilesModel::findById($varFile);
+
+          									if ($objFileModel != null)
+          									{
+          										$objFile = new \File($objFileModel->path);
+          										if ($objFile->size)
+          										{
+          											$objMailProperties->attachments[TL_ROOT .'/' . $objFile->path] = array
+          											(
+          												'file' => TL_ROOT . '/' . $objFile->path,
+          												'name' => $objFile->basename,
+          												'mime' => $objFile->mime);
+          										}
+          									}
+          								}
+          							}
+          						}
+          					}
+
+          					$objMailProperties->subject = \StringUtil::decodeEntities($this->objSurvey->confirmationMailAlternateSubject);
+          					$objMailProperties->messageText = \StringUtil::decodeEntities($this->objSurvey->confirmationMailAlternateText);
+
+          					$messageHtmlTmpl = '';
+          					if (\Validator::isUuid($this->objSurvey->confirmationMailAlternateTemplate) || (is_numeric($this->objSurvey->confirmationMailAlternateTemplate) && $this->objSurvey->confirmationMailAlternateTemplate > 0))
+          					{
+          						$objFileModel = \FilesModel::findById($this->objSurvey->confirmationMailAlternateTemplate);
+          						if ($objFileModel != null)
+          						{
+          							$messageHtmlTmpl = $objFileModel->path;
+          						}
+          					}
+          					if ($messageHtmlTmpl != '')
+          					{
+          						$fileTemplate = new \File($messageHtmlTmpl);
+          						if ($fileTemplate->mime == 'text/html')
+          						{
+          							$messageHtml = $fileTemplate->getContent();
+          							$objMailProperties->messageHtml = $messageHtml;
+          						}
+          					}
+          					// Replace Insert tags and conditional tags
+          					//$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
+
+          					// Send Mail
+          					$blnConfirmationSent = false;
+          					if (!empty($objMailProperties->recipients))
+          					{
+          						$objMail = new \Email();
+          						$objMail->from = $objMailProperties->sender;
+
+          						if (!empty($objMailProperties->senderName))
+          						{
+          							$objMail->fromName = $objMailProperties->senderName;
+          						}
+
+          						if (!empty($objMailProperties->replyTo))
+          						{
+          							$objMail->replyTo($objMailProperties->replyTo);
+          						}
+
+          						$helper = new \Hschottm\SurveyBundle\SurveyHelper();
+
+          						$objMail->subject = $objMailProperties->subject;
+
+          						if (!empty($objMailProperties->attachments))
+          						{
+          							foreach ($objMailProperties->attachments as $strFile => $varParams)
+          							{
+          								$strContent = file_get_contents($varParams['file'], false);
+          								$objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
+          							}
+          						}
+
+          						if (!empty($objMailProperties->messageText))
+          						{
+          							$objMail->text = $helper->replaceTags($objMailProperties->messageText, $this->pin, []);
+          						}
+
+          						if (!empty($objMailProperties->messageHtml))
+          						{
+          							$objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, [], true);
+          						}
+
+          						foreach ($objMailProperties->recipients as $recipient)
+          						{
+          							$objMail->sendTo($recipient);
+          							$blnConfirmationSent = true;
+          						}
+          					}
+                  }
+                }
 
                 if ($this->objSurvey->jumpto) {
                     $pagedata = \PageModel::findByPk($this->objSurvey->jumpto);
