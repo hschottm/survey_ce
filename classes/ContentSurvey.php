@@ -377,7 +377,7 @@ class ContentSurvey extends \ContentElement
 		}
 		
 		// check survey start
-		if (\Input::post('start') || ($this->objSurvey->immediate_start == 1 && !\Input::post('FORM_SUBMIT')))
+		if (\Input::post('start') || ($this->objSurvey->immediate_start == 1 && !\Input::post('FORM_SUBMIT')) ||  || \Input::get('token'))
 		{
 			$page = 0;
 			switch ($this->objSurvey->access)
@@ -401,8 +401,25 @@ class ContentSurvey extends \ContentElement
 					}
 					break;
 				case 'anoncode':
-					$tan = \Input::post('tan');
-					if ((strcmp(\Input::post('FORM_SUBMIT'), 'tl_survey_form') == 0) && (strlen($tan)))
+				    $formCheck = false;
+				    
+				    // check GET as first
+				    if (\Input::get('token')) {
+				        $tan = \Input::get('token');
+				        if (strlen($tan)) {
+				            $formCheck = true;
+				        }
+				    }
+				    
+				    // check POST as second
+				    if (\Input::post('token')) {
+				        $tan = \Input::post('tan');
+				        if ((strcmp(\Input::post('FORM_SUBMIT'), 'tl_survey_form') == 0) && (strlen($tan))) {
+				            $formCheck = true;
+				        }
+				    }
+
+					if ($formCheck)
 					{
 						$result = $this->svy->checkPINTAN($this->objSurvey->id, "", $tan);
 						if ($result === false)
