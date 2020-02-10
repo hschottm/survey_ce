@@ -214,7 +214,7 @@ class FormMatrixQuestion extends FormQuestionWidget
 
             return $varInput;
         }
-        if (\count($varInput) != \count($this->arrRows) && $this->mandatory) {
+        if ((!$varInput || \count($varInput) != \count($this->arrRows)) && $this->mandatory) {
             $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_matrix'], $this->title));
 
             return $varInput;
