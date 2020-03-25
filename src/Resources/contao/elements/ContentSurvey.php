@@ -121,7 +121,7 @@ class ContentSurvey extends \ContentElement
                     $tan = \Input::post('tan');
                     if ((0 == strcmp(\Input::post('FORM_SUBMIT'), 'tl_survey_form')) && (\strlen($tan))) {
                         $result = $this->svy->checkPINTAN($this->objSurvey->id, '', $tan);
-                        if (false == $result) {
+                        if (false === $result) {
                             $this->Template->tanMsg = $GLOBALS['TL_LANG']['ERR']['survey_wrong_tan'];
                         } else {
                             $this->pin = $this->svy->getPINforTAN($this->objSurvey->id, $tan);
