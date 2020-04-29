@@ -14,7 +14,6 @@
     "php": ">=5.6.0",
     "contao/core-bundle":"~4.4",
     "hschottm/contao-textwizard":"~3.2",
-    "symfony/framework-bundle": "^3.3",
     "sonata-project/exporter": "^1.0"
   },
   "require-dev": {
