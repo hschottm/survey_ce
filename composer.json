@@ -12,7 +12,7 @@
   ],
   "require":{
     "php": ">=5.6.0",
-    "contao/core-bundle":^4.4",
+    "contao/core-bundle":"^4.4",
     "hschottm/contao-textwizard":"~3.2",
     "sonata-project/exporter": "^1.0"
   },
