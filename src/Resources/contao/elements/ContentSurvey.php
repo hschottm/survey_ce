@@ -516,7 +516,7 @@ class ContentSurvey extends \ContentElement
                 if (isset($GLOBALS['TL_HOOKS']['surveyFinished']) && \is_array($GLOBALS['TL_HOOKS']['surveyFinished'])) {
                     foreach ($GLOBALS['TL_HOOKS']['surveyFinished'] as $callback) {
                         $this->import($callback[0]);
-                        $this->$callback[0]->$callback[1]($this->objSurvey->row());
+                        $this->{$callback[0]}->{$callback[1]}($this->objSurvey->row());
                     }
                 }
 
