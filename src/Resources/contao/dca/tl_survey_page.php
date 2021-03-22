@@ -188,10 +188,6 @@ class tl_survey_page extends Backend
      */
     public function getSurveyTemplates(DataContainer $dc)
     {
-        if (version_compare(VERSION.BUILD, '2.9.0', '>=')) {
-            return $this->getTemplateGroup('survey_', $dc->activeRecord->pid);
-        }
-
         return $this->getTemplateGroup('survey_');
     }
 
