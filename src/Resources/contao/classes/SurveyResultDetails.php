@@ -154,7 +154,7 @@ class SurveyResultDetails extends \Backend
                 $filename = 'survey';
             }
             $exporter->setFilename($filename);
-            $exporter->sendFile($objSurvey->title, $objSurvey->title, $objSurvey->title, 'Contao CMS', 'Contao CMS');
+            $exporter->sendFile($surveyModel->title, $surveyModel->title, $surveyModel->title, 'Contao CMS', 'Contao CMS');
         }
         $href = \Backend::addToUrl('', true, ['key', 'id']);
         $this->redirect($href);
