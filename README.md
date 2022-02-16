@@ -25,6 +25,14 @@ Exports will be in csv format. If the bundle [hschottm/contao-xls-export](https:
 
 A special thanks goes to Georg Rehfeld for his development of the detailed survey export and the enhancements of the survey tool.
 
+# Contributors
+
+<a href = "https://github.com/pdir/contao-survey/graphs/contributors">
+  <img src = "https://contrib.rocks/image?repo=pdir/contao-survey"/>
+</a>
+
+Made with [contributors-img](https://contrib.rocks).
+
 # run before commit
 
     vendor/bin/ecs check src tests
