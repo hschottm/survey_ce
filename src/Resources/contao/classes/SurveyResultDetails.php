@@ -288,7 +288,9 @@ class SurveyResultDetails extends \Backend
                 if (\strlen($objParticipant->mem_email)) {
                     $display .= ' <'.$objParticipant->mem_email.'>';
                 }
-                $display = utf8_decode($display);
+                if (version_compare(VERSION, "4.9", '<')) {
+                    $display = utf8_decode($display);
+                }
             }
             $result[$pin_uid] = [
                 'id' => $objParticipant->id,
