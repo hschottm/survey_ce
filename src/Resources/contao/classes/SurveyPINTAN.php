@@ -206,7 +206,7 @@ class SurveyPINTAN extends Backend
         $this->Template->hrefBack = ampersand(str_replace('&key=createtan', '', Environment::get('request')));
         $this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'];
-        $this->Template->request = ampersand(Environment::get('request'), ENCODE_AMPERSANDS);
+        $this->Template->request = StringUtil::ampersand(Environment::get('request'));
         $this->Template->submit = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
 
         // Create import form

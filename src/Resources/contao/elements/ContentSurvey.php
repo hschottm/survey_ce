@@ -18,6 +18,7 @@ use Contao\File;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
 use Contao\Input;
+use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\Validator;
 
