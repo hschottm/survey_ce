@@ -10,6 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\FrontendTemplate;
+use Contao\StringUtil;
+
 /**
  * Class FormConstantSumQuestion.
  *
@@ -93,11 +96,11 @@ class FormConstantSumQuestion extends FormQuestionWidget
     public function generate()
     {
         $this->loadLanguageFile('tl_survey_question');
-        $template = new \FrontendTemplate('survey_question_constantsum');
+        $template = new FrontendTemplate('survey_question_constantsum');
         $template->choices = $this->arrChoices;
         $template->blnInputFirst = $this->blnInputFirst;
-        $template->name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
+        $template->name = StringUtil::specialchars($this->strName);
+        $template->ctrl_id = StringUtil::specialchars($this->strId);
         $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
         $template->values = $this->varValue;
         $widget = $template->parse();

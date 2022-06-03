@@ -10,6 +10,10 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Backend;
+use Contao\Database;
+use Contao\FrontendTemplate;
+
 /**
  * Class SurveyQuestion.
  *
@@ -18,7 +22,7 @@ namespace Hschottm\SurveyBundle;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-abstract class SurveyQuestion extends \Backend
+abstract class SurveyQuestion extends Backend
 {
     protected $arrData;
     protected $arrStatistics;
@@ -38,7 +42,7 @@ abstract class SurveyQuestion extends \Backend
         $this->arrStatistics['answered'] = 0;
         $this->arrStatistics['skipped'] = 0;
         if ($question_id > 0) {
-            $objQuestion = \Database::getInstance()->prepare('SELECT tl_survey_question.*, tl_survey_page.title pagetitle, tl_survey_page.pid parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_question.id = ?')
+            $objQuestion = Database::getInstance()->prepare('SELECT tl_survey_question.*, tl_survey_page.title pagetitle, tl_survey_page.pid parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_question.id = ?')
                 ->execute($question_id);
             if ($objQuestion->numRows) {
                 $this->data = $objQuestion->fetchAssoc();
@@ -93,7 +97,7 @@ abstract class SurveyQuestion extends \Backend
     public function getAnswersAsHTML()
     {
         if (\is_array($this->statistics['answers'])) {
-            $template = new \FrontendTemplate('survey_answers_default');
+            $template = new FrontendTemplate('survey_answers_default');
             $template->answers = $this->statistics['answers'];
 
             return $template->parse();

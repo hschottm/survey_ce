@@ -10,6 +10,10 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Date;
+use Contao\FrontendTemplate;
+use Contao\StringUtil;
+
 /**
  * Class FormOpenEndedQuestion.
  *
@@ -124,9 +128,9 @@ class FormOpenEndedQuestion extends FormQuestionWidget
      */
     public function generate()
     {
-        $template = new \FrontendTemplate('survey_question_openended');
-        $template->ctrl_name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
+        $template = new FrontendTemplate('survey_question_openended');
+        $template->ctrl_name = StringUtil::specialchars($this->strName);
+        $template->ctrl_id = StringUtil::specialchars($this->strId);
         $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
         $template->multiLine = (0 == strcmp($this->questiontype, 'oe_multiline'));
         $template->singleLine = (0 == strcmp($this->questiontype, 'oe_singleline'));
@@ -145,16 +149,16 @@ class FormOpenEndedQuestion extends FormQuestionWidget
     protected function setData_oe_singleline($varValue)
     {
         if (\strlen($varValue['openended_width'])) {
-            $this->arrAttributes['size'] = \StringUtil::specialchars($varValue['openended_width']);
+            $this->arrAttributes['size'] = StringUtil::specialchars($varValue['openended_width']);
         }
         if (\strlen($varValue['openended_maxlen'])) {
-            $this->arrAttributes['maxlength'] = \StringUtil::specialchars($varValue['openended_maxlen']);
+            $this->arrAttributes['maxlength'] = StringUtil::specialchars($varValue['openended_maxlen']);
         }
         if (\strlen($varValue['openended_textinside'])) {
-            $this->arrAttributes['value'] = \StringUtil::specialchars($varValue['openended_textinside']);
+            $this->arrAttributes['value'] = StringUtil::specialchars($varValue['openended_textinside']);
         }
         if (\strlen($this->varValue)) {
-            $this->arrAttributes['value'] = \StringUtil::specialchars($this->varValue);
+            $this->arrAttributes['value'] = StringUtil::specialchars($this->varValue);
         }
     }
 
@@ -181,10 +185,10 @@ class FormOpenEndedQuestion extends FormQuestionWidget
     protected function setData_oe_multiline($varValue)
     {
         if (\strlen($varValue['openended_rows'])) {
-            $this->arrAttributes['rows'] = \StringUtil::specialchars($varValue['openended_rows']);
+            $this->arrAttributes['rows'] = StringUtil::specialchars($varValue['openended_rows']);
         }
         if (\strlen($varValue['openended_cols'])) {
-            $this->arrAttributes['cols'] = \StringUtil::specialchars($varValue['openended_cols']);
+            $this->arrAttributes['cols'] = StringUtil::specialchars($varValue['openended_cols']);
         }
         if (!\strlen($this->varValue)) {
             if (\strlen($varValue['openended_textinside'])) {

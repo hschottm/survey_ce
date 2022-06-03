@@ -10,6 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\FrontendTemplate;
+use Contao\StringUtil;
+
 /**
  * Class FormMatrixQuestion.
  *
@@ -127,7 +130,7 @@ class FormMatrixQuestion extends FormQuestionWidget
         if ($this->blnNeutralColumn) {
             $col_classes['neutral'] = substr(standardize($this->strNeutralColumn), 0, 28);
         }
-        $template = new \FrontendTemplate('survey_question_matrix');
+        $template = new FrontendTemplate('survey_question_matrix');
         $template->nrOfColumns = max(1, \count($this->arrColumns)) + (($this->blnNeutralColumn) ? 1 : 0) + (($this->blnBipolar && 0 == strcmp($this->strBipolarPosition, 'aside')) ? 2 : 0);
         $template->columns = $this->arrColumns;
         $template->col_classes = $col_classes;
@@ -137,14 +140,14 @@ class FormMatrixQuestion extends FormQuestionWidget
         $template->bipolar = $this->blnBipolar;
         $template->bipolarTop = 0 == strcmp($this->strBipolarPosition, 'top');
         $template->bipolarAside = 0 == strcmp($this->strBipolarPosition, 'aside');
-        $template->leftadjective = \StringUtil::specialchars($this->strAdjective1);
-        $template->rightadjective = \StringUtil::specialchars($this->strAdjective2);
+        $template->leftadjective = StringUtil::specialchars($this->strAdjective1);
+        $template->rightadjective = StringUtil::specialchars($this->strAdjective2);
         $template->hasNeutralColumn = $this->blnNeutralColumn;
-        $template->neutralColumn = \StringUtil::specialchars($this->strNeutralColumn);
+        $template->neutralColumn = StringUtil::specialchars($this->strNeutralColumn);
         $template->singleResponse = 0 == strcmp($this->questiontype, 'matrix_singleresponse');
         $template->multipleResponse = !$template->singleResponse;
-        $template->ctrl_name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
+        $template->ctrl_name = StringUtil::specialchars($this->strName);
+        $template->ctrl_id = StringUtil::specialchars($this->strId);
         $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
         $template->values = $this->varValue;
         $widget = $template->parse();

@@ -2,8 +2,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Backend;
 
-class SurveyHelper extends \Backend
+class SurveyHelper extends Backend
 {
 	/**
 	 * Load the database object

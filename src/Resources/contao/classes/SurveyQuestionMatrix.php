@@ -10,6 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Database;
+use Contao\FrontendTemplate;
+use Contao\StringUtil;
 use Hschottm\SurveyBundle\Export\Exporter;
 
 /**
@@ -45,7 +48,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (\is_array($this->statistics['cumulated'])) {
-            $template = new \FrontendTemplate('survey_answers_matrix');
+            $template = new FrontendTemplate('survey_answers_matrix');
             $template->choices = deserialize($this->arrData['matrixcolumns'], true);
             $template->rows = deserialize($this->arrData['matrixrows'], true);
             $template->statistics = $this->statistics;
@@ -153,7 +156,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
     protected function calculateStatistics()
     {
         if (array_key_exists('id', $this->arrData) && array_key_exists('parentID', $this->arrData)) {
-            $objResult = \Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
+            $objResult = Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
                 ->execute($this->arrData['id'], $this->arrData['parentID']);
             if ($objResult->numRows) {
                 $this->calculateAnsweredSkipped($objResult);
@@ -202,7 +205,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
     {
         $this->subquestions = deserialize($this->arrData['matrixrows'], true);
         foreach ($this->subquestions as $k => $v) {
-            $this->subquestions[$k] = \StringUtil::decodeEntities($v);
+            $this->subquestions[$k] = StringUtil::decodeEntities($v);
         }
         $numcols = \count($this->subquestions);
 
@@ -213,7 +216,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
             $this->choices[] = '-';
         }
         foreach ($this->choices as $k => $v) {
-            $this->choices[$k] = \StringUtil::decodeEntities($v);
+            $this->choices[$k] = StringUtil::decodeEntities($v);
         }
 
         $result = [];
@@ -294,7 +297,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
 
         // question title
         $data = [
-          Exporter::DATA => \StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
+          Exporter::DATA => StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
           Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
           Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
           Exporter::TEXTWRAP => true

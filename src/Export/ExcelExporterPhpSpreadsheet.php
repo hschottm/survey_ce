@@ -10,9 +10,10 @@
 
 namespace Hschottm\SurveyBundle\Export;
 
+use Contao\StringUtil;
+use Hschottm\SurveyBundle\Export\Exporter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ExcelExporterPhpSpreadsheet extends Exporter
@@ -83,7 +84,7 @@ class ExcelExporterPhpSpreadsheet extends Exporter
     {
         $objWriter = new Xlsx($this->spreadsheet);
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="'.\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xlsx"');
+        header('Content-Disposition: attachment;filename="'.StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xlsx"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
         echo '';
@@ -104,15 +105,15 @@ class ExcelExporterPhpSpreadsheet extends Exporter
         $font_array = [];
 
         switch ($cell[self::CELLTYPE]) {
-      case CELLTYPE_STRING:
+      case self::CELLTYPE_STRING:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
         break;
-      case CELLTYPE_FLOAT:
+      case self::CELLTYPE_FLOAT:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_00);
         break;
-      case CELLTYPE_PICTURE:
+      case self::CELLTYPE_PICTURE:
         break;
-      case CELLTYPE_INTEGER:
+      case self::CELLTYPE_INTEGER:
       default:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
         break;

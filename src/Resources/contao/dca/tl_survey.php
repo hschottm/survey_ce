@@ -8,7 +8,12 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
- $found = (\strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Database;
+use Contao\Input;
+
+ $found = (\strlen(Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(Input::get('id')) : null;
  $hasData = (null != $found && 0 < $found->count()) ? true : false;
 
 /*
@@ -548,8 +553,8 @@ class tl_survey extends Backend
   		$fields = array();
 
   		// Get all form fields which can be used to define recipient of confirmation mail
-  		$objFields = \Database::getInstance()->prepare("SELECT tl_survey_question.id,tl_survey_question.title FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? AND tl_survey_question.questiontype=? ORDER BY tl_survey_question.title ASC")
-  			->execute(\Input::get('id'), 'openended');
+  		$objFields = Database::getInstance()->prepare("SELECT tl_survey_question.id,tl_survey_question.title FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? AND tl_survey_question.questiontype=? ORDER BY tl_survey_question.title ASC")
+  			->execute(Input::get('id'), 'openended');
 
   		$fields[] = '-';
   		while ($objFields->next())

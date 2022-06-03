@@ -102,15 +102,3 @@ $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = [
         ],
     ],
 ];
-
-/**
- * Class tl_survey_scale_folder.
- *
- * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @copyright  Helmut Schottmüller 2009
- * @author     Helmut Schottmüller <typolight@aurealis.de>
- */
-class tl_survey_scale_folder extends Backend
-{
-}

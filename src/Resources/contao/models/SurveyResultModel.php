@@ -10,6 +10,7 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Database;
 use Contao\Model;
 
 class SurveyResultModel extends Model
@@ -36,7 +37,7 @@ class SurveyResultModel extends Model
 
         $t = static::$strTable;
 
-        return static::findBy(["$t.id IN(".implode(',', array_map('intval', $arrIds)).')'], null, ['order' => \Database::getInstance()->findInSet("$t.id", $arrIds)]);
+        return static::findBy(["$t.id IN(".implode(',', array_map('intval', $arrIds)).')'], null, ['order' => Database::getInstance()->findInSet("$t.id", $arrIds)]);
     }
 }
 

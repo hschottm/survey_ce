@@ -8,6 +8,9 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
+use Contao\Backend;
+use Contao\StringUtil;
+
 $GLOBALS['TL_DCA']['tl_survey_scale'] = [
     // Config
     'config' => [
@@ -152,7 +155,7 @@ class tl_survey_scale extends Backend
         $result .= '<ol>';
         $answers = deserialize($row['scale'], true);
         foreach ($answers as $answer) {
-            $result .= '<li>'.\StringUtil::specialchars($answer).'</li>';
+            $result .= '<li>'.StringUtil::specialchars($answer).'</li>';
         }
         $result .= '</ol>';
 

@@ -10,6 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\FrontendTemplate;
+use Contao\StringUtil;
+
 /**
  * Class FormMultipleChoiceQuestion.
  *
@@ -119,9 +122,9 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         $strOptions = '';
 
         $this->loadLanguageFile('tl_survey_question');
-        $template = new \FrontendTemplate('survey_question_multiplechoice');
-        $template->ctrl_name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
+        $template = new FrontendTemplate('survey_question_multiplechoice');
+        $template->ctrl_name = StringUtil::specialchars($this->strName);
+        $template->ctrl_id = StringUtil::specialchars($this->strId);
         $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
         $template->singleResponse = 0 == strcmp($this->questiontype, 'mc_singleresponse');
         $template->multipleResponse = 0 == strcmp($this->questiontype, 'mc_multipleresponse');
@@ -134,7 +137,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         $template->blnOther = $this->blnOther;
         $template->lngYes = $GLOBALS['TL_LANG']['tl_survey_question']['yes'];
         $template->lngNo = $GLOBALS['TL_LANG']['tl_survey_question']['no'];
-        $template->otherTitle = \StringUtil::specialchars($this->strOtherTitle);
+        $template->otherTitle = StringUtil::specialchars($this->strOtherTitle);
         $strOptions = $template->parse();
         $strError = $this->getErrorAsHTML();
 

@@ -10,6 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Database;
+use Contao\FrontendTemplate;
+use Contao\StringUtil;
 use Hschottm\SurveyBundle\Export\Exporter;
 
 /**
@@ -44,18 +47,18 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (\is_array($this->statistics['cumulated'])) {
-            $template = new \FrontendTemplate('survey_answers_multiplechoice');
+            $template = new FrontendTemplate('survey_answers_multiplechoice');
             $template->statistics = $this->statistics;
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
             $template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
             $template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
             $template->choices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
             $template->other = ($this->arrData['addother']) ? true : false;
-            $template->othertitle = \StringUtil::specialchars($this->arrData['othertitle']);
+            $template->othertitle = StringUtil::specialchars($this->arrData['othertitle']);
             $otherchoices = [];
             if (\count($this->statistics['cumulated']['other'])) {
                 foreach ($this->statistics['cumulated']['other'] as $value) {
-                    ++$otherchoices[\StringUtil::specialchars($value)];
+                    ++$otherchoices[StringUtil::specialchars($value)];
                 }
             }
             $template->otherchoices = $otherchoices;
@@ -155,7 +158,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     protected function calculateStatistics()
     {
         if (array_key_exists('id', $this->arrData) && array_key_exists('parentID', $this->arrData)) {
-            $objResult = \Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
+            $objResult = Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
                 ->execute($this->arrData['id'], $this->arrData['parentID']);
             if ($objResult->numRows) {
                 $this->calculateAnsweredSkipped($objResult);
@@ -332,7 +335,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
         // question title
         $data = [
-          Exporter::DATA => \StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
+          Exporter::DATA => StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
           Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
           Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
           Exporter::TEXTWRAP => true
@@ -424,7 +427,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     }
                     $strAnswer = (($emptyAnswer) ? ($arrAnswers['value'] . ' - ') : '') . $this->choices[$arrAnswers['value'] - 1];
                     if (($this->arrData['addother']) && ($arrAnswers['value'] == \count($this->choices))) {
-                        $strAnswer .= ': '.\StringUtil::decodeEntities($arrAnswers['other']);
+                        $strAnswer .= ': '.StringUtil::decodeEntities($arrAnswers['other']);
                     }
                     $exporter->setCellValue($sheet, $row, $col, [
                       Exporter::DATA => $strAnswer,
@@ -435,7 +438,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     foreach ($this->choices as $k => $v) {
                         $strAnswer = (\is_array($arrAnswers['value']) && array_key_exists($k + 1, $arrAnswers['value']))
                             ? ($this->arrData['addother'] && ($k + 1 == \count($this->choices)))
-                                ? \StringUtil::decodeEntities($arrAnswers['other'])
+                                ? StringUtil::decodeEntities($arrAnswers['other'])
                                 : 'x'
                             : '';
                         if (\strlen($strAnswer)) {
