@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.2.12](https://github.com/pdir/contao-survey/tree/3.2.12) – 2022-06-08
+
+- [fix] Do not use global namespace 🤗 [fritzmg](https://github.com/fritzmg)
+
 ## [3.2.11](https://github.com/pdir/contao-survey/tree/3.2.11) – 2022-02-16
 
 - [fix] fix result export 🤗 [arboc](https://github.com/arboc)
