@@ -8,7 +8,12 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
- $found = (\strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
+use Contao\Backend;
+use Contao\DataContainer;
+use Contao\Input;
+use Contao\StringUtil;
+
+ $found = (\strlen(Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(Input::get('id')) : null;
  $hasData = (null != $found && 0 < $found->count()) ? true : false;
 
 if ($hasData) {
@@ -215,7 +220,7 @@ class tl_survey_page extends Backend
             return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
     }
 
     /**
@@ -242,7 +247,7 @@ class tl_survey_page extends Backend
             return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
     }
 
     /**
@@ -269,7 +274,7 @@ class tl_survey_page extends Backend
             return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
     }
 
     /**
@@ -296,13 +301,13 @@ class tl_survey_page extends Backend
             return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
     }
 
     protected function hasData()
     {
         if (null == $this->hasData) {
-          $resultModel = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?'], [\Input::get('id')]);
+          $resultModel = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?'], [Input::get('id')]);
           $this->hasData = null != $resultModel && $resultModel->count() > 0;
         }
 

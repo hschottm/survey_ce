@@ -9,6 +9,9 @@
 
  namespace Hschottm\SurveyBundle;
 
+use Contao\BackendTemplate;
+use Contao\Widget;
+
 /**
  * Class ConditionWizard
  *
@@ -16,7 +19,7 @@
  *
  * @property integer $maxlength
  */
-class ConditionWizard extends \Widget
+class ConditionWizard extends Widget
 {
 	/**
 	 * Submit user input
@@ -68,7 +71,7 @@ class ConditionWizard extends \Widget
 	 */
 	public function generate()
 	{
-    $tpl = new \BackendTemplate('be_condition_wizard');
+    $tpl = new BackendTemplate('be_condition_wizard');
     return $tpl->parse();
   }
 }

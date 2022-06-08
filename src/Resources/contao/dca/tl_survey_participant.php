@@ -8,6 +8,10 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
+use Contao\Backend;
+use Contao\Input;
+use Contao\System;
+
 $GLOBALS['TL_DCA']['tl_survey_participant'] = [
     // Config
     'config' => [
@@ -132,7 +136,7 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
-class tl_survey_participant extends \Backend
+class tl_survey_participant extends Backend
 {
     protected $pageCount;
 
@@ -143,7 +147,7 @@ class tl_survey_participant extends \Backend
      */
     public function checkPermission()
     {
-        switch (\Input::get('act')) {
+        switch (Input::get('act')) {
           case 'select':
           case 'show':
           case 'edit':
@@ -155,17 +159,17 @@ class tl_survey_participant extends \Backend
           case 'deleteAll':
           case 'overrideAll':
               /** @var Symfony\Component\HttpFoundation\Session\SessionInterface $objSession */
-              $objSession = \System::getContainer()->get('session');
+              $objSession = System::getContainer()->get('session');
               $session = $objSession->all();
-              $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy('pid', \Input::get('id'));
+              $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy('pid', Input::get('id'));
               if (null != $res && $res->count() >= 1) {
                   $session['CURRENT']['IDS'] = array_values($res->fetchEach('id'));
                   $objSession->replace($session);
               }
               break;
           default:
-              if (\strlen(\Input::get('act'))) {
-                  throw new Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "'.\Input::get('act').'.');
+              if (\strlen(Input::get('act'))) {
+                  throw new Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "'.Input::get('act').'.');
               }
               break;
       }

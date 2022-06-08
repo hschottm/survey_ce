@@ -10,7 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
-class SurveyModel extends \Model
+use Contao\Model;
+
+class SurveyModel extends Model
 {
     /**
      * Table name.

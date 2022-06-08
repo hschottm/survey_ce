@@ -8,6 +8,8 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
+use Contao\DataContainer;
+
 $GLOBALS['TL_DCA']['tl_content']['palettes']['survey'] = '{type_legend},type,headline;{survey_legend},survey;{template_legend:hide},surveyTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['survey'] = [

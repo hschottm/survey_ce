@@ -10,6 +10,7 @@
 
 namespace Hschottm\SurveyBundle\Export;
 
+use Contao\StringUtil;
 use Exporter\Writer\CsvWriter;
 
 class CSVExporter extends Exporter
@@ -72,7 +73,7 @@ class CSVExporter extends Exporter
         }
         $this->spreadsheet->close();
         header('Content-type: text/csv');
-        header('Content-Disposition: attachment; filename="'.\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.csv'.'"');
+        header('Content-Disposition: attachment; filename="'.StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.csv'.'"');
         readfile($this->tempName);
         unlink($this->tempName);
         exit;

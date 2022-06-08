@@ -10,6 +10,8 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Widget;
+
 /**
  * Class FormQuestionWidget.
  *
@@ -18,7 +20,7 @@ namespace Hschottm\SurveyBundle;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class FormQuestionWidget extends \Widget
+class FormQuestionWidget extends Widget
 {
     /**
      * Submit user input.

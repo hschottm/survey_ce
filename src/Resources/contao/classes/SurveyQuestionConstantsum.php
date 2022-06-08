@@ -10,6 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Database;
+use Contao\FrontendTemplate;
+use Contao\StringUtil;
 use Hschottm\SurveyBundle\Export\Exporter;
 
 /**
@@ -44,8 +47,8 @@ class SurveyQuestionConstantsum extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (\is_array($this->statistics['cumulated'])) {
-            $template = new \FrontendTemplate('survey_answers_constantsum');
-            $template->choices = deserialize($this->arrData['sumchoices'], true);
+            $template = new FrontendTemplate('survey_answers_constantsum');
+            $template->choices = StringUtil::deserialize($this->arrData['sumchoices'], true);
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
             $template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
             $template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
@@ -145,7 +148,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
     protected function calculateStatistics()
     {
         if (array_key_exists('id', $this->arrData) && array_key_exists('parentID', $this->arrData)) {
-            $objResult = \Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
+            $objResult = Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
                 ->execute($this->arrData['id'], $this->arrData['parentID']);
             if ($objResult->numRows) {
                 $this->calculateAnsweredSkipped($objResult);
@@ -192,7 +195,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
     {
         $this->choices = deserialize($this->arrData['sumchoices'], true);
         foreach ($this->choices as $k => $v) {
-            $this->choices[$k] = \StringUtil::decodeEntities($v);
+            $this->choices[$k] = StringUtil::decodeEntities($v);
         }
         $numcols = \count($this->choices);
         $result = [];
@@ -269,7 +272,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
         // question title
         $data = [
-          Exporter::DATA => \StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
+          Exporter::DATA => StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
           Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
           Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
           Exporter::TEXTWRAP => true

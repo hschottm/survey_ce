@@ -10,7 +10,11 @@
 
 namespace Hschottm\SurveyBundle;
 
-class SurveyPagePreview extends \Backend
+use Contao\Backend;
+use Contao\FrontendTemplate;
+use Contao\StringUtil;
+
+class SurveyPagePreview extends Backend
 {
     /**
      * Import String library.
@@ -35,11 +39,11 @@ class SurveyPagePreview extends \Backend
         $surveyPageCollection = \Hschottm\SurveyBundle\SurveyPageModel::findBy(['pid=?', 'sorting<?'], [$row['pid'], $row['sorting']]);
         $position = (null != $surveyPageCollection) ? $surveyPageCollection->count() + 1 : 1;
 
-        $template = new \FrontendTemplate('be_survey_page_preview');
+        $template = new FrontendTemplate('be_survey_page_preview');
         $template->page = $GLOBALS['TL_LANG']['tl_survey_page']['page'];
         $template->position = $position;
-        $template->title = \StringUtil::specialchars($row['title']);
-        $template->description = \StringUtil::specialchars($row['description']);
+        $template->title = StringUtil::specialchars($row['title']);
+        $template->description = StringUtil::specialchars($row['description']);
 
         return $template->parse();
     }

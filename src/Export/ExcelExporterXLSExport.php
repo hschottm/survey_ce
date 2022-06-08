@@ -10,6 +10,7 @@
 
 namespace Hschottm\SurveyBundle\Export;
 
+use Contao\StringUtil;
 use Hschottm\ExcelXLSBundle\xlsexport;
 
 class ExcelExporterXLSExport extends Exporter
@@ -61,7 +62,7 @@ class ExcelExporterXLSExport extends Exporter
 
     protected function send()
     {
-        $this->spreadsheet->sendFile(\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xls');
+        $this->spreadsheet->sendFile(StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xls');
         exit;
     }
 
@@ -87,16 +88,16 @@ class ExcelExporterXLSExport extends Exporter
         $this->spreadsheet->setcell($data);
 
         switch ($cell[self::CELLTYPE]) {
-      case CELLTYPE_STRING:
+      case self::CELLTYPE_STRING:
         $data['type'] = CELL_STRING;
         break;
-      case CELLTYPE_FLOAT:
+      case self::CELLTYPE_FLOAT:
         $data['type'] = CELL_FLOAT;
         break;
-      case CELLTYPE_PICTURE:
+      case self::CELLTYPE_PICTURE:
         $data['type'] = CELL_PICTURE;
         break;
-      case CELLTYPE_INTEGER:
+      case self::CELLTYPE_INTEGER:
       default:
         break;
     }

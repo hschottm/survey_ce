@@ -10,7 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
-class Survey extends \Backend
+use Contao\Backend;
+
+class Survey extends Backend
 {
     /**
      * Import String library.

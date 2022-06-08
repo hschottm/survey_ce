@@ -8,6 +8,8 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
+use Contao\Backend;
+
 $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
     // Config
     'config' => [
