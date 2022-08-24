@@ -105,7 +105,9 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
 
 // Palettes
 $GLOBALS['TL_DCA']['tl_survey_page']['palettes'] = [
-    'default' => '{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
+    '__selector__' => ['type'],
+    'default' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
+    'result' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
 ];
 //    'default' => '{title_legend},title,description;{intro_legend},introduction;{condition_legend},conditions;{template_legend},page_template',
 
@@ -122,6 +124,15 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
     ],
     'sorting' => [
         'sql' => "int(10) unsigned NOT NULL default '0'",
+    ],
+    'type' => [
+        'exclude'                 => true,
+        'filter'                  => true,
+        'inputType'               => 'select',
+        'options'                 => array('default', 'result'),
+        'reference'               => &$GLOBALS['tl_survey_page']['type'],
+        'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
+        'sql'                     => array('name'=>'type', 'type'=>'string', 'length'=>8, 'default'=>'default')
     ],
     'title' => [
         'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['title'],
@@ -163,7 +174,6 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
         'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['page_template'],
         'default' => 'survey_questionblock',
         'inputType' => 'select',
-        'options_callback' => ['tl_survey_page', 'getSurveyTemplates'],
         'eval' => ['tl_class' => 'w50'],
         'sql' => "varchar(255) NOT NULL default 'survey_questionblock'",
     ],
@@ -183,18 +193,6 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
 class tl_survey_page extends Backend
 {
     protected $hasData;
-
-    /**
-     * Return all survey templates as array.
-     *
-     * @param object
-     *
-     * @return array
-     */
-    public function getSurveyTemplates(DataContainer $dc)
-    {
-        return $this->getTemplateGroup('survey_');
-    }
 
     /**
      * Return the edit page button.

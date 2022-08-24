@@ -7,3 +7,8 @@ services:
         Symfony\Component\DependencyInjection\ContainerAwareInterface:
             calls:
                 - ["setContainer", ["@service_container"]]
+
+    Hschottm\SurveyBundle\:
+        resource: '../../{DataContainer}/*'
+        autowire: true
+        autoconfigure: true

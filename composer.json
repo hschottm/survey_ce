@@ -16,10 +16,11 @@
     }
   ],
   "require":{
-    "php": ">=5.6.0",
-    "contao/core-bundle":"^4.4",
+    "php": "^7.1 || ^8.0",
+    "contao/core-bundle":"^4.9",
     "hschottm/contao-textwizard":"~3.2",
-    "sonata-project/exporter": "^1.0"
+    "sonata-project/exporter": "^1.0",
+    "symfony/polyfill-php80": "^v1.26"
   },
   "require-dev": {
     "contao/manager-plugin": "^2.0",

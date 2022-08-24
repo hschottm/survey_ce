@@ -11,7 +11,13 @@
 namespace Hschottm\SurveyBundle;
 
 use Contao\Model;
+use Contao\Model\Collection;
 
+/**
+ * @property string $type
+ *
+ * @method static Collection|SurveyPageModel[]|SurveyPageModel|null findByType($val, array $opt=array())
+ */
 class SurveyPageModel extends Model
 {
     /**
