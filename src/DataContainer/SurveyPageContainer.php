@@ -11,6 +11,7 @@ use Contao\Image;
 use Contao\Input;
 use Contao\StringUtil;
 use Hschottm\SurveyBundle\SurveyPageModel;
+use Hschottm\SurveyBundle\SurveyResultModel;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
@@ -95,8 +96,12 @@ class SurveyPageContainer
      */
     public function onListEditHeaderButtonCallback(array $arrRow, ?string $href, string $label, string $title, ?string $icon, string $attributes): string
     {
-        if (!$this->security->getUser()->canEditFieldsOf(static::TABLE))
-        {
+        $id = $this->requestStack->getCurrentRequest()->query->get('id');
+        if (!$id
+            || SurveyResultModel::findByPid($id)
+            || !$this->security->getUser()->canEditFieldsOf(static::TABLE)
+
+        ) {
             return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
         }
 
