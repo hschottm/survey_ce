@@ -1,5 +1,5 @@
 {
-  "name":"hschottm/contao-survey",
+  "name":"arminfrey/contao-survey",
   "description":"Contao bundle to create questionnaires and run online surveys",
   "keywords":["contao", "module", "extension", "survey", "bundle"],
   "type":"contao-bundle",
@@ -11,9 +11,8 @@
     }
   ],
   "require":{
-    "php": ">=5.6.0",
     "contao/core-bundle":"~4.4",
-    "hschottm/contao-textwizard":"~3.2",
+    "hschottm/contao-textwizard":"^3.4",
     "sonata-project/exporter": "^1.0"
   },
   "require-dev": {
