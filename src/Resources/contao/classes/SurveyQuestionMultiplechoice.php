@@ -44,15 +44,36 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         }
     }
 
+    public function getResultData(): array
+    {
+        $result = [];
+        if (\is_array($this->statistics['cumulated'])) {
+            $result['statistics'] = $this->statistics;
+            $result['choices'] = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous'))
+                ? StringUtil::deserialize($this->arrData['choices'], true)
+                : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+
+            $counter = 1;
+            foreach ($result['choices'] as $id => $choice) {
+                $result['answers'][$counter] = [
+                    'choices' => $choice,
+                    'selections' => (($this->statistics['cumulated'][$id+1]) ? $this->statistics['cumulated'][$id+1] : 0),
+                ];
+                $counter++;
+            }
+        }
+        return $result;
+    }
+
     public function getAnswersAsHTML()
     {
-        if (\is_array($this->statistics['cumulated'])) {
+        if (!empty($resultData = $this->getResultData())) {
             $template = new FrontendTemplate('survey_answers_multiplechoice');
-            $template->statistics = $this->statistics;
+            $template->statistics = $resultData['statistics'];
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
             $template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
             $template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
-            $template->choices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+            $template->choices = $resultData['choices'];
             $template->other = ($this->arrData['addother']) ? true : false;
             $template->othertitle = StringUtil::specialchars($this->arrData['othertitle']);
             $otherchoices = [];

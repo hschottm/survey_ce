@@ -18,6 +18,7 @@ use Contao\File;
 use Contao\FilesModel;
 use Contao\FrontendTemplate;
 use Contao\Input;
+use Contao\Model\Collection;
 use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\Validator;
@@ -235,19 +236,28 @@ class ContentSurvey extends ContentElement
                 $this->questionblock_template = $pages[$page - 1]['page_template'];
             }
         }
-        $questionBlockTemplate = new FrontendTemplate($this->questionblock_template);
-        $questionBlockTemplate->surveypage = $surveypage;
-                if (is_array($pages))
-                {
-                        $helper = new \Hschottm\SurveyBundle\SurveyHelper();
 
-			foreach ($pages as $pageidx => $pagerow)
-                        {
-                                $replacements = [];
-                                $pagerow['introduction'] = $helper->replaceTags($pagerow['introduction'], $this->pin, $replacements, true);
-                                $pages[$pageidx] = $pagerow;
-                        }
+        if ('result' === ($pages[$page - 1]['type'] ?? 'default')) {
+            $this->createResultPage($pages[$page - 1]);
+        } else {
+            $questionBlockTemplate             = new FrontendTemplate($this->questionblock_template);
+            $questionBlockTemplate->surveypage = $surveypage;
+            if (is_array($pages)) {
+                $helper = new SurveyHelper();
+
+                foreach ($pages as $pageidx => $pagerow) {
+                    $replacements            = [];
+                    $pagerow['introduction'] = $helper->replaceTags($pagerow['introduction'], $this->pin, $replacements, true);
+                    $pages[$pageidx]         = $pagerow;
                 }
+            }
+
+            $qb = $questionBlockTemplate->parse();
+            $replacements = [];
+            $qb = $helper->replaceTags($qb, $this->pin, $replacements, true);
+            $this->Template->questionblock = $qb;
+        }
+
 
         // template output
         $this->Template->pages = $pages;
@@ -259,11 +269,6 @@ class ContentSurvey extends ContentElement
         global $objPage;
         $this->Template->cancellink = $this->generateFrontendUrl($objPage->row());
         $this->Template->allowback = $this->objSurvey->allowback;
-
-                $qb = $questionBlockTemplate->parse();
-                $replacements = [];
-                $qb = $helper->replaceTags($qb, $this->pin, $replacements, true);
-                $this->Template->questionblock = $qb;
 
 
 	$this->Template->page = $page;
@@ -545,14 +550,14 @@ class ContentSurvey extends ContentElement
         					$objMailProperties->attachments = array();
 
         					// Set the sender as given in form configuration
-        					list($senderName, $sender) = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailSender);
+        					[$senderName, $sender] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailSender);
         					$objMailProperties->sender = $sender;
         					$objMailProperties->senderName = $senderName;
 
         					// Set the 'reply to' address, if given in form configuration
         					if (!empty($this->objSurvey->confirmationMailReplyto))
         					{
-        						list($replyToName, $replyTo) = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailReplyto);
+        						[$replyToName, $replyTo] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailReplyto);
         						$objMailProperties->replyTo = (strlen($replyToName) ? $replyToName . ' <' . $replyTo . '>' : $replyTo);
         					}
 
@@ -579,7 +584,7 @@ class ContentSurvey extends ContentElement
         					{
         						foreach ($arrRecipient as $kR => $recipient)
         						{
-        							list($recipientName, $recipient) = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
+        							[$recipientName, $recipient] = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
         							$arrRecipient[$kR] = (strlen($recipientName) ? $recipientName . ' <' . $recipient . '>' : $recipient);
         						}
         					}
@@ -655,7 +660,7 @@ class ContentSurvey extends ContentElement
         							$objMail->replyTo($objMailProperties->replyTo);
         						}
 
-        						$helper = new \Hschottm\SurveyBundle\SurveyHelper();
+        						$helper = new SurveyHelper();
 
         						$objMail->subject = $objMailProperties->subject;
 
@@ -712,14 +717,14 @@ class ContentSurvey extends ContentElement
           					$objMailProperties->attachments = array();
 
           					// Set the sender as given in form configuration
-          					list($senderName, $sender) = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateSender);
+          					[$senderName, $sender] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateSender);
           					$objMailProperties->sender = $sender;
           					$objMailProperties->senderName = $senderName;
 
           					// Set the 'reply to' address, if given in form configuration
           					if (!empty($this->objSurvey->confirmationMailAlternateReplyto))
           					{
-          						list($replyToName, $replyTo) = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateReplyto);
+          						[$replyToName, $replyTo] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateReplyto);
           						$objMailProperties->replyTo = (strlen($replyToName) ? $replyToName . ' <' . $replyTo . '>' : $replyTo);
           					}
 
@@ -736,7 +741,7 @@ class ContentSurvey extends ContentElement
           					{
           						foreach ($arrRecipient as $kR => $recipient)
           						{
-          							list($recipientName, $recipient) = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
+          							[$recipientName, $recipient] = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
           							$arrRecipient[$kR] = (strlen($recipientName) ? $recipientName . ' <' . $recipient . '>' : $recipient);
           						}
           					}
@@ -812,7 +817,7 @@ class ContentSurvey extends ContentElement
           							$objMail->replyTo($objMailProperties->replyTo);
           						}
 
-          						$helper = new \Hschottm\SurveyBundle\SurveyHelper();
+          						$helper = new SurveyHelper();
 
           						$objMail->subject = $objMailProperties->subject;
 
@@ -937,6 +942,14 @@ class ContentSurvey extends ContentElement
         }
     }
 
+    /**
+     * @param int $pid Survey id
+     * @param int $qid Question id
+     * @param string $pin
+     * @param mixed $result Result
+     * @param int $uid User id
+     * @return void
+     */
     protected function insertResult($pid, $qid, $pin, $result, $uid = null)
     {
         $newResult = new \Hschottm\SurveyBundle\SurveyResultModel();
@@ -996,5 +1009,57 @@ class ContentSurvey extends ContentElement
         $newNavigation->frompage = $from;
         $newNavigation->topage = $to;
         $newNavigation->save();
+    }
+
+    protected function createResultPage(array $pageData): void
+    {
+        $templateName = ($pageData['page_template'] ?? '');
+        if (!str_starts_with($templateName, 'surveypage_result_')) {
+            $templateName = 'surveypage_result_default';
+        }
+
+        $resultPageTemplate = new FrontendTemplate($templateName);
+
+        switch ($this->objSurvey->access) {
+            case 'anon':
+            case 'anoncode':
+                $userId = $this->pin;
+                break;
+            case 'nonanoncode':
+                $userId = $this->User->id;
+                break;
+        }
+
+        $resultPageTemplate->userId = $userId;
+        $resultPageTemplate->access = $this->objSurvey->access;
+        $this->Template->surveyUserId = $userId;
+        $this->Template->surveyUserAccess = $this->objSurvey->access;
+
+        $questions = [];
+        /** @var SurveyQuestionModel|SurveyQuestionModel[]|Collection|null $questionCollection */
+        $questionCollection = SurveyQuestionModel::findBySurvey($this->objSurvey->id);
+        if (!$questionCollection) {
+            $resultPageTemplate->results = $questions;
+            return;
+        }
+
+        $count = 0;
+        while ($questionCollection->next()) {
+            $count++;
+            $question = SurveyQuestion::createInstance($questionCollection->id, $questionCollection->questiontype);
+            $questions[$count] = $question->getResultData();
+            $questions[$count]['question'] = $question;
+
+            $currentUserResult = SurveyResultModel::findBy(
+                ['pid=?', 'qid=?', ($this->objSurvey->access === 'nonanoncode' ? 'uid=?' : 'pin=?')],
+                [$this->surveyModel->id, $questionCollection->id, $userId]
+            );
+
+            $questions[$count]['currentUserResult'] = $currentUserResult ? $currentUserResult->result : null;
+        }
+
+        $resultPageTemplate->results = $questions;
+
+        $this->Template->questionblock = $resultPageTemplate->parse();
     }
 }

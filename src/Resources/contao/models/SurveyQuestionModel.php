@@ -10,9 +10,18 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Database;
 use Contao\Model;
+use Contao\Model\Collection;
 use Contao\System;
 
+/**
+ * @property int $id
+ * @property int $pid
+ * @property string $questiontype
+ *
+ * @method static SurveyQuestionModel|null findByPk($val, array $opt=array())
+ */
 class SurveyQuestionModel extends Model
 {
     /**
@@ -39,6 +48,20 @@ class SurveyQuestionModel extends Model
 
         return $result;
     }
+
+    public static function findBySurvey(int $id): ?Collection
+    {
+        $result = Database::getInstance()
+            ->prepare('SELECT tl_survey_question.* FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
+            ->execute($id);
+        if ($result->count() < 1) {
+            return null;
+        }
+
+        return Collection::createFromDbResult($result, static::$strTable);
+    }
+
+
 }
 
 class_alias(SurveyQuestionModel::class, 'SurveyQuestionModel');

@@ -1,1 +1,10 @@
-Resultat:
+<?php if ($this->results): ?>
+    <table>
+        <?php foreach ($this->results as $result): ?>
+            <tr>
+                <td><?= $result['question']->title ?></td>
+                <td><?= $result['question']->getAnswersAsHTML() ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>

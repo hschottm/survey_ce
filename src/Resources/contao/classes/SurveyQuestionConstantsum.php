@@ -44,16 +44,25 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         }
     }
 
+    public function getResultData(): array
+    {
+        $result = [];
+        if (\is_array($this->statistics['cumulated'])) {
+            $result['statistics'] = $this->statistics;
+            $result['choices'] = StringUtil::deserialize($this->arrData['sumchoices'], true);
+            $result['cumulated'] = $this->statistics['cumulated'];
+        }
+        return $result;
+    }
+
     public function getAnswersAsHTML()
     {
-        if (\is_array($this->statistics['cumulated'])) {
+        if (!empty($resultData = $this->getResultData())) {
             $template = new FrontendTemplate('survey_answers_constantsum');
-            $template->choices = StringUtil::deserialize($this->arrData['sumchoices'], true);
+            $template->setData($resultData);
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
             $template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
             $template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
-            $template->cumulated = $this->statistics['cumulated'];
-
             return $template->parse();
         }
     }

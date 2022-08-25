@@ -109,7 +109,6 @@ $GLOBALS['TL_DCA']['tl_survey_page']['palettes'] = [
     'default' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
     'result' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
 ];
-//    'default' => '{title_legend},title,description;{intro_legend},introduction;{condition_legend},conditions;{template_legend},page_template',
 
 // Fields
 $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
