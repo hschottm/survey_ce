@@ -132,7 +132,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
         'filter'                  => true,
         'inputType'               => 'select',
         'options'                 => array('default', 'result'),
-        'reference'               => &$GLOBALS['tl_survey_page']['type'],
+        'reference'               => &$GLOBALS['TL_LANG']['tl_survey_page']['type'],
         'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
         'sql'                     => array('name'=>'type', 'type'=>'string', 'length'=>8, 'default'=>'default')
     ],

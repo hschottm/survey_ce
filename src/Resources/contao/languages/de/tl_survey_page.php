@@ -31,8 +31,20 @@ $GLOBALS['TL_LANG']['tl_survey_page']['copy']['1'] = 'Seite ID %s duplizieren';
 $GLOBALS['TL_LANG']['tl_survey_page']['delete']['0'] = 'Seite löschen';
 $GLOBALS['TL_LANG']['tl_survey_page']['delete']['1'] = 'Seite ID %s löschen';
 $GLOBALS['TL_LANG']['tl_survey_page']['page'] = 'Seite';
+$GLOBALS['TL_LANG']['tl_survey_page']['conditions'] = ['Sprungbedingungen', 'Wenn Sie nicht mit der nächsten Seite fortfahren wollen, können Sie hier Sprungbedingungen definieren, um mit einer anderen Seite fortzufahren.'];
+$GLOBALS['TL_LANG']['tl_survey_page']['type'] = ['Seitentyp', 'Bitte wählen Sie den Typ der Seite.'];
+
+/*
+ * Legends
+ */
+$GLOBALS['TL_LANG']['tl_survey_page']['type_legend'] = 'Seitentyp';
 $GLOBALS['TL_LANG']['tl_survey_page']['title_legend'] = 'Titel und Beschreibung';
 $GLOBALS['TL_LANG']['tl_survey_page']['intro_legend'] = 'Einleitender Text';
 $GLOBALS['TL_LANG']['tl_survey_page']['condition_legend'] = 'Sprungbedingungen';
 $GLOBALS['TL_LANG']['tl_survey_page']['template_legend'] = 'Template-Einstellungen';
-$GLOBALS['TL_LANG']['tl_survey_page']['conditions'] = ['Sprungbedingungen', 'Wenn Sie nicht mit der nächsten Seite fortfahren wollen, können Sie hier Sprungbedingungen definieren, um mit einer anderen Seite fortzufahren.'];
+
+/**
+ * Page types
+ */
+$GLOBALS['TL_LANG']['tl_survey_page']['type']['default'] = 'Fragenseite';
+$GLOBALS['TL_LANG']['tl_survey_page']['type']['result'] = 'Ergebnisseite';

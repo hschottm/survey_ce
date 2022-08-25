@@ -23,11 +23,19 @@ $GLOBALS['TL_LANG']['tl_survey_page']['copy'] = ['Duplicate page', 'Duplicate pa
 $GLOBALS['TL_LANG']['tl_survey_page']['delete'] = ['Delete page', 'Delete page ID %s'];
 
 $GLOBALS['TL_LANG']['tl_survey_page']['page'] = 'Page';
+$GLOBALS['TL_LANG']['tl_survey_page']['type'] = ['Page type', 'Please choose the type of the page.'];
 
 /*
 * Legends
 */
+$GLOBALS['TL_LANG']['tl_survey_page']['type_legend'] = 'Page type';
 $GLOBALS['TL_LANG']['tl_survey_page']['title_legend'] = 'Title and description';
 $GLOBALS['TL_LANG']['tl_survey_page']['intro_legend'] = 'Introduction';
 $GLOBALS['TL_LANG']['tl_survey_page']['condition_legend'] = 'Jump conditions';
 $GLOBALS['TL_LANG']['tl_survey_page']['template_legend'] = 'Template settings';
+
+/**
+ * Page types
+ */
+$GLOBALS['TL_LANG']['tl_survey_page']['type']['default'] = 'Question page';
+$GLOBALS['TL_LANG']['tl_survey_page']['type']['result'] = 'Result page';
