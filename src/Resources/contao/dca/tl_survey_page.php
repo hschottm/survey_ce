@@ -186,7 +186,7 @@ class tl_survey_page extends Backend
      *
      * @return array
      */
-    public function getSurveyTemplates(DataContainer $dc)
+    public function getSurveyTemplates(DataContainer $dc): array
     {
         return $this->getTemplateGroup('survey_', $dc->activeRecord->pid);
     }
