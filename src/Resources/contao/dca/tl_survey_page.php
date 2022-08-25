@@ -73,9 +73,12 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['edit'],
             'href' => 'table=tl_survey_question',
             'icon' => 'edit.svg',
-            'button_callback' => ['tl_survey_page', 'editPage'],
         ],
-        'copy' => [
+        'editheader' => [
+            'href' => 'act=edit',
+            'icon' => 'header.svg',
+        ],
+        'copy'       => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['copy'],
             'href' => 'act=paste&mode=copy',
             'icon' => 'copy.svg',
@@ -192,33 +195,6 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
 class tl_survey_page extends Backend
 {
     protected $hasData;
-
-    /**
-     * Return the edit page button.
-     *
-     * @param array
-     * @param string
-     * @param string
-     * @param string
-     * @param string
-     * @param string
-     * @param mixed $row
-     * @param mixed $href
-     * @param mixed $label
-     * @param mixed $title
-     * @param mixed $icon
-     * @param mixed $attributes
-     *
-     * @return string
-     */
-    public function editPage($row, $href, $label, $title, $icon, $attributes)
-    {
-        if ($this->hasData()) {
-            return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
-        }
-
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
-    }
 
     /**
      * Return the copy page button.

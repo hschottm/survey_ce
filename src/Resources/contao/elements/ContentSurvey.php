@@ -1052,10 +1052,16 @@ class ContentSurvey extends ContentElement
 
             $currentUserResult = SurveyResultModel::findBy(
                 ['pid=?', 'qid=?', ($this->objSurvey->access === 'nonanoncode' ? 'uid=?' : 'pin=?')],
-                [$this->surveyModel->id, $questionCollection->id, $userId]
+                [$this->objSurvey->id, $questionCollection->id, $userId]
             );
 
-            $questions[$count]['currentUserResult'] = $currentUserResult ? $currentUserResult->result : null;
+            $questions[$count]['currentUserResult'] = null;
+            if ($currentUserResult) {
+                $questions[$count]['currentUserResult'] = [
+                    'result' => $question->resultAsString($currentUserResult->result),
+                    'data' => $currentUserResult->row(),
+                ];
+            }
         }
 
         $resultPageTemplate->results = $questions;

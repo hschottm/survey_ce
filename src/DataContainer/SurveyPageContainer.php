@@ -2,6 +2,7 @@
 
 namespace Hschottm\SurveyBundle\DataContainer;
 
+use Contao\Backend;
 use Contao\Controller;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\DataContainer;
@@ -11,16 +12,19 @@ use Contao\Input;
 use Contao\StringUtil;
 use Hschottm\SurveyBundle\SurveyPageModel;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 class SurveyPageContainer
 {
     public const TABLE = 'tl_survey_page';
 
     private RequestStack $requestStack;
+    private Security     $security;
 
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, Security $security)
     {
         $this->requestStack = $requestStack;
+        $this->security = $security;
     }
 
     /**
@@ -82,7 +86,21 @@ class SurveyPageContainer
             return '';
         }
 
-        $href = Controller::addToUrl($href . '&amp;id=' . $arrRow['id'] . (Input::get('nb') ? '&amp;nc=1' : ''));
+        $href = Backend::addToUrl($href . '&amp;id=' . $arrRow['id'] . (Input::get('nb') ? '&amp;nc=1' : ''));
+        return '<a href="' . $href . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ';
+    }
+
+    /**
+     * @Callback(table=SurveyPageContainer::TABLE, target="list.operations.editheader.button")
+     */
+    public function onListEditHeaderButtonCallback(array $arrRow, ?string $href, string $label, string $title, ?string $icon, string $attributes): string
+    {
+        if (!$this->security->getUser()->canEditFieldsOf(static::TABLE))
+        {
+            return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
+        }
+
+        $href = Backend::addToUrl($href . '&amp;id=' . $arrRow['id']);
         return '<a href="' . $href . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ';
     }
 }

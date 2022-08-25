@@ -1,0 +1,12 @@
+<?php if ($this->results): ?>
+    <table>
+        <?php foreach ($this->results as $result): ?>
+            <tr>
+                <td><?= $result['question']->title ?></td>
+                <?php if (!empty($result['currentUserResult'])): ?>
+                <td><?= $result['currentUserResult']['result'] ?></td>
+                <?php endif; ?>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>
