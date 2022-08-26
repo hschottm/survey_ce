@@ -37,12 +37,8 @@ class tl_content_survey extends tl_content
      *
      * @return array
      */
-    public function getSurveyTemplates(DataContainer $dc)
+    public function getSurveyTemplates()
     {
-        if (version_compare(VERSION.BUILD, '2.9.0', '>=')) {
-            return $this->getTemplateGroup('ce_survey', $dc->activeRecord->pid);
-        }
-
         return $this->getTemplateGroup('ce_survey');
     }
 }
