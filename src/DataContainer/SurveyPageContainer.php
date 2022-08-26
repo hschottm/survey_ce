@@ -73,7 +73,7 @@ class SurveyPageContainer
         $template->title = StringUtil::specialchars($row['title']);
         $template->description = StringUtil::specialchars($row['description']);
         $icon = ('result' === $row['type'] ? 'bundles/hschottmsurvey/images/page_result.svg' : 'bundles/hschottmsurvey/images/page_question.svg');
-        $template->icon = Image::getHtml($icon);
+        $template->icon = Image::getHtml($icon, '', 'title="'.($GLOBALS['TL_LANG']['tl_survey_page']['type'][$row['type']] ?? '').'"');
 
         return $template->parse();
     }
