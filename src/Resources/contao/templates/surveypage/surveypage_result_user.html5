@@ -1,12 +1,21 @@
-<?php if ($this->results): ?>
-    <table>
-        <?php foreach ($this->results as $result): ?>
-            <tr>
-                <td><?= $result['question']->title ?></td>
-                <?php if (!empty($result['currentUserResult'])): ?>
-                <td><?= $result['currentUserResult']['result'] ?></td>
-                <?php endif; ?>
-            </tr>
-        <?php endforeach; ?>
-    </table>
-<?php endif; ?>
+<?php $this->extend('surveypage_result_default'); ?>
+
+<?php $this->block('result'); ?>
+<?php foreach ($this->results as $result): ?>
+    <?php if (!empty($result['title'])): ?>
+        <tr>
+            <td class="survey_question_title"><?= $result['title'] ?></td>
+        </tr>
+    <?php endif; ?>
+    <?php if (!empty($result['question'])): ?>
+        <tr>
+            <td class="survey_question_question"><?= $result['question'] ?></td>
+        </tr>
+    <?php endif; ?>
+    <?php if (!empty($result['currentUserResult'])): ?>
+        <tr>
+            <td><?= $result['currentUserResult']['result'] ?></td>
+        </tr>
+    <?php endif; ?>
+<?php endforeach; ?>
+<?php $this->endblock(); ?>

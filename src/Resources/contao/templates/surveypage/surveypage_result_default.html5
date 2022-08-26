@@ -1,10 +1,26 @@
 <?php if ($this->results): ?>
-    <table>
+    <div class="survey_page_result">
+        <?php $this->block('result'); ?>
         <?php foreach ($this->results as $result): ?>
-            <tr>
-                <td><?= $result['question']->title ?></td>
-                <td><?= $result['question']->getAnswersAsHTML() ?></td>
-            </tr>
+            <table>
+                <?php if (!empty($result['title'])): ?>
+                    <tr>
+                        <td class="survey_question_title"><?= $result['title'] ?></td>
+                    </tr>
+                <?php endif; ?>
+                <?php if (!empty($result['question'])): ?>
+                    <tr>
+                        <td class="survey_question_question"><?= $result['question'] ?></td>
+                    </tr>
+                <?php endif; ?>
+                <tr>
+                    <td class="survey_question_answers"><?= $result['questionType']->getAnswersAsHTML() ?></td>
+                </tr>
+            </table>
         <?php endforeach; ?>
-    </table>
+
+        <?php $this->endblock(); ?>
+
+
+    </div>
 <?php endif; ?>

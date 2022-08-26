@@ -19,6 +19,9 @@ use Contao\System;
  * @property int $id
  * @property int $pid
  * @property string $questiontype
+ * @property string $title
+ * @property string $question
+ * @property bool $hidetitle
  *
  * @method static SurveyQuestionModel|null findByPk($val, array $opt=array())
  */

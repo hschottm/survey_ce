@@ -1046,9 +1046,18 @@ class ContentSurvey extends ContentElement
         $count = 0;
         while ($questionCollection->next()) {
             $count++;
-            $question = SurveyQuestion::createInstance($questionCollection->id, $questionCollection->questiontype);
-            $questions[$count] = $question->getResultData();
-            $questions[$count]['question'] = $question;
+            $questionType = SurveyQuestion::createInstance($questionCollection->id, $questionCollection->questiontype);
+            $questions[$count] = [
+                'id' => $questionCollection->id,
+                'type' => $questionCollection->questiontype,
+                'question' => $questionCollection->question,
+                'result' => $questionType->getResultData(),
+                'questionType' => $questionType,
+            ];
+
+            if (!$questionCollection->hidetitle) {
+                $questions[$count]['title'] = $questionCollection->title;
+            }
 
             $currentUserResult = SurveyResultModel::findBy(
                 ['pid=?', 'qid=?', ($this->objSurvey->access === 'nonanoncode' ? 'uid=?' : 'pin=?')],
@@ -1058,7 +1067,7 @@ class ContentSurvey extends ContentElement
             $questions[$count]['currentUserResult'] = null;
             if ($currentUserResult) {
                 $questions[$count]['currentUserResult'] = [
-                    'result' => $question->resultAsString($currentUserResult->result),
+                    'result' => $questionType->resultAsString($currentUserResult->result),
                     'data' => $currentUserResult->row(),
                 ];
             }
