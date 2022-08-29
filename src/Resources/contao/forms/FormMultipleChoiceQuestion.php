@@ -51,7 +51,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
                 $this->strOtherTitle = $varValue['othertitle'];
                 $this->blnOther = ($varValue['addother']) ? true : false;
                 $this->strStyle = $varValue['mc_style'];
-                $this->arrChoices = deserialize($varValue['choices']);
+                $this->arrChoices = array_column(StringUtil::deserialize($varValue['choices'], true), 'choice');
                 if (!\is_array($this->arrChoices)) {
                     $this->arrChoices = [];
                 }
