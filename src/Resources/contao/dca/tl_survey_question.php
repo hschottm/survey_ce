@@ -338,10 +338,8 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
             'sql' => "varchar(32) NOT NULL default ''",
         ],
         'choices' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['choices'],
             'exclude' => true,
             'inputType' => 'group',
-            'wizard' => [['tl_survey_question', 'addScaleWizard']],
             'palette' => ['choice'],
             'fields' => [
                 'choice' => [
@@ -352,25 +350,8 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
                     ],
                 ],
             ],
-            'eval' => ['tl_class' => 'wizard'],
             'sql' => 'blob NULL',
         ],
-//        'choices' => [
-//            'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['choices'],
-//            'exclude' => true,
-//            'inputType' => 'textwizard',
-//            'wizard' => [['tl_survey_question', 'addScaleWizard']],
-//            'eval' => [
-//                'allowHtml' => true,
-//                'decodeEntities' => true,
-//                'buttonTitles' => [
-//                    'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_new'],
-//                    'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_copy'],
-//                    'delete' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_delete'],
-//                ],
-//            ],
-//            'sql' => 'blob NULL',
-//        ],
         'matrixrows' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['matrixrows'],
             'exclude' => true,
@@ -608,18 +589,6 @@ class tl_survey_question extends Backend
         return ['vertical', 'horizontal', 'select'];
     }
 
-    public function addScaleWizard(DataContainer $dc)
-    {
-        $objQuestion = $this->Database->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?')
-            ->limit(1)
-            ->execute($dc->id);
-        if (0 == strcmp($objQuestion->multiplechoice_subtype, 'mc_singleresponse')) {
-            return '<a class="tl_submit" style="margin-top: 10px;" href="'.$this->addToUrl('key=scale').'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]).'" onclick="Backend.getScrollOffset();">'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]).'</a>';
-        }
-
-        return '';
-    }
-
     /**
      * Return a form to choose a CSV file and import it.
      *
@@ -652,8 +621,16 @@ class tl_survey_question extends Backend
                 $this->reload();
             }
 
+            $choices = $arrScales[Input::post('scale')]['scales'];
+            $groups = [];
+            $i = 0;
+            foreach ($choices as $choice) {
+                $i++;
+                $groups[$i] = ['choice' => $choice];
+            }
+
             $this->Database->prepare('UPDATE tl_survey_question SET choices=? WHERE id=?')
-                ->execute(serialize($arrScales[Input::post('scale')]['scales']), $dc->id);
+                ->execute(serialize($groups), $dc->id);
 
             setcookie('BE_PAGE_OFFSET', 0, 0, '/');
             $this->redirect(str_replace('&key=scale', '', Environment::get('request')));
