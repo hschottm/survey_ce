@@ -18,7 +18,9 @@
   "require":{
     "php": "^7.2 || ^8.0",
     "contao/core-bundle":"^4.9",
+    "doctrine/dbal": "^2.5 || ^3.0",
     "hschottm/contao-textwizard":"~3.2",
+    "mvo/contao-group-widget": "^1.4",
     "sonata-project/exporter": "^1.0",
     "symfony/polyfill-php80": "^v1.26"
   },

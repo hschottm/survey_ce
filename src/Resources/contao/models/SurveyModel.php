@@ -12,6 +12,10 @@ namespace Hschottm\SurveyBundle;
 
 use Contao\Model;
 
+/**
+ * @property bool $useResultCategories
+ * @property string $resultCategories
+ */
 class SurveyModel extends Model
 {
     /**

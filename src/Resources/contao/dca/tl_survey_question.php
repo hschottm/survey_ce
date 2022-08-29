@@ -340,19 +340,37 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
         'choices' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['choices'],
             'exclude' => true,
-            'inputType' => 'textwizard',
+            'inputType' => 'group',
             'wizard' => [['tl_survey_question', 'addScaleWizard']],
-            'eval' => [
-                'allowHtml' => true,
-                'decodeEntities' => true,
-                'buttonTitles' => [
-                    'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_new'],
-                    'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_copy'],
-                    'delete' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_delete'],
+            'palette' => ['choice'],
+            'fields' => [
+                'choice' => [
+                    'inputType' => 'text',
+                    'eval' => [
+                        'allowHtml' => true,
+                        'decodeEntities' => true,
+                    ],
                 ],
             ],
+            'eval' => ['tl_class' => 'wizard'],
             'sql' => 'blob NULL',
         ],
+//        'choices' => [
+//            'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['choices'],
+//            'exclude' => true,
+//            'inputType' => 'textwizard',
+//            'wizard' => [['tl_survey_question', 'addScaleWizard']],
+//            'eval' => [
+//                'allowHtml' => true,
+//                'decodeEntities' => true,
+//                'buttonTitles' => [
+//                    'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_new'],
+//                    'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_copy'],
+//                    'delete' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_delete'],
+//                ],
+//            ],
+//            'sql' => 'blob NULL',
+//        ],
         'matrixrows' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['matrixrows'],
             'exclude' => true,
