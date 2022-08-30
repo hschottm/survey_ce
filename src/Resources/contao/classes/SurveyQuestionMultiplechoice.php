@@ -55,11 +55,13 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             $result = [];
             if (\is_array($this->statistics['cumulated'])) {
                 $result['statistics'] = $this->statistics;
+
                 $result['choices'] = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous'))
                     ? StringUtil::deserialize($this->arrData['choices'], true)
                     : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
                 $result['categories'] = [];
                 $counter = 1;
+
                 foreach ($result['choices'] as $id => $choice) {
                     $result['answers'][$counter] = [
                         'choices' => $choice['choice'],
@@ -498,7 +500,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
         if (is_array($arrAnswer['value'])) {
             foreach ($arrAnswer['value'] as $key => $val) {
-                $selections[] = $arrChoices[$val - 1];
+                $selections[] = $arrChoices[$val]['choice'];
             }
             return implode(", ", $selections);
         } else {
