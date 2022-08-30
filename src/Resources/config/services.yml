@@ -9,11 +9,6 @@ services:
                 - ["setContainer", ["@service_container"]]
 
     Hschottm\SurveyBundle\:
-        resource: '../../{EventListener,DataContainer,Helper,Migration}/*'
+        resource: '../../{EventListener,DataContainer,Migration}/*'
         autowire: true
         autoconfigure: true
-
-    Hschottm\SurveyBundle\Helper\CategoryHelper:
-        public: true
-        autowire: true
-        autoconfigure: false
