@@ -457,9 +457,9 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     $emptyAnswer = false;
                     foreach ($this->choices as $choice)
                     {
-                      if (strlen($choice) == 0) $emptyAnswer = true;
+                      if (empty($choice['choice']) == 0) $emptyAnswer = true;
                     }
-                    $strAnswer = (($emptyAnswer) ? ($arrAnswers['value'] . ' - ') : '') . $this->choices[$arrAnswers['value'] - 1];
+                    $strAnswer = (($emptyAnswer) ? ($arrAnswers['value'] . ' - ') : '') . $this->choices[$arrAnswers['value']]['choice'];
                     if (($this->arrData['addother']) && ($arrAnswers['value'] == \count($this->choices))) {
                         $strAnswer .= ': '.StringUtil::decodeEntities($arrAnswers['other']);
                     }
