@@ -50,9 +50,10 @@ class CategoriesListener
             && ($surveyModel->useResultCategories)
         ) {
             $choicesField = &$GLOBALS['TL_DCA'][SurveyQuestionModel::getTable()]['fields']['choices'];
-            $choicesField['fields']['catory'] = [
+            $choicesField['palette'][] = 'category';
+            $choicesField['fields']['category'] = [
                 'inputType' => 'select',
-                ''
+                'options_callback' => [self::class, 'surveyChoicesCategoryOptionsCallback'],
             ];
         }
     }
@@ -88,5 +89,27 @@ class CategoriesListener
         }
         $survey->resultCategories = serialize($categories);
         $survey->save();
+    }
+
+    /**
+     * @param DataContainer|null $dc
+     * @return array
+     */
+    public function surveyChoicesCategoryOptionsCallback(DataContainer $dc = null): array
+    {
+        $options = [];
+        if ($dc && $dc->id || 'edit' === $this->requestStack->getCurrentRequest()->query->get('act')) {
+            if (!($questionModel = SurveyQuestionModel::findByPk($dc->id))
+            || !($surveyPageModel = SurveyPageModel::findByPk($questionModel->pid))
+            || !($surveyModel = SurveyModel::findByPk($surveyPageModel->pid))) {
+                return $options;
+            }
+            $categories = StringUtil::deserialize($surveyModel->resultCategories, true);
+            foreach ($categories as $category) {
+                $options[$category['id']] = $category['category'];
+            }
+        }
+
+        return $options;
     }
 }
