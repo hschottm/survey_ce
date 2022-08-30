@@ -99,14 +99,15 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
     'palettes' => [
         '__selector__' => ['access', 'limit_groups', 'useResultCategories'],
         'default' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end',
-        'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto',
-        'anoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto',
-        'nonanoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie,limit_groups;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto',
+        'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
+        'anoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
+        'nonanoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie,limit_groups;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
     ],
 
     // Palettes
     'subpalettes' => [
         'limit_groups' => 'allowed_groups',
+        'useResultCategories' => 'resultCategories',
     ],
 
     // Fields
@@ -258,6 +259,31 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey']['surveyPage'],
             'inputType' => 'pageTree',
             'eval' => ['mandatory' => false, 'fieldType' => 'radio'],
+        ],
+        'useResultCategories' => [
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'       => "char(1) NOT NULL default ''",
+        ],
+        'resultCategories' => [
+            'exclude'   => true,
+            'inputType' => 'group',
+            'palette' => ['id', 'category'],
+            'fields' => [
+                'id' => [
+                    'inputType' => 'text',
+                    'eval' => ['readonly' => true, 'rgxp' => 'natural']
+                ],
+                'category' => [
+                    'inputType' => 'text',
+                ],
+            ],
+            'sql' => [
+                'type' => 'blob',
+                'length' => MySqlPlatform::LENGTH_LIMIT_BLOB,
+                'notnull' => false,
+            ],
         ],
     ],
 ];

@@ -14,6 +14,8 @@ use Contao\Model;
 use Contao\Model\Collection;
 
 /**
+ * @property int $id
+ * @property int $pid
  * @property string $type
  *
  * @method static Collection|SurveyPageModel[]|SurveyPageModel|null findByType($val, array $opt=array())
