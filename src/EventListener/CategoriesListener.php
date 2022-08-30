@@ -45,10 +45,7 @@ class CategoriesListener
                 .'<a class="tl_submit" style="margin-top: 10px;" href="'.Backend::addToUrl('key=scale').'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]).'" onclick="Backend.getScrollOffset();">'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]).'</a><p style="height: 0;margin: 0;">';
         }
 
-        if (($surveyPageModel = SurveyPageModel::findByPk($questionModel->pid))
-            && ($surveyModel = SurveyModel::findByPk($surveyPageModel->pid))
-            && ($surveyModel->useResultCategories)
-        ) {
+        if (($surveyModel = SurveyModel::findByQuestionId($questionModel->id)) && $surveyModel->useResultCategories) {
             $choicesField = &$GLOBALS['TL_DCA'][SurveyQuestionModel::getTable()]['fields']['choices'];
             $choicesField['palette'][] = 'category';
             $choicesField['fields']['choice']['eval']['tl_class'] =
