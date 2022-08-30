@@ -19,8 +19,8 @@ class SurveyPageContainer
 {
     public const TABLE = 'tl_survey_page';
 
-    private RequestStack $requestStack;
-    private Security     $security;
+    private $requestStack;
+    private $security;
 
     public function __construct(RequestStack $requestStack, Security $security)
     {
