@@ -436,7 +436,7 @@ class ContentSurvey extends ContentElement
                         break;
                 }
                 if (null != $objResult && $objResult->count()) {
-                    $objWidget->value = deserialize($objResult->result);
+                    $objWidget->value = StringUtil::deserialize($objResult->result);
                 }
             }
         }

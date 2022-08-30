@@ -10,8 +10,8 @@
 <?php foreach ($this->choices as $id => $choice): ?>
 	<tr>
 		<td class="counter"><?php echo $counter; ?>.</td>
-		<td class="answer"><?php echo $choice; ?></td>
-		<td class="selections"><?php echo (($this->statistics['cumulated'][$id+1]) ? $this->statistics['cumulated'][$id+1] : 0); ?></td>
+		<td class="answer"><?php echo $choice['choice']; ?></td>
+		<td class="selections"><?php echo (($this->statistics['cumulated'][$id]) ? $this->statistics['cumulated'][$id] : 0); ?></td>
 	</tr>
 <?php $counter++; ?>
 <?php endforeach; ?>
