@@ -269,14 +269,15 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
         'resultCategories' => [
             'exclude'   => true,
             'inputType' => 'group',
-            'palette' => ['id', 'category'],
+            'palette' => ['category', 'id',],
             'fields' => [
                 'id' => [
                     'inputType' => 'text',
-                    'eval' => ['readonly' => true, 'rgxp' => 'natural']
+                    'eval' => ['readonly' => true, 'tl_class' => 'w50',],
                 ],
                 'category' => [
                     'inputType' => 'text',
+                    'eval' => ['tl_class' => 'w50',],
                 ],
             ],
             'sql' => [

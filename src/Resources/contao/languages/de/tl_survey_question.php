@@ -34,6 +34,15 @@ $GLOBALS['TL_LANG']['tl_survey_question']['upper_bound']['0'] = 'Wertebereich bi
 $GLOBALS['TL_LANG']['tl_survey_question']['upper_bound']['1'] = 'Bitte geben Sie die obere Schranke des Wertebereiches ein, wenn dieser überprüft werden soll.';
 $GLOBALS['TL_LANG']['tl_survey_question']['choices']['0'] = 'Antworten';
 $GLOBALS['TL_LANG']['tl_survey_question']['choices']['1'] = 'Benutzen Sie die Schaltflächen, um Antworten zu kopieren, zu verschieben oder zu löschen. Wenn Sie ohne JavaScript-Unterstützung arbeiten, sollten Sie Ihre Eingaben speichern bevor Sie die Struktur der Antworten verändern!';
+$GLOBALS['TL_LANG']['tl_survey_question']['choices_'] = [
+    'choice' => [
+        'Antwort'
+    ],
+    'category' => [
+        'Kategorie'
+    ],
+];
+
 $GLOBALS['TL_LANG']['tl_survey_question']['hidetitle']['0'] = 'Fragentitel nicht anzeigen';
 $GLOBALS['TL_LANG']['tl_survey_question']['hidetitle']['1'] = 'Zeigt den Titel der Frage während der Umfrage nicht an.';
 $GLOBALS['TL_LANG']['tl_survey_question']['addother']['0'] = 'Andere Antwort erlauben';

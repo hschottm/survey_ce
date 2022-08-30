@@ -69,12 +69,6 @@ $GLOBALS['TL_LANG']['tl_survey']['copy']['0'] = 'Umfrage duplizieren';
 $GLOBALS['TL_LANG']['tl_survey']['copy']['1'] = 'Umfrage ID %s duplizieren';
 $GLOBALS['TL_LANG']['tl_survey']['delete']['0'] = 'Umfrage löschen';
 $GLOBALS['TL_LANG']['tl_survey']['delete']['1'] = 'Umfrage ID %s löschen';
-$GLOBALS['TL_LANG']['tl_survey']['head_legend'] = 'Einstellungen für die Kopfzeile';
-$GLOBALS['TL_LANG']['tl_survey']['title_legend'] = 'Titel und Beschreibung';
-$GLOBALS['TL_LANG']['tl_survey']['activation_legend'] = 'Aktivierung';
-$GLOBALS['TL_LANG']['tl_survey']['access_legend'] = 'Zugriff';
-$GLOBALS['TL_LANG']['tl_survey']['texts_legend'] = 'Einleitende und abschließende Bemerkung';
-$GLOBALS['TL_LANG']['tl_survey']['misc_legend'] = 'Allgemeine Einstellungen';
 $GLOBALS['TL_LANG']['tl_survey']['surveyPage']['0'] = 'Seite der Umfrage';
 $GLOBALS['TL_LANG']['tl_survey']['surveyPage']['1'] = 'Bitte wählen Sie die Seite aus, auf der Sie die Umfrage durchführen wollen. Bei einer ausgewählten Seite wird eine Start-URL mit dem zugehörigen TAN-Code generiert.';
 
@@ -104,5 +98,28 @@ $GLOBALS['TL_LANG']['tl_survey']['formattedMailAttachments'] = array('Dateianhä
 $GLOBALS['TL_LANG']['tl_survey']['sendFormattedMail'] = array('Per E-Mail versenden (formatierter Text / HTML)', 'Der Inhalt der Nachricht kann frei angegeben werden, unter Verwendung von Insert-Tags. Die Nachricht kann auch als HTML-E-Mail versendet werden.');
 $GLOBALS['TL_LANG']['tl_survey']['formattedMailText'] = array('Text der E-Mail', 'Bitte geben Sie hier den Text der E-Mail ein. Neben den allgemeinen Insert-Tags werden Tags der Form form::FORMULARFELDNAME unterstützt.');
 $GLOBALS['TL_LANG']['tl_survey']['formattedMailTemplate'] = array('HTML-Vorlage für die E-Mail', 'Wenn die E-Mail als HTML-E-Mail versendet werden soll, wählen Sie hier die HTML-Vorlage aus dem Dateisystem.');
+
+$GLOBALS['TL_LANG']['tl_survey']['useResultCategories'] = [
+    'Antwort-Kategorien verwenden',
+    'Aktivieren Sie diese Option, um Kategorien für Antworten (nur bei Multiplie Choice) zu verwenden.'
+];
+$GLOBALS['TL_LANG']['tl_survey']['resultCategories'] = [
+    'Antwort-Kategorien',
+    'Hier können Sie Antwort-Kategorien anlegen.',
+];
+$GLOBALS['TL_LANG']['tl_survey']['resultCategories_'] = [
+    'id' => ['ID', 'Die interne ID der Kategorie. Kann nicht bearbeitet werden.'],
+    'category' => ['Titel', 'Der Titel der Kategorie.']
+];
+
+/*
+* Legends
+*/
+$GLOBALS['TL_LANG']['tl_survey']['head_legend'] = 'Einstellungen für die Kopfzeile';
+$GLOBALS['TL_LANG']['tl_survey']['title_legend'] = 'Titel und Beschreibung';
+$GLOBALS['TL_LANG']['tl_survey']['activation_legend'] = 'Aktivierung';
+$GLOBALS['TL_LANG']['tl_survey']['access_legend'] = 'Zugriff';
+$GLOBALS['TL_LANG']['tl_survey']['texts_legend'] = 'Einleitende und abschließende Bemerkung';
+$GLOBALS['TL_LANG']['tl_survey']['misc_legend'] = 'Allgemeine Einstellungen';
 $GLOBALS['TL_LANG']['tl_survey']['sendformattedmail_legend'] = 'Per E-Mail versenden';
 $GLOBALS['TL_LANG']['tl_survey']['sendconfirmationmail_legend'] = 'Bestätigung per E-Mail versenden';

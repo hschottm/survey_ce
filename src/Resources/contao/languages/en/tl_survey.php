@@ -71,6 +71,19 @@ $GLOBALS['TL_LANG']['tl_survey']['sendFormattedMail'] = array('Send form data vi
 $GLOBALS['TL_LANG']['tl_survey']['formattedMailText'] = array('Text of mail', 'Please enter the text of mail. You can use standard insert tags and tags like form::NAME_OF_FORMFIELD .');
 $GLOBALS['TL_LANG']['tl_survey']['formattedMailTemplate'] = array('HTML-template for mail', 'If mail should be sent as HTML mail, please choose your HTML-template from file system.');
 
+$GLOBALS['TL_LANG']['tl_survey']['useResultCategories'] = [
+    'Use answer cateories',
+    'Activate this option to enable categories for (multiple choice) answers.'
+];
+$GLOBALS['TL_LANG']['tl_survey']['resultCategories'] = [
+    'Answer categories',
+    'Create answer categories',
+];
+$GLOBALS['TL_LANG']['tl_survey']['resultCategories_'] = [
+    'id' => ['ID', 'The internal id for the categorie. Read only.'],
+    'category' => ['Title', 'The category title.']
+];
+
 /*
 * Legends
 */
