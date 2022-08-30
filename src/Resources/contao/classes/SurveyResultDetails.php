@@ -92,13 +92,21 @@ class SurveyResultDetails extends Backend
         $data = [];
         $abs_question_no = 0;
 
+        $categoryCount = [];
+        $collectCategories = false;
+
+        $surveyModel = SurveyModel::findByPk(Input::get('id'));
+        if ($surveyModel && $surveyModel->useResultCategories) {
+            $collectCategories = true;
+        }
+
         while ($row = $objQuestion->fetchAssoc()) {
             ++$abs_question_no;
-            $class = 'Hschottm\SurveyBundle\SurveyQuestion'.ucfirst($row['questiontype']);
 
-            if ($this->classFileExists($class)) {
-                $this->import($class);
-                $question = new $class();
+
+            $question = SurveyQuestion::createInstance(0, $row['questiontype']);
+
+            if ($question) {
                 $question->data = $row;
                 $strUrl = Backend::addToUrl('key=details&amp;id='.$question->id, true, ['key', 'id']);
                 array_push($data, [
@@ -110,6 +118,12 @@ class SurveyResultDetails extends Backend
                     'hrefdetails' => $strUrl,
                     'titledetails' => StringUtil::specialchars(sprintf($GLOBALS['TL_LANG']['tl_survey_result']['details'][1], $question->id)),
                 ]);
+
+                if ($collectCategories && $question instanceof SurveyQuestionMultiplechoice) {
+                    foreach ($question->getResultData()['categories'] as $key => $value) {
+                        $categoryCount[$key] = (($categoryCount[$key] ?? 0) + $value);
+                    }
+                }
             }
         }
         $this->Template = new BackendTemplate('be_survey_result_cumulated');
@@ -123,6 +137,24 @@ class SurveyResultDetails extends Backend
         $this->Template->imgdetails = 'bundles/hschottmsurvey/images/details.png';
         $this->Template->lngAnswered = $GLOBALS['TL_LANG']['tl_survey_question']['answered'];
         $this->Template->lngSkipped = $GLOBALS['TL_LANG']['tl_survey_question']['skipped'];
+
+        if ($collectCategories && !empty($categoryCount)) {
+            $resultCount = array_sum($categoryCount);
+            $categories = [];
+            foreach ($categoryCount as $id => $count) {
+                if ($categoryName = $surveyModel->getCategoryName($id)) {
+                    $categories[$id] = [
+                        'name' => $categoryName,
+                        'count' => $count,
+                        'percent' => ceil(($count/$resultCount)*100),
+                    ];
+                }
+            }
+            $this->Template->categories = $categories;
+        }
+
+
+
 
         return $this->Template->parse();
     }

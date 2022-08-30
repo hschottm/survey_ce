@@ -1,0 +1,24 @@
+<?php $this->extend('surveypage_result_default'); ?>
+
+<?php $this->block('result'); ?>
+
+<div class="survey_usercategories">
+    <span class="survey_categories_userresults_title"><?= ($GLOBALS['TL_LANG']['tl_survey_result']['categoryResults'] ?? 'Categories') ?></span>
+
+    <div class="survey_categories_userresults">
+        <table>
+            <?php if ($this->currentUserCategories): ?>
+                <?php foreach ($this->currentUserCategories as $category): ?>
+                    <tr>
+                        <td><?= $category['name'] ?></td>
+                        <td><?= $category['percent'] ?>%</td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </table>
+        <?php if ($this->currentUserCategory): ?>
+        <p class="survey_categories_userresults"><?= ($GLOBALS['TL_LANG']['tl_survey_result']['userCategory'] ?? 'Your Category:') ?> <?= $this->currentUserCategory ?></p>
+        <?php endif; ?>
+    </div>
+</div>
+<?php $this->endblock(); ?>

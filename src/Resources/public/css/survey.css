@@ -95,3 +95,14 @@ table.tl_cumulated {
 .tl_left.surveypage img {
 	vertical-align: text-top;
 }
+
+.tl_survey_results_categories {
+	/*padding: 18px 15px 3px;*/
+}
+
+.tl_survey_results_categories, .tl_survey_results_cumulated {
+	border-top:1px solid #e6e6e8;
+}
+.tl_survey_results_categories .tl_cumulated.multiplechoice {
+	margin: 3px 18px 15px;
+}

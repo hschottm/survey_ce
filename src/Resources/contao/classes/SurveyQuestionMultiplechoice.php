@@ -23,7 +23,12 @@ use Hschottm\SurveyBundle\Export\Exporter;
  */
 class SurveyQuestionMultiplechoice extends SurveyQuestion
 {
+    public const TYPE = 'multiplechoice';
+
     protected $choices = [];
+
+    /** @var array|null */
+    protected $resultData = null;
 
     /**
      * Import String library.
@@ -46,23 +51,31 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
     public function getResultData(): array
     {
-        $result = [];
-        if (\is_array($this->statistics['cumulated'])) {
-            $result['statistics'] = $this->statistics;
-            $result['choices'] = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous'))
-                ? StringUtil::deserialize($this->arrData['choices'], true)
-                : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        if (null === $this->resultData) {
+            $result = [];
+            if (\is_array($this->statistics['cumulated'])) {
+                $result['statistics'] = $this->statistics;
+                $result['choices'] = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous'))
+                    ? StringUtil::deserialize($this->arrData['choices'], true)
+                    : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+                $result['categories'] = [];
+                $counter = 1;
+                foreach ($result['choices'] as $id => $choice) {
+                    $result['answers'][$counter] = [
+                        'choices' => $choice['choice'],
+                        'selections' => ($this->statistics['cumulated'][$id] ?? 0),
+                    ];
+                    if (isset($choice['category'])) {
+                        $result['categories'][$choice['category']] = (($result['categories'][$choice['category']] ?? 0) + $this->statistics['cumulated'][$id] ?? 0);
+                    }
 
-            $counter = 1;
-            foreach ($result['choices'] as $id => $choice) {
-                $result['answers'][$counter] = [
-                    'choices' => $choice,
-                    'selections' => (($this->statistics['cumulated'][$id]) ? $this->statistics['cumulated'][$id] : 0),
-                ];
-                $counter++;
+                    $counter++;
+                }
             }
+            $this->resultData = $result;
         }
-        return $result;
+
+        return $this->resultData;
     }
 
     public function getAnswersAsHTML()

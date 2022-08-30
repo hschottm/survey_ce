@@ -1,6 +1,7 @@
 <?php $this->extend('surveypage_result_default'); ?>
 
 <?php $this->block('result'); ?>
+
 <?php foreach ($this->results as $result): ?>
     <?php if (!empty($result['title'])): ?>
         <tr>

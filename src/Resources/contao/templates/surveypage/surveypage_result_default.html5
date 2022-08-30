@@ -20,7 +20,5 @@
         <?php endforeach; ?>
 
         <?php $this->endblock(); ?>
-
-
     </div>
 <?php endif; ?>

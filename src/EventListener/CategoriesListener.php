@@ -54,6 +54,7 @@ class CategoriesListener
             $choicesField['fields']['category'] = [
                 'inputType' => 'select',
                 'options_callback' => [self::class, 'surveyChoicesCategoryOptionsCallback'],
+                'eval' => ['isAssociative' => true,]
             ];
         }
     }
