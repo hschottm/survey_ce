@@ -21,6 +21,7 @@ class SurveyPageContainer
 
     private $requestStack;
     private $security;
+    private $hasData;
 
     public function __construct(RequestStack $requestStack, Security $security)
     {
@@ -87,6 +88,11 @@ class SurveyPageContainer
             return '';
         }
 
+        $id = $this->requestStack->getCurrentRequest()->query->get('id');
+        if (!$id || $this->hasData($id)) {
+            return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
+        }
+
         $href = Backend::addToUrl($href . '&amp;id=' . $arrRow['id'] . (Input::get('nb') ? '&amp;nc=1' : ''));
         return '<a href="' . $href . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ';
     }
@@ -97,15 +103,19 @@ class SurveyPageContainer
     public function onListEditHeaderButtonCallback(array $arrRow, ?string $href, string $label, string $title, ?string $icon, string $attributes): string
     {
         $id = $this->requestStack->getCurrentRequest()->query->get('id');
-        if (!$id
-            || SurveyResultModel::findByPid($id)
-            || !$this->security->getUser()->canEditFieldsOf(static::TABLE)
-
-        ) {
+        if (!$id || $this->hasData($id) || !$this->security->getUser()->canEditFieldsOf(static::TABLE)) {
             return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
         }
 
         $href = Backend::addToUrl($href . '&amp;id=' . $arrRow['id']);
         return '<a href="' . $href . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ';
+    }
+
+    protected function hasData(int $id): bool
+    {
+        if (null === $this->hasData) {
+            $this->hasData = !(null === SurveyResultModel::findByPid($id));
+        }
+        return $this->hasData;
     }
 }
