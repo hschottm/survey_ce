@@ -75,7 +75,9 @@ class CategoriesListener
         }
 
         $categories = StringUtil::deserialize($survey->resultCategories, true);
-        $ids = array_filter(array_column($categories, "id"));
+        $ids = array_filter(array_column($categories, "id"), function ($value) {
+            return (!empty($value) || 0 === $value);
+        });
         $max = 0;
         if (!empty($ids)) {
             $max = (max($ids)+1);
