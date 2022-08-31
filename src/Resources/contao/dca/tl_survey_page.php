@@ -108,9 +108,12 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
 
 // Palettes
 $GLOBALS['TL_DCA']['tl_survey_page']['palettes'] = [
-    '__selector__' => ['type'],
+    '__selector__' => ['type','useCustomNextButtonTitle'],
     'default' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
-    'result' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
+    'result' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{config_legend},useCustomNextButtonTitle;{template_legend},page_template',
+];
+$GLOBALS['TL_DCA']['tl_survey_page']['subpalettes'] = [
+    'useCustomNextButtonTitle' => 'customNextButtonTitle',
 ];
 
 // Fields
@@ -181,6 +184,23 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
     ],
     'pagetype' => [
         'sql' => "varchar(30) NOT NULL default 'standard'",
+    ],
+    'useCustomNextButtonTitle' => [
+        'exclude' => true,
+        'inputType' => 'checkbox',
+        'eval' => ['tl_class' => 'w50', 'submitOnChange' => true,],
+        'sql' => "char(1) NOT NULL default ''",
+    ],
+    'customNextButtonTitle' => [
+        'inputType' => 'text',
+        'eval' => ['mandatory' => true, 'maxlength' => 128],
+        'sql' => "varchar(128) NOT NULL default ''",
+    ],
+    'hideBackButton' => [
+        'exclude' => true,
+        'inputType' => 'checkbox',
+        'eval' => ['tl_class' => 'w50'],
+        'sql' => "char(1) NOT NULL default ''",
     ],
 ];
 

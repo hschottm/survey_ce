@@ -18,12 +18,14 @@ namespace Hschottm\SurveyBundle\DataContainer;
 
 use Contao\Backend;
 use Contao\Controller;
+use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\DataContainer;
 use Contao\FrontendTemplate;
 use Contao\Image;
 use Contao\Input;
 use Contao\StringUtil;
+use Hschottm\SurveyBundle\SurveyModel;
 use Hschottm\SurveyBundle\SurveyPageModel;
 use Hschottm\SurveyBundle\SurveyResultModel;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -33,6 +35,8 @@ class SurveyPageContainer
 {
     public const TABLE = 'tl_survey_page';
 
+    public const PAGETYPE_RESULT = 'result';
+
     private $requestStack;
     private $security;
     private $hasData;
@@ -41,6 +45,33 @@ class SurveyPageContainer
     {
         $this->requestStack = $requestStack;
         $this->security = $security;
+    }
+
+    /**
+     * @Callback(table=SurveyPageContainer::TABLE, target="config.onload")
+     */
+    public function onLoadCallback(DataContainer $dc = null): void
+    {
+        if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()->query->get('act')) {
+            return;
+        }
+
+        $surveyPageModel = SurveyPageModel::findByPk($dc->id);
+
+        if (!$surveyPageModel || static::PAGETYPE_RESULT !== $surveyPageModel->type) {
+            return;
+        }
+
+        $surveyModel = SurveyModel::findById($surveyPageModel->pid);
+
+        if (!$surveyModel || !$surveyModel->allowback) {
+            return;
+        }
+
+        PaletteManipulator::create()
+            ->addField('hideBackButton', 'config_legend', PaletteManipulator::POSITION_APPEND)
+            ->applyToPalette(static::PAGETYPE_RESULT, static::TABLE)
+        ;
     }
 
     /**
@@ -108,7 +139,7 @@ class SurveyPageContainer
 
         $id = $this->requestStack->getCurrentRequest()->query->get('id');
 
-        if (!$id || $this->hasData((int)$id)) {
+        if (!$id || $this->hasData((int) $id)) {
             return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
@@ -124,7 +155,7 @@ class SurveyPageContainer
     {
         $id = $this->requestStack->getCurrentRequest()->query->get('id');
 
-        if (!$id || $this->hasData((int)$id) || !$this->security->getUser()->canEditFieldsOf(static::TABLE)) {
+        if (!$id || $this->hasData((int) $id) || !$this->security->getUser()->canEditFieldsOf(static::TABLE)) {
             return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 

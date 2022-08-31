@@ -22,6 +22,7 @@ use Contao\Model\Collection;
 use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\Validator;
+use Hschottm\SurveyBundle\DataContainer\SurveyPageContainer;
 
 class ContentSurvey extends ContentElement
 {
@@ -258,7 +259,18 @@ class ContentSurvey extends ContentElement
             $this->Template->questionblock = $qb;
         }
 
+        if (SurveyPageContainer::PAGETYPE_RESULT === ($pages[$page]['type'] ?? 'default') && $pages[$page]['useCustomNextButtonTitle'] ?? false) {
+            $this->Template->next = $pages[$page]['customNextButtonTitle'];
+        } else {
+            $this->Template->next = $GLOBALS['TL_LANG']['MSC']['survey_next'];
+        }
 
+        if ($this->objSurvey->allowback && (SurveyPageContainer::PAGETYPE_RESULT === ($pages[$page - 1]['type'] ?? 'default')) && $pages[$page - 1]['hideBackButton'] ?? false) {
+            $this->Template->allowback = false;
+        } else {
+            $this->Template->allowback = $this->objSurvey->allowback;
+        }
+        
         // template output
         $this->Template->pages = $pages;
         $this->Template->survey_id = $this->objSurvey->id;
@@ -268,16 +280,13 @@ class ContentSurvey extends ContentElement
         $this->Template->cancel = StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['cancel_survey']);
         global $objPage;
         $this->Template->cancellink = $this->generateFrontendUrl($objPage->row());
-        $this->Template->allowback = $this->objSurvey->allowback;
 
-
-	$this->Template->page = $page;
+	    $this->Template->page = $page;
         $this->Template->introduction = $this->objSurvey->introduction;
         $this->Template->finalsubmission = ($this->objSurvey->finalsubmission) ? $this->objSurvey->finalsubmission : $GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'];
         $formaction = Environment::get('request');
 
         $this->Template->pageXofY = $GLOBALS['TL_LANG']['MSC']['page_x_of_y'];
-        $this->Template->next = $GLOBALS['TL_LANG']['MSC']['survey_next'];
         $this->Template->prev = $GLOBALS['TL_LANG']['MSC']['survey_prev'];
         $this->Template->start = $GLOBALS['TL_LANG']['MSC']['survey_start'];
         $this->Template->finish = $GLOBALS['TL_LANG']['MSC']['survey_finish'];
