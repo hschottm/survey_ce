@@ -1,5 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
+ */
+
 namespace Hschottm\SurveyBundle\DataContainer;
 
 use Contao\Backend;
@@ -49,12 +63,16 @@ class SurveyPageContainer
         $templates = Controller::getTemplateGroup($templateGroup, [], $defaultTemplate);
 
         if ('survey_' === $templateGroup) {
-            $templates = array_filter($templates, function ($template) {
-                if (!is_string($template) || str_starts_with($template, 'survey_answers_') || str_starts_with($template, 'survey_question_')) {
-                    return false;
+            $templates = array_filter(
+                $templates,
+                static function ($template) {
+                    if (!\is_string($template) || str_starts_with($template, 'survey_answers_') || str_starts_with($template, 'survey_question_')) {
+                        return false;
+                    }
+
+                    return true;
                 }
-                return true;
-            });
+            );
         }
 
         return $templates;
@@ -66,7 +84,7 @@ class SurveyPageContainer
     public function onChildRecordCallback(array $row): string
     {
         $surveyPageCollection = SurveyPageModel::findBy(['pid=?', 'sorting<?'], [$row['pid'], $row['sorting']]);
-        $position = (null != $surveyPageCollection) ? $surveyPageCollection->count() + 1 : 1;
+        $position = null !== $surveyPageCollection ? $surveyPageCollection->count() + 1 : 1;
 
         $template = new FrontendTemplate('be_survey_page_preview');
         $template->page = $GLOBALS['TL_LANG']['tl_survey_page']['page'];
@@ -89,12 +107,14 @@ class SurveyPageContainer
         }
 
         $id = $this->requestStack->getCurrentRequest()->query->get('id');
+
         if (!$id || $this->hasData($id)) {
-            return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
+            return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        $href = Backend::addToUrl($href . '&amp;id=' . $arrRow['id'] . (Input::get('nb') ? '&amp;nc=1' : ''));
-        return '<a href="' . $href . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ';
+        $href = Backend::addToUrl($href.'&amp;id='.$arrRow['id'].(Input::get('nb') ? '&amp;nc=1' : ''));
+
+        return '<a href="'.$href.'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
     }
 
     /**
@@ -103,19 +123,22 @@ class SurveyPageContainer
     public function onListEditHeaderButtonCallback(array $arrRow, ?string $href, string $label, string $title, ?string $icon, string $attributes): string
     {
         $id = $this->requestStack->getCurrentRequest()->query->get('id');
+
         if (!$id || $this->hasData($id) || !$this->security->getUser()->canEditFieldsOf(static::TABLE)) {
-            return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)) . ' ';
+            return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        $href = Backend::addToUrl($href . '&amp;id=' . $arrRow['id']);
-        return '<a href="' . $href . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ';
+        $href = Backend::addToUrl($href.'&amp;id='.$arrRow['id']);
+
+        return '<a href="'.$href.'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
     }
 
     protected function hasData(int $id): bool
     {
         if (null === $this->hasData) {
-            $this->hasData = !(null === SurveyResultModel::findByPid($id));
+            $this->hasData = !null === SurveyResultModel::findByPid($id);
         }
+
         return $this->hasData;
     }
 }
