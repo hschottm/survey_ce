@@ -124,7 +124,7 @@ class SurveyPageContainer
     {
         $id = $this->requestStack->getCurrentRequest()->query->get('id');
 
-        if (!$id || $this->hasData($id) || !$this->security->getUser()->canEditFieldsOf(static::TABLE)) {
+        if (!$id || $this->hasData((int)$id) || !$this->security->getUser()->canEditFieldsOf(static::TABLE)) {
             return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
