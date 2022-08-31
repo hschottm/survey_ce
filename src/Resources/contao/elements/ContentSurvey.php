@@ -1112,6 +1112,7 @@ class ContentSurvey extends ContentElement
             $currentMaxCount = 0;
             foreach ($currentUserCategories as $id =>  $value) {
                 $userCategories[$id] = [
+                    'id' => $id,
                     'name' => ($surveyModel ? $surveyModel->getCategoryName($id) : ''),
                     'count' => $value,
                     'percent' => ceil(($value/$resultCount)*100),
