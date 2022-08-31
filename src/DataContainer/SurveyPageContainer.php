@@ -108,7 +108,7 @@ class SurveyPageContainer
 
         $id = $this->requestStack->getCurrentRequest()->query->get('id');
 
-        if (!$id || $this->hasData($id)) {
+        if (!$id || $this->hasData((int)$id)) {
             return Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
