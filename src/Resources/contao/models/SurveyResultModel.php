@@ -12,6 +12,7 @@ namespace Hschottm\SurveyBundle;
 
 use Contao\Database;
 use Contao\Model;
+use Contao\Model\Collection;
 
 /**
  * @property int $id
@@ -21,6 +22,8 @@ use Contao\Model;
  * @property int $uid
  * @property int $qid
  * @property mixed $result
+ *
+ * @method static static[]|Collection|null findBy($val, array $opt=array())
  */
 class SurveyResultModel extends Model
 {

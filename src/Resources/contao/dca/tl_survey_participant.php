@@ -125,6 +125,9 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
         'company' => [
             'sql' => "varchar(255) NOT NULL default ''",
         ],
+        'category' => [
+            'sql' => "int(10) unsigned NULL",
+        ],
     ],
 ];
 

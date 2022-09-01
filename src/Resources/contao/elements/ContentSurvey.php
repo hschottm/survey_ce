@@ -1061,8 +1061,13 @@ class ContentSurvey extends ContentElement
             $useCategories = true;
         }
 
+//        $participantModel = SurveyParticipantModel::findByPin($this->pin);
+//        $category = $participantModel->getCategory();
+
         $count = 0;
         $currentUserCategories = [];
+        $allUserCategories = [];
+        $allUserQuestionsSolvedCount = 0;
         while ($questionCollection->next()) {
             $count++;
             $questionType = SurveyQuestion::createInstance($questionCollection->id, $questionCollection->questiontype);
@@ -1076,6 +1081,13 @@ class ContentSurvey extends ContentElement
 
             if (!$questionCollection->hidetitle) {
                 $questions[$count]['title'] = $questionCollection->title;
+            }
+
+            if ($useCategories) {
+                foreach ($questions[$count]['result']['categories'] as $categoryId => $categoryCount) {
+                    $allUserCategories[$categoryId] = (($allUserCategories[$categoryId] ?? 0) + $categoryCount);
+                }
+                $allUserQuestionsSolvedCount += ($questions[$count]['result']['statistics']['answered'] ?? 0);
             }
 
             $currentUserResult = SurveyResultModel::findBy(
@@ -1105,25 +1117,40 @@ class ContentSurvey extends ContentElement
         }
 
         $resultPageTemplate->results = $questions;
-        if ($useCategories && !empty($currentUserCategories)) {
-            $surveyModel = SurveyModel::findByPk($this->objSurvey->id);
-            $userCategories = [];
-            $resultCount = array_sum($currentUserCategories);
-            $currentMaxCount = 0;
-            foreach ($currentUserCategories as $id =>  $value) {
-                $userCategories[$id] = [
-                    'id' => $id,
-                    'name' => ($surveyModel ? $surveyModel->getCategoryName($id) : ''),
-                    'count' => $value,
-                    'percent' => ceil(($value/$resultCount)*100),
-                ];
-                if ($value > $currentMaxCount) {
-                    $resultPageTemplate->currentUserCategory = $userCategories[$id];
-                    $currentMaxCount = $value;
-                }
-            }
 
-            $resultPageTemplate->currentUserCategories = $userCategories;
+        if ($useCategories) {
+            $surveyModel = SurveyModel::findByPk($this->objSurvey->id);
+
+            $resultCategories = [];
+            foreach ($allUserCategories as $categoryId => $categoryCount) {
+                $resultCategories[$categoryId] = [
+                    'id' => $categoryId,
+                    'name' => ($surveyModel ? $surveyModel->getCategoryName($categoryId) : ''),
+                    'count' => $categoryCount,
+                    'percent' => ceil(($categoryCount/$allUserQuestionsSolvedCount)*100),
+                ];
+            }
+            $resultPageTemplate->resultCategories = $resultCategories;
+
+            if (!empty($currentUserCategories)) {
+                $userCategories = [];
+                $resultCount = array_sum($currentUserCategories);
+                $currentMaxCount = 0;
+                foreach ($currentUserCategories as $id =>  $value) {
+                    $userCategories[$id] = [
+                        'id' => $id,
+                        'name' => ($surveyModel ? $surveyModel->getCategoryName($id) : ''),
+                        'count' => $value,
+                        'percent' => ceil(($value/$resultCount)*100),
+                    ];
+                    if ($value > $currentMaxCount) {
+                        $resultPageTemplate->currentUserCategory = $userCategories[$id];
+                        $currentMaxCount = $value;
+                    }
+                }
+
+                $resultPageTemplate->currentUserCategories = $userCategories;
+            }
         }
 
         $this->Template->questionblock = $resultPageTemplate->parse();
