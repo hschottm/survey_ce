@@ -13,6 +13,7 @@ namespace Hschottm\SurveyBundle;
 use Contao\Backend;
 use Contao\Database;
 use Contao\FrontendTemplate;
+use Contao\StringUtil;
 
 /**
  * Class SurveyQuestion.
@@ -94,14 +95,41 @@ abstract class SurveyQuestion extends Backend
         }
     }
 
+    public function getResultData(): array
+    {
+        $result = [];
+        if (\is_array($this->statistics['answers'])) {
+            $result['statistics'] = $this->statistics;
+            $result['answers'] = $this->statistics['answers'];
+        }
+        return $result;
+    }
+
     public function getAnswersAsHTML()
     {
-        if (\is_array($this->statistics['answers'])) {
+        if (!empty($resultData = $this->getResultData())) {
             $template = new FrontendTemplate('survey_answers_default');
-            $template->answers = $this->statistics['answers'];
-
+            $template->setData($resultData);
             return $template->parse();
         }
+    }
+
+    public static function createInstance(int $questionId, string $questionType = null): ?self
+    {
+        if (null === $questionType) {
+            $questionModel = SurveyQuestionModel::findByPk($questionId);
+            if (!$questionModel) {
+                return null;
+            }
+            $questionType = $questionModel->type;
+        }
+
+        $class = 'Hschottm\\SurveyBundle\\SurveyQuestion'.ucfirst($questionType);
+        if (!class_exists($class)) {
+            return null;
+        }
+
+        return new $class($questionId);
     }
 
     public function clearStatistics()

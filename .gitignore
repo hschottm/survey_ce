@@ -4,6 +4,8 @@
 .settings/
 .buildpath
 .project
+.idea
+.ddev
 composer.lock
 vendor
 # Transifex

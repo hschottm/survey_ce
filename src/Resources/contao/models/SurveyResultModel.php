@@ -13,6 +13,15 @@ namespace Hschottm\SurveyBundle;
 use Contao\Database;
 use Contao\Model;
 
+/**
+ * @property int $id
+ * @property int $tstamp
+ * @property int $pid
+ * @property string $pin
+ * @property int $uid
+ * @property int $qid
+ * @property mixed $result
+ */
 class SurveyResultModel extends Model
 {
     /**

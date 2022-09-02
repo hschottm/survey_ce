@@ -88,3 +88,10 @@ table.tl_cumulated {
 	background-repeat:no-repeat;
   margin-left: 15px;
 }
+
+.tl_left.surveypage {
+	line-height: normal;
+}
+.tl_left.surveypage img {
+	vertical-align: text-top;
+}

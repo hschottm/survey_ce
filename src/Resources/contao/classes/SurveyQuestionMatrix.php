@@ -45,17 +45,28 @@ class SurveyQuestionMatrix extends SurveyQuestion
         }
     }
 
+    public function getResultData(): array
+    {
+        $result = [];
+        if (\is_array($this->statistics['cumulated'])) {
+            $result['statistics'] = $this->statistics;
+            $result['choices'] = StringUtil::deserialize($this->arrData['matrixcolumns'], true);
+            $result['rows'] = StringUtil::deserialize($this->arrData['matrixrows'], true);
+        }
+        return $result;
+    }
+
     public function getAnswersAsHTML()
     {
-        if (\is_array($this->statistics['cumulated'])) {
+        if (!empty($resultData = $this->getResultData())) {
             $template = new FrontendTemplate('survey_answers_matrix');
-            $template->choices = deserialize($this->arrData['matrixcolumns'], true);
-            $template->rows = deserialize($this->arrData['matrixrows'], true);
-            $template->statistics = $this->statistics;
+            $template->choices = $resultData['choices'];
+            $template->rows = $resultData['rows'];
+            $template->statistics = $resultData['statistics'];
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
             $template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
             $template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
-            $template->cumulated = $this->statistics['cumulated'];
+            $template->cumulated = $resultData['statistics']['cumulated'];
 
             return $template->parse();
         }

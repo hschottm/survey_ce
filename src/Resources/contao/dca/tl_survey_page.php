@@ -73,9 +73,12 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['edit'],
             'href' => 'table=tl_survey_question',
             'icon' => 'edit.svg',
-            'button_callback' => ['tl_survey_page', 'editPage'],
         ],
-        'copy' => [
+        'editheader' => [
+            'href' => 'act=edit',
+            'icon' => 'header.svg',
+        ],
+        'copy'       => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['copy'],
             'href' => 'act=paste&mode=copy',
             'icon' => 'copy.svg',
@@ -105,9 +108,13 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
 
 // Palettes
 $GLOBALS['TL_DCA']['tl_survey_page']['palettes'] = [
-    'default' => '{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
+    '__selector__' => ['type','useCustomNextButtonTitle'],
+    'default' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
+    'result' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{config_legend},useCustomNextButtonTitle;{template_legend},page_template',
 ];
-//    'default' => '{title_legend},title,description;{intro_legend},introduction;{condition_legend},conditions;{template_legend},page_template',
+$GLOBALS['TL_DCA']['tl_survey_page']['subpalettes'] = [
+    'useCustomNextButtonTitle' => 'customNextButtonTitle',
+];
 
 // Fields
 $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
@@ -122,6 +129,15 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
     ],
     'sorting' => [
         'sql' => "int(10) unsigned NOT NULL default '0'",
+    ],
+    'type' => [
+        'exclude'                 => true,
+        'filter'                  => true,
+        'inputType'               => 'select',
+        'options'                 => array('default', 'result'),
+        'reference'               => &$GLOBALS['TL_LANG']['tl_survey_page']['type'],
+        'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
+        'sql'                     => array('name'=>'type', 'type'=>'string', 'length'=>8, 'default'=>'default')
     ],
     'title' => [
         'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['title'],
@@ -163,12 +179,28 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
         'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['page_template'],
         'default' => 'survey_questionblock',
         'inputType' => 'select',
-        'options_callback' => ['tl_survey_page', 'getSurveyTemplates'],
         'eval' => ['tl_class' => 'w50'],
         'sql' => "varchar(255) NOT NULL default 'survey_questionblock'",
     ],
     'pagetype' => [
         'sql' => "varchar(30) NOT NULL default 'standard'",
+    ],
+    'useCustomNextButtonTitle' => [
+        'exclude' => true,
+        'inputType' => 'checkbox',
+        'eval' => ['tl_class' => 'w50', 'submitOnChange' => true,],
+        'sql' => "char(1) NOT NULL default ''",
+    ],
+    'customNextButtonTitle' => [
+        'inputType' => 'text',
+        'eval' => ['mandatory' => true, 'maxlength' => 128],
+        'sql' => "varchar(128) NOT NULL default ''",
+    ],
+    'hideBackButton' => [
+        'exclude' => true,
+        'inputType' => 'checkbox',
+        'eval' => ['tl_class' => 'w50'],
+        'sql' => "char(1) NOT NULL default ''",
     ],
 ];
 
@@ -183,45 +215,6 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
 class tl_survey_page extends Backend
 {
     protected $hasData;
-
-    /**
-     * Return all survey templates as array.
-     *
-     * @param object
-     *
-     * @return array
-     */
-    public function getSurveyTemplates(DataContainer $dc)
-    {
-        return $this->getTemplateGroup('survey_');
-    }
-
-    /**
-     * Return the edit page button.
-     *
-     * @param array
-     * @param string
-     * @param string
-     * @param string
-     * @param string
-     * @param string
-     * @param mixed $row
-     * @param mixed $href
-     * @param mixed $label
-     * @param mixed $title
-     * @param mixed $icon
-     * @param mixed $attributes
-     *
-     * @return string
-     */
-    public function editPage($row, $href, $label, $title, $icon, $attributes)
-    {
-        if ($this->hasData()) {
-            return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
-        }
-
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
-    }
 
     /**
      * Return the copy page button.
