@@ -14,7 +14,7 @@ Types of changes
 
 - [Added] Add result page type 🤗 [koertho](https://github.com/koertho)
 - [Fixed] Fix export for german umlauts (C4.9) 🤗 [arboc](https://github.com/arboc)
-- [Changed] allow PHP 8
+- [Changed] Increase PHP version to 7.2 || 8.0
 
 ## [3.2.12](https://github.com/pdir/contao-survey/tree/3.2.12) – 2022-06-08
 
