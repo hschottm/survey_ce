@@ -1061,9 +1061,6 @@ class ContentSurvey extends ContentElement
             $useCategories = true;
         }
 
-//        $participantModel = SurveyParticipantModel::findByPin($this->pin);
-//        $category = $participantModel->getCategory();
-
         $count = 0;
         $currentUserCategories = [];
         $allUserCategories = [];
@@ -1084,7 +1081,7 @@ class ContentSurvey extends ContentElement
             }
 
             if ($useCategories) {
-                foreach ($questions[$count]['result']['categories'] as $categoryId => $categoryCount) {
+                foreach (($questions[$count]['result']['categories'] ?? []) as $categoryId => $categoryCount) {
                     $allUserCategories[$categoryId] = (($allUserCategories[$categoryId] ?? 0) + $categoryCount);
                 }
                 $allUserQuestionsSolvedCount += ($questions[$count]['result']['statistics']['answered'] ?? 0);

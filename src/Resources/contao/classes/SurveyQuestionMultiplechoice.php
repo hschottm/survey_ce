@@ -63,8 +63,11 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                 $counter = 1;
 
                 foreach ($result['choices'] as $id => $choice) {
+                    $choice = $choice['choice'];
+                    $result['choices'][$id] = $choice;
+
                     $result['answers'][$counter] = [
-                        'choices' => $choice['choice'],
+                        'choices' => $choice,
                         'selections' => ($this->statistics['cumulated'][$id] ?? 0),
                     ];
                     if (isset($choice['category'])) {
@@ -83,6 +86,8 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (!empty($resultData = $this->getResultData())) {
+            $survey = SurveyModel::findByQuestionId($this->id);
+
             $template = new FrontendTemplate('survey_answers_multiplechoice');
             $template->statistics = $resultData['statistics'];
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
@@ -91,6 +96,8 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             $template->choices = $resultData['choices'];
             $template->other = ($this->arrData['addother']) ? true : false;
             $template->othertitle = StringUtil::specialchars($this->arrData['othertitle']);
+            $template->useCategories = ($survey && $survey->useResultCategories);
+            $template->survey = $survey;
             $otherchoices = [];
             if (\count($this->statistics['cumulated']['other'])) {
                 foreach ($this->statistics['cumulated']['other'] as $value) {
@@ -126,10 +133,10 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
         $exporter->setCellValue($sheet, $row + 1, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['nrOfSelections'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
 
-        $arrChoices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        $arrChoices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
         $col = 2;
         foreach ($arrChoices as $id => $choice) {
-            $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice['choice']]);
+            $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice['choice']['choice']]);
             $exporter->setCellValue($sheet, $row + 1, $col++, [Exporter::DATA => (($this->statistics['cumulated'][$id]) ? $this->statistics['cumulated'][$id] : 0), Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
         }
         if ($this->arrData['addother']) {
@@ -500,11 +507,11 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
         if (is_array($arrAnswer['value'])) {
             foreach ($arrAnswer['value'] as $key => $val) {
-                $selections[] = $arrChoices[$val]['choice'];
+                $selections[] = $arrChoices[$val]['choice']['choice'];
             }
             return implode(", ", $selections);
         } else {
-            return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice'];
+            return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice']['choice'];
         }
         if (strlen($arrAnswer['other'])) {
             return $arrAnswer['other'];
