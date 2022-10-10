@@ -133,7 +133,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         $template->styleVertical = 0 == strcmp($this->strStyle, 'vertical');
         $template->styleSelect = 0 == strcmp($this->strStyle, 'select');
         $template->values = $this->varValue;
-        $template->choices = array_column($this->arrChoices, 'choice');
+        $template->choices = $this->arrChoices;
         $template->blnOther = $this->blnOther;
         $template->lngYes = $GLOBALS['TL_LANG']['tl_survey_question']['yes'];
         $template->lngNo = $GLOBALS['TL_LANG']['tl_survey_question']['no'];
