@@ -13,6 +13,7 @@ namespace Hschottm\SurveyBundle;
 use Contao\Database;
 use Contao\Model;
 use Contao\Model\Collection;
+use Contao\StringUtil;
 use Contao\System;
 
 /**
@@ -22,6 +23,7 @@ use Contao\System;
  * @property string $title
  * @property string $question
  * @property bool $hidetitle
+ * @property string $choices
  *
  * @method static SurveyQuestionModel|null findByPk($val, array $opt=array())
  */
@@ -64,7 +66,17 @@ class SurveyQuestionModel extends Model
         return Collection::createFromDbResult($result, static::$strTable);
     }
 
-
+    public function getCategoryByChoice(int $choice): ?int
+    {
+        $choices = StringUtil::deserialize($this->choices, true);
+        if (isset($choices[$choice]['category']) && (!(empty($choices[$choice]['category']))
+                || 0 === $choices[$choice]['category']
+                || "0" === $choices[$choice]['category']))
+        {
+            return $choices[$choice]['category'];
+        }
+        return null;
+    }
 }
 
 class_alias(SurveyQuestionModel::class, 'SurveyQuestionModel');

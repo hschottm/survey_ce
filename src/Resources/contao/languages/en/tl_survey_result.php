@@ -31,3 +31,9 @@ $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_sort'] = 'Sort';
 $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_sort'] = 'Date';
 $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_lastpage'] = 'Last page';
 $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_participant'] = 'Participant';
+$GLOBALS['TL_LANG']['tl_survey_result']['categoryResults'] = 'Categories';
+
+$GLOBALS['TL_LANG']['tl_survey_result']['BE']['categoryResults'] = 'Categories';
+$GLOBALS['TL_LANG']['tl_survey_result']['BE']['category'] = 'Category';
+$GLOBALS['TL_LANG']['tl_survey_result']['BE']['percent'] = 'Percent';
+

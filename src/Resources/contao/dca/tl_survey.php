@@ -12,8 +12,9 @@ use Contao\Backend;
 use Contao\BackendUser;
 use Contao\Database;
 use Contao\Input;
+use Doctrine\DBAL\Platforms\MySqlPlatform;
 
- $found = (\strlen(Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(Input::get('id')) : null;
+$found = (\strlen(Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(Input::get('id')) : null;
  $hasData = (null != $found && 0 < $found->count()) ? true : false;
 
 /*
@@ -96,16 +97,17 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
 
     // Palettes
     'palettes' => [
-        '__selector__' => ['access', 'limit_groups'],
+        '__selector__' => ['access', 'limit_groups', 'useResultCategories'],
         'default' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end',
-        'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto',
-        'anoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto',
-        'nonanoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie,limit_groups;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto',
+        'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
+        'anoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
+        'nonanoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie,limit_groups;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
     ],
 
     // Palettes
     'subpalettes' => [
         'limit_groups' => 'allowed_groups',
+        'useResultCategories' => 'resultCategories',
     ],
 
     // Fields
@@ -257,6 +259,32 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey']['surveyPage'],
             'inputType' => 'pageTree',
             'eval' => ['mandatory' => false, 'fieldType' => 'radio'],
+        ],
+        'useResultCategories' => [
+            'exclude'   => true,
+            'inputType' => 'checkbox',
+            'eval'      => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'       => "char(1) NOT NULL default ''",
+        ],
+        'resultCategories' => [
+            'exclude'   => true,
+            'inputType' => 'group',
+            'palette' => ['category', 'id',],
+            'fields' => [
+                'id' => [
+                    'inputType' => 'text',
+                    'eval' => ['readonly' => true, 'tl_class' => 'w50',],
+                ],
+                'category' => [
+                    'inputType' => 'text',
+                    'eval' => ['tl_class' => 'w50',],
+                ],
+            ],
+            'sql' => [
+                'type' => 'blob',
+                'length' => MySqlPlatform::LENGTH_LIMIT_BLOB,
+                'notnull' => false,
+            ],
         ],
     ],
 ];

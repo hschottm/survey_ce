@@ -12,6 +12,7 @@ namespace Hschottm\SurveyBundle;
 
 use Contao\BackendTemplate;
 use Contao\ContentElement;
+use Contao\Database\Result;
 use Contao\Email;
 use Contao\Environment;
 use Contao\File;
@@ -24,6 +25,9 @@ use Contao\StringUtil;
 use Contao\Validator;
 use Hschottm\SurveyBundle\DataContainer\SurveyPageContainer;
 
+/**
+ * @property SurveyModel|Result $objSurvey
+ */
 class ContentSurvey extends ContentElement
 {
     /**
@@ -281,7 +285,7 @@ class ContentSurvey extends ContentElement
         global $objPage;
         $this->Template->cancellink = $this->generateFrontendUrl($objPage->row());
 
-	    $this->Template->page = $page;
+	$this->Template->page = $page;
         $this->Template->introduction = $this->objSurvey->introduction;
         $this->Template->finalsubmission = ($this->objSurvey->finalsubmission) ? $this->objSurvey->finalsubmission : $GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'];
         $formaction = Environment::get('request');
@@ -436,7 +440,7 @@ class ContentSurvey extends ContentElement
                         break;
                 }
                 if (null != $objResult && $objResult->count()) {
-                    $objWidget->value = deserialize($objResult->result);
+                    $objWidget->value = StringUtil::deserialize($objResult->result);
                 }
             }
         }
@@ -1052,7 +1056,15 @@ class ContentSurvey extends ContentElement
             return;
         }
 
+        $useCategories = false;
+        if ($this->objSurvey->useResultCategories) {
+            $useCategories = true;
+        }
+
         $count = 0;
+        $currentUserCategories = [];
+        $allUserCategories = [];
+        $allUserQuestionsSolvedCount = 0;
         while ($questionCollection->next()) {
             $count++;
             $questionType = SurveyQuestion::createInstance($questionCollection->id, $questionCollection->questiontype);
@@ -1068,6 +1080,13 @@ class ContentSurvey extends ContentElement
                 $questions[$count]['title'] = $questionCollection->title;
             }
 
+            if ($useCategories) {
+                foreach (($questions[$count]['result']['categories'] ?? []) as $categoryId => $categoryCount) {
+                    $allUserCategories[$categoryId] = (($allUserCategories[$categoryId] ?? 0) + $categoryCount);
+                }
+                $allUserQuestionsSolvedCount += ($questions[$count]['result']['statistics']['answered'] ?? 0);
+            }
+
             $currentUserResult = SurveyResultModel::findBy(
                 ['pid=?', 'qid=?', ($this->objSurvey->access === 'nonanoncode' ? 'uid=?' : 'pin=?')],
                 [$this->objSurvey->id, $questionCollection->id, $userId]
@@ -1079,10 +1098,57 @@ class ContentSurvey extends ContentElement
                     'result' => $questionType->resultAsString($currentUserResult->result),
                     'data' => $currentUserResult->row(),
                 ];
+
+                if ($useCategories && $questionType instanceof SurveyQuestionMultiplechoice) {
+                    $result = StringUtil::deserialize($currentUserResult->result ?? '', true)['value'] ?? null;
+                    if ($result) {
+                        $categoryId = $questionCollection->current()->getCategoryByChoice((int)$result);
+                        if ($categoryId || 0 === $categoryId) {
+                            $currentUserCategories[$categoryId] = (($currentUserCategories[$categoryId] ?? 0) + 1);
+                        }
+                    }
+
+
+                }
             }
         }
 
         $resultPageTemplate->results = $questions;
+
+        if ($useCategories) {
+            $surveyModel = SurveyModel::findByPk($this->objSurvey->id);
+
+            $resultCategories = [];
+            foreach ($allUserCategories as $categoryId => $categoryCount) {
+                $resultCategories[$categoryId] = [
+                    'id' => $categoryId,
+                    'name' => ($surveyModel ? $surveyModel->getCategoryName($categoryId) : ''),
+                    'count' => $categoryCount,
+                    'percent' => ceil(($categoryCount/$allUserQuestionsSolvedCount)*100),
+                ];
+            }
+            $resultPageTemplate->resultCategories = $resultCategories;
+
+            if (!empty($currentUserCategories)) {
+                $userCategories = [];
+                $resultCount = array_sum($currentUserCategories);
+                $currentMaxCount = 0;
+                foreach ($currentUserCategories as $id =>  $value) {
+                    $userCategories[$id] = [
+                        'id' => $id,
+                        'name' => ($surveyModel ? $surveyModel->getCategoryName($id) : ''),
+                        'count' => $value,
+                        'percent' => ceil(($value/$resultCount)*100),
+                    ];
+                    if ($value > $currentMaxCount) {
+                        $resultPageTemplate->currentUserCategory = $userCategories[$id];
+                        $currentMaxCount = $value;
+                    }
+                }
+
+                $resultPageTemplate->currentUserCategories = $userCategories;
+            }
+        }
 
         $this->Template->questionblock = $resultPageTemplate->parse();
     }

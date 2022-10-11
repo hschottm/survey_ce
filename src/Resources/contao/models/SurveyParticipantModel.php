@@ -12,6 +12,15 @@ namespace Hschottm\SurveyBundle;
 
 use Contao\Model;
 
+/**
+ * @property int $id
+ * @property int $pid
+ * @property int $tstamp
+ * @property string $pin
+ * @property int $category
+ *
+ * @method static static|null findByPin($val, array $opt=array())
+ */
 class SurveyParticipantModel extends Model
 {
     /**

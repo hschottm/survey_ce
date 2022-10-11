@@ -23,7 +23,12 @@ use Hschottm\SurveyBundle\Export\Exporter;
  */
 class SurveyQuestionMultiplechoice extends SurveyQuestion
 {
+    public const TYPE = 'multiplechoice';
+
     protected $choices = [];
+
+    /** @var array|null */
+    protected $resultData = null;
 
     /**
      * Import String library.
@@ -46,28 +51,43 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
     public function getResultData(): array
     {
-        $result = [];
-        if (\is_array($this->statistics['cumulated'])) {
-            $result['statistics'] = $this->statistics;
-            $result['choices'] = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous'))
-                ? StringUtil::deserialize($this->arrData['choices'], true)
-                : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        if (null === $this->resultData) {
+            $result = [];
+            if (\is_array($this->statistics['cumulated'])) {
+                $result['statistics'] = $this->statistics;
 
-            $counter = 1;
-            foreach ($result['choices'] as $id => $choice) {
-                $result['answers'][$counter] = [
-                    'choices' => $choice,
-                    'selections' => (($this->statistics['cumulated'][$id+1]) ? $this->statistics['cumulated'][$id+1] : 0),
-                ];
-                $counter++;
+                $result['choices'] = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous'))
+                    ? StringUtil::deserialize($this->arrData['choices'], true)
+                    : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+                $result['categories'] = [];
+                $counter = 1;
+
+                foreach ($result['choices'] as $id => $choice) {
+                    $choice = $choice['choice'];
+                    $result['choices'][$id] = $choice;
+
+                    $result['answers'][$counter] = [
+                        'choices' => $choice,
+                        'selections' => ($this->statistics['cumulated'][$id] ?? 0),
+                    ];
+                    if (isset($choice['category'])) {
+                        $result['categories'][$choice['category']] = (($result['categories'][$choice['category']] ?? 0) + $this->statistics['cumulated'][$id] ?? 0);
+                    }
+
+                    $counter++;
+                }
             }
+            $this->resultData = $result;
         }
-        return $result;
+
+        return $this->resultData;
     }
 
     public function getAnswersAsHTML()
     {
         if (!empty($resultData = $this->getResultData())) {
+            $survey = SurveyModel::findByQuestionId($this->id);
+
             $template = new FrontendTemplate('survey_answers_multiplechoice');
             $template->statistics = $resultData['statistics'];
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
@@ -76,6 +96,8 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             $template->choices = $resultData['choices'];
             $template->other = ($this->arrData['addother']) ? true : false;
             $template->othertitle = StringUtil::specialchars($this->arrData['othertitle']);
+            $template->useCategories = ($survey && $survey->useResultCategories);
+            $template->survey = $survey;
             $otherchoices = [];
             if (\count($this->statistics['cumulated']['other'])) {
                 foreach ($this->statistics['cumulated']['other'] as $value) {
@@ -111,11 +133,11 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
         $exporter->setCellValue($sheet, $row + 1, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['nrOfSelections'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
 
-        $arrChoices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        $arrChoices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
         $col = 2;
         foreach ($arrChoices as $id => $choice) {
-            $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice]);
-            $exporter->setCellValue($sheet, $row + 1, $col++, [Exporter::DATA => (($this->statistics['cumulated'][$id + 1]) ? $this->statistics['cumulated'][$id + 1] : 0), Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
+            $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice['choice']['choice']]);
+            $exporter->setCellValue($sheet, $row + 1, $col++, [Exporter::DATA => (($this->statistics['cumulated'][$id]) ? $this->statistics['cumulated'][$id] : 0), Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
         }
         if ($this->arrData['addother']) {
             $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $this->arrData['othertitle']]);
@@ -198,7 +220,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             $this->arrStatistics['participants'][$id][] = $objResult->row();
             $this->arrStatistics['answers'][] = $objResult->result;
             if (\strlen($objResult->result)) {
-                $arrAnswer = deserialize($objResult->result, true);
+                $arrAnswer = StringUtil::deserialize($objResult->result, true);
                 $found = false;
                 if (\is_array($arrAnswer['value'])) {
                     foreach ($arrAnswer['value'] as $answervalue) {
@@ -230,7 +252,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $cumulated = [];
         $cumulated['other'] = [];
         foreach ($this->arrStatistics['answers'] as $answer) {
-            $arrAnswer = deserialize($answer, true);
+            $arrAnswer = StringUtil::deserialize($answer, true);
             if (\is_array($arrAnswer['value'])) {
                 foreach ($arrAnswer['value'] as $answervalue) {
                     if (\strlen($answervalue)) {
@@ -271,7 +293,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
                     1 => $GLOBALS['TL_LANG']['tl_survey_question']['no'],
                 ]
-            : deserialize($this->arrData['choices'], true);
+            : StringUtil::deserialize($this->arrData['choices'], true);
         if ($this->arrData['addother']) {
             $this->choices[] = preg_replace('/[-=>:\s]+$/', '', $this->arrData['othertitle']);
         }
@@ -387,7 +409,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             $sumWidth = 0;
             foreach ($this->choices as $key => $choice) {
               $data = [
-                Exporter::DATA => $choice,
+                Exporter::DATA => $choice['choice'],
                 Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
                 Exporter::TEXTWRAP => true,
                 Exporter::TEXTROTATE => ($this->arrData['addother'] && ($key == \count($this->choices) - 1)) ? Exporter::TEXTROTATE_NONE : Exporter::TEXTROTATE_COUNTERCLOCKWISE,
@@ -444,9 +466,9 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     $emptyAnswer = false;
                     foreach ($this->choices as $choice)
                     {
-                      if (strlen($choice) == 0) $emptyAnswer = true;
+                      if (empty($choice['choice']) == 0) $emptyAnswer = true;
                     }
-                    $strAnswer = (($emptyAnswer) ? ($arrAnswers['value'] . ' - ') : '') . $this->choices[$arrAnswers['value'] - 1];
+                    $strAnswer = (($emptyAnswer) ? ($arrAnswers['value'] . ' - ') : '') . $this->choices[$arrAnswers['value']]['choice'];
                     if (($this->arrData['addother']) && ($arrAnswers['value'] == \count($this->choices))) {
                         $strAnswer .= ': '.StringUtil::decodeEntities($arrAnswers['other']);
                     }
@@ -479,43 +501,38 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         return $cells;
     }
 
-            public function resultAsString($res)
-        {
-                $arrAnswer = deserialize($res, true);
-    $arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
-                if (is_array($arrAnswer['value']))
-                {
-      foreach ($arrAnswer['value'] as $key => $val)
-      {
-        $selections[] = $arrChoices[$val-1];
-      }
-                        return implode (", ", $selections);
-                }
-                else
-                {
-                        return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value']-1 : -1];
-                }
-                if (strlen($arrAnswer['other']))
-                {
-                        return $arrAnswer['other'];
-                }
+    public function resultAsString($res)
+    {
+        $arrAnswer  = StringUtil::deserialize($res, true);
+        $arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        if (is_array($arrAnswer['value'])) {
+            foreach ($arrAnswer['value'] as $key => $val) {
+                $selections[] = $arrChoices[$val]['choice']['choice'];
+            }
+            return implode(", ", $selections);
+        } else {
+            return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice']['choice'];
         }
+        if (strlen($arrAnswer['other'])) {
+            return $arrAnswer['other'];
+        }
+    }
 
-/*public function resultAsString($res)
-  	{
-  		$arrAnswer = deserialize($res, true);
-  		if (is_array($arrAnswer['value']))
-  		{
-  			return implode (", ", $arrAnswer['value']);
-  		}
-  		else
-  		{
-  			$arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
-  			return $arrChoices[$arrAnswer['value']-1];
-  		}
-  		if (strlen($arrAnswer['other']))
-  		{
-  			return $arrAnswer['other'];
-  		}
-  	}*/
+    /*public function resultAsString($res)
+          {
+              $arrAnswer = deserialize($res, true);
+              if (is_array($arrAnswer['value']))
+              {
+                  return implode (", ", $arrAnswer['value']);
+              }
+              else
+              {
+                  $arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
+                  return $arrChoices[$arrAnswer['value']-1];
+              }
+              if (strlen($arrAnswer['other']))
+              {
+                  return $arrAnswer['other'];
+              }
+          }*/
 }
