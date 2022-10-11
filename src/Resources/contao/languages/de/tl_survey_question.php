@@ -165,3 +165,4 @@ $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_copy'] = 'Sp
 $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_delete'] = 'Spalte löschen';
 $GLOBALS['TL_LANG']['tl_survey_question']['cssClass'] = ['CSS-Klasse', 'Hier können Sie eine oder mehrere CSS-Klassen eingeben.'];
 $GLOBALS['TL_LANG']['tl_survey_question']['expert_legend'] = 'Experten-Einstellungen';
+$GLOBALS['TL_LANG']['tl_survey_question']['answers'] = 'Antworten';

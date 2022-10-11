@@ -53,7 +53,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     {
         if (null === $this->resultData) {
             $result = [];
-            if (\is_array($this->statistics['cumulated'])) {
+            if (isset($this->statistics['cumulated']) && \is_array($this->statistics['cumulated'])) {
                 $result['statistics'] = $this->statistics;
 
                 $result['choices'] = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous'))
@@ -409,7 +409,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             $sumWidth = 0;
             foreach ($this->choices as $key => $choice) {
               $data = [
-                Exporter::DATA => $choice['choice'],
+                Exporter::DATA => is_array($choice)? $choice['choice']: $choice,
                 Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
                 Exporter::TEXTWRAP => true,
                 Exporter::TEXTROTATE => ($this->arrData['addother'] && ($key == \count($this->choices) - 1)) ? Exporter::TEXTROTATE_NONE : Exporter::TEXTROTATE_COUNTERCLOCKWISE,
@@ -446,10 +446,10 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $startCol = $col;
         foreach ($participants as $key => $value) {
             $data = false;
-            if (\strlen($this->statistics['participants'][$key]['result'])) {
+            if (isset($this->statistics['participants']) && \strlen($this->statistics['participants'][$key]['result'])) {
                 // future state of survey_ce
                 $data = $this->statistics['participants'][$key]['result'];
-            } elseif (\strlen($this->statistics['participants'][$key][0]['result'])) {
+            } elseif (isset($this->statistics['participants']) && \strlen($this->statistics['participants'][$key][0]['result'])) {
                 // current state of survey_ce: additional subarray with always 1 entry
                 $data = $this->statistics['participants'][$key][0]['result'];
             }
