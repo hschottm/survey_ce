@@ -114,7 +114,7 @@ $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_new'] = 'New
 $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_copy'] = 'Duplicate column';
 $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_delete'] = 'Delete column';
 $GLOBALS['TL_LANG']['tl_survey_question']['cssClass'] = ['CSS class', 'Here you can enter one or more CSS classes.'];
-
+$GLOBALS['TL_LANG']['tl_survey_question']['answers'] = 'Answers';
 /*
 * Legends
 */

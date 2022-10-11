@@ -86,4 +86,7 @@ $GLOBALS['TL_SVY']['q_constantsum'] = SurveyQuestionConstantsum::class;
 /*
  * Set the member URL parameter as url keyword
  */
-$GLOBALS['TL_CONFIG']['urlKeywords'] .= (\strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '').'code';
+if (isset($GLOBALS['TL_CONFIG']['urlKeywords'])) {
+    $GLOBALS['TL_CONFIG']['urlKeywords'] .= (\strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '').'code';
+}
+

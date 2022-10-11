@@ -98,7 +98,7 @@ abstract class SurveyQuestion extends Backend
     public function getResultData(): array
     {
         $result = [];
-        if (\is_array($this->statistics['answers'])) {
+        if (isset($this->statistics['answers']) && \is_array($this->statistics['answers'])) {
             $result['statistics'] = $this->statistics;
             $result['answers'] = $this->statistics['answers'];
         }

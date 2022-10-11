@@ -47,7 +47,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
     public function getResultData(): array
     {
         $result = [];
-        if (\is_array($this->statistics['cumulated'])) {
+        if (isset($this->statistics['cumulated']) && \is_array($this->statistics['cumulated'])) {
             $result['statistics'] = $this->statistics;
             $result['choices'] = StringUtil::deserialize($this->arrData['sumchoices'], true);
             $result['cumulated'] = $this->statistics['cumulated'];
