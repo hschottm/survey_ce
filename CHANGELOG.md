@@ -10,9 +10,13 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
+## [3.4.2](https://github.com/pdir/contao-survey/tree/3.4.2) – 2022-12-22
+
+- [Fixed] Fixes a bug in multi-page surveys [#19](https://github.com/pdir/contao-survey/issues/19)
+
 ## [3.4.1](https://github.com/pdir/contao-survey/tree/3.4.1) – 2022-12-21
 
-- [Fixed] Fix Migration #21
+- [Fixed] Fix Migration [#21](https://github.com/pdir/contao-survey/issues/21)
 - [Fixed] Remove warnings
 - [Changed] Increase PHP version to 7.4 || 8.0
 
