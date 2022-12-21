@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 $GLOBALS['TL_LANG']['tl_survey_page']['title'] = ['Title', 'Please enter the page title.'];
@@ -26,15 +32,15 @@ $GLOBALS['TL_LANG']['tl_survey_page']['page'] = 'Page';
 $GLOBALS['TL_LANG']['tl_survey_page']['type'] = ['Page type', 'Please choose the type of the page.'];
 $GLOBALS['TL_LANG']['tl_survey_page']['useCustomNextButtonTitle'] = [
     'Adjust "Next" text',
-    'Choose this option to use a custom next button text on the former page.'
+    'Choose this option to use a custom next button text on the former page.',
 ];
 $GLOBALS['TL_LANG']['tl_survey_page']['customNextButtonTitle'] = [
     '"Next" text',
-    'Set a text for the next button on the former page.'
+    'Set a text for the next button on the former page.',
 ];
 $GLOBALS['TL_LANG']['tl_survey_page']['hideBackButton'] = [
     'Hide "back"',
-    'Choose this option to hide the back button on the current page.'
+    'Choose this option to hide the back button on the current page.',
 ];
 
 /*
@@ -47,7 +53,7 @@ $GLOBALS['TL_LANG']['tl_survey_page']['condition_legend'] = 'Jump conditions';
 $GLOBALS['TL_LANG']['tl_survey_page']['template_legend'] = 'Template settings';
 $GLOBALS['TL_LANG']['tl_survey_page']['config_legend'] = 'Configuration';
 
-/**
+/*
  * Page types
  */
 $GLOBALS['TL_LANG']['tl_survey_page']['type']['default'] = 'Question page';

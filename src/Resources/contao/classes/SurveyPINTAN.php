@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle;
@@ -37,11 +43,11 @@ class SurveyPINTAN extends Backend
 
     public function exportTAN(DataContainer $dc)
     {
-        if ('exporttan' != Input::get('key')) {
+        if ('exporttan' !== Input::get('key')) {
             return '';
         }
 
-        if ('tl_survey_pin_tan' == Input::get('table')) {
+        if ('tl_survey_pin_tan' === Input::get('table')) {
             $this->redirect(Backend::addToUrl('table=tl_survey', true, ['table']));
 
             return;
@@ -59,25 +65,28 @@ class SurveyPINTAN extends Backend
         $this->Template->submit = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
 
         // Create import form
-        if ('tl_export_survey_pin_tan' == Input::post('FORM_SUBMIT') && $this->blnSave) {
+        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave) {
             $export = [];
             $surveyPage = $this->Template->surveyPage->value;
             $pageModel = PageModel::findOneBy('id', $surveyPage);
-            $pagedata = (null != $pageModel) ? $pageModel->row() : null;
+            $pagedata = null !== $pageModel ? $pageModel->row() : null;
             $domain = Environment::get('base');
 
-            $res = \Hschottm\SurveyBundle\SurveyPinTanModel::findBy('pid', Input::get('pid'), ['order' => 'tstamp DESC, id DESC']);
+            $res = SurveyPinTanModel::findBy('pid', Input::get('pid'), ['order' => 'tstamp DESC, id DESC']);
+
             foreach ($res as $objPINTAN) {
                 $row = $objPINTAN->row();
                 $line = [];
                 $line['tan'] = $row['tan'];
                 $line['tstamp'] = date($GLOBALS['TL_CONFIG']['datimFormat'], $row['tstamp']);
                 $line['used'] = $row['used'] ? 1 : 0;
-                if (null != $pagedata) {
+
+                if (null !== $pagedata) {
                     $line['url'] = ampersand($domain.$this->generateFrontendUrl($pagedata, '/code/'.$row['tan']));
                 }
                 $export[] = $line;
             }
+
             if (\count($export)) {
                 $exporter = ExportHelper::getExporter();
                 $sheet = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tans'];
@@ -88,102 +97,105 @@ class SurveyPINTAN extends Backend
                 $intColCounter = 0;
 
                 $exporter->setCellValue(
-                  $sheet,
-                  $intRowCounter,
-                  $intColCounter,
-                  [
-                    Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'][0],
-                    Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD
-                  ]
-                );
-                ++$intColCounter;
-
-                $exporter->setCellValue(
-                  $sheet,
-                  $intRowCounter,
-                  $intColCounter,
-                  [
-                    Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'][0],
-                    Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-                    Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO
-                  ]
-                );
-                ++$intColCounter;
-
-                $exporter->setCellValue(
-                  $sheet,
-                  $intRowCounter,
-                  $intColCounter,
-                  [
-                    Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'][0],
-                    Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD
-                  ]
-                );
-                ++$intColCounter;
-
-                if (null != $pagedata) {
-                    $exporter->setCellValue(
-                      $sheet,
-                      $intRowCounter,
-                      $intColCounter,
-                      [
-                        Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['url'],
+                    $sheet,
+                    $intRowCounter,
+                    $intColCounter,
+                    [
+                        Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'][0],
                         Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-                        Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO
-                      ]
+                    ]
+                );
+                ++$intColCounter;
+
+                $exporter->setCellValue(
+                    $sheet,
+                    $intRowCounter,
+                    $intColCounter,
+                    [
+                        Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'][0],
+                        Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+                        Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO,
+                    ]
+                );
+                ++$intColCounter;
+
+                $exporter->setCellValue(
+                    $sheet,
+                    $intRowCounter,
+                    $intColCounter,
+                    [
+                        Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'][0],
+                        Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+                    ]
+                );
+                ++$intColCounter;
+
+                if (null !== $pagedata) {
+                    $exporter->setCellValue(
+                        $sheet,
+                        $intRowCounter,
+                        $intColCounter,
+                        [
+                            Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['url'],
+                            Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+                            Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO,
+                        ]
                     );
                     ++$intColCounter;
                 }
 
                 $exporter->setCellValue(
-                  $sheet,
-                  $intRowCounter,
-                  $intColCounter,
-                  [
-                    Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['sort'],
-                    Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-                    Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO
-                  ]
+                    $sheet,
+                    $intRowCounter,
+                    $intColCounter,
+                    [
+                        Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['sort'],
+                        Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+                        Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO,
+                    ]
                 );
 
                 // Data
                 $intRowCounter = 1;
+
                 foreach ($export as $line) {
                     $intColCounter = 0;
+
                     foreach ($line as $key => $data) {
                         $celldata = [
-                          Exporter::DATA => $data
+                            Exporter::DATA => $data,
                         ];
-                        if ($intColCounter == 0)
-                        {
-                          $celldata[Exporter::CELLTYPE] = Exporter::CELLTYPE_STRING;
+
+                        if (0 === $intColCounter) {
+                            $celldata[Exporter::CELLTYPE] = Exporter::CELLTYPE_STRING;
                         }
                         $exporter->setCellValue(
-                          $sheet,
-                          $intRowCounter,
-                          $intColCounter,
-                          $celldata
+                            $sheet,
+                            $intRowCounter,
+                            $intColCounter,
+                            $celldata
                         );
                         ++$intColCounter;
                     }
                     $exporter->setCellValue(
-                      $sheet,
-                      $intRowCounter,
-                      $intColCounter,
-                      [
-                        Exporter::DATA => $intRowCounter,
-                        Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
-                      ]
+                        $sheet,
+                        $intRowCounter,
+                        $intColCounter,
+                        [
+                            Exporter::DATA => $intRowCounter,
+                            Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
+                        ]
                     );
                     ++$intRowCounter;
                 }
-                $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', Input::get('pid'));
-                if (null != $surveyModel) {
-                  $exporter->setFilename('TAN_'.$surveyModel->title);
+                $surveyModel = SurveyModel::findOneBy('id', Input::get('pid'));
+
+                if (null !== $surveyModel) {
+                    $exporter->setFilename('TAN_'.$surveyModel->title);
                 } else {
-                  $exporter->setFilename('TAN');
+                    $exporter->setFilename('TAN');
                 }
-                $exporter->sendFile("TAN", "TAN", "TAN", 'Contao CMS', 'Contao CMS');
+                $exporter->sendFile('TAN', 'TAN', 'TAN', 'Contao CMS', 'Contao CMS');
                 exit;
             }
             $this->redirect(Backend::addToUrl('table=tl_survey_pin_tan', true, ['key', 'table']));
@@ -194,7 +206,7 @@ class SurveyPINTAN extends Backend
 
     public function createTAN(DataContainer $dc)
     {
-        if ('createtan' != Input::get('key')) {
+        if ('createtan' !== Input::get('key')) {
             return '';
         }
 
@@ -210,9 +222,10 @@ class SurveyPINTAN extends Backend
         $this->Template->submit = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
 
         // Create import form
-        if ('tl_export_survey_pin_tan' == Input::post('FORM_SUBMIT') && $this->blnSave) {
+        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave) {
             $nrOfTAN = $this->Template->nrOfTAN->value;
             $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
+
             for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
                 $pintan = $this->svy->generatePIN_TAN();
                 $this->insertPinTan(Input::get('id'), $pintan['PIN'], $pintan['TAN']);
@@ -223,9 +236,9 @@ class SurveyPINTAN extends Backend
         return $this->Template->parse();
     }
 
-    protected function insertPinTan($pid, $pin, $tan)
+    protected function insertPinTan($pid, $pin, $tan): void
     {
-        $newParticipant = new \Hschottm\SurveyBundle\SurveyPinTanModel();
+        $newParticipant = new SurveyPinTanModel();
         $newParticipant->tstamp = time();
         $newParticipant->pid = $pid;
         $newParticipant->pin = $pin;
@@ -244,12 +257,13 @@ class SurveyPINTAN extends Backend
     protected function getSurveyPageWidget($value = null)
     {
         $widget = new PageTree(Widget::getAttributesFromDca($GLOBALS['TL_DCA']['tl_survey']['fields']['surveyPage'], 'surveyPage', $value, 'surveyPage', 'tl_survey'));
+
         if ($GLOBALS['TL_CONFIG']['showHelp'] && \strlen($GLOBALS['TL_LANG']['tl_survey']['surveyPage'][1])) {
             $widget->help = $GLOBALS['TL_LANG']['tl_survey']['surveyPage'][1];
         }
 
         // Valiate input
-        if ('tl_export_survey_pin_tan' == Input::post('FORM_SUBMIT')) {
+        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT')) {
             $widget->validate();
 
             if ($widget->hasErrors()) {
@@ -288,7 +302,7 @@ class SurveyPINTAN extends Backend
         }
 
         // Valiate input
-        if ('tl_export_survey_pin_tan' == Input::post('FORM_SUBMIT')) {
+        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT')) {
             $widget->validate();
 
             if ($widget->hasErrors()) {

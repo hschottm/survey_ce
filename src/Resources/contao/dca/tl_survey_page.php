@@ -1,20 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 use Contao\Backend;
-use Contao\DataContainer;
 use Contao\Input;
 use Contao\StringUtil;
+use Hschottm\SurveyBundle\SurveyResultModel;
 
- $found = (\strlen(Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(Input::get('id')) : null;
- $hasData = (null != $found && 0 < $found->count()) ? true : false;
+ $found = strlen(Input::get('id')) ? SurveyResultModel::findByPid(Input::get('id')) : null;
+ $hasData = null !== $found && 0 < $found->count() ? true : false;
 
 if ($hasData) {
     /*
@@ -78,7 +84,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
             'href' => 'act=edit',
             'icon' => 'header.svg',
         ],
-        'copy'       => [
+        'copy' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['copy'],
             'href' => 'act=paste&mode=copy',
             'icon' => 'copy.svg',
@@ -95,7 +101,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['delete'],
             'href' => 'act=delete',
             'icon' => 'delete.svg',
-            'attributes' => 'onclick="if (!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm']?? null).'\')) return false; Backend.getScrollOffset();"',
+            'attributes' => 'onclick="if (!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\')) return false; Backend.getScrollOffset();"',
             'button_callback' => ['tl_survey_page', 'deletePage'],
         ],
         'show' => [
@@ -108,7 +114,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
 
 // Palettes
 $GLOBALS['TL_DCA']['tl_survey_page']['palettes'] = [
-    '__selector__' => ['type','useCustomNextButtonTitle'],
+    '__selector__' => ['type', 'useCustomNextButtonTitle'],
     'default' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
     'result' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{config_legend},useCustomNextButtonTitle;{template_legend},page_template',
 ];
@@ -131,13 +137,13 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
         'sql' => "int(10) unsigned NOT NULL default '0'",
     ],
     'type' => [
-        'exclude'                 => true,
-        'filter'                  => true,
-        'inputType'               => 'select',
-        'options'                 => array('default', 'result'),
-        'reference'               => &$GLOBALS['TL_LANG']['tl_survey_page']['type'],
-        'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'w50'),
-        'sql'                     => array('name'=>'type', 'type'=>'string', 'length'=>8, 'default'=>'default')
+        'exclude' => true,
+        'filter' => true,
+        'inputType' => 'select',
+        'options' => ['default', 'result'],
+        'reference' => &$GLOBALS['TL_LANG']['tl_survey_page']['type'],
+        'eval' => ['submitOnChange' => true, 'tl_class' => 'w50'],
+        'sql' => ['name' => 'type', 'type' => 'string', 'length' => 8, 'default' => 'default'],
     ],
     'title' => [
         'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['title'],
@@ -188,7 +194,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
     'useCustomNextButtonTitle' => [
         'exclude' => true,
         'inputType' => 'checkbox',
-        'eval' => ['tl_class' => 'w50', 'submitOnChange' => true,],
+        'eval' => ['tl_class' => 'w50', 'submitOnChange' => true],
         'sql' => "char(1) NOT NULL default ''",
     ],
     'customNextButtonTitle' => [
@@ -299,9 +305,9 @@ class tl_survey_page extends Backend
 
     protected function hasData()
     {
-        if (null == $this->hasData) {
-          $resultModel = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?'], [Input::get('id')]);
-          $this->hasData = null != $resultModel && $resultModel->count() > 0;
+        if (null === $this->hasData) {
+            $resultModel = SurveyResultModel::findBy(['pid=?'], [Input::get('id')]);
+            $this->hasData = null !== $resultModel && $resultModel->count() > 0;
         }
 
         return $this->hasData;

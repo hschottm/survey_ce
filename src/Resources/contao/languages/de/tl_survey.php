@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 $GLOBALS['TL_LANG']['tl_survey']['title']['0'] = 'Titel';
@@ -72,36 +78,36 @@ $GLOBALS['TL_LANG']['tl_survey']['delete']['1'] = 'Umfrage ID %s löschen';
 $GLOBALS['TL_LANG']['tl_survey']['surveyPage']['0'] = 'Seite der Umfrage';
 $GLOBALS['TL_LANG']['tl_survey']['surveyPage']['1'] = 'Bitte wählen Sie die Seite aus, auf der Sie die Umfrage durchführen wollen. Bei einer ausgewählten Seite wird eine Start-URL mit dem zugehörigen TAN-Code generiert.';
 
-$GLOBALS['TL_LANG']['tl_survey']['skipEmpty'] = array('Leere Felder auslassen', 'Leere Felder in der E-Mail nicht anzeigen.');
-$GLOBALS['TL_LANG']['tl_survey']['sendConfirmationMail'] = array('Bestätigung per E-Mail versenden', 'Wenn Sie diese Option wählen, wird eine Bestätigung per E-Mail an den Absender des Formulars versendet.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailRecipientField'] = array('Formularfeld mit E-Mail-Adresse des Empfängers', 'Wählen Sie hier das Formularfeld, in dem der Absender seine E-Mail-Adresse angibt oder ein Formularfeld, das die Empfänger-Adresse als Wert enthält.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailRecipient'] = array('Empfänger', 'Kommagetrennte Liste von E-Mail-Adressen, falls die E-Mail-Adresse nicht per Formularfeld definiert wird, oder die E-Mail an weitere Empfänger gesendet werden soll.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailSender'] = array('Absender', 'Bitte geben Sie hier die Absender-E-Mail-Adresse ein.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailReplyto'] = array('Antwort an (Reply-To)', 'Kommagetrennte Liste von E-Mail-Adressen, falls Antworten auf die E-Mail nicht an den Absender gesendet werden sollen.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailSubject'] = array('Betreff', 'Bitte geben Sie eine Betreffzeile für die Bestätigungs-E-Mail ein. Wenn Sie keine Betreffzeile erfassen, steigt die Wahrscheinlichkeit, dass die E-Mail als SPAM identifiziert wird.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailText'] = array('Text der Bestätigungs-E-Mail', 'Bitte geben Sie hier den Text der Bestätigungs-E-Mail ein. Neben den allgemeinen Insert-Tags werden Tags der Form form::FORMULARFELDNAME unterstützt.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailTemplate'] = array('HTML-Vorlage für die Bestätigungs-E-Mail', 'Wenn die Bestätigungs-E-Mail als HTML-E-Mail versendet werden soll, wählen Sie hier die HTML-Vorlage aus dem Dateisystem.');
-$GLOBALS['TL_LANG']['tl_survey']['addConfirmationMailAttachments'] = array('Dateien an Bestätigungs-E-Mail anhängen', 'Der Bestätigungs-E-Mail können hier Dateien zum Versand angehängt werden.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAttachments'] = array('Dateianhänge', 'Bitte wählen Sie hier die anzuhängenden Dateien aus.');
-$GLOBALS['TL_LANG']['tl_survey']['sendConfirmationMailAlternate'] = array('Alternative Bestätigung per E-Mail versenden', 'Wenn Sie diese Option wählen, wird eine alternative Bestätigung per E-Mail an den Absender des Formulars versendet.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateCondition'] = array('Sendebedingung', 'Wenn Sie möchten, dass die alternative E-Mail nur unter einer bestimmten Bedingung versendet wird, geben Sie bitte eine Bedingung basierend auf einer bestimmten Frage an, z.B. \'{{q::geschlecht}}\' == \'männlich\'.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateRecipient'] = array('Alternativer Empfänger', 'Kommagetrennte Liste von E-Mail-Adressen für die Empfänger der alternativen E-Mail.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateSender'] = array('Alternativer Absender', 'Bitte geben Sie hier die Absender-E-Mail-Adresse der alternativen E-Mail ein.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateReplyto'] = array('Antwort an (Reply-To)', 'Kommagetrennte Liste von E-Mail-Adressen, falls Antworten auf die alternative E-Mail nicht an den Absender gesendet werden sollen.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateSubject'] = array('Alternativer Betreff', 'Bitte geben Sie eine Betreffzeile für die alternative Bestätigungs-E-Mail ein. Wenn Sie keine Betreffzeile erfassen, steigt die Wahrscheinlichkeit, dass die E-Mail als SPAM identifiziert wird.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateText'] = array('Text der alternativen Bestätigungs-E-Mail', 'Bitte geben Sie hier den Text der alternativen Bestätigungs-E-Mail ein. Neben den allgemeinen Insert-Tags werden Tags der Form form::FORMULARFELDNAME unterstützt.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateTemplate'] = array('HTML-Vorlage für die alternative Bestätigungs-E-Mail', 'Wenn die alternative Bestätigungs-E-Mail als HTML-E-Mail versendet werden soll, wählen Sie hier die HTML-Vorlage aus dem Dateisystem.');
-$GLOBALS['TL_LANG']['tl_survey']['addConfirmationMailAlternateAttachments'] = array('Dateien an alternative Bestätigungs-E-Mail anhängen', 'Der alternativen Bestätigungs-E-Mail können hier Dateien zum Versand angehängt werden.');
-$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateAttachments'] = array('Alternative Dateianhänge', 'Bitte wählen Sie hier die anzuhängenden Dateien aus.');
-$GLOBALS['TL_LANG']['tl_survey']['addFormattedMailAttachments'] = array('Dateien an E-Mail anhängen', 'Der E-Mail können hier Dateien zum Versand angehängt werden.');
-$GLOBALS['TL_LANG']['tl_survey']['formattedMailAttachments'] = array('Dateianhänge', 'Bitte wählen Sie hier die anzuhängenden Dateien aus.');
-$GLOBALS['TL_LANG']['tl_survey']['sendFormattedMail'] = array('Per E-Mail versenden (formatierter Text / HTML)', 'Der Inhalt der Nachricht kann frei angegeben werden, unter Verwendung von Insert-Tags. Die Nachricht kann auch als HTML-E-Mail versendet werden.');
-$GLOBALS['TL_LANG']['tl_survey']['formattedMailText'] = array('Text der E-Mail', 'Bitte geben Sie hier den Text der E-Mail ein. Neben den allgemeinen Insert-Tags werden Tags der Form form::FORMULARFELDNAME unterstützt.');
-$GLOBALS['TL_LANG']['tl_survey']['formattedMailTemplate'] = array('HTML-Vorlage für die E-Mail', 'Wenn die E-Mail als HTML-E-Mail versendet werden soll, wählen Sie hier die HTML-Vorlage aus dem Dateisystem.');
+$GLOBALS['TL_LANG']['tl_survey']['skipEmpty'] = ['Leere Felder auslassen', 'Leere Felder in der E-Mail nicht anzeigen.'];
+$GLOBALS['TL_LANG']['tl_survey']['sendConfirmationMail'] = ['Bestätigung per E-Mail versenden', 'Wenn Sie diese Option wählen, wird eine Bestätigung per E-Mail an den Absender des Formulars versendet.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailRecipientField'] = ['Formularfeld mit E-Mail-Adresse des Empfängers', 'Wählen Sie hier das Formularfeld, in dem der Absender seine E-Mail-Adresse angibt oder ein Formularfeld, das die Empfänger-Adresse als Wert enthält.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailRecipient'] = ['Empfänger', 'Kommagetrennte Liste von E-Mail-Adressen, falls die E-Mail-Adresse nicht per Formularfeld definiert wird, oder die E-Mail an weitere Empfänger gesendet werden soll.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailSender'] = ['Absender', 'Bitte geben Sie hier die Absender-E-Mail-Adresse ein.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailReplyto'] = ['Antwort an (Reply-To)', 'Kommagetrennte Liste von E-Mail-Adressen, falls Antworten auf die E-Mail nicht an den Absender gesendet werden sollen.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailSubject'] = ['Betreff', 'Bitte geben Sie eine Betreffzeile für die Bestätigungs-E-Mail ein. Wenn Sie keine Betreffzeile erfassen, steigt die Wahrscheinlichkeit, dass die E-Mail als SPAM identifiziert wird.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailText'] = ['Text der Bestätigungs-E-Mail', 'Bitte geben Sie hier den Text der Bestätigungs-E-Mail ein. Neben den allgemeinen Insert-Tags werden Tags der Form form::FORMULARFELDNAME unterstützt.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailTemplate'] = ['HTML-Vorlage für die Bestätigungs-E-Mail', 'Wenn die Bestätigungs-E-Mail als HTML-E-Mail versendet werden soll, wählen Sie hier die HTML-Vorlage aus dem Dateisystem.'];
+$GLOBALS['TL_LANG']['tl_survey']['addConfirmationMailAttachments'] = ['Dateien an Bestätigungs-E-Mail anhängen', 'Der Bestätigungs-E-Mail können hier Dateien zum Versand angehängt werden.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAttachments'] = ['Dateianhänge', 'Bitte wählen Sie hier die anzuhängenden Dateien aus.'];
+$GLOBALS['TL_LANG']['tl_survey']['sendConfirmationMailAlternate'] = ['Alternative Bestätigung per E-Mail versenden', 'Wenn Sie diese Option wählen, wird eine alternative Bestätigung per E-Mail an den Absender des Formulars versendet.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateCondition'] = ['Sendebedingung', 'Wenn Sie möchten, dass die alternative E-Mail nur unter einer bestimmten Bedingung versendet wird, geben Sie bitte eine Bedingung basierend auf einer bestimmten Frage an, z.B. \'{{q::geschlecht}}\' == \'männlich\'.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateRecipient'] = ['Alternativer Empfänger', 'Kommagetrennte Liste von E-Mail-Adressen für die Empfänger der alternativen E-Mail.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateSender'] = ['Alternativer Absender', 'Bitte geben Sie hier die Absender-E-Mail-Adresse der alternativen E-Mail ein.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateReplyto'] = ['Antwort an (Reply-To)', 'Kommagetrennte Liste von E-Mail-Adressen, falls Antworten auf die alternative E-Mail nicht an den Absender gesendet werden sollen.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateSubject'] = ['Alternativer Betreff', 'Bitte geben Sie eine Betreffzeile für die alternative Bestätigungs-E-Mail ein. Wenn Sie keine Betreffzeile erfassen, steigt die Wahrscheinlichkeit, dass die E-Mail als SPAM identifiziert wird.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateText'] = ['Text der alternativen Bestätigungs-E-Mail', 'Bitte geben Sie hier den Text der alternativen Bestätigungs-E-Mail ein. Neben den allgemeinen Insert-Tags werden Tags der Form form::FORMULARFELDNAME unterstützt.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateTemplate'] = ['HTML-Vorlage für die alternative Bestätigungs-E-Mail', 'Wenn die alternative Bestätigungs-E-Mail als HTML-E-Mail versendet werden soll, wählen Sie hier die HTML-Vorlage aus dem Dateisystem.'];
+$GLOBALS['TL_LANG']['tl_survey']['addConfirmationMailAlternateAttachments'] = ['Dateien an alternative Bestätigungs-E-Mail anhängen', 'Der alternativen Bestätigungs-E-Mail können hier Dateien zum Versand angehängt werden.'];
+$GLOBALS['TL_LANG']['tl_survey']['confirmationMailAlternateAttachments'] = ['Alternative Dateianhänge', 'Bitte wählen Sie hier die anzuhängenden Dateien aus.'];
+$GLOBALS['TL_LANG']['tl_survey']['addFormattedMailAttachments'] = ['Dateien an E-Mail anhängen', 'Der E-Mail können hier Dateien zum Versand angehängt werden.'];
+$GLOBALS['TL_LANG']['tl_survey']['formattedMailAttachments'] = ['Dateianhänge', 'Bitte wählen Sie hier die anzuhängenden Dateien aus.'];
+$GLOBALS['TL_LANG']['tl_survey']['sendFormattedMail'] = ['Per E-Mail versenden (formatierter Text / HTML)', 'Der Inhalt der Nachricht kann frei angegeben werden, unter Verwendung von Insert-Tags. Die Nachricht kann auch als HTML-E-Mail versendet werden.'];
+$GLOBALS['TL_LANG']['tl_survey']['formattedMailText'] = ['Text der E-Mail', 'Bitte geben Sie hier den Text der E-Mail ein. Neben den allgemeinen Insert-Tags werden Tags der Form form::FORMULARFELDNAME unterstützt.'];
+$GLOBALS['TL_LANG']['tl_survey']['formattedMailTemplate'] = ['HTML-Vorlage für die E-Mail', 'Wenn die E-Mail als HTML-E-Mail versendet werden soll, wählen Sie hier die HTML-Vorlage aus dem Dateisystem.'];
 
 $GLOBALS['TL_LANG']['tl_survey']['useResultCategories'] = [
     'Antwort-Kategorien verwenden',
-    'Aktivieren Sie diese Option, um Kategorien für Antworten (nur bei Multiplie Choice) zu verwenden.'
+    'Aktivieren Sie diese Option, um Kategorien für Antworten (nur bei Multiplie Choice) zu verwenden.',
 ];
 $GLOBALS['TL_LANG']['tl_survey']['resultCategories'] = [
     'Antwort-Kategorien',
@@ -109,7 +115,7 @@ $GLOBALS['TL_LANG']['tl_survey']['resultCategories'] = [
 ];
 $GLOBALS['TL_LANG']['tl_survey']['resultCategories_'] = [
     'id' => ['ID', 'Die interne ID der Kategorie. Kann nicht bearbeitet werden.'],
-    'category' => ['Titel', 'Der Titel der Kategorie.']
+    'category' => ['Titel', 'Der Titel der Kategorie.'],
 ];
 
 /*

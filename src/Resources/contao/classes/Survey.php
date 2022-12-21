@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle;
@@ -24,23 +30,24 @@ class Survey extends Backend
 
     public function getTANforPIN($id, $pin)
     {
-        $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
+        $pinTanModel = SurveyPinTanModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
 
-        return (null != $pinTanModel) ? $pinTanModel->tan : null;
+        return null !== $pinTanModel ? $pinTanModel->tan : null;
     }
 
     public function getPINforTAN($id, $tan)
     {
-        $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'tan=?'], [$id, $tan]);
+        $pinTanModel = SurveyPinTanModel::findOneBy(['pid=?', 'tan=?'], [$id, $tan]);
 
-        return (null != $pinTanModel) ? $pinTanModel->pin : null;
+        return null !== $pinTanModel ? $pinTanModel->pin : null;
     }
 
     public function getSurveyStatus($id, $pin)
     {
-        $participantModel = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
-        if (null != $participantModel) {
-            return ($participantModel->finished) ? 'finished' : 'started';
+        $participantModel = SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
+
+        if (null !== $participantModel) {
+            return $participantModel->finished ? 'finished' : 'started';
         }
 
         return false;
@@ -58,35 +65,39 @@ class Survey extends Backend
     public function checkPINTAN($id, $pin = '', $tan = '')
     {
         if (\strlen($pin)) {
-            $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
+            $pinTanModel = SurveyPinTanModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
         } else {
-            $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'tan=?'], [$id, $tan]);
+            $pinTanModel = SurveyPinTanModel::findOneBy(['pid=?', 'tan=?'], [$id, $tan]);
         }
 
-        return (null != $pinTanModel) ? $pinTanModel->used : false;
+        return null !== $pinTanModel ? $pinTanModel->used : false;
     }
 
     public function getSurveyStatusForMember($id, $uid)
     {
-        $participantModel = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$id, $uid]);
-        if (null != $participantModel) {
-            return ($participantModel->finished) ? 'finished' : 'started';
+        $participantModel = SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$id, $uid]);
+
+        if (null !== $participantModel) {
+            return $participantModel->finished ? 'finished' : 'started';
         }
 
         return false;
     }
 
-    public function isUserAllowedToTakeSurvey(&$objSurvey)
+    public function isUserAllowedToTakeSurvey(& $objSurvey)
     {
-        $groups = (!\strlen($objSurvey->allowed_groups)) ? [] : deserialize($objSurvey->allowed_groups, true);
-        if (0 == \count($groups)) {
+        $groups = !\strlen($objSurvey->allowed_groups) ? [] : deserialize($objSurvey->allowed_groups, true);
+
+        if (0 === \count($groups)) {
             return false;
         }
         $this->import('\FrontendUser', 'User');
+
         if (!$this->User->id) {
             return false;
         }
         $usergroups = deserialize($this->User->groups, true);
+
         if (\count(array_intersect($usergroups, $groups))) {
             return true;
         }
@@ -96,9 +107,9 @@ class Survey extends Backend
 
     public function getLastPageForPIN($id, $pin)
     {
-        $participantModel = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
+        $participantModel = SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
 
-        return (null != $participantModel) ? $participantModel->lastpage : 0;
+        return null !== $participantModel ? $participantModel->lastpage : 0;
     }
 
     public function generatePIN_TAN()
@@ -106,24 +117,27 @@ class Survey extends Backend
         return [
             'PIN' => $this->generatePIN(),
             'TAN' => $this->generateTAN(),
-            ];
+        ];
     }
 
     protected function generateCode($length, $type = 'alphanum')
     {
         $codestring = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
         switch ($type) {
             case 'alpha':
                 $codestring = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 break;
+
             case 'num':
                 $codestring = '0123456789';
                 break;
         }
         mt_srand();
         $code = '';
+
         for ($i = 1; $i <= $length; ++$i) {
-            $index = mt_rand(0, \strlen($codestring) - 1);
+            $index = random_int(0, \strlen($codestring) - 1);
             $code .= substr($codestring, $index, 1);
         }
 

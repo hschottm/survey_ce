@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle;
@@ -15,15 +21,15 @@ use Contao\Model;
 use Contao\Model\Collection;
 
 /**
- * @property int $id
- * @property int $tstamp
- * @property int $pid
+ * @property int    $id
+ * @property int    $tstamp
+ * @property int    $pid
  * @property string $pin
- * @property int $uid
- * @property int $qid
- * @property mixed $result
+ * @property int    $uid
+ * @property int    $qid
+ * @property mixed  $result
  *
- * @method static static[]|Collection|null findBy($val, array $opt=array())
+ * @method static array<static>|Collection|null findBy($val, array $opt = [])
  */
 class SurveyResultModel extends Model
 {

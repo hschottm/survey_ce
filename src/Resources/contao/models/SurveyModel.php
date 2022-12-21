@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle;
@@ -15,7 +21,7 @@ use Contao\Model;
 use Contao\StringUtil;
 
 /**
- * @property bool $useResultCategories
+ * @property bool   $useResultCategories
  * @property string $resultCategories
  */
 class SurveyModel extends Model
@@ -36,26 +42,27 @@ class SurveyModel extends Model
         }
 
         $result = Database::getInstance()->prepare(
-            "SELECT tl_survey.id FROM tl_survey "
-            ."JOIN tl_survey_page ON tl_survey_page.pid = tl_survey.id "
-            ."JOIN tl_survey_question ON tl_survey_question.pid = tl_survey_page.id "
-            ."WHERE tl_survey_question.id=?"
+            'SELECT tl_survey.id FROM tl_survey '
+            .'JOIN tl_survey_page ON tl_survey_page.pid = tl_survey.id '
+            .'JOIN tl_survey_question ON tl_survey_question.pid = tl_survey_page.id '
+            .'WHERE tl_survey_question.id=?'
         )->execute($questionId);
 
         $surveyModel = static::findByPk($result->id ?? 0);
+
         if ($surveyModel) {
             static::$questionMapper[$questionId] = $surveyModel->id;
         }
 
         return $surveyModel;
-
     }
 
     public function getCategoryName(int $id): string
     {
         $categories = StringUtil::deserialize($this->resultCategories, true);
         $categories = array_column($categories, 'category', 'id');
-        return ($categories[$id] ?? '');
+
+        return $categories[$id] ?? '';
     }
 }
 

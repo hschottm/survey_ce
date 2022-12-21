@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle;
@@ -42,16 +48,17 @@ class FormConstantSumQuestion extends FormQuestionWidget
      * @param mixed $strKey
      * @param mixed $varValue
      */
-    public function __set($strKey, $varValue)
+    public function __set($strKey, $varValue): void
     {
         switch ($strKey) {
             case 'surveydata':
                 parent::__set($strKey, $varValue);
-                $this->strClass = 'constantsum'.((\strlen($varValue['cssClass']) ? (' '.$varValue['cssClass']) : ''));
+                $this->strClass = 'constantsum'.((\strlen($varValue['cssClass']) ? ' '.$varValue['cssClass'] : ''));
                 $this->strSumOption = $varValue['sumoption'];
                 $this->dblSum = $varValue['sum'];
-                $this->blnInputFirst = ($varValue['inputfirst']) ? true : false;
+                $this->blnInputFirst = $varValue['inputfirst'] ? true : false;
                 $this->arrChoices = deserialize($varValue['sumchoices']);
+
                 if (!\is_array($this->arrChoices)) {
                     $this->arrChoices = [];
                 }
@@ -80,7 +87,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
     /**
      * Validate input and set value.
      */
-    public function validate()
+    public function validate(): void
     {
         $submit = $this->getPost('question');
         $value = $submit[$this->id];
@@ -119,6 +126,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
         $result = '';
         $choices = [];
         $counter = 1;
+
         foreach ($this->arrChoices as $choice) {
             if (\strlen($this->varValue[$counter])) {
                 $result .= $choice.': '.$this->varValue[$counter]."\n";
@@ -139,28 +147,31 @@ class FormConstantSumQuestion extends FormQuestionWidget
      */
     protected function validator($varInput)
     {
-        if (!\is_array($varInput) || 0 == \count($varInput)) {
+        if (!\is_array($varInput) || 0 === \count($varInput)) {
             $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_constantsum'], $this->title));
 
             return $varInput;
         }
         $sum = 0.0;
+
         foreach ($varInput as $value) {
-            if (0 == \strlen($value)) {
+            if (0 === \strlen($value)) {
                 $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_constantsum'], $this->title));
 
                 return $varInput;
             }
             $sum += $value;
         }
+
         switch ($this->strSumOption) {
             case 'exact':
-                if ($sum != $this->dblSum) {
+                if ($sum !== $this->dblSum) {
                     $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['sumnotexact'], $this->title, $this->dblSum));
 
                     return $varInput;
                 }
                 break;
+
             case 'max':
                 if ($sum > $this->dblSum) {
                     $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['sumnotmax'], $this->title, $this->dblSum));

@@ -39,7 +39,7 @@ class SurveyPageContainer
 
     private $requestStack;
     private $security;
-    private $hasData = null;
+    private $hasData;
 
     public function __construct(RequestStack $requestStack, Security $security)
     {
@@ -167,7 +167,7 @@ class SurveyPageContainer
     protected function hasData(int $id): bool
     {
         if (null === $this->hasData) {
-            $this->hasData = !(null === SurveyResultModel::findByPid($id));
+            $this->hasData = !null === SurveyResultModel::findByPid($id);
         }
 
         return $this->hasData;

@@ -1,5 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
+ */
+
 namespace Hschottm\SurveyBundle\Migration;
 
 use Contao\CoreBundle\Migration\MigrationInterface;
@@ -41,23 +55,28 @@ class ChoicesFieldMigration implements MigrationInterface
 
     public function run(): MigrationResult
     {
-        $result = $this->connection->executeQuery("SELECT id, choices FROM tl_survey_question WHERE choices IS NOT NULL;");
+        $result = $this->connection->executeQuery('SELECT id, choices FROM tl_survey_question WHERE choices IS NOT NULL;');
+
         if ($result->rowCount() > 0) {
-            $stmt = $this->connection->prepare("UPDATE tl_survey_question SET choices=? WHERE id=?");
+            $stmt = $this->connection->prepare('UPDATE tl_survey_question SET choices=? WHERE id=?');
+
             foreach ($result as $row) {
                 $groups = [];
                 $choices = StringUtil::deserialize($row['choices']);
+
                 if (isset($choices['choice'])) {
                     continue;
                 }
                 $i = 0;
+
                 foreach ($choices as $choice) {
-                    $i++;
+                    ++$i;
                     $groups[$i] = ['choice' => $choice];
                 }
                 $stmt->executeQuery([serialize($groups), $row['id']]);
             }
         }
-        return new MigrationResult(true, "Migrated Choices field!");
+
+        return new MigrationResult(true, 'Migrated Choices field!');
     }
 }

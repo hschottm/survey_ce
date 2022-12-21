@@ -1,5 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
+ */
+
 namespace Hschottm\SurveyBundle\EventListener;
 
 use Contao\Backend;
@@ -49,11 +63,11 @@ class CategoriesListener
             $choicesField = &$GLOBALS['TL_DCA'][SurveyQuestionModel::getTable()]['fields']['choices'];
             $choicesField['palette'][] = 'category';
             $choicesField['fields']['choice']['eval']['tl_class'] =
-                trim(($choicesField['fields']['choice']['eval']['tl_class'] == '').' w50');
+                trim(('' === $choicesField['fields']['choice']['eval']['tl_class']).' w50');
             $choicesField['fields']['category'] = [
                 'inputType' => 'select',
                 'options_callback' => [self::class, 'surveyChoicesCategoryOptionsCallback'],
-                'eval' => ['isAssociative' => true, 'tl_class' => 'w50']
+                'eval' => ['isAssociative' => true, 'tl_class' => 'w50'],
             ];
         }
     }
@@ -75,38 +89,37 @@ class CategoriesListener
         }
 
         $categories = StringUtil::deserialize($survey->resultCategories, true);
-        $ids = array_filter(array_column($categories, "id"), function ($value) {
-            return (!empty($value) || 0 === $value);
-        });
+        $ids = array_filter(array_column($categories, 'id'), static fn ($value) => !empty($value) || 0 === $value);
         $max = 0;
+
         if (!empty($ids)) {
-            $max = (max($ids)+1);
+            $max = max($ids) + 1;
         }
 
         foreach ($categories as $key => $category) {
             if (empty($category['id']) && 0 !== $category['id']) {
                 $categories[$key]['id'] = $max;
-                $max++;
+                ++$max;
             }
         }
         $survey->resultCategories = serialize($categories);
         $survey->save();
     }
 
-    /**
-     * @param DataContainer|null $dc
-     * @return array
-     */
     public function surveyChoicesCategoryOptionsCallback(DataContainer $dc = null): array
     {
         $options = [];
+
         if ($dc && $dc->id || 'edit' === $this->requestStack->getCurrentRequest()->query->get('act')) {
-            if (!($questionModel = SurveyQuestionModel::findByPk($dc->id))
+            if (
+                !($questionModel = SurveyQuestionModel::findByPk($dc->id))
             || !($surveyPageModel = SurveyPageModel::findByPk($questionModel->pid))
-            || !($surveyModel = SurveyModel::findByPk($surveyPageModel->pid))) {
+            || !($surveyModel = SurveyModel::findByPk($surveyPageModel->pid))
+            ) {
                 return $options;
             }
             $categories = StringUtil::deserialize($surveyModel->resultCategories, true);
+
             foreach ($categories as $category) {
                 $options[$category['id']] = $category['category'];
             }

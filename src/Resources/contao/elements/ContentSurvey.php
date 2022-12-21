@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle;
@@ -48,14 +54,14 @@ class ContentSurvey extends ContentElement
      */
     public function generate()
     {
-        if (TL_MODE == 'BE') {
+        if (TL_MODE === 'BE') {
             $objTemplate = new BackendTemplate('be_wildcard');
             $objTemplate->wildcard = '### SURVEY ###';
 
             return $objTemplate->parse();
         }
 
-        $this->strTemplate = (\strlen($this->surveyTpl)) ? $this->surveyTpl : $this->strTemplate;
+        $this->strTemplate = \strlen($this->surveyTpl) ? $this->surveyTpl : $this->strTemplate;
 
         return parent::generate();
     }
@@ -65,7 +71,7 @@ class ContentSurvey extends ContentElement
      */
     protected function compile()
     {
-        if (TL_MODE == 'FE' && !BE_USER_LOGGED_IN && ($this->invisible || ($this->start > 0 && $this->start > time()) || ($this->stop > 0 && $this->stop < time()))) {
+        if (TL_MODE === 'FE' && !BE_USER_LOGGED_IN && ($this->invisible || ($this->start > 0 && $this->start > time()) || ($this->stop > 0 && $this->stop < time()))) {
             return '';
         }
 
@@ -79,13 +85,14 @@ class ContentSurvey extends ContentElement
             $GLOBALS['TL_JAVASCRIPT'] = ['bundles/hschottmsurvey/js/survey.js'];
         }
 
-        $surveyID = (\strlen(Input::post('survey'))) ? Input::post('survey') : $this->survey;
+        $surveyID = \strlen(Input::post('survey')) ? Input::post('survey') : $this->survey;
 
         $this->objSurvey = $this->Database->prepare('SELECT * FROM tl_survey WHERE id=?')
-            ->execute($surveyID);
+            ->execute($surveyID)
+        ;
         $this->objSurvey->next();
         //$this->objSurvey = \Hschottm\SurveyBundle\SurveyModel::findByPk($surveyId);
-        if (null == $this->objSurvey) {
+        if (null === $this->objSurvey) {
             return;
         }
 
@@ -97,35 +104,38 @@ class ContentSurvey extends ContentElement
 
             return;
         }
+
         if ((\strlen($this->objSurvey->online_end)) && ($this->objSurvey->online_end < time())) {
             $this->Template->protected = true;
 
             return;
         }
 
-        $pages = \Hschottm\SurveyBundle\SurveyPageModel::findBy('pid', $surveyID, ['order' => 'sorting']);
+        $pages = SurveyPageModel::findBy('pid', $surveyID, ['order' => 'sorting']);
 
-        if (null == $pages) {
+        if (null === $pages) {
             $pages = [];
         } else {
             $pages = $pages->fetchAll();
         }
 
-        $page = (Input::post('page')) ? Input::post('page') : 0;
+        $page = Input::post('page') ?: 0;
         // introduction page / status
-        if (0 == $page) {
+        if (0 === $page) {
             $this->outIntroductionPage();
         }
         // check survey start
-        if (Input::post('start') || (1 == $this->objSurvey->immediate_start && !Input::post('FORM_SUBMIT'))) {
+        if (Input::post('start') || (1 === $this->objSurvey->immediate_start && !Input::post('FORM_SUBMIT'))) {
             $page = 0;
+
             switch ($this->objSurvey->access) {
                 case 'anon':
-                    if (($this->objSurvey->usecookie) && \strlen($_COOKIE['TLsvy_'.$this->objSurvey->id]) && false != $this->svy->checkPINTAN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id])) {
+                    if ($this->objSurvey->usecookie && \strlen($_COOKIE['TLsvy_'.$this->objSurvey->id]) && false !== $this->svy->checkPINTAN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id])) {
                         $page = $this->svy->getLastPageForPIN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id]);
                         $this->pin = $_COOKIE['TLsvy_'.$this->objSurvey->id];
                     } else {
                         $pintan = $this->svy->generatePIN_TAN();
+
                         if ($this->objSurvey->usecookie) {
                             setcookie('TLsvy_'.$this->objSurvey->id, $pintan['PIN'], time() + 3600 * 24 * 365, '/');
                         }
@@ -135,18 +145,22 @@ class ContentSurvey extends ContentElement
                         $page = 1;
                     }
                     break;
+
                 case 'anoncode':
                     $tan = Input::post('tan');
-                    if ((0 == strcmp(Input::post('FORM_SUBMIT'), 'tl_survey_form')) && (\strlen($tan))) {
+
+                    if (0 === strcmp(Input::post('FORM_SUBMIT'), 'tl_survey_form') && (\strlen($tan))) {
                         $result = $this->svy->checkPINTAN($this->objSurvey->id, '', $tan);
+
                         if (false === $result) {
                             $this->Template->tanMsg = $GLOBALS['TL_LANG']['ERR']['survey_wrong_tan'];
                         } else {
                             $this->pin = $this->svy->getPINforTAN($this->objSurvey->id, $tan);
 
-                            if (0 == $result) {
-                                $res = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['tan=?', 'pid=?'], [$tan, $this->objSurvey->id]);
-                                if (null != $res) {
+                            if (0 === $result) {
+                                $res = SurveyPinTanModel::findOneBy(['tan=?', 'pid=?'], [$tan, $this->objSurvey->id]);
+
+                                if (null !== $res) {
                                     $res->used = 1;
                                     $res->save();
                                 }
@@ -158,7 +172,8 @@ class ContentSurvey extends ContentElement
                                 $page = 1;
                             } else {
                                 $status = $this->svy->getSurveyStatus($this->objSurvey->id, $this->pin);
-                                if (0 == strcmp($status, 'finished')) {
+
+                                if (0 === strcmp($status, 'finished')) {
                                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                                     $this->Template->hideStartButtons = true;
                                 } else {
@@ -170,15 +185,16 @@ class ContentSurvey extends ContentElement
                         $this->Template->tanMsg = $GLOBALS['TL_LANG']['ERR']['survey_please_enter_tan'];
                     }
                     break;
+
                 case 'nonanoncode':
-                  $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
-                  if (null == $participant) {
-                    $pintan = $this->svy->generatePIN_TAN();
-                    $this->pin = $pintan['PIN'];
-                    $this->insertParticipant($this->objSurvey->id, $pintan['PIN'], $this->User->id);
-                  }
-                  else {
-                    $this->pin = $participant->pin;
+                  $participant = SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
+
+                  if (null === $participant) {
+                      $pintan = $this->svy->generatePIN_TAN();
+                      $this->pin = $pintan['PIN'];
+                      $this->insertParticipant($this->objSurvey->id, $pintan['PIN'], $this->User->id);
+                  } else {
+                      $this->pin = $participant->pin;
                   }
                   $page = \strlen($participant->lastpage) ? $participant->lastpage : 1;
                   break;
@@ -186,44 +202,44 @@ class ContentSurvey extends ContentElement
         }
         // check question input and save input or return a question list of the page
         $surveypage = [];
+
         if (($page > 0 && $page <= \count($pages))) {
-            if ('tl_survey' == Input::post('FORM_SUBMIT')) {
-                $goback = (\strlen(Input::post('prev'))) ? true : false;
+            if ('tl_survey' === Input::post('FORM_SUBMIT')) {
+                $goback = \strlen(Input::post('prev')) ? true : false;
                 $surveypage = $this->createSurveyPage($pages[$page - 1], $page, true, $goback);
             }
         }
 
         // submit successful, calculate next page and return a question list of the new page
         $previouspage = $page;
-        if (0 == \count($surveypage)) {
+
+        if (0 === \count($surveypage)) {
             if (\strlen(Input::post('next'))) {
-                $pageid = $this->evaluateConditions($pages[$page-1]);
-                if (null == $pageid)
-                {
-                  $page++;
-                }
-                else
-                {
-                  foreach ($pages as $idx => $p)
-                  {
-                    if ($p['id'] == $pageid)
-                    {
-                      $page = $idx + 1;
+                $pageid = $this->evaluateConditions($pages[$page - 1]);
+
+                if (null === $pageid) {
+                    ++$page;
+                } else {
+                    foreach ($pages as $idx => $p) {
+                        if ($p['id'] === $pageid) {
+                            $page = $idx + 1;
+                        }
                     }
-                  }
                 }
                 $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id, $previouspage, $page);
             }
+
             if (\strlen(Input::post('finish'))) {
-                $page++;
+                ++$page;
             }
+
             if (\strlen(Input::post('prev'))) {
-                $res = \Hschottm\SurveyBundle\SurveyNavigationModel::findOneBy(['pid=?', 'pin=?', 'uid=?', 'topage=?'], [$this->objSurvey->id, $this->pin, (strlen($this->User->id) == 0) ? 0 : $this->User->id, $page], ['order' => 'tstamp DESC']);
-                if (null != $res) {
-                  $page = $res->frompage;
-                }
-                else {
-                  $page--;
+                $res = SurveyNavigationModel::findOneBy(['pid=?', 'pin=?', 'uid=?', 'topage=?'], [$this->objSurvey->id, $this->pin, 0 === \strlen($this->User->id) ? 0 : $this->User->id, $page], ['order' => 'tstamp DESC']);
+
+                if (null !== $res) {
+                    $page = $res->frompage;
+                } else {
+                    --$page;
                 }
             }
 
@@ -232,11 +248,13 @@ class ContentSurvey extends ContentElement
 
         // save position of last page (for resume)
         if ($page > 0) {
-            $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
-            if (null != $res) {
+            $res = SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
+
+            if (null !== $res) {
                 $res->lastpage = $page;
                 $res->save();
             }
+
             if (\strlen($pages[$page - 1]['page_template'])) {
                 $this->questionblock_template = $pages[$page - 1]['page_template'];
             }
@@ -245,15 +263,16 @@ class ContentSurvey extends ContentElement
         if ('result' === ($pages[$page - 1]['type'] ?? 'default')) {
             $this->createResultPage($pages[$page - 1]);
         } else {
-            $questionBlockTemplate             = new FrontendTemplate($this->questionblock_template);
+            $questionBlockTemplate = new FrontendTemplate($this->questionblock_template);
             $questionBlockTemplate->surveypage = $surveypage;
-            if (is_array($pages)) {
+
+            if (\is_array($pages)) {
                 $helper = new SurveyHelper();
 
                 foreach ($pages as $pageidx => $pagerow) {
-                    $replacements            = [];
+                    $replacements = [];
                     $pagerow['introduction'] = $helper->replaceTags($pagerow['introduction'], $this->pin, $replacements, true);
-                    $pages[$pageidx]         = $pagerow;
+                    $pages[$pageidx] = $pagerow;
                 }
             }
 
@@ -274,20 +293,20 @@ class ContentSurvey extends ContentElement
         } else {
             $this->Template->allowback = $this->objSurvey->allowback;
         }
-        
+
         // template output
         $this->Template->pages = $pages;
         $this->Template->survey_id = $this->objSurvey->id;
         $this->Template->show_title = $this->objSurvey->show_title;
-        $this->Template->show_cancel = ($page > 0 && \count($surveypage)) ? $this->objSurvey->show_cancel : false;
+        $this->Template->show_cancel = $page > 0 && \count($surveypage) ? $this->objSurvey->show_cancel : false;
         $this->Template->surveytitle = StringUtil::specialchars($this->objSurvey->title);
         $this->Template->cancel = StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['cancel_survey']);
         global $objPage;
         $this->Template->cancellink = $this->generateFrontendUrl($objPage->row());
 
-	$this->Template->page = $page;
+        $this->Template->page = $page;
         $this->Template->introduction = $this->objSurvey->introduction;
-        $this->Template->finalsubmission = ($this->objSurvey->finalsubmission) ? $this->objSurvey->finalsubmission : $GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'];
+        $this->Template->finalsubmission = $this->objSurvey->finalsubmission ?: $GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'];
         $formaction = Environment::get('request');
 
         $this->Template->pageXofY = $GLOBALS['TL_LANG']['MSC']['page_x_of_y'];
@@ -300,84 +319,76 @@ class ContentSurvey extends ContentElement
 
     protected function evaluateConditions($page)
     {
-      $conditions = [];
-      $conditionModel = \Hschottm\SurveyBundle\SurveyConditionModel::findBy(['pid=?'], [$page['id']]);
-      if (null != $conditionModel) {
-        $conditions = $conditionModel->fetchAll();
-      }
-      $groups = [];
-      foreach ($conditions as $condition)
-      {
-        $groups[$condition['grp']][] = $condition;
-      }
-      foreach ($groups as $group)
-      {
-        $applies = true;
-        foreach ($group as $condition)
-        {
-          if ($condition['qid'] == 0)
-          {
-            return $condition['pageid'];
-          }
-          else
-          {
-            $res = $this->getResultForQuestion($condition['qid']);
-            $questionModel = \Hschottm\SurveyBundle\SurveyQuestionModel::findOneBy('id', $condition['qid']);
-            if (null != $res)
-            {
-              // check if condition is valid
-              if ($condition['relation'] == '=')
-              {
-		if ($questionModel->questiontype == 'multiplechoice')
-		{
-			if (is_array($res['value']))
-			{
-				$applies = $applies && in_array($condition['condition'], $res['value']);
-			}
-			else
-			{
-		                $applies = $applies && ($res['value'] == $condition['condition']);
-			}
-		}
-		else
-		{
-	                $applies = $applies && ($res['value'] == $condition['condition']);
-		}
-              } else if ($condition['relation'] == '>') {
-                $applies = $applies && ($res['value'] > $condition['condition']);
-              } else if ($condition['relation'] == '<') {
-                $applies = $applies && ($res['value'] < $condition['condition']);
-              } else if ($condition['relation'] == '<=') {
-                $applies = $applies && ($res['value'] <= $condition['condition']);
-              } else if ($condition['relation'] == '>=') {
-                $applies = $applies && ($res['value'] >= $condition['condition']);
-              } else if ($condition['relation'] == '!=') {
-                $applies = $applies && ($res['value'] != $condition['condition']);
-              }
+        $conditions = [];
+        $conditionModel = SurveyConditionModel::findBy(['pid=?'], [$page['id']]);
+
+        if (null !== $conditionModel) {
+            $conditions = $conditionModel->fetchAll();
+        }
+        $groups = [];
+
+        foreach ($conditions as $condition) {
+            $groups[$condition['grp']][] = $condition;
+        }
+
+        foreach ($groups as $group) {
+            $applies = true;
+
+            foreach ($group as $condition) {
+                if (0 === $condition['qid']) {
+                    return $condition['pageid'];
+                }
+
+                $res = $this->getResultForQuestion($condition['qid']);
+                $questionModel = SurveyQuestionModel::findOneBy('id', $condition['qid']);
+
+                if (null !== $res) {
+                    // check if condition is valid
+                    if ('=' === $condition['relation']) {
+                        if ('multiplechoice' === $questionModel->questiontype) {
+                            if (\is_array($res['value'])) {
+                                $applies = $applies && \in_array($condition['condition'], $res['value'], true);
+                            } else {
+                                $applies = $applies && ($res['value'] === $condition['condition']);
+                            }
+                        } else {
+                            $applies = $applies && ($res['value'] === $condition['condition']);
+                        }
+                    } elseif ('>' === $condition['relation']) {
+                        $applies = $applies && ($res['value'] > $condition['condition']);
+                    } elseif ('<' === $condition['relation']) {
+                        $applies = $applies && ($res['value'] < $condition['condition']);
+                    } elseif ('<=' === $condition['relation']) {
+                        $applies = $applies && ($res['value'] <= $condition['condition']);
+                    } elseif ('>=' === $condition['relation']) {
+                        $applies = $applies && ($res['value'] >= $condition['condition']);
+                    } elseif ('!=' === $condition['relation']) {
+                        $applies = $applies && ($res['value'] !== $condition['condition']);
+                    }
+                }
             }
-          }
+
+            if ($applies) {
+                $condition = array_shift($group);
+
+                return $condition['pageid'];
+            }
         }
-        if ($applies)
-        {
-          $condition = array_shift($group);
-          return $condition['pageid'];
-        }
-      }
-      return null;
+
+        return null;
     }
 
     protected function getResultForQuestion($question_id)
     {
-      $objResult = $this->Database->prepare("SELECT * FROM tl_survey_result WHERE (pid=? AND qid=? AND pin=?)")
-                      ->execute($this->objSurvey->id, $question_id, $this->pin);
-      if ($objResult->numRows)
-      {
-              return deserialize($objResult->result);
-      }
-      else
-      {
-              return null;
-      }
+        $objResult = $this->Database->prepare('SELECT * FROM tl_survey_result WHERE (pid=? AND qid=? AND pin=?)')
+            ->execute($this->objSurvey->id, $question_id, $this->pin)
+        ;
+
+        if ($objResult->numRows) {
+            return deserialize($objResult->result);
+        }
+
+        return null;
     }
 
     /**
@@ -393,6 +404,7 @@ class ContentSurvey extends ContentElement
     protected function createSurveyPage($pagerow, $pagenumber, $validate = true, $goback = false)
     {
         $this->questionpositions = [];
+
         if (!\strlen($this->pin)) {
             $this->pin = Input::post('pin');
         }
@@ -400,9 +412,9 @@ class ContentSurvey extends ContentElement
         $pagequestioncounter = 1;
         $doNotSubmit = false;
 
-        $questions = \Hschottm\SurveyBundle\SurveyQuestionModel::findBy('pid', $pagerow['id'], ['order' => 'sorting']);
+        $questions = SurveyQuestionModel::findBy('pid', $pagerow['id'], ['order' => 'sorting']);
 
-        if (null == $questions) {
+        if (null === $questions) {
             $questions = [];
         }
 
@@ -419,12 +431,13 @@ class ContentSurvey extends ContentElement
             $objWidget->absoluteNumber = $this->getQuestionPosition($question['id'], $this->objSurvey->id);
             $objWidget->pageQuestionNumber = $pagequestioncounter;
             $objWidget->pageNumber = $pagenumber;
-            $objWidget->cssClass = ('' != $question['cssClass'] ? ' '.$question['cssClass'] : '').(0 == $objWidget->absoluteNumber % 2 ? ' odd' : ' even');
+            $objWidget->cssClass = ('' !== $question['cssClass'] ? ' '.$question['cssClass'] : '').(0 === $objWidget->absoluteNumber % 2 ? ' odd' : ' even');
             array_push($surveypage, $objWidget);
             ++$pagequestioncounter;
 
             if ($validate) {
                 $objWidget->validate();
+
                 if ($objWidget->hasErrors()) {
                     $doNotSubmit = true;
                 }
@@ -433,17 +446,20 @@ class ContentSurvey extends ContentElement
                 switch ($this->objSurvey->access) {
                     case 'anon':
                     case 'anoncode':
-                        $objResult = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $objWidget->id, $this->pin]);
+                        $objResult = SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $objWidget->id, $this->pin]);
                         break;
+
                     case 'nonanoncode':
-                        $objResult = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $objWidget->id, $this->User->id]);
+                        $objResult = SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $objWidget->id, $this->User->id]);
                         break;
                 }
-                if (null != $objResult && $objResult->count()) {
+
+                if (null !== $objResult && $objResult->count()) {
                     $objWidget->value = StringUtil::deserialize($objResult->result);
                 }
             }
         }
+
         if ($validate) {
             // HOOK: pass validated questions to callback functions
             if (isset($GLOBALS['TL_HOOKS']['surveyQuestionsValidated']) && \is_array($GLOBALS['TL_HOOKS']['surveyQuestionsValidated'])) {
@@ -462,7 +478,7 @@ class ContentSurvey extends ContentElement
             }
         }
 
-        if ($validate && 'tl_survey' == Input::post('FORM_SUBMIT') && !\strlen($this->pin)) {
+        if ($validate && 'tl_survey' === Input::post('FORM_SUBMIT') && !\strlen($this->pin)) {
             if ($this->objSurvey->usecookie && \strlen($_COOKIE['TLsvy_'.$this->objSurvey->id])) {
                 // restore lost PIN from cookie
                 $this->pin = $_COOKIE['TLsvy_'.$this->objSurvey->id];
@@ -474,40 +490,47 @@ class ContentSurvey extends ContentElement
         }
 
         // save survey values
-        if ($validate && 'tl_survey' == Input::post('FORM_SUBMIT') && (!$doNotSubmit || $goback)) {
+        if ($validate && 'tl_survey' === Input::post('FORM_SUBMIT') && (!$doNotSubmit || $goback)) {
             if (!\strlen($this->pin) || !$this->isValid($this->pin)) {
                 global $objPage;
                 $this->redirect($this->generateFrontendUrl($objPage->row()));
             }
+
             foreach ($surveypage as $question) {
                 switch ($this->objSurvey->access) {
                     case 'anon':
                     case 'anoncode':
-                      $res = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $question->id, $this->pin]);
-                      if (null != $res) {
-                        $modelinstance = "Model";
-                        $collectioninstance = "Model\Collection";
-                        if ($res instanceof $modelinstance) {
-                          $res->delete();
-                        } elseif ($res instanceof $collectioninstance) {
-                          foreach ($res as $singleRes) {
-                            $singleRes->delete();
+                      $res = SurveyResultModel::findBy(['pid=?', 'qid=?', 'pin=?'], [$this->objSurvey->id, $question->id, $this->pin]);
+
+                      if (null !== $res) {
+                          $modelinstance = 'Model';
+                          $collectioninstance = 'Model\\Collection';
+
+                          if ($res instanceof $modelinstance) {
+                              $res->delete();
+                          } elseif ($res instanceof $collectioninstance) {
+                              foreach ($res as $singleRes) {
+                                  $singleRes->delete();
+                              }
                           }
-                        }
                       }
                         $value = $question->value;
+
                         if (\is_array($question->value)) {
                             $value = serialize($question->value);
                         }
+
                         if (\strlen($value)) {
                             $this->insertResult($this->objSurvey->id, $question->id, $this->pin, $value);
                         }
                         break;
+
                     case 'nonanoncode':
-                        $res = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $question->id, $this->User->id]);
-                        $modelinstance = "Model";
-                        $collectioninstance = "Model\Collection";
-                        if (null != $res) {
+                        $res = SurveyResultModel::findBy(['pid=?', 'qid=?', 'uid=?'], [$this->objSurvey->id, $question->id, $this->User->id]);
+                        $modelinstance = 'Model';
+                        $collectioninstance = 'Model\\Collection';
+
+                        if (null !== $res) {
                             if ($res instanceof $modelinstance) {
                                 $res->delete();
                             } elseif ($res instanceof $collectioninstance) {
@@ -517,9 +540,11 @@ class ContentSurvey extends ContentElement
                             }
                         }
                         $value = $question->value;
+
                         if (\is_array($question->value)) {
                             $value = serialize($question->value);
                         }
+
                         if (\strlen($value)) {
                             $this->insertResult($this->objSurvey->id, $question->id, $this->pin, $value, $this->User->id);
                         }
@@ -532,12 +557,13 @@ class ContentSurvey extends ContentElement
                 switch ($this->objSurvey->access) {
                     case 'anon':
                     case 'anoncode':
-            $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
+            $participant = SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
             $participant->finished = 1;
             $participant->save();
                         break;
+
                     case 'nonanoncode':
-            $participant = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
+            $participant = SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
             $participant->finished = 1;
             $participant->save();
                         break;
@@ -550,338 +576,302 @@ class ContentSurvey extends ContentElement
                     }
                 }
 
-                if ($this->objSurvey->sendConfirmationMail)
-        				{
-        					$objMailProperties = new \stdClass();
-        					$objMailProperties->subject = '';
-        					$objMailProperties->sender = '';
-        					$objMailProperties->senderName = '';
-        					$objMailProperties->replyTo = '';
-        					$objMailProperties->recipients = array();
-        					$objMailProperties->messageText = '';
-        					$objMailProperties->messageHtml = '';
-        					$objMailProperties->attachments = array();
-
-        					// Set the sender as given in form configuration
-        					[$senderName, $sender] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailSender);
-        					$objMailProperties->sender = $sender;
-        					$objMailProperties->senderName = $senderName;
-
-        					// Set the 'reply to' address, if given in form configuration
-        					if (!empty($this->objSurvey->confirmationMailReplyto))
-        					{
-        						[$replyToName, $replyTo] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailReplyto);
-        						$objMailProperties->replyTo = (strlen($replyToName) ? $replyToName . ' <' . $replyTo . '>' : $replyTo);
-        					}
-
-        					// Set recipient(s)
-        					if (strlen($this->objSurvey->confirmationMailRecipientField))
-        					{
-                    $res = \Hschottm\SurveyBundle\SurveyResultModel::findOneBy(['qid=?', 'pin=?'], [$this->objSurvey->confirmationMailRecipientField, $this->pin]);
-                    if (null != $res) {
-                      if (strlen($res->result))
-          						{
-          							$arrRecipient = trimsplit(',', $res->result);
-          						}
-                    }
-        					}
-
-        					if (!empty($this->objSurvey->confirmationMailRecipient))
-        					{
-        						$varRecipient = $this->objSurvey->confirmationMailRecipient;
-        						$arrRecipient = array_merge($arrRecipient, trimsplit(',', $varRecipient));
-        					}
-        					$arrRecipient = array_filter(array_unique($arrRecipient));
-
-        					if (!empty($arrRecipient))
-        					{
-        						foreach ($arrRecipient as $kR => $recipient)
-        						{
-        							[$recipientName, $recipient] = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
-        							$arrRecipient[$kR] = (strlen($recipientName) ? $recipientName . ' <' . $recipient . '>' : $recipient);
-        						}
-        					}
-        					$objMailProperties->recipients = $arrRecipient;
-        					// Check if we want custom attachments... (Thanks to Torben Schwellnus)
-        					if ($this->objSurvey->addConfirmationMailAttachments)
-        					{
-        						if($this->objSurvey->confirmationMailAttachments)
-        						{
-        							$arrCustomAttachments = deserialize($this->objSurvey->confirmationMailAttachments, true);
-
-        							if (!empty($arrCustomAttachments))
-        							{
-        								foreach ($arrCustomAttachments as $varFile)
-        								{
-        									$objFileModel = FilesModel::findById($varFile);
-
-        									if ($objFileModel != null)
-        									{
-        										$objFile = new File($objFileModel->path);
-        										if ($objFile->size)
-        										{
-        											$objMailProperties->attachments[TL_ROOT .'/' . $objFile->path] = array
-        											(
-        												'file' => TL_ROOT . '/' . $objFile->path,
-        												'name' => $objFile->basename,
-        												'mime' => $objFile->mime);
-        										}
-        									}
-        								}
-        							}
-        						}
-        					}
-
-        					$objMailProperties->subject = StringUtil::decodeEntities($this->objSurvey->confirmationMailSubject);
-        					$objMailProperties->messageText = StringUtil::decodeEntities($this->objSurvey->confirmationMailText);
-
-        					$messageHtmlTmpl = '';
-        					if (Validator::isUuid($this->objSurvey->confirmationMailTemplate) || (is_numeric($this->objSurvey->confirmationMailTemplate) && $this->objSurvey->confirmationMailTemplate > 0))
-        					{
-        						$objFileModel = FilesModel::findById($this->objSurvey->confirmationMailTemplate);
-        						if ($objFileModel != null)
-        						{
-        							$messageHtmlTmpl = $objFileModel->path;
-        						}
-        					}
-        					if ($messageHtmlTmpl != '')
-        					{
-        						$fileTemplate = new File($messageHtmlTmpl);
-        						if ($fileTemplate->mime == 'text/html')
-        						{
-        							$messageHtml = $fileTemplate->getContent();
-        							$objMailProperties->messageHtml = $messageHtml;
-        						}
-        					}
-        					// Replace Insert tags and conditional tags
-        					//$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
-
-        					// Send Mail
-        					$blnConfirmationSent = false;
-        					if (!empty($objMailProperties->recipients))
-        					{
-        						$objMail = new Email();
-        						$objMail->from = $objMailProperties->sender;
-
-        						if (!empty($objMailProperties->senderName))
-        						{
-        							$objMail->fromName = $objMailProperties->senderName;
-        						}
-
-        						if (!empty($objMailProperties->replyTo))
-        						{
-        							$objMail->replyTo($objMailProperties->replyTo);
-        						}
-
-        						$helper = new SurveyHelper();
-
-        						$objMail->subject = $objMailProperties->subject;
-
-        						if (!empty($objMailProperties->attachments))
-        						{
-        							foreach ($objMailProperties->attachments as $strFile => $varParams)
-        							{
-        								$strContent = file_get_contents($varParams['file'], false);
-        								$objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
-        							}
-        						}
-
-        						if (!empty($objMailProperties->messageText))
-        						{
-        							$objMail->text = $helper->replaceTags($objMailProperties->messageText, $this->pin, []);
-        						}
-
-        						if (!empty($objMailProperties->messageHtml))
-        						{
-        							$objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, [], true);
-        						}
-
-        						foreach ($objMailProperties->recipients as $recipient)
-        						{
-        							$objMail->sendTo($recipient);
-        							$blnConfirmationSent = true;
-        						}
-        					}
-        				}
-
-                if ($this->objSurvey->sendConfirmationMailAlternate)
-                {
-                  $condition = true;
-                  if ($this->objSurvey->confirmationMailAlternateCondition)
-                  {
-                    if ($helper->replaceTags(sprintf("{if %s}1{endif}", StringUtil::decodeEntities($this->objSurvey->confirmationMailAlternateCondition)), $this->pin, []) == '1')
-                    {
-                      $condition = true;
-                    }
-                    else {
-                      $condition = false;
-                    }
-                  }
-                  if ($condition)
-                  {
+                if ($this->objSurvey->sendConfirmationMail) {
                     $objMailProperties = new \stdClass();
-          					$objMailProperties->subject = '';
-          					$objMailProperties->sender = '';
-          					$objMailProperties->senderName = '';
-          					$objMailProperties->replyTo = '';
-          					$objMailProperties->recipients = array();
-          					$objMailProperties->messageText = '';
-          					$objMailProperties->messageHtml = '';
-          					$objMailProperties->attachments = array();
+                    $objMailProperties->subject = '';
+                    $objMailProperties->sender = '';
+                    $objMailProperties->senderName = '';
+                    $objMailProperties->replyTo = '';
+                    $objMailProperties->recipients = [];
+                    $objMailProperties->messageText = '';
+                    $objMailProperties->messageHtml = '';
+                    $objMailProperties->attachments = [];
 
-          					// Set the sender as given in form configuration
-          					[$senderName, $sender] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateSender);
-          					$objMailProperties->sender = $sender;
-          					$objMailProperties->senderName = $senderName;
+                    // Set the sender as given in form configuration
+                    [$senderName, $sender] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailSender);
+                    $objMailProperties->sender = $sender;
+                    $objMailProperties->senderName = $senderName;
 
-          					// Set the 'reply to' address, if given in form configuration
-          					if (!empty($this->objSurvey->confirmationMailAlternateReplyto))
-          					{
-          						[$replyToName, $replyTo] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateReplyto);
-          						$objMailProperties->replyTo = (strlen($replyToName) ? $replyToName . ' <' . $replyTo . '>' : $replyTo);
-          					}
+                    // Set the 'reply to' address, if given in form configuration
+                    if (!empty($this->objSurvey->confirmationMailReplyto)) {
+                        [$replyToName, $replyTo] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailReplyto);
+                        $objMailProperties->replyTo = (\strlen($replyToName) ? $replyToName.' <'.$replyTo.'>' : $replyTo);
+                    }
 
-          					// Set recipient(s)
-                    $arrRecipient = [];
-          					if (!empty($this->objSurvey->confirmationMailAlternateRecipient))
-          					{
-          						$varRecipient = $this->objSurvey->confirmationMailAlternateRecipient;
-          						$arrRecipient = array_merge($arrRecipient, trimsplit(',', $varRecipient));
-          					}
-          					$arrRecipient = array_filter(array_unique($arrRecipient));
+                    // Set recipient(s)
+                    if (\strlen($this->objSurvey->confirmationMailRecipientField)) {
+                        $res = SurveyResultModel::findOneBy(['qid=?', 'pin=?'], [$this->objSurvey->confirmationMailRecipientField, $this->pin]);
 
-          					if (!empty($arrRecipient))
-          					{
-          						foreach ($arrRecipient as $kR => $recipient)
-          						{
-          							[$recipientName, $recipient] = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
-          							$arrRecipient[$kR] = (strlen($recipientName) ? $recipientName . ' <' . $recipient . '>' : $recipient);
-          						}
-          					}
-          					$objMailProperties->recipients = $arrRecipient;
-          					// Check if we want custom attachments... (Thanks to Torben Schwellnus)
-          					if ($this->objSurvey->addConfirmationMailAlternateAttachments)
-          					{
-          						if($this->objSurvey->confirmationMailAlternateAttachments)
-          						{
-          							$arrCustomAttachments = deserialize($this->objSurvey->confirmationMailAlternateAttachments, true);
+                        if (null !== $res) {
+                            if (\strlen($res->result)) {
+                                $arrRecipient = trimsplit(',', $res->result);
+                            }
+                        }
+                    }
 
-          							if (!empty($arrCustomAttachments))
-          							{
-          								foreach ($arrCustomAttachments as $varFile)
-          								{
-          									$objFileModel = FilesModel::findById($varFile);
+                    if (!empty($this->objSurvey->confirmationMailRecipient)) {
+                        $varRecipient = $this->objSurvey->confirmationMailRecipient;
+                        $arrRecipient = array_merge($arrRecipient, trimsplit(',', $varRecipient));
+                    }
+                    $arrRecipient = array_filter(array_unique($arrRecipient));
 
-          									if ($objFileModel != null)
-          									{
-          										$objFile = new File($objFileModel->path);
-          										if ($objFile->size)
-          										{
-          											$objMailProperties->attachments[TL_ROOT .'/' . $objFile->path] = array
-          											(
-          												'file' => TL_ROOT . '/' . $objFile->path,
-          												'name' => $objFile->basename,
-          												'mime' => $objFile->mime);
-          										}
-          									}
-          								}
-          							}
-          						}
-          					}
+                    if (!empty($arrRecipient)) {
+                        foreach ($arrRecipient as $kR => $recipient) {
+                            [$recipientName, $recipient] = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
+                            $arrRecipient[$kR] = (\strlen($recipientName) ? $recipientName.' <'.$recipient.'>' : $recipient);
+                        }
+                    }
+                    $objMailProperties->recipients = $arrRecipient;
+                    // Check if we want custom attachments... (Thanks to Torben Schwellnus)
+                    if ($this->objSurvey->addConfirmationMailAttachments) {
+                        if ($this->objSurvey->confirmationMailAttachments) {
+                            $arrCustomAttachments = deserialize($this->objSurvey->confirmationMailAttachments, true);
 
-          					$objMailProperties->subject = StringUtil::decodeEntities($this->objSurvey->confirmationMailAlternateSubject);
-          					$objMailProperties->messageText = StringUtil::decodeEntities($this->objSurvey->confirmationMailAlternateText);
+                            if (!empty($arrCustomAttachments)) {
+                                foreach ($arrCustomAttachments as $varFile) {
+                                    $objFileModel = FilesModel::findById($varFile);
 
-          					$messageHtmlTmpl = '';
-          					if (Validator::isUuid($this->objSurvey->confirmationMailAlternateTemplate) || (is_numeric($this->objSurvey->confirmationMailAlternateTemplate) && $this->objSurvey->confirmationMailAlternateTemplate > 0))
-          					{
-          						$objFileModel = FilesModel::findById($this->objSurvey->confirmationMailAlternateTemplate);
-          						if ($objFileModel != null)
-          						{
-          							$messageHtmlTmpl = $objFileModel->path;
-          						}
-          					}
-          					if ($messageHtmlTmpl != '')
-          					{
-          						$fileTemplate = new File($messageHtmlTmpl);
-          						if ($fileTemplate->mime == 'text/html')
-          						{
-          							$messageHtml = $fileTemplate->getContent();
-          							$objMailProperties->messageHtml = $messageHtml;
-          						}
-          					}
-          					// Replace Insert tags and conditional tags
-          					//$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
+                                    if (null !== $objFileModel) {
+                                        $objFile = new File($objFileModel->path);
 
-          					// Send Mail
-          					$blnConfirmationSent = false;
-          					if (!empty($objMailProperties->recipients))
-          					{
-          						$objMail = new Email();
-          						$objMail->from = $objMailProperties->sender;
+                                        if ($objFile->size) {
+                                            $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
+                                                        'file' => TL_ROOT.'/'.$objFile->path,
+                                                        'name' => $objFile->basename,
+                                                        'mime' => $objFile->mime, ];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-          						if (!empty($objMailProperties->senderName))
-          						{
-          							$objMail->fromName = $objMailProperties->senderName;
-          						}
+                    $objMailProperties->subject = StringUtil::decodeEntities($this->objSurvey->confirmationMailSubject);
+                    $objMailProperties->messageText = StringUtil::decodeEntities($this->objSurvey->confirmationMailText);
 
-          						if (!empty($objMailProperties->replyTo))
-          						{
-          							$objMail->replyTo($objMailProperties->replyTo);
-          						}
+                    $messageHtmlTmpl = '';
 
-          						$helper = new SurveyHelper();
+                    if (Validator::isUuid($this->objSurvey->confirmationMailTemplate) || (is_numeric($this->objSurvey->confirmationMailTemplate) && $this->objSurvey->confirmationMailTemplate > 0)) {
+                        $objFileModel = FilesModel::findById($this->objSurvey->confirmationMailTemplate);
 
-          						$objMail->subject = $objMailProperties->subject;
+                        if (null !== $objFileModel) {
+                            $messageHtmlTmpl = $objFileModel->path;
+                        }
+                    }
 
-          						if (!empty($objMailProperties->attachments))
-          						{
-          							foreach ($objMailProperties->attachments as $strFile => $varParams)
-          							{
-          								$strContent = file_get_contents($varParams['file'], false);
-          								$objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
-          							}
-          						}
+                    if ('' !== $messageHtmlTmpl) {
+                        $fileTemplate = new File($messageHtmlTmpl);
 
-          						if (!empty($objMailProperties->messageText))
-          						{
-          							$objMail->text = $helper->replaceTags($objMailProperties->messageText, $this->pin, []);
-          						}
+                        if ('text/html' === $fileTemplate->mime) {
+                            $messageHtml = $fileTemplate->getContent();
+                            $objMailProperties->messageHtml = $messageHtml;
+                        }
+                    }
+                    // Replace Insert tags and conditional tags
+                    //$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
 
-          						if (!empty($objMailProperties->messageHtml))
-          						{
-          							$objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, [], true);
-          						}
+                    // Send Mail
+                    $blnConfirmationSent = false;
 
-          						foreach ($objMailProperties->recipients as $recipient)
-          						{
-          							$objMail->sendTo($recipient);
-          							$blnConfirmationSent = true;
-          						}
-          					}
-                  }
+                    if (!empty($objMailProperties->recipients)) {
+                        $objMail = new Email();
+                        $objMail->from = $objMailProperties->sender;
+
+                        if (!empty($objMailProperties->senderName)) {
+                            $objMail->fromName = $objMailProperties->senderName;
+                        }
+
+                        if (!empty($objMailProperties->replyTo)) {
+                            $objMail->replyTo($objMailProperties->replyTo);
+                        }
+
+                        $helper = new SurveyHelper();
+
+                        $objMail->subject = $objMailProperties->subject;
+
+                        if (!empty($objMailProperties->attachments)) {
+                            foreach ($objMailProperties->attachments as $strFile => $varParams) {
+                                $strContent = file_get_contents($varParams['file'], false);
+                                $objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
+                            }
+                        }
+
+                        if (!empty($objMailProperties->messageText)) {
+                            $objMail->text = $helper->replaceTags($objMailProperties->messageText, $this->pin, []);
+                        }
+
+                        if (!empty($objMailProperties->messageHtml)) {
+                            $objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, [], true);
+                        }
+
+                        foreach ($objMailProperties->recipients as $recipient) {
+                            $objMail->sendTo($recipient);
+                            $blnConfirmationSent = true;
+                        }
+                    }
+                }
+
+                if ($this->objSurvey->sendConfirmationMailAlternate) {
+                    $condition = true;
+
+                    if ($this->objSurvey->confirmationMailAlternateCondition) {
+                        if ('1' === $helper->replaceTags(sprintf('{if %s}1{endif}', StringUtil::decodeEntities($this->objSurvey->confirmationMailAlternateCondition)), $this->pin, [])) {
+                            $condition = true;
+                        } else {
+                            $condition = false;
+                        }
+                    }
+
+                    if ($condition) {
+                        $objMailProperties = new \stdClass();
+                        $objMailProperties->subject = '';
+                        $objMailProperties->sender = '';
+                        $objMailProperties->senderName = '';
+                        $objMailProperties->replyTo = '';
+                        $objMailProperties->recipients = [];
+                        $objMailProperties->messageText = '';
+                        $objMailProperties->messageHtml = '';
+                        $objMailProperties->attachments = [];
+
+                        // Set the sender as given in form configuration
+                        [$senderName, $sender] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateSender);
+                        $objMailProperties->sender = $sender;
+                        $objMailProperties->senderName = $senderName;
+
+                        // Set the 'reply to' address, if given in form configuration
+                        if (!empty($this->objSurvey->confirmationMailAlternateReplyto)) {
+                            [$replyToName, $replyTo] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateReplyto);
+                            $objMailProperties->replyTo = (\strlen($replyToName) ? $replyToName.' <'.$replyTo.'>' : $replyTo);
+                        }
+
+                        // Set recipient(s)
+                        $arrRecipient = [];
+
+                        if (!empty($this->objSurvey->confirmationMailAlternateRecipient)) {
+                            $varRecipient = $this->objSurvey->confirmationMailAlternateRecipient;
+                            $arrRecipient = array_merge($arrRecipient, trimsplit(',', $varRecipient));
+                        }
+                        $arrRecipient = array_filter(array_unique($arrRecipient));
+
+                        if (!empty($arrRecipient)) {
+                            foreach ($arrRecipient as $kR => $recipient) {
+                                [$recipientName, $recipient] = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
+                                $arrRecipient[$kR] = (\strlen($recipientName) ? $recipientName.' <'.$recipient.'>' : $recipient);
+                            }
+                        }
+                        $objMailProperties->recipients = $arrRecipient;
+                        // Check if we want custom attachments... (Thanks to Torben Schwellnus)
+                        if ($this->objSurvey->addConfirmationMailAlternateAttachments) {
+                            if ($this->objSurvey->confirmationMailAlternateAttachments) {
+                                $arrCustomAttachments = deserialize($this->objSurvey->confirmationMailAlternateAttachments, true);
+
+                                if (!empty($arrCustomAttachments)) {
+                                    foreach ($arrCustomAttachments as $varFile) {
+                                        $objFileModel = FilesModel::findById($varFile);
+
+                                        if (null !== $objFileModel) {
+                                            $objFile = new File($objFileModel->path);
+
+                                            if ($objFile->size) {
+                                                $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
+                                                          'file' => TL_ROOT.'/'.$objFile->path,
+                                                          'name' => $objFile->basename,
+                                                          'mime' => $objFile->mime, ];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        $objMailProperties->subject = StringUtil::decodeEntities($this->objSurvey->confirmationMailAlternateSubject);
+                        $objMailProperties->messageText = StringUtil::decodeEntities($this->objSurvey->confirmationMailAlternateText);
+
+                        $messageHtmlTmpl = '';
+
+                        if (Validator::isUuid($this->objSurvey->confirmationMailAlternateTemplate) || (is_numeric($this->objSurvey->confirmationMailAlternateTemplate) && $this->objSurvey->confirmationMailAlternateTemplate > 0)) {
+                            $objFileModel = FilesModel::findById($this->objSurvey->confirmationMailAlternateTemplate);
+
+                            if (null !== $objFileModel) {
+                                $messageHtmlTmpl = $objFileModel->path;
+                            }
+                        }
+
+                        if ('' !== $messageHtmlTmpl) {
+                            $fileTemplate = new File($messageHtmlTmpl);
+
+                            if ('text/html' === $fileTemplate->mime) {
+                                $messageHtml = $fileTemplate->getContent();
+                                $objMailProperties->messageHtml = $messageHtml;
+                            }
+                        }
+                        // Replace Insert tags and conditional tags
+                        //$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
+
+                        // Send Mail
+                        $blnConfirmationSent = false;
+
+                        if (!empty($objMailProperties->recipients)) {
+                            $objMail = new Email();
+                            $objMail->from = $objMailProperties->sender;
+
+                            if (!empty($objMailProperties->senderName)) {
+                                $objMail->fromName = $objMailProperties->senderName;
+                            }
+
+                            if (!empty($objMailProperties->replyTo)) {
+                                $objMail->replyTo($objMailProperties->replyTo);
+                            }
+
+                            $helper = new SurveyHelper();
+
+                            $objMail->subject = $objMailProperties->subject;
+
+                            if (!empty($objMailProperties->attachments)) {
+                                foreach ($objMailProperties->attachments as $strFile => $varParams) {
+                                    $strContent = file_get_contents($varParams['file'], false);
+                                    $objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
+                                }
+                            }
+
+                            if (!empty($objMailProperties->messageText)) {
+                                $objMail->text = $helper->replaceTags($objMailProperties->messageText, $this->pin, []);
+                            }
+
+                            if (!empty($objMailProperties->messageHtml)) {
+                                $objMail->html = $helper->replaceTags($objMailProperties->messageHtml, $this->pin, [], true);
+                            }
+
+                            foreach ($objMailProperties->recipients as $recipient) {
+                                $objMail->sendTo($recipient);
+                                $blnConfirmationSent = true;
+                            }
+                        }
+                    }
                 }
 
                 if ($this->objSurvey->jumpto) {
                     $pagedata = PageModel::findByPk($this->objSurvey->jumpto);
-                    if (null != $pagedata) {
+
+                    if (null !== $pagedata) {
                         $this->redirect($pagedata->getFrontendUrl());
                     }
                 }
             }
         }
 
-        return (($doNotSubmit || !$validate) && !$goback) ? $surveypage : [];
+        return ($doNotSubmit || !$validate) && !$goback ? $surveypage : [];
     }
 
     protected function getQuestionPosition($question_id, $survey_id)
     {
         if ($question_id > 0 && $survey_id > 0) {
             if (!\count($this->questionpositions)) {
-                $execute = (method_exists($this->Database, 'executeUncached')) ? 'executeUncached' : 'execute';
+                $execute = method_exists($this->Database, 'executeUncached') ? 'executeUncached' : 'execute';
                 $this->questionpositions = $this->Database->prepare('SELECT tl_survey_question.id FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
                     ->$execute($survey_id)
-                    ->fetchEach('id');
+                    ->fetchEach('id')
+                ;
             }
 
             return array_search($question_id, $this->questionpositions, true) + 1;
@@ -896,45 +886,52 @@ class ContentSurvey extends ContentElement
      * @param mixed $pin
      *
      * @return bool
-     **/
+     */
     protected function isValid($pin)
     {
-        if (0 == \strlen($pin)) {
+        if (0 === \strlen($pin)) {
             return false;
         }
-        $participants = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy(['pin=?', 'pid=?'], [$pin, $this->objSurvey->id]);
-        if (null == $participants) {
+        $participants = SurveyParticipantModel::findBy(['pin=?', 'pid=?'], [$pin, $this->objSurvey->id]);
+
+        if (null === $participants) {
             return false;
         }
-        if (1 == $participants->count()) {
+
+        if (1 === $participants->count()) {
             return true;
         }
 
         return false;
     }
 
-    protected function outIntroductionPage()
+    protected function outIntroductionPage(): void
     {
         switch ($this->objSurvey->access) {
             case 'anon':
                 $status = '';
+
                 if ($this->objSurvey->usecookie) {
                     $status = $this->svy->getSurveyStatus($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id]);
                 }
-                if (0 == strcmp($status, 'finished')) {
+
+                if (0 === strcmp($status, 'finished')) {
                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                     $this->Template->hideStartButtons = true;
                 }
                 break;
+
             case 'anoncode':
                 $this->loadLanguageFile('tl_content');
                 $this->Template->needsTAN = true;
                 $this->Template->txtTANInputDesc = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start_desc'];
                 $this->Template->txtTANInput = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start'];
+
                 if (\strlen(Input::get('code'))) {
                     $this->Template->tancode = Input::get('code');
                 }
                 break;
+
             case 'nonanoncode':
                 if (!$this->User->id) {
                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_no_member'];
@@ -946,7 +943,8 @@ class ContentSurvey extends ContentElement
                     }
                 } else {
                     $status = $this->svy->getSurveyStatusForMember($this->objSurvey->id, $this->User->id);
-                    if (0 == strcmp($status, 'finished')) {
+
+                    if (0 === strcmp($status, 'finished')) {
                         $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                         $this->Template->hideStartButtons = true;
                     }
@@ -956,30 +954,30 @@ class ContentSurvey extends ContentElement
     }
 
     /**
-     * @param int $pid Survey id
-     * @param int $qid Question id
+     * @param int    $pid    Survey id
+     * @param int    $qid    Question id
      * @param string $pin
-     * @param mixed $result Result
-     * @param int $uid User id
-     * @return void
+     * @param mixed  $result Result
+     * @param int    $uid    User id
      */
-    protected function insertResult($pid, $qid, $pin, $result, $uid = null)
+    protected function insertResult($pid, $qid, $pin, $result, $uid = null): void
     {
-        $newResult = new \Hschottm\SurveyBundle\SurveyResultModel();
+        $newResult = new SurveyResultModel();
         $newResult->tstamp = time();
         $newResult->pid = $pid;
         $newResult->qid = $qid;
         $newResult->pin = $pin;
         $newResult->result = $result;
-        if (null != $uid) {
+
+        if (null !== $uid) {
             $newResult->uid = $uid;
         }
         $newResult->save();
     }
 
-    protected function insertPinTan($pid, $pin, $tan, $used)
+    protected function insertPinTan($pid, $pin, $tan, $used): void
     {
-        $newParticipant = new \Hschottm\SurveyBundle\SurveyPinTanModel();
+        $newParticipant = new SurveyPinTanModel();
         $newParticipant->tstamp = time();
         $newParticipant->pid = $pid;
         $newParticipant->pin = $pin;
@@ -995,9 +993,9 @@ class ContentSurvey extends ContentElement
      * @param mixed $pin
      * @param mixed $uid
      */
-    protected function insertParticipant($pid, $pin, $uid = 0)
+    protected function insertParticipant($pid, $pin, $uid = 0): void
     {
-        $newParticipant = new \Hschottm\SurveyBundle\SurveyParticipantModel();
+        $newParticipant = new SurveyParticipantModel();
         $newParticipant->tstamp = time();
         $newParticipant->pid = $pid;
         $newParticipant->pin = $pin;
@@ -1006,15 +1004,15 @@ class ContentSurvey extends ContentElement
     }
 
     /**
-     * Insert a new navigation step
+     * Insert a new navigation step.
      *
      * @param mixed $pid
      * @param mixed $pin
      * @param mixed $uid
      */
-    protected function insertNavigation($pid, $pin, $uid = 0, $from = 0, $to = 0)
+    protected function insertNavigation($pid, $pin, $uid = 0, $from = 0, $to = 0): void
     {
-        $newNavigation = new \Hschottm\SurveyBundle\SurveyNavigationModel();
+        $newNavigation = new SurveyNavigationModel();
         $newNavigation->tstamp = time();
         $newNavigation->pid = $pid;
         $newNavigation->pin = $pin;
@@ -1027,6 +1025,7 @@ class ContentSurvey extends ContentElement
     protected function createResultPage(array $pageData): void
     {
         $templateName = ($pageData['page_template'] ?? '');
+
         if (!str_starts_with($templateName, 'surveypage_result_')) {
             $templateName = 'surveypage_result_default';
         }
@@ -1038,6 +1037,7 @@ class ContentSurvey extends ContentElement
             case 'anoncode':
                 $userId = $this->pin;
                 break;
+
             case 'nonanoncode':
                 $userId = $this->User->id;
                 break;
@@ -1049,14 +1049,17 @@ class ContentSurvey extends ContentElement
         $this->Template->surveyUserAccess = $this->objSurvey->access;
 
         $questions = [];
-        /** @var SurveyQuestionModel|SurveyQuestionModel[]|Collection|null $questionCollection */
+        /** @var SurveyQuestionModel|array<SurveyQuestionModel>|Collection|null $questionCollection */
         $questionCollection = SurveyQuestionModel::findBySurvey($this->objSurvey->id);
+
         if (!$questionCollection) {
             $resultPageTemplate->results = $questions;
+
             return;
         }
 
         $useCategories = false;
+
         if ($this->objSurvey->useResultCategories) {
             $useCategories = true;
         }
@@ -1065,8 +1068,9 @@ class ContentSurvey extends ContentElement
         $currentUserCategories = [];
         $allUserCategories = [];
         $allUserQuestionsSolvedCount = 0;
+
         while ($questionCollection->next()) {
-            $count++;
+            ++$count;
             $questionType = SurveyQuestion::createInstance($questionCollection->id, $questionCollection->questiontype);
             $questions[$count] = [
                 'id' => $questionCollection->id,
@@ -1082,17 +1086,18 @@ class ContentSurvey extends ContentElement
 
             if ($useCategories) {
                 foreach (($questions[$count]['result']['categories'] ?? []) as $categoryId => $categoryCount) {
-                    $allUserCategories[$categoryId] = (($allUserCategories[$categoryId] ?? 0) + $categoryCount);
+                    $allUserCategories[$categoryId] = ($allUserCategories[$categoryId] ?? 0) + $categoryCount;
                 }
                 $allUserQuestionsSolvedCount += ($questions[$count]['result']['statistics']['answered'] ?? 0);
             }
 
             $currentUserResult = SurveyResultModel::findBy(
-                ['pid=?', 'qid=?', ($this->objSurvey->access === 'nonanoncode' ? 'uid=?' : 'pin=?')],
+                ['pid=?', 'qid=?', ('nonanoncode' === $this->objSurvey->access ? 'uid=?' : 'pin=?')],
                 [$this->objSurvey->id, $questionCollection->id, $userId]
             );
 
             $questions[$count]['currentUserResult'] = null;
+
             if ($currentUserResult) {
                 $questions[$count]['currentUserResult'] = [
                     'result' => $questionType->resultAsString($currentUserResult->result),
@@ -1101,14 +1106,14 @@ class ContentSurvey extends ContentElement
 
                 if ($useCategories && $questionType instanceof SurveyQuestionMultiplechoice) {
                     $result = StringUtil::deserialize($currentUserResult->result ?? '', true)['value'] ?? null;
+
                     if ($result) {
-                        $categoryId = $questionCollection->current()->getCategoryByChoice((int)$result);
+                        $categoryId = $questionCollection->current()->getCategoryByChoice((int) $result);
+
                         if ($categoryId || 0 === $categoryId) {
-                            $currentUserCategories[$categoryId] = (($currentUserCategories[$categoryId] ?? 0) + 1);
+                            $currentUserCategories[$categoryId] = ($currentUserCategories[$categoryId] ?? 0) + 1;
                         }
                     }
-
-
                 }
             }
         }
@@ -1119,12 +1124,13 @@ class ContentSurvey extends ContentElement
             $surveyModel = SurveyModel::findByPk($this->objSurvey->id);
 
             $resultCategories = [];
+
             foreach ($allUserCategories as $categoryId => $categoryCount) {
                 $resultCategories[$categoryId] = [
                     'id' => $categoryId,
                     'name' => ($surveyModel ? $surveyModel->getCategoryName($categoryId) : ''),
                     'count' => $categoryCount,
-                    'percent' => ceil(($categoryCount/$allUserQuestionsSolvedCount)*100),
+                    'percent' => ceil($categoryCount / $allUserQuestionsSolvedCount * 100),
                 ];
             }
             $resultPageTemplate->resultCategories = $resultCategories;
@@ -1133,13 +1139,15 @@ class ContentSurvey extends ContentElement
                 $userCategories = [];
                 $resultCount = array_sum($currentUserCategories);
                 $currentMaxCount = 0;
-                foreach ($currentUserCategories as $id =>  $value) {
+
+                foreach ($currentUserCategories as $id => $value) {
                     $userCategories[$id] = [
                         'id' => $id,
                         'name' => ($surveyModel ? $surveyModel->getCategoryName($id) : ''),
                         'count' => $value,
-                        'percent' => ceil(($value/$resultCount)*100),
+                        'percent' => ceil($value / $resultCount * 100),
                     ];
+
                     if ($value > $currentMaxCount) {
                         $resultPageTemplate->currentUserCategory = $userCategories[$id];
                         $currentMaxCount = $value;

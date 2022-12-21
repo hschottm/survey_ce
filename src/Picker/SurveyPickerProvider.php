@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle\Picker;
@@ -15,8 +21,6 @@ use Contao\CoreBundle\Framework\FrameworkAwareTrait;
 use Contao\CoreBundle\Picker\AbstractPickerProvider;
 use Contao\CoreBundle\Picker\DcaPickerProviderInterface;
 use Contao\CoreBundle\Picker\PickerConfig;
-use Contao\NewsArchiveModel;
-use Contao\NewsModel;
 
 /**
  * Provides the news picker.
@@ -40,7 +44,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
      */
     public function supportsContext($context)
     {
-        return 'link' == $context; // && $this->getUser()->hasAccess('news', 'modules');
+        return 'link' === $context; // && $this->getUser()->hasAccess('news', 'modules');
     }
 
     /**
@@ -92,11 +96,12 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
     {
         $params = ['do' => 'survey'];
 
-        if (null == $config || !$config->getValue() || false == strpos($config->getValue(), '{{news_url::')) {
+        if (null === $config || !$config->getValue() || false === strpos($config->getValue(), '{{news_url::')) {
             return $params;
         }
 
         $value = str_replace(['{{news_url::', '}}'], '', $config->getValue());
+
         return $params;
     }
 }

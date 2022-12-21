@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle;
@@ -17,12 +23,12 @@ use Contao\StringUtil;
 use Contao\System;
 
 /**
- * @property int $id
- * @property int $pid
+ * @property int    $id
+ * @property int    $pid
  * @property string $questiontype
  * @property string $title
  * @property string $question
- * @property bool $hidetitle
+ * @property bool   $hidetitle
  * @property string $choices
  *
  * @method static SurveyQuestionModel|null findByPk($val, array $opt=array())
@@ -41,12 +47,14 @@ class SurveyQuestionModel extends Model
         $framework = System::getContainer()->get('contao.framework');
         /** @var SurveyQuestionModel $questionModel */
         $questionModel = $framework->getAdapter(static::class)->findByPk($id);
-        if (null == $questionModel) {
+
+        if (null === $questionModel) {
             return null;
         }
         $result = $questionModel->row();
         $pageModel = $framework->getAdapter(SurveyPageModel::class)->findByPk($questionModel->pid);
-        if (null != $pageModel) {
+
+        if (null !== $pageModel) {
             $result['pagetitle'] = $pageModel->title;
             $result['parentID'] = $pageModel->pid;
         }
@@ -58,7 +66,9 @@ class SurveyQuestionModel extends Model
     {
         $result = Database::getInstance()
             ->prepare('SELECT tl_survey_question.* FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
-            ->execute($id);
+            ->execute($id)
+        ;
+
         if ($result->count() < 1) {
             return null;
         }
@@ -69,12 +79,15 @@ class SurveyQuestionModel extends Model
     public function getCategoryByChoice(int $choice): ?int
     {
         $choices = StringUtil::deserialize($this->choices, true);
-        if (isset($choices[$choice]['category']) && (!(empty($choices[$choice]['category']))
+
+        if (
+            isset($choices[$choice]['category']) && (!empty($choices[$choice]['category'])
                 || 0 === $choices[$choice]['category']
-                || "0" === $choices[$choice]['category']))
-        {
+                || '0' === $choices[$choice]['category'])
+        ) {
             return $choices[$choice]['category'];
         }
+
         return null;
     }
 }

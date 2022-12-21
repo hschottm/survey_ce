@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 $GLOBALS['TL_LANG']['tl_survey_page']['title']['0'] = 'Titel';
@@ -35,15 +41,15 @@ $GLOBALS['TL_LANG']['tl_survey_page']['conditions'] = ['Sprungbedingungen', 'Wen
 $GLOBALS['TL_LANG']['tl_survey_page']['type'] = ['Seitentyp', 'Bitte wählen Sie den Typ der Seite.'];
 $GLOBALS['TL_LANG']['tl_survey_page']['useCustomNextButtonTitle'] = [
     '"Weiter"-Text anpassen',
-    'Wählen Sie diese Option, um der "Weiter"-Schaltfläche der vorrigen Seite einen benutzerdefinierten Text zuzuweisen.'
+    'Wählen Sie diese Option, um der "Weiter"-Schaltfläche der vorrigen Seite einen benutzerdefinierten Text zuzuweisen.',
 ];
 $GLOBALS['TL_LANG']['tl_survey_page']['customNextButtonTitle'] = [
     '"Weiter"-Text',
-    'Geben Sie einen Text für die "Weiter"-Schaltfläche der vorrigen Seite an.'
+    'Geben Sie einen Text für die "Weiter"-Schaltfläche der vorrigen Seite an.',
 ];
 $GLOBALS['TL_LANG']['tl_survey_page']['hideBackButton'] = [
     '"Zurück" ausblenden',
-    'Wählen Sie diese Option, um die "Zurück"-Schaltfläche auf dieser Seite auszublenden.'
+    'Wählen Sie diese Option, um die "Zurück"-Schaltfläche auf dieser Seite auszublenden.',
 ];
 
 /*
@@ -56,7 +62,7 @@ $GLOBALS['TL_LANG']['tl_survey_page']['condition_legend'] = 'Sprungbedingungen';
 $GLOBALS['TL_LANG']['tl_survey_page']['template_legend'] = 'Template-Einstellungen';
 $GLOBALS['TL_LANG']['tl_survey_page']['config_legend'] = 'Konfiguration';
 
-/**
+/*
  * Page types
  */
 $GLOBALS['TL_LANG']['tl_survey_page']['type']['default'] = 'Fragenseite';

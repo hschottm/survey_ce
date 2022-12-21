@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle;
@@ -32,7 +38,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
         parent::__construct($question_id);
     }
 
-    public function __set($name, $value)
+    public function __set($name, $value): void
     {
         switch ($name) {
             default:
@@ -41,7 +47,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
         }
     }
 
-    public function exportDataToExcel(&$exporter, $sheet, &$row)
+    public function exportDataToExcel(& $exporter, $sheet, & $row): void
     {
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => 'ID', Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
         $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $this->id, Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
@@ -65,6 +71,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
 
         $col = 2;
+
         if (\is_array($this->statistics['answers'])) {
             foreach ($this->statistics['answers'] as $answer) {
                 $exporter->setCellValue($sheet, $row, $col++, [Exporter::DATA => $answer]);
@@ -85,29 +92,37 @@ class SurveyQuestionOpenended extends SurveyQuestion
      * which does a good job here by default. However Excel 95/97 seems to do it worse,
      * I can't test that currently. "Set optimal row height" might help users of Excel.
      *
-     * @param object &$exporter       instance of the Excel exporter object
+     * @param object $exporter        instance of the Excel exporter object
      * @param string $sheet           name of the worksheet
-     * @param int    &$row            row to put a cell in
-     * @param int    &$col            col to put a cell in
+     * @param int    $row             row to put a cell in
+     * @param int    $col             col to put a cell in
      * @param array  $questionNumbers array with page and question numbers
      * @param array  $participants    array with all participant data
      *
      * @return array the cells to be added to the export
      */
-    public function exportDetailsToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, $participants)
+    public function exportDetailsToExcel(& $exporter, $sheet, & $row, & $col, $questionNumbers, $participants)
     {
         $rotateInfo = [];
         $headerCells = $this->exportQuestionHeadersToExcel($exporter, $sheet, $row, $col, $questionNumbers, $rotateInfo);
         $resultCells = $this->exportDetailResults($exporter, $sheet, $row, $col, $participants);
         ++$col;
+
         return array_merge($headerCells, $resultCells);
     }
 
-    protected function calculateStatistics()
+    public function resultAsString($res)
     {
-        if (array_key_exists('id', $this->arrData) && array_key_exists('parentID', $this->arrData)) {
+        return $res;
+    }
+
+    protected function calculateStatistics(): void
+    {
+        if (\array_key_exists('id', $this->arrData) && \array_key_exists('parentID', $this->arrData)) {
             $objResult = Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
-                ->execute($this->arrData['id'], $this->arrData['parentID']);
+                ->execute($this->arrData['id'], $this->arrData['parentID'])
+            ;
+
             if ($objResult->numRows) {
                 $this->calculateAnsweredSkipped($objResult);
             }
@@ -120,70 +135,70 @@ class SurveyQuestionOpenended extends SurveyQuestion
      * Several rows are returned, so that the user of the Excel file is able to
      * use them for reference, filtering and sorting.
      *
-     * @param object &$exporter       instance of the Excel exporter object
+     * @param object $exporter        instance of the Excel exporter object
      * @param string $sheet           name of the worksheet
-     * @param int    &$row            in/out row to put a cell in
-     * @param int    &$col            in/out col to put a cell in
+     * @param int    $row             in/out row to put a cell in
+     * @param int    $col             in/out col to put a cell in
      * @param array  $questionNumbers array with page and question numbers
-     * @param array  &$rotateInfo     out param with row => text for later calculation of row height
+     * @param array  $rotateInfo      out param with row => text for later calculation of row height
      *
      * @return array the cells to be added to the export
      */
-    protected function exportQuestionHeadersToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
+    protected function exportQuestionHeadersToExcel(& $exporter, $sheet, & $row, & $col, $questionNumbers, & $rotateInfo)
     {
         $result = [];
 
         // ID and question numbers
         $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => $this->id,
-          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
+            Exporter::DATA => $this->id,
+            Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => $questionNumbers['abs_question_no'],
-          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
-          Exporter::FONTSTYLE => Exporter::FONTSTYLE_ITALIC
+            Exporter::DATA => $questionNumbers['abs_question_no'],
+            Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
+            Exporter::FONTSTYLE => Exporter::FONTSTYLE_ITALIC,
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => $questionNumbers['page_no'].'.'.$questionNumbers['rel_question_no'],
-          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
-          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER
+            Exporter::DATA => $questionNumbers['page_no'].'.'.$questionNumbers['rel_question_no'],
+            Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
+            Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+            Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
         ]);
 
         // question type
         $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype]
+            Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question'][$this->questiontype],
         ]);
 
         // answered and skipped info, retrieves all answers as a side effect
         $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => $this->statistics['answered'],
-          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
+            Exporter::DATA => $this->statistics['answered'],
+            Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
         ]);
 
         $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => $this->statistics['skipped'],
-          Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
+            Exporter::DATA => $this->statistics['skipped'],
+            Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
         ]);
 
         // question title
         $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
-          Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
-          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
-          Exporter::TEXTWRAP => true
+            Exporter::DATA => StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
+            Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
+            Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
+            Exporter::TEXTWRAP => true,
         ]);
 
         // empty cell used in other question types, for the formatting
         $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => '',
-          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
-          Exporter::TEXTWRAP => true,
-          Exporter::TEXTROTATE => ($this->arrData['addother'] && ($key == \count($this->choices) - 1)) ? Exporter::TEXTROTATE_NONE : Exporter::TEXTROTATE_COUNTERCLOCKWISE,
-          Exporter::BORDERBOTTOM => Exporter::BORDER_THIN,
-          Exporter::BORDERBOTTOMCOLOR => '#000000',
+            Exporter::DATA => '',
+            Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
+            Exporter::TEXTWRAP => true,
+            Exporter::TEXTROTATE => $this->arrData['addother'] && ($key === \count($this->choices) - 1) ? Exporter::TEXTROTATE_NONE : Exporter::TEXTROTATE_COUNTERCLOCKWISE,
+            Exporter::BORDERBOTTOM => Exporter::BORDER_THIN,
+            Exporter::BORDERBOTTOMCOLOR => '#000000',
         ]);
 
         return $result;
@@ -194,21 +209,23 @@ class SurveyQuestionOpenended extends SurveyQuestion
      *
      * Sets column widthes as a side effect.
      *
-     * @param object &$exporter    instance of the Excel exporter object
+     * @param object $exporter     instance of the Excel exporter object
      * @param string $sheet        name of the worksheet
-     * @param int    &$row         row to put a cell in
-     * @param int    &$col         col to put a cell in
+     * @param int    $row          row to put a cell in
+     * @param int    $col          col to put a cell in
      * @param array  $participants array with all participant data
      *
      * @return array the cells to be added to the export
      *
      * @TODO: make alignment and max colwidth configurable in dcaconfig.php ?
      */
-    protected function exportDetailResults(&$exporter, $sheet, &$row, &$col, $participants)
+    protected function exportDetailResults(& $exporter, $sheet, & $row, & $col, $participants)
     {
         $cells = [];
+
         foreach ($participants as $key => $value) {
             $data = false;
+
             if (isset($this->statistics['participants']) && \strlen($this->statistics['participants'][$key]['result'])) {
                 // future state of survey_ce
                 $data = $this->statistics['participants'][$key]['result'];
@@ -216,12 +233,13 @@ class SurveyQuestionOpenended extends SurveyQuestion
                 // current state of survey_ce: additional subarray with always 1 entry
                 $data = $this->statistics['participants'][$key][0]['result'];
             }
+
             if ($data) {
                 $data = StringUtil::decodeEntities($data);
                 $exporter->setCellValue($sheet, $row, $col, [
-                  Exporter::DATA => $data,
-                  Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
-                  Exporter::TEXTWRAP => true
+                    Exporter::DATA => $data,
+                    Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
+                    Exporter::TEXTWRAP => true,
                 ]);
             }
             ++$row;
@@ -229,9 +247,4 @@ class SurveyQuestionOpenended extends SurveyQuestion
 
         return $cells;
     }
-
-    public function resultAsString($res)
-  	{
-  		return $res;
-  	}
 }

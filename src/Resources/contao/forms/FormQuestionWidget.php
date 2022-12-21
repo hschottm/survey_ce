@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 namespace Hschottm\SurveyBundle;
@@ -52,7 +58,7 @@ class FormQuestionWidget extends Widget
      * @param mixed $strKey
      * @param mixed $varValue
      */
-    public function __set($strKey, $varValue)
+    public function __set($strKey, $varValue): void
     {
         switch ($strKey) {
             case 'surveydata':
@@ -106,29 +112,37 @@ class FormQuestionWidget extends Widget
             case 'question':
                 return $this->question;
                 break;
+
             case 'title':
                 return $this->title;
                 break;
+
             case 'questionNumber':
                 return $this->questionNumber;
                 break;
+
             case 'pageQuestionNumber':
                 return $this->pageQuestionNumber;
                 break;
+
             case 'pageNumber':
                 return $this->pageNumber;
                 break;
+
             case 'absoluteNumber':
                 return $this->absoluteNumber;
                 break;
+
             case 'showTitle':
-                return false == $this->hidetitle;
+                return false === $this->hidetitle;
                 break;
+
             case 'help':
                 return $this->help;
                 break;
+
             case 'empty':
-                return (!\is_array($this->varValue) && !\strlen($this->varValue)) ? true : false;
+                return !\is_array($this->varValue) && !\strlen($this->varValue) ? true : false;
                 break;
         }
 
@@ -147,7 +161,7 @@ class FormQuestionWidget extends Widget
 
     public function hasLabel()
     {
-        if ('' == $this->title || false == $this->showTitle) {
+        if ('' === $this->title || false === $this->showTitle) {
             return false;
         }
 
@@ -165,12 +179,14 @@ class FormQuestionWidget extends Widget
             return '';
         }
 
-        return sprintf('<label%s%s>%s%s%s</label>',
+        return sprintf(
+            '<label%s%s>%s%s%s</label>',
             (\strlen($this->strId) ? ' for="ctrl_'.$this->strId.'"' : ''),
-            (('' != $this->strClass) ? ' class="'.$this->strClass.'"' : ''),
+            ('' !== $this->strClass ? ' class="'.$this->strClass.'"' : ''),
             ($this->mandatory ? '<span class="invisible">'.$GLOBALS['TL_LANG']['MSC']['mandatory'].' </span>' : ''),
             $this->title,
-            ($this->mandatory ? '<span class="mandatory">*</span>' : ''));
+            ($this->mandatory ? '<span class="mandatory">*</span>' : '')
+        );
     }
 
     /**
@@ -181,6 +197,7 @@ class FormQuestionWidget extends Widget
     public function getResultStringRepresentation()
     {
         $result = '';
+
         if (!\is_array($this->varValue) && \strlen($this->varValue)) {
             $result .= $this->varValue."\n";
         }

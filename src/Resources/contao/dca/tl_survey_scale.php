@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 use Contao\Backend;
@@ -64,7 +70,7 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_scale']['delete'],
                 'href' => 'act=delete',
                 'icon' => 'delete.svg',
-                'attributes' => 'onclick="if (!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm']?? null).'\')) return false; Backend.getScrollOffset();"',
+                'attributes' => 'onclick="if (!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\')) return false; Backend.getScrollOffset();"',
             ],
             'show' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_scale']['show'],
@@ -154,6 +160,7 @@ class tl_survey_scale extends Backend
         $result = '<p><strong>'.$row['title'].'</strong></p>';
         $result .= '<ol>';
         $answers = deserialize($row['scale'], true);
+
         foreach ($answers as $answer) {
             $result .= '<li>'.StringUtil::specialchars($answer).'</li>';
         }

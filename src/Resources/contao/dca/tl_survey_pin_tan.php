@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
- * @see	      https://github.com/hschottm/survey_ce
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
  */
 
 use Contao\Backend;
@@ -66,7 +72,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['delete'],
                 'href' => 'act=delete',
                 'icon' => 'delete.gif',
-                'attributes' => 'onclick="if (!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm']?? null).'\')) return false; Backend.getScrollOffset();"',
+                'attributes' => 'onclick="if (!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\')) return false; Backend.getScrollOffset();"',
             ],
             'show' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['show'],
@@ -99,7 +105,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'maxlength' => 16, 'insertTag' => true],
             'sql' => "varchar(16) NOT NULL default ''",
-            ],
+        ],
         'used' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'],
             'filter' => true,
@@ -131,6 +137,7 @@ class tl_survey_pin_tan extends Backend
     public function getLabel($row, $label)
     {
         preg_match('/^(.*?)::(.*?)::(.*?)$/', $label, $matches);
+
         if ($matches[3]) {
             // tan is used
             $used = '<img src="bundles/hschottmsurvey/images/tan_used.png" alt="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'].'" title="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'].'" />';
