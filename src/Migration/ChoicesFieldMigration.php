@@ -26,7 +26,13 @@ class ChoicesFieldMigration implements MigrationInterface
 
     public function shouldRun(): bool
     {
-        if (!$this->connection->executeQuery("SELECT id FROM tl_survey_question WHERE choices LIKE '%a:1:{s:6:\"choice\"%'")->rowCount()) {
+        $schemaManager = $this->connection->getSchemaManager();
+
+        if (!$schemaManager->tablesExist(['tl_survey_question'])) {
+            return false;
+        }
+
+        if (0 !== $this->connection->executeQuery("SELECT id FROM tl_survey_question WHERE choices LIKE '%a:1:{s:6:\"choice\"%'")->rowCount()) {
             return true;
         }
 
