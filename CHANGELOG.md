@@ -10,6 +10,18 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
+## [3.4.1](https://github.com/pdir/contao-survey/tree/3.4.1) – 2022-12-21
+
+- [Fixed] Fix Migration #21
+- [Fixed] Remove warnings
+- [Changed] Increase PHP version to 7.4 || 8.0
+
+## [3.4.0](https://github.com/pdir/contao-survey/tree/3.4.0) – 2022-10-11
+
+- [Added] Add categories to multiple choice questions 🤗 [koertho](https://github.com/koertho)
+- [Changed] Allow hschottm/contao-textwizard 3.4
+- [Fixed] Remove warnings
+
 ## [3.3.0](https://github.com/pdir/contao-survey/tree/3.3.0) – 2022-09-02
 
 - [Added] Add result page type 🤗 [koertho](https://github.com/koertho)
