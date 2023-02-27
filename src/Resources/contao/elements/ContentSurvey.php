@@ -226,7 +226,7 @@ class ContentSurvey extends ContentElement
                         }
                     }
                 }
-                $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id, $previouspage, $page);
+                $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id?? 0, $previouspage, $page);
             }
 
             if (\strlen(Input::post('finish'))) {
