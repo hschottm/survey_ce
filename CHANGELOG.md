@@ -10,6 +10,10 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
+## [3.4.2](https://github.com/pdir/contao-survey/tree/3.4.2) – 2023-02-27
+
+- [Fixed] An error in the condition that determines the necessity of choices field migration. 🤗 [akroii](https://github.com/akroii) for the financial support.
+
 ## [3.4.1](https://github.com/pdir/contao-survey/tree/3.4.1) – 2022-12-21
 
 - [Fixed] Fix Migration #21
