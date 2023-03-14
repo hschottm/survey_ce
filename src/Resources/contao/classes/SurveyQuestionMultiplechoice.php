@@ -72,16 +72,19 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                 $counter = 1;
 
                 foreach ($result['choices'] as $id => $choice) {
-                    $choice = $choice['choice'];
                     $result['choices'][$id] = $choice;
 
                     $result['answers'][$counter] = [
-                        'choices' => $choice,
+                        'choices' => $choice['choice'],
                         'selections' => ($this->statistics['cumulated'][$id] ?? 0),
                     ];
 
                     if (isset($choice['category'])) {
-                        $result['categories'][$choice['category']] = (($result['categories'][$choice['category']] ?? 0) + $this->statistics['cumulated'][$id] ?? 0);
+                        $result['categories'][$choice['category']] =
+                            (
+                                ($result['categories'][$choice['category']] ?? 0) +
+                                ($this->statistics['cumulated'][$id] ?? 0)
+                            );
                     }
 
                     ++$counter;
@@ -275,7 +278,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     }
                 }
 
-                if (\strlen($arrAnswer['other'])) {
+                if ($arrAnswer['other'] ?? false) {
                     $found = true;
                 }
 
@@ -305,12 +308,12 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     }
                 }
             } else {
-                if (\strlen($arrAnswer['value'])) {
-                    ++$cumulated[$arrAnswer['value']];
+                if ($arrAnswer['value'] ?? false) {
+                    $cumulated[$arrAnswer['value']] = ($cumulated[$arrAnswer['value']] ?? 0) + 1;
                 }
             }
 
-            if (\strlen($arrAnswer['other'])) {
+            if ($arrAnswer['other'] ?? false) {
                 array_push($cumulated['other'], $arrAnswer['other']);
             }
         }

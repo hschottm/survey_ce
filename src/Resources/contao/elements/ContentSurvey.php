@@ -85,7 +85,7 @@ class ContentSurvey extends ContentElement
             $GLOBALS['TL_JAVASCRIPT'] = ['bundles/hschottmsurvey/js/survey.js'];
         }
 
-        $surveyID = \strlen(Input::post('survey')) ? Input::post('survey') : $this->survey;
+        $surveyID = (Input::post('survey')) ? (int)Input::post('survey') : $this->survey;
 
         $this->objSurvey = $this->Database->prepare('SELECT * FROM tl_survey WHERE id=?')
             ->execute($surveyID)
@@ -205,7 +205,7 @@ class ContentSurvey extends ContentElement
 
         if (($page > 0 && $page <= \count($pages))) {
             if ('tl_survey' === Input::post('FORM_SUBMIT')) {
-                $goback = \strlen(Input::post('prev')) ? true : false;
+                $goback = Input::post('prev') ? true : false;
                 $surveypage = $this->createSurveyPage($pages[$page - 1], $page, true, $goback);
             }
         }
@@ -214,7 +214,7 @@ class ContentSurvey extends ContentElement
         $previouspage = $page;
 
         if (0 === \count($surveypage)) {
-            if (\strlen(Input::post('next'))) {
+            if (Input::post('next')) {
                 $pageid = $this->evaluateConditions($pages[$page - 1]);
 
                 if (null === $pageid) {
@@ -229,11 +229,11 @@ class ContentSurvey extends ContentElement
                 $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id?? 0, $previouspage, $page);
             }
 
-            if (\strlen(Input::post('finish'))) {
+            if (Input::post('finish')) {
                 ++$page;
             }
 
-            if (\strlen(Input::post('prev'))) {
+            if (Input::post('prev')) {
                 $res = SurveyNavigationModel::findOneBy(['pid=?', 'pin=?', 'uid=?', 'topage=?'], [$this->objSurvey->id, $this->pin, 0 === \strlen($this->User->id) ? 0 : $this->User->id, $page], ['order' => 'tstamp DESC']);
 
                 if (null !== $res) {
@@ -243,7 +243,7 @@ class ContentSurvey extends ContentElement
                 }
             }
 
-            $surveypage = $this->createSurveyPage($pages[$page - 1], $page, false);
+            $surveypage = $this->createSurveyPage(($pages[(($page > 0) ? $page - 1 : 0)] ?? null), $page, false);
         }
 
         // save position of last page (for resume)
@@ -255,7 +255,7 @@ class ContentSurvey extends ContentElement
                 $res->save();
             }
 
-            if (\strlen($pages[$page - 1]['page_template'])) {
+            if ($pages[$page - 1]['page_template'] ?? false) {
                 $this->questionblock_template = $pages[$page - 1]['page_template'];
             }
         }
@@ -405,14 +405,14 @@ class ContentSurvey extends ContentElement
     {
         $this->questionpositions = [];
 
-        if (!\strlen($this->pin)) {
+        if (!$this->pin) {
             $this->pin = Input::post('pin');
         }
         $surveypage = [];
         $pagequestioncounter = 1;
         $doNotSubmit = false;
 
-        $questions = SurveyQuestionModel::findBy('pid', $pagerow['id'], ['order' => 'sorting']);
+        $questions = SurveyQuestionModel::findBy('pid', $pagerow['id'] ?? 0, ['order' => 'sorting']);
 
         if (null === $questions) {
             $questions = [];

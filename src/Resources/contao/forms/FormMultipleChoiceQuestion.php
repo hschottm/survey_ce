@@ -112,7 +112,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         $submit_other = $this->getPost('other_question');
         $value = [];
         $value['value'] = $submit[$this->id];
-        $value['other'] = $submit_other[$this->id];
+        $value['other'] = $submit_other[$this->id] ?? null;
         $varInput = $this->validator($value);
         $this->value = $varInput;
     }

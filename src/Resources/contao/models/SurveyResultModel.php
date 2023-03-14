@@ -30,6 +30,7 @@ use Contao\Model\Collection;
  * @property mixed  $result
  *
  * @method static array<static>|Collection|null findBy($val, array $opt = [])
+ * @method static array<static>|Collection|null findByPid($val, array $opt = [])
  */
 class SurveyResultModel extends Model
 {
