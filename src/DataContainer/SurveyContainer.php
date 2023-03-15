@@ -23,9 +23,9 @@ class SurveyContainer
             return;
         }
 
-        $found = ($id = $request->query->get('id', false)) ? (is_numeric($id) ? (SurveyResultModel::findByPid((int)$id)) : null) : null;
+        $resultData = ($id = $request->query->get('id', false)) ? (is_numeric($id) ? (SurveyResultModel::findByPid((int)$id)) : null) : null;
 
-        if ($found) {
+        if ($resultData) {
             $GLOBALS['TL_DCA']['tl_survey']['fields']['access']['eval']['disabled'] = 'disabled';
         }
 
