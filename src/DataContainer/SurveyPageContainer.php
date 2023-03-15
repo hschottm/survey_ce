@@ -59,7 +59,7 @@ class SurveyPageContainer
             return;
         }
 
-        $resultData = ($id = $request->query->get('id', false)) ? (is_numeric($id) ? (SurveyResultModel::findByPid((int)$id)) : null) : null;
+        $resultData = ($id = $request->query->get('id', false)) ? (is_numeric($id) ? SurveyResultModel::findByPid((int) $id) : null) : null;
 
         if ($resultData) {
             $dca = &$GLOBALS['TL_DCA']['tl_survey_page'];
@@ -163,7 +163,7 @@ class SurveyPageContainer
     protected function hasData(int $id): bool
     {
         if (null === $this->hasData) {
-            $this->hasData = !(null === SurveyResultModel::findByPid($id));
+            $this->hasData = !null === SurveyResultModel::findByPid($id);
         }
 
         return $this->hasData;
@@ -171,7 +171,6 @@ class SurveyPageContainer
 
     /**
      * @param DataContainer|null $dc
-     * @return void
      */
     private function adjustResultPageDca(DataContainer $dc, Request $request): void
     {
@@ -193,6 +192,7 @@ class SurveyPageContainer
 
         PaletteManipulator::create()
             ->addField('hideBackButton', 'config_legend', PaletteManipulator::POSITION_APPEND)
-            ->applyToPalette(static::PAGETYPE_RESULT, static::TABLE);
+            ->applyToPalette(static::PAGETYPE_RESULT, static::TABLE)
+        ;
     }
 }
