@@ -33,6 +33,7 @@ use Hschottm\SurveyBundle\DataContainer\SurveyPageContainer;
 
 /**
  * @property SurveyModel|Result $objSurvey
+ * @property Survey $svy
  */
 class ContentSurvey extends ContentElement
 {
@@ -130,7 +131,7 @@ class ContentSurvey extends ContentElement
 
             switch ($this->objSurvey->access) {
                 case 'anon':
-                    if ($this->objSurvey->usecookie && \strlen($_COOKIE['TLsvy_'.$this->objSurvey->id]) && false !== $this->svy->checkPINTAN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id])) {
+                    if ($this->objSurvey->usecookie && !empty($_COOKIE['TLsvy_'.$this->objSurvey->id]) && false !== $this->svy->checkPINTAN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id])) {
                         $page = $this->svy->getLastPageForPIN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id]);
                         $this->pin = $_COOKIE['TLsvy_'.$this->objSurvey->id];
                     } else {
@@ -912,10 +913,10 @@ class ContentSurvey extends ContentElement
                 $status = '';
 
                 if ($this->objSurvey->usecookie) {
-                    $status = $this->svy->getSurveyStatus($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id]);
+                    $status = $this->svy->getSurveyStatus($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id] ?? null);
                 }
 
-                if (0 === strcmp($status, 'finished')) {
+                if (is_string($status) && (0 === strcmp($status, 'finished'))) {
                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                     $this->Template->hideStartButtons = true;
                 }

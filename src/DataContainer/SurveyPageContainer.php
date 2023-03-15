@@ -163,7 +163,7 @@ class SurveyPageContainer
     protected function hasData(int $id): bool
     {
         if (null === $this->hasData) {
-            $this->hasData = !null === SurveyResultModel::findByPid($id);
+            $this->hasData = null !== SurveyResultModel::findByPid($id);
         }
 
         return $this->hasData;
