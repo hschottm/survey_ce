@@ -1128,7 +1128,7 @@ class ContentSurvey extends ContentElement
             foreach ($allUserCategories as $categoryId => $categoryCount) {
                 $resultCategories[$categoryId] = [
                     'id' => $categoryId,
-                    'name' => ($surveyModel ? $surveyModel->getCategoryName($categoryId) : ''),
+                    'name' => ($surveyModel ? $surveyModel->getCategoryName((int) $categoryId) : ''),
                     'count' => $categoryCount,
                     'percent' => ceil($categoryCount / $allUserQuestionsSolvedCount * 100),
                 ];
@@ -1143,7 +1143,7 @@ class ContentSurvey extends ContentElement
                 foreach ($currentUserCategories as $id => $value) {
                     $userCategories[$id] = [
                         'id' => $id,
-                        'name' => ($surveyModel ? $surveyModel->getCategoryName($id) : ''),
+                        'name' => ($surveyModel ? $surveyModel->getCategoryName((int) $id) : ''),
                         'count' => $value,
                         'percent' => ceil($value / $resultCount * 100),
                     ];

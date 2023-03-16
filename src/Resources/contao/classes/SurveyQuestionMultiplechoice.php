@@ -96,7 +96,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (!empty($resultData = $this->getResultData())) {
-            $survey = SurveyModel::findByQuestionId($this->id);
+            $survey = SurveyModel::findByQuestionId((int) $this->id);
 
             $template = new FrontendTemplate('survey_answers_multiplechoice');
             $template->statistics = $resultData['statistics'];

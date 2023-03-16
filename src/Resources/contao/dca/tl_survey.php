@@ -21,7 +21,7 @@ use Contao\Input;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Hschottm\SurveyBundle\SurveyResultModel;
 
-$found = strlen(Input::get('id')) ? SurveyResultModel::findByPid(Input::get('id')) : null;
+$found = ($currentId = Input::get('id')) ? SurveyResultModel::findByPid($currentId) : null;
  $hasData = null !== $found && 0 < $found->count() ? true : false;
 
 /*
