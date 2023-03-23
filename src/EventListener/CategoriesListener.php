@@ -63,7 +63,7 @@ class CategoriesListener
             $choicesField = &$GLOBALS['TL_DCA'][SurveyQuestionModel::getTable()]['fields']['choices'];
             $choicesField['palette'][] = 'category';
             $choicesField['fields']['choice']['eval']['tl_class'] =
-                trim(('' === $choicesField['fields']['choice']['eval']['tl_class']).' w50');
+                trim(($choicesField['fields']['choice']['eval']['tl_class'] ?? '').' w50');
             $choicesField['fields']['category'] = [
                 'inputType' => 'select',
                 'options_callback' => [self::class, 'surveyChoicesCategoryOptionsCallback'],

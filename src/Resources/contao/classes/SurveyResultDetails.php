@@ -51,7 +51,7 @@ class SurveyResultDetails extends Backend
             return '';
         }
         $return = '';
-        $qid = Input::get('id');
+        $qid = (int)Input::get('id');
         $qtype = $this->Database->prepare('SELECT questiontype, pid FROM tl_survey_question WHERE id = ?')
             ->execute($qid)
             ->fetchAssoc()
@@ -60,16 +60,15 @@ class SurveyResultDetails extends Backend
             ->execute($qtype['pid'])
             ->fetchAssoc()
         ;
-        $class = 'Hschottm\\SurveyBundle\\SurveyQuestion'.ucfirst($qtype['questiontype']);
         $this->loadLanguageFile('tl_survey_result');
         $this->loadLanguageFile('tl_survey_question');
         $this->Template = new BackendTemplate('be_question_result_details');
         $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->hrefBack = Backend::addToUrl('key=cumulated&amp;id='.$parent['pid'], true, ['key', 'id']);
 
-        if ($this->classFileExists($class)) {
-            $this->import($class);
-            $question = new $class($qid);
+        $question = SurveyQuestion::createInstance($qid, $qtype['questiontype']);
+
+        if ($question) {
             $this->Template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['detailsSummary'];
             $this->Template->heading = sprintf($GLOBALS['TL_LANG']['tl_survey_result']['detailsHeading'], $qid);
             $data = [];

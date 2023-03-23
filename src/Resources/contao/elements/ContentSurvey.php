@@ -33,6 +33,7 @@ use Hschottm\SurveyBundle\DataContainer\SurveyPageContainer;
 
 /**
  * @property SurveyModel|Result $objSurvey
+ * @property Survey $svy
  */
 class ContentSurvey extends ContentElement
 {
@@ -85,7 +86,7 @@ class ContentSurvey extends ContentElement
             $GLOBALS['TL_JAVASCRIPT'] = ['bundles/hschottmsurvey/js/survey.js'];
         }
 
-        $surveyID = !empty(Input::post('survey')) ? Input::post('survey') : $this->survey;
+        $surveyID = \strlen(Input::post('survey')) ? Input::post('survey') : $this->survey;
 
         $this->objSurvey = $this->Database->prepare('SELECT * FROM tl_survey WHERE id=?')
             ->execute($surveyID)
@@ -243,7 +244,7 @@ class ContentSurvey extends ContentElement
                 }
             }
 
-            $surveypage = $this->createSurveyPage($pages[$page - 1], $page, false);
+            $surveypage = $this->createSurveyPage(($pages[(($page > 0) ? $page - 1 : 0)] ?? null), $page, false);
         }
 
         // save position of last page (for resume)
@@ -412,7 +413,7 @@ class ContentSurvey extends ContentElement
         $pagequestioncounter = 1;
         $doNotSubmit = false;
 
-        $questions = SurveyQuestionModel::findBy('pid', $pagerow['id'], ['order' => 'sorting']);
+        $questions = SurveyQuestionModel::findBy('pid', $pagerow['id'] ?? 0, ['order' => 'sorting']);
 
         if (null === $questions) {
             $questions = [];
@@ -912,10 +913,10 @@ class ContentSurvey extends ContentElement
                 $status = '';
 
                 if ($this->objSurvey->usecookie) {
-                    $status = $this->svy->getSurveyStatus($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id]);
+                    $status = $this->svy->getSurveyStatus($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id] ?? null);
                 }
 
-                if (0 === strcmp($status, 'finished')) {
+                if (is_string($status) && (0 === strcmp($status, 'finished'))) {
                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                     $this->Template->hideStartButtons = true;
                 }

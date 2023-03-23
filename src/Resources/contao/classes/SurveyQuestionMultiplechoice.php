@@ -72,16 +72,16 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                 $counter = 1;
 
                 foreach ($result['choices'] as $id => $choice) {
-                    $choice = $choice['choice'];
                     $result['choices'][$id] = $choice;
 
                     $result['answers'][$counter] = [
-                        'choices' => $choice,
+                        'choices' => $choice['choice'],
                         'selections' => ($this->statistics['cumulated'][$id] ?? 0),
                     ];
 
                     if (isset($choice['category'])) {
-                        $result['categories'][$choice['category']] = (($result['categories'][$choice['category']] ?? 0) + $this->statistics['cumulated'][$id] ?? 0);
+                        $result['categories'][$choice['category']] =
+                            (($result['categories'][$choice['category']] ?? 0) + ($this->statistics['cumulated'][$id] ?? 0));
                     }
 
                     ++$counter;

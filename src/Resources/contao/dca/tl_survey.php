@@ -19,10 +19,6 @@ use Contao\BackendUser;
 use Contao\Database;
 use Contao\Input;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
-use Hschottm\SurveyBundle\SurveyResultModel;
-
-$found = ($currentId = Input::get('id')) ? SurveyResultModel::findByPid($currentId) : null;
- $hasData = null !== $found && 0 < $found->count() ? true : false;
 
 /*
  * Table tl_survey
@@ -518,10 +514,6 @@ $GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailAlternateAttachments'
     'eval' => ['fieldType' => 'checkbox', 'files' => true, 'filesOnly' => true, 'multiple' => true, 'mandatory' => true],
     'sql' => 'blob NULL',
 ];
-
-if ($hasData) {
-    $GLOBALS['TL_DCA']['tl_survey']['fields']['access']['eval']['disabled'] = 'disabled';
-}
 
 /**
  * Class tl_survey.

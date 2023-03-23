@@ -28,6 +28,7 @@ use Contao\StringUtil;
 use Hschottm\SurveyBundle\SurveyModel;
 use Hschottm\SurveyBundle\SurveyPageModel;
 use Hschottm\SurveyBundle\SurveyResultModel;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
@@ -52,26 +53,21 @@ class SurveyPageContainer
      */
     public function onLoadCallback(DataContainer $dc = null): void
     {
-        if (null === $dc || !$dc->id || 'edit' !== $this->requestStack->getCurrentRequest()->query->get('act')) {
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (!$dc || !$request) {
             return;
         }
 
-        $surveyPageModel = SurveyPageModel::findByPk($dc->id);
+        $resultData = ($id = $request->query->get('id', false)) ? (is_numeric($id) ? SurveyResultModel::findByPid((int) $id) : null) : null;
 
-        if (!$surveyPageModel || static::PAGETYPE_RESULT !== $surveyPageModel->type) {
-            return;
+        if ($resultData) {
+            $dca = &$GLOBALS['TL_DCA']['tl_survey_page'];
+            $dca['config']['notEditable'] = true;
+            $dca['config']['closed'] = true;
         }
 
-        $surveyModel = SurveyModel::findById($surveyPageModel->pid);
-
-        if (!$surveyModel || !$surveyModel->allowback) {
-            return;
-        }
-
-        PaletteManipulator::create()
-            ->addField('hideBackButton', 'config_legend', PaletteManipulator::POSITION_APPEND)
-            ->applyToPalette(static::PAGETYPE_RESULT, static::TABLE)
-        ;
+        $this->adjustResultPageDca($dc, $request);
     }
 
     /**
@@ -167,9 +163,36 @@ class SurveyPageContainer
     protected function hasData(int $id): bool
     {
         if (null === $this->hasData) {
-            $this->hasData = !null === SurveyResultModel::findByPid($id);
+            $this->hasData = null !== SurveyResultModel::findByPid($id);
         }
 
         return $this->hasData;
+    }
+
+    /**
+     * @param DataContainer|null $dc
+     */
+    private function adjustResultPageDca(DataContainer $dc, Request $request): void
+    {
+        if (!$dc->id || 'edit' !== $request->query->get('act')) {
+            return;
+        }
+
+        $surveyPageModel = SurveyPageModel::findByPk($dc->id);
+
+        if (!$surveyPageModel || static::PAGETYPE_RESULT !== $surveyPageModel->type) {
+            return;
+        }
+
+        $surveyModel = SurveyModel::findById($surveyPageModel->pid);
+
+        if (!$surveyModel || !$surveyModel->allowback) {
+            return;
+        }
+
+        PaletteManipulator::create()
+            ->addField('hideBackButton', 'config_legend', PaletteManipulator::POSITION_APPEND)
+            ->applyToPalette(static::PAGETYPE_RESULT, static::TABLE)
+        ;
     }
 }
