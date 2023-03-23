@@ -96,7 +96,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (!empty($resultData = $this->getResultData())) {
-            $survey = SurveyModel::findByQuestionId($this->id);
+            $survey = SurveyModel::findByQuestionId((int) $this->id);
 
             $template = new FrontendTemplate('survey_answers_multiplechoice');
             $template->statistics = $resultData['statistics'];
@@ -229,7 +229,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
         return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice']['choice'];
 
-        if (\strlen($arrAnswer['other'])) {
+        if (!empty($arrAnswer['other'])) {
             return $arrAnswer['other'];
         }
     }
@@ -255,27 +255,27 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $this->arrStatistics['skipped'] = 0;
 
         while ($objResult->next()) {
-            $id = \strlen($objResult->pin) ? $objResult->pin : $objResult->uid;
+            $id = !empty($objResult->pin) ? $objResult->pin : $objResult->uid;
             $this->arrStatistics['participants'][$id][] = $objResult->row();
             $this->arrStatistics['answers'][] = $objResult->result;
 
-            if (\strlen($objResult->result)) {
+            if (!empty($objResult->result)) {
                 $arrAnswer = StringUtil::deserialize($objResult->result, true);
                 $found = false;
 
                 if (\is_array($arrAnswer['value'])) {
                     foreach ($arrAnswer['value'] as $answervalue) {
-                        if (\strlen($answervalue)) {
+                        if (!empty($answervalue)) {
                             $found = true;
                         }
                     }
                 } else {
-                    if (\strlen($arrAnswer['value'])) {
+                    if (!empty($arrAnswer['value'])) {
                         $found = true;
                     }
                 }
 
-                if (\strlen($arrAnswer['other'])) {
+                if (!empty($arrAnswer['other'])) {
                     $found = true;
                 }
 
@@ -300,17 +300,17 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
             if (\is_array($arrAnswer['value'])) {
                 foreach ($arrAnswer['value'] as $answervalue) {
-                    if (\strlen($answervalue)) {
+                    if (!empty($answervalue)) {
                         ++$cumulated[$answervalue];
                     }
                 }
             } else {
-                if (\strlen($arrAnswer['value'])) {
+                if (!empty($arrAnswer['value'])) {
                     ++$cumulated[$arrAnswer['value']];
                 }
             }
 
-            if (\strlen($arrAnswer['other'])) {
+            if (!empty($arrAnswer['other'])) {
                 array_push($cumulated['other'], $arrAnswer['other']);
             }
         }
@@ -496,10 +496,10 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         foreach ($participants as $key => $value) {
             $data = false;
 
-            if (isset($this->statistics['participants']) && \strlen($this->statistics['participants'][$key]['result'])) {
+            if (isset($this->statistics['participants']) && !empty($this->statistics['participants'][$key]['result'])) {
                 // future state of survey_ce
                 $data = $this->statistics['participants'][$key]['result'];
-            } elseif (isset($this->statistics['participants']) && \strlen($this->statistics['participants'][$key][0]['result'])) {
+            } elseif (isset($this->statistics['participants']) && !empty($this->statistics['participants'][$key][0]['result'])) {
                 // current state of survey_ce: additional subarray with always 1 entry
                 $data = $this->statistics['participants'][$key][0]['result'];
             }
@@ -540,7 +540,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                                 : 'x'
                             : '';
 
-                        if (\strlen($strAnswer)) {
+                        if (!empty($strAnswer)) {
                             $exporter->setCellValue($sheet, $row, $col, [
                                 Exporter::DATA => $strAnswer,
                                 Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,

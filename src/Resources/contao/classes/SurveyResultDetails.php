@@ -153,7 +153,7 @@ class SurveyResultDetails extends Backend
             $categories = [];
 
             foreach ($categoryCount as $id => $count) {
-                if ($categoryName = $surveyModel->getCategoryName($id)) {
+                if ($categoryName = $surveyModel->getCategoryName((int) $id)) {
                     $categories[$id] = [
                         'name' => $categoryName,
                         'count' => $count,

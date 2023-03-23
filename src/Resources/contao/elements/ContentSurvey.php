@@ -61,7 +61,7 @@ class ContentSurvey extends ContentElement
             return $objTemplate->parse();
         }
 
-        $this->strTemplate = \strlen($this->surveyTpl) ? $this->surveyTpl : $this->strTemplate;
+        $this->strTemplate = !empty($this->surveyTpl) ? $this->surveyTpl : $this->strTemplate;
 
         return parent::generate();
     }
@@ -85,7 +85,7 @@ class ContentSurvey extends ContentElement
             $GLOBALS['TL_JAVASCRIPT'] = ['bundles/hschottmsurvey/js/survey.js'];
         }
 
-        $surveyID = \strlen(Input::post('survey')) ? Input::post('survey') : $this->survey;
+        $surveyID = !empty(Input::post('survey')) ? Input::post('survey') : $this->survey;
 
         $this->objSurvey = $this->Database->prepare('SELECT * FROM tl_survey WHERE id=?')
             ->execute($surveyID)
@@ -99,13 +99,13 @@ class ContentSurvey extends ContentElement
         $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 
         // check date activation
-        if ((\strlen($this->objSurvey->online_start)) && ($this->objSurvey->online_start > time())) {
+        if ((!empty($this->objSurvey->online_start)) && ($this->objSurvey->online_start > time())) {
             $this->Template->protected = true;
 
             return;
         }
 
-        if ((\strlen($this->objSurvey->online_end)) && ($this->objSurvey->online_end < time())) {
+        if ((!empty($this->objSurvey->online_end)) && ($this->objSurvey->online_end < time())) {
             $this->Template->protected = true;
 
             return;
@@ -130,7 +130,7 @@ class ContentSurvey extends ContentElement
 
             switch ($this->objSurvey->access) {
                 case 'anon':
-                    if ($this->objSurvey->usecookie && \strlen($_COOKIE['TLsvy_'.$this->objSurvey->id]) && false !== $this->svy->checkPINTAN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id])) {
+                    if ($this->objSurvey->usecookie && !empty($_COOKIE['TLsvy_'.$this->objSurvey->id]) && false !== $this->svy->checkPINTAN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id])) {
                         $page = $this->svy->getLastPageForPIN($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id]);
                         $this->pin = $_COOKIE['TLsvy_'.$this->objSurvey->id];
                     } else {
@@ -149,7 +149,7 @@ class ContentSurvey extends ContentElement
                 case 'anoncode':
                     $tan = Input::post('tan');
 
-                    if (0 === strcmp(Input::post('FORM_SUBMIT'), 'tl_survey_form') && (\strlen($tan))) {
+                    if (0 === strcmp(Input::post('FORM_SUBMIT'), 'tl_survey_form') && (!empty($tan))) {
                         $result = $this->svy->checkPINTAN($this->objSurvey->id, '', $tan);
 
                         if (false === $result) {
@@ -196,7 +196,7 @@ class ContentSurvey extends ContentElement
                   } else {
                       $this->pin = $participant->pin;
                   }
-                  $page = \strlen($participant->lastpage) ? $participant->lastpage : 1;
+                  $page = !empty($participant->lastpage) ? $participant->lastpage : 1;
                   break;
             }
         }
@@ -205,7 +205,7 @@ class ContentSurvey extends ContentElement
 
         if (($page > 0 && $page <= \count($pages))) {
             if ('tl_survey' === Input::post('FORM_SUBMIT')) {
-                $goback = \strlen(Input::post('prev')) ? true : false;
+                $goback = !empty(Input::post('prev')) ? true : false;
                 $surveypage = $this->createSurveyPage($pages[$page - 1], $page, true, $goback);
             }
         }
@@ -214,7 +214,7 @@ class ContentSurvey extends ContentElement
         $previouspage = $page;
 
         if (0 === \count($surveypage)) {
-            if (\strlen(Input::post('next'))) {
+            if (!empty(Input::post('next'))) {
                 $pageid = $this->evaluateConditions($pages[$page - 1]);
 
                 if (null === $pageid) {
@@ -229,12 +229,12 @@ class ContentSurvey extends ContentElement
                 $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id?? 0, $previouspage, $page);
             }
 
-            if (\strlen(Input::post('finish'))) {
+            if (!empty(Input::post('finish'))) {
                 ++$page;
             }
 
-            if (\strlen(Input::post('prev'))) {
-                $res = SurveyNavigationModel::findOneBy(['pid=?', 'pin=?', 'uid=?', 'topage=?'], [$this->objSurvey->id, $this->pin, 0 === \strlen($this->User->id) ? 0 : $this->User->id, $page], ['order' => 'tstamp DESC']);
+            if (!empty(Input::post('prev'))) {
+                $res = SurveyNavigationModel::findOneBy(['pid=?', 'pin=?', 'uid=?', 'topage=?'], [$this->objSurvey->id, $this->pin, 0 === !empty($this->User->id) ? 0 : $this->User->id, $page], ['order' => 'tstamp DESC']);
 
                 if (null !== $res) {
                     $page = $res->frompage;
@@ -255,7 +255,7 @@ class ContentSurvey extends ContentElement
                 $res->save();
             }
 
-            if (\strlen($pages[$page - 1]['page_template'])) {
+            if (!empty($pages[$page - 1]['page_template'])) {
                 $this->questionblock_template = $pages[$page - 1]['page_template'];
             }
         }
@@ -405,7 +405,7 @@ class ContentSurvey extends ContentElement
     {
         $this->questionpositions = [];
 
-        if (!\strlen($this->pin)) {
+        if (empty($this->pin)) {
             $this->pin = Input::post('pin');
         }
         $surveypage = [];
@@ -478,8 +478,8 @@ class ContentSurvey extends ContentElement
             }
         }
 
-        if ($validate && 'tl_survey' === Input::post('FORM_SUBMIT') && !\strlen($this->pin)) {
-            if ($this->objSurvey->usecookie && \strlen($_COOKIE['TLsvy_'.$this->objSurvey->id])) {
+        if ($validate && 'tl_survey' === Input::post('FORM_SUBMIT') && empty($this->pin)) {
+            if ($this->objSurvey->usecookie && !empty($_COOKIE['TLsvy_'.$this->objSurvey->id])) {
                 // restore lost PIN from cookie
                 $this->pin = $_COOKIE['TLsvy_'.$this->objSurvey->id];
             } else {
@@ -491,7 +491,7 @@ class ContentSurvey extends ContentElement
 
         // save survey values
         if ($validate && 'tl_survey' === Input::post('FORM_SUBMIT') && (!$doNotSubmit || $goback)) {
-            if (!\strlen($this->pin) || !$this->isValid($this->pin)) {
+            if (empty($this->pin) || !$this->isValid($this->pin)) {
                 global $objPage;
                 $this->redirect($this->generateFrontendUrl($objPage->row()));
             }
@@ -520,7 +520,7 @@ class ContentSurvey extends ContentElement
                             $value = serialize($question->value);
                         }
 
-                        if (\strlen($value)) {
+                        if (!empty($value)) {
                             $this->insertResult($this->objSurvey->id, $question->id, $this->pin, $value);
                         }
                         break;
@@ -545,7 +545,7 @@ class ContentSurvey extends ContentElement
                             $value = serialize($question->value);
                         }
 
-                        if (\strlen($value)) {
+                        if (!empty($value)) {
                             $this->insertResult($this->objSurvey->id, $question->id, $this->pin, $value, $this->User->id);
                         }
                         break;
@@ -595,15 +595,15 @@ class ContentSurvey extends ContentElement
                     // Set the 'reply to' address, if given in form configuration
                     if (!empty($this->objSurvey->confirmationMailReplyto)) {
                         [$replyToName, $replyTo] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailReplyto);
-                        $objMailProperties->replyTo = (\strlen($replyToName) ? $replyToName.' <'.$replyTo.'>' : $replyTo);
+                        $objMailProperties->replyTo = (!empty($replyToName) ? $replyToName.' <'.$replyTo.'>' : $replyTo);
                     }
 
                     // Set recipient(s)
-                    if (\strlen($this->objSurvey->confirmationMailRecipientField)) {
+                    if (!empty($this->objSurvey->confirmationMailRecipientField)) {
                         $res = SurveyResultModel::findOneBy(['qid=?', 'pin=?'], [$this->objSurvey->confirmationMailRecipientField, $this->pin]);
 
                         if (null !== $res) {
-                            if (\strlen($res->result)) {
+                            if (!empty($res->result)) {
                                 $arrRecipient = trimsplit(',', $res->result);
                             }
                         }
@@ -618,7 +618,7 @@ class ContentSurvey extends ContentElement
                     if (!empty($arrRecipient)) {
                         foreach ($arrRecipient as $kR => $recipient) {
                             [$recipientName, $recipient] = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
-                            $arrRecipient[$kR] = (\strlen($recipientName) ? $recipientName.' <'.$recipient.'>' : $recipient);
+                            $arrRecipient[$kR] = (!empty($recipientName) ? $recipientName.' <'.$recipient.'>' : $recipient);
                         }
                     }
                     $objMailProperties->recipients = $arrRecipient;
@@ -741,7 +741,7 @@ class ContentSurvey extends ContentElement
                         // Set the 'reply to' address, if given in form configuration
                         if (!empty($this->objSurvey->confirmationMailAlternateReplyto)) {
                             [$replyToName, $replyTo] = StringUtil::splitFriendlyEmail($this->objSurvey->confirmationMailAlternateReplyto);
-                            $objMailProperties->replyTo = (\strlen($replyToName) ? $replyToName.' <'.$replyTo.'>' : $replyTo);
+                            $objMailProperties->replyTo = (!empty($replyToName) ? $replyToName.' <'.$replyTo.'>' : $replyTo);
                         }
 
                         // Set recipient(s)
@@ -756,7 +756,7 @@ class ContentSurvey extends ContentElement
                         if (!empty($arrRecipient)) {
                             foreach ($arrRecipient as $kR => $recipient) {
                                 [$recipientName, $recipient] = StringUtil::splitFriendlyEmail($this->replaceInsertTags($recipient, false));
-                                $arrRecipient[$kR] = (\strlen($recipientName) ? $recipientName.' <'.$recipient.'>' : $recipient);
+                                $arrRecipient[$kR] = (!empty($recipientName) ? $recipientName.' <'.$recipient.'>' : $recipient);
                             }
                         }
                         $objMailProperties->recipients = $arrRecipient;
@@ -889,7 +889,7 @@ class ContentSurvey extends ContentElement
      */
     protected function isValid($pin)
     {
-        if (0 === \strlen($pin)) {
+        if (0 === !empty($pin)) {
             return false;
         }
         $participants = SurveyParticipantModel::findBy(['pin=?', 'pid=?'], [$pin, $this->objSurvey->id]);
@@ -927,7 +927,7 @@ class ContentSurvey extends ContentElement
                 $this->Template->txtTANInputDesc = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start_desc'];
                 $this->Template->txtTANInput = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start'];
 
-                if (\strlen(Input::get('code'))) {
+                if (!empty(Input::get('code'))) {
                     $this->Template->tancode = Input::get('code');
                 }
                 break;
@@ -1128,7 +1128,7 @@ class ContentSurvey extends ContentElement
             foreach ($allUserCategories as $categoryId => $categoryCount) {
                 $resultCategories[$categoryId] = [
                     'id' => $categoryId,
-                    'name' => ($surveyModel ? $surveyModel->getCategoryName($categoryId) : ''),
+                    'name' => ($surveyModel ? $surveyModel->getCategoryName((int) $categoryId) : ''),
                     'count' => $categoryCount,
                     'percent' => ceil($categoryCount / $allUserQuestionsSolvedCount * 100),
                 ];
@@ -1143,7 +1143,7 @@ class ContentSurvey extends ContentElement
                 foreach ($currentUserCategories as $id => $value) {
                     $userCategories[$id] = [
                         'id' => $id,
-                        'name' => ($surveyModel ? $surveyModel->getCategoryName($id) : ''),
+                        'name' => ($surveyModel ? $surveyModel->getCategoryName((int) $id) : ''),
                         'count' => $value,
                         'percent' => ceil($value / $resultCount * 100),
                     ];
