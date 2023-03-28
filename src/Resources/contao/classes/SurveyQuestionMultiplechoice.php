@@ -77,10 +77,10 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
                 $result['categories'] = [];
                 $counter = 1;
-#dump($result['choices']);
+
                 foreach ($result['choices'] as $id => $choice) {
                     $result['choices'][$id] = $choice;
-#dump($choice);
+
                     $result['answers'][$counter] = [
                         'choices' => \is_array($choice) ? $choice['choice'] : $choice,
                         'selections' => ($this->statistics['cumulated'][$id] ?? 0),
@@ -96,7 +96,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             }
             $this->resultData = $result;
         }
-#dump($this->resultData);
+
         return $this->resultData;
     }
 
@@ -237,17 +237,12 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             return implode(', ', $selections);
         }
 
-#dump(is_numeric($arrAnswer['value']) ? 'is numeric' : 'is not numeric');
-#dump($arrAnswer['value']);
-#dump(is_array(array_values($arrChoices)[0]) ? 'ist array ->hole [choice]': 'ist kein array -> hole wert');
-
         if(is_array(array_values($arrChoices)[0])) {
             $result = $arrChoices[$arrAnswer['value']]['choice'];
         } else {
             $result = $arrChoices[((int)$arrAnswer['value'])-1];
         }
-#dump($result);
-        // this code should never have worked like this??
+        // the following line should never have worked like this??
         //return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice'];
 
         return $result;
