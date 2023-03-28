@@ -59,23 +59,30 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
     public function getResultData(): array
     {
+        /*
+         * an array of the form question.id => result, where result can be array or string|int
+         * like
+         *      [5 => "1", 6 => [2 => "1", 4 => "1"]]
+         * where "1" means selected,
+         *
+         */
         if (null === $this->resultData) {
             $result = [];
 
             if (isset($this->statistics['cumulated']) && \is_array($this->statistics['cumulated'])) {
                 $result['statistics'] = $this->statistics;
 
-                $result['choices'] = 0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')
-                    ? StringUtil::deserialize($this->arrData['choices'], true)
-                    : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+                $result['choices'] = $this->arrData['multiplechoice_subtype'] !== 'mc_dichotomous' ?
+                    StringUtil::deserialize($this->arrData['choices'], true) :
+                    [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
                 $result['categories'] = [];
                 $counter = 1;
-
+#dump($result['choices']);
                 foreach ($result['choices'] as $id => $choice) {
                     $result['choices'][$id] = $choice;
-
+#dump($choice);
                     $result['answers'][$counter] = [
-                        'choices' => $choice['choice'],
+                        'choices' => \is_array($choice) ? $choice['choice'] : $choice,
                         'selections' => ($this->statistics['cumulated'][$id] ?? 0),
                     ];
 
@@ -89,7 +96,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             }
             $this->resultData = $result;
         }
-
+#dump($this->resultData);
         return $this->resultData;
     }
 
@@ -112,7 +119,12 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
             if (\count($this->statistics['cumulated']['other'])) {
                 foreach ($this->statistics['cumulated']['other'] as $value) {
-                    ++$otherchoices[StringUtil::specialchars($value)];
+                    if(array_key_exists(StringUtil::specialchars($value), $otherchoices)) {
+                        ++$otherchoices[StringUtil::specialchars($value)];
+                    } else {
+                        $otherchoices[StringUtil::specialchars($value)] = 1;
+                    }
+
                 }
             }
             $template->otherchoices = $otherchoices;
@@ -218,20 +230,27 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     {
         $arrAnswer = StringUtil::deserialize($res, true);
         $arrChoices = 0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        $selections = [];
 
         if (\is_array($arrAnswer['value'])) {
-            foreach ($arrAnswer['value'] as $key => $val) {
-                $selections[] = $arrChoices[$val]['choice']['choice'];
-            }
-
+            foreach ($arrAnswer['value'] as $key => $val) $selections[] = $arrChoices[$val]['choice'];
             return implode(', ', $selections);
         }
 
-        return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice']['choice'];
+#dump(is_numeric($arrAnswer['value']) ? 'is numeric' : 'is not numeric');
+#dump($arrAnswer['value']);
+#dump(is_array(array_values($arrChoices)[0]) ? 'ist array ->hole [choice]': 'ist kein array -> hole wert');
 
-        if (!empty($arrAnswer['other'])) {
-            return $arrAnswer['other'];
+        if(is_array(array_values($arrChoices)[0])) {
+            $result = $arrChoices[$arrAnswer['value']]['choice'];
+        } else {
+            $result = $arrChoices[((int)$arrAnswer['value'])-1];
         }
+#dump($result);
+        // this code should never have worked like this??
+        //return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice'];
+
+        return $result;
     }
 
     protected function calculateStatistics(): void
@@ -301,12 +320,12 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             if (\is_array($arrAnswer['value'])) {
                 foreach ($arrAnswer['value'] as $answervalue) {
                     if (!empty($answervalue)) {
-                        ++$cumulated[$answervalue];
+                        $cumulated[$answervalue] = array_key_exists($answervalue, $cumulated) ? ++$cumulated[$answervalue] : $cumulated[$answervalue] = 1;
                     }
                 }
             } else {
                 if (!empty($arrAnswer['value'])) {
-                    ++$cumulated[$arrAnswer['value']];
+                    $cumulated[$arrAnswer['value']] = array_key_exists($arrAnswer['value'], $cumulated) ? ++$cumulated[$arrAnswer['value']] : $cumulated[$arrAnswer['value']] = 1;
                 }
             }
 
