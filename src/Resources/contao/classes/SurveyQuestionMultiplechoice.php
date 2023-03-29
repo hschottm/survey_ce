@@ -229,8 +229,6 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             return $arrChoices[$arrAnswer['value']]['choice']['choice'];
         }
 
-//        return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice']['choice'];
-
         if (!empty($arrAnswer['other'])) {
             return $arrAnswer['other'];
         }
@@ -308,7 +306,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                 }
             } else {
                 if (!empty($arrAnswer['value'])) {
-                    ++$cumulated[$arrAnswer['value']];
+                    $cumulated[$arrAnswer['value']] = ($cumulated[$arrAnswer['value']] ?? 0) + 1;
                 }
             }
 
