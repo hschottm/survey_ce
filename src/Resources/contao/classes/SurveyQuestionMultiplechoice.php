@@ -221,13 +221,15 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
         if (\is_array($arrAnswer['value'])) {
             foreach ($arrAnswer['value'] as $key => $val) {
-                $selections[] = $arrChoices[$val]['choice']['choice'];
+                $selections[] = $arrChoices[$val]['choice'];
             }
 
             return implode(', ', $selections);
+        } elseif (is_numeric($arrAnswer['value'] ?? null)) {
+            return $arrChoices[$arrAnswer['value']]['choice']['choice'];
         }
 
-        return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice']['choice'];
+//        return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice']['choice'];
 
         if (!empty($arrAnswer['other'])) {
             return $arrAnswer['other'];
@@ -301,7 +303,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             if (\is_array($arrAnswer['value'])) {
                 foreach ($arrAnswer['value'] as $answervalue) {
                     if (!empty($answervalue)) {
-                        ++$cumulated[$answervalue];
+                        $cumulated[$answervalue] = ($cumulated[$answervalue] ?? 0) + 1;
                     }
                 }
             } else {

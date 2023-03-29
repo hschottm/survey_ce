@@ -183,7 +183,7 @@ class tl_survey_participant extends Backend
               break;
 
           default:
-              if (strlen(Input::get('act'))) {
+              if (Input::get('act')) {
                   throw new Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "'.Input::get('act').'.');
               }
               break;
