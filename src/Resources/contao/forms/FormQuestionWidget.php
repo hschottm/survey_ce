@@ -134,7 +134,7 @@ class FormQuestionWidget extends Widget
                 break;
 
             case 'showTitle':
-                return false === $this->hidetitle;
+                return !$this->hidetitle;
                 break;
 
             case 'help':
@@ -161,7 +161,7 @@ class FormQuestionWidget extends Widget
 
     public function hasLabel()
     {
-        if ('' === $this->title || false === $this->showTitle) {
+        if ('' === $this->title || $this->showTitle) {
             return false;
         }
 
