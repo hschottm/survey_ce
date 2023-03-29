@@ -74,7 +74,10 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
                 $result['choices'] = $this->arrData['multiplechoice_subtype'] !== 'mc_dichotomous' ?
                     StringUtil::deserialize($this->arrData['choices'], true) :
-                    [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+                    [
+                        1 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
+                        2 => $GLOBALS['TL_LANG']['tl_survey_question']['no']
+                    ];
                 $result['categories'] = [];
                 $counter = 1;
 
@@ -156,7 +159,12 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
         $exporter->setCellValue($sheet, $row + 1, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['nrOfSelections'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
 
-        $arrChoices = 0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        $arrChoices = $this->arrData['multiplechoice_subtype'] !== 'mc_dichotomous' ?
+            StringUtil::deserialize($this->arrData['choices'], true) :
+            [
+                1 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
+                2 => $GLOBALS['TL_LANG']['tl_survey_question']['no']
+            ];
         $col = 2;
 
         foreach ($arrChoices as $id => $choice) {
@@ -229,18 +237,29 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function resultAsString($res)
     {
         $arrAnswer = StringUtil::deserialize($res, true);
-        $arrChoices = 0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        $arrChoices = $this->arrData['multiplechoice_subtype'] !== 'mc_dichotomous' ?
+            StringUtil::deserialize($this->arrData['choices'], true) :
+            [
+                1 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
+                2 => $GLOBALS['TL_LANG']['tl_survey_question']['no']
+            ];
         $selections = [];
 
-        if (\is_array($arrAnswer['value'])) {
-            foreach ($arrAnswer['value'] as $key => $val) $selections[] = $arrChoices[$val]['choice'];
+        if (\is_array($arrAnswer['value']))
+        {
+            foreach ($arrAnswer['value'] as $key => $val)
+            {
+                // ToDo: what todo with 'other' here?
+                $selections[] = array_key_exists($val, $arrChoices) ? $arrChoices[$val]['choice'] : 'other';
+            };
             return implode(', ', $selections);
         }
 
         if(is_array(array_values($arrChoices)[0])) {
-            $result = $arrChoices[$arrAnswer['value']]['choice'];
+            // ToDo: what todo with 'other' here?
+            $result = array_key_exists($arrAnswer['value'], $arrChoices) ? $arrChoices[$arrAnswer['value']]['choice'] : 'other';
         } else {
-            $result = $arrChoices[((int)$arrAnswer['value'])-1];
+            $result = $arrChoices[((int)$arrAnswer['value'])];
         }
         // the following line should never have worked like this??
         //return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice'];
@@ -312,7 +331,8 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         foreach ($this->arrStatistics['answers'] as $answer) {
             $arrAnswer = StringUtil::deserialize($answer, true);
 
-            if (\is_array($arrAnswer['value'])) {
+            if (\is_array($arrAnswer['value']))
+            {
                 foreach ($arrAnswer['value'] as $answervalue) {
                     if (!empty($answervalue)) {
                         $cumulated[$answervalue] = array_key_exists($answervalue, $cumulated) ? ++$cumulated[$answervalue] : $cumulated[$answervalue] = 1;
@@ -328,6 +348,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                 array_push($cumulated['other'], $arrAnswer['other']);
             }
         }
+
         $this->arrStatistics['cumulated'] = $cumulated;
     }
 
@@ -350,8 +371,8 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     {
         $this->choices = 'mc_dichotomous' === $this->arrData['multiplechoice_subtype']
             ? [
-                0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
-                1 => $GLOBALS['TL_LANG']['tl_survey_question']['no'],
+                1 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
+                2 => $GLOBALS['TL_LANG']['tl_survey_question']['no'],
             ]
             : StringUtil::deserialize($this->arrData['choices'], true);
 
@@ -570,22 +591,4 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
         return $cells;
     }
-
-    /*public function resultAsString($res)
-          {
-              $arrAnswer = deserialize($res, true);
-              if (is_array($arrAnswer['value']))
-              {
-                  return implode (", ", $arrAnswer['value']);
-              }
-              else
-              {
-                  $arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
-                  return $arrChoices[$arrAnswer['value']-1];
-              }
-              if (strlen($arrAnswer['other']))
-              {
-                  return $arrAnswer['other'];
-              }
-          }*/
 }

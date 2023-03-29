@@ -89,6 +89,7 @@ abstract class SurveyQuestion extends Backend
             case 'title':
             case 'question':
             case 'questiontype':
+            case 'multiplechoice_subtype':
                 return $this->arrData[$name];
                 break;
 
