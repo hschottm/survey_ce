@@ -65,9 +65,8 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             if (isset($this->statistics['cumulated']) && \is_array($this->statistics['cumulated'])) {
                 $result['statistics'] = $this->statistics;
 
-                $result['choices'] = 0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')
-                    ? StringUtil::deserialize($this->arrData['choices'], true)
-                    : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+                $result['choices'] = $this->getQuestionChoices();
+
                 $result['categories'] = [];
                 $counter = 1;
 
@@ -217,7 +216,8 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function resultAsString($res)
     {
         $arrAnswer = StringUtil::deserialize($res, true);
-        $arrChoices = 0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+
+        $arrChoices = $this->getQuestionChoices();
 
         if (\is_array($arrAnswer['value'])) {
             foreach ($arrAnswer['value'] as $key => $val) {
@@ -574,4 +574,24 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                   return $arrAnswer['other'];
               }
           }*/
+    /**
+     * @param array $result
+     * @return array
+     */
+    protected function getQuestionChoices(): array
+    {
+        if ($this->arrData['multiplechoice_subtype'] === 'mc_dichotomous') {
+            $choices = [
+                1 => [
+                    'choice' => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
+                ],
+                2 => [
+                    'choice' => $GLOBALS['TL_LANG']['tl_survey_question']['no'],
+                ]
+            ];
+        } else {
+            $choices = StringUtil::deserialize($this->arrData['choices'], true);
+        }
+        return $choices;
+    }
 }

@@ -77,7 +77,7 @@
             <div><input type="radio" name="<?php echo $this->ctrl_name; ?>" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $counter; ?>" class="radio<?php echo $this->ctrl_class; ?>" value="<?php echo $counter; ?>"<?php if ($this->values['value'] == $counter): ?> checked="checked"<?php endif; ?> /> <label for="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $counter; ?>"><?php echo Contao\StringUtil::specialchars(($counter == 1) ? $this->lngYes : $this->lngNo); ?></label></div>
         <?php endfor; ?>
     <?php elseif ($this->multipleResponse): ?>
-        <?php $values = $this->values['value'] ?? [] ?>
+        <?php $values = (!empty($this->values['value'])) ? $this->values['value'] : [] ?>
         <?php $counter = 1; ?>
         <?php foreach ($this->choices as $choice): ?>
             <div>
