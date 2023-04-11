@@ -1131,8 +1131,9 @@ class ContentSurvey extends ContentElement
                     'id' => $categoryId,
                     'name' => ($surveyModel ? $surveyModel->getCategoryName((int) $categoryId) : ''),
                     'count' => $categoryCount,
-                    'percent' => ceil($categoryCount / $allUserQuestionsSolvedCount * 100),
+                    'percent' => $allUserQuestionsSolvedCount > 0 ? ceil($categoryCount / $allUserQuestionsSolvedCount * 100) : 0,
                 ];
+
             }
             $resultPageTemplate->resultCategories = $resultCategories;
 

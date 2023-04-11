@@ -59,15 +59,21 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
     public function getResultData(): array
     {
+        /*
+         * an array of the form question.id => result, where result can be array or string|int
+         * like
+         *      [5 => "1", 6 => [2 => "1", 4 => "1"]]
+         * where "1" means selected,
+         *
+         */
         if (null === $this->resultData) {
             $result = [];
 
             if (isset($this->statistics['cumulated']) && \is_array($this->statistics['cumulated'])) {
                 $result['statistics'] = $this->statistics;
 
-                $result['choices'] = 0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')
-                    ? StringUtil::deserialize($this->arrData['choices'], true)
-                    : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+                $result['choices'] = $this->getQuestionChoices();
+
                 $result['categories'] = [];
                 $counter = 1;
 
@@ -217,17 +223,18 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function resultAsString($res)
     {
         $arrAnswer = StringUtil::deserialize($res, true);
-        $arrChoices = 0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+
+        $arrChoices = $this->getQuestionChoices();
 
         if (\is_array($arrAnswer['value'])) {
             foreach ($arrAnswer['value'] as $key => $val) {
-                $selections[] = $arrChoices[$val]['choice']['choice'];
+                $selections[] = $arrChoices[$val]['choice'];
             }
 
             return implode(', ', $selections);
+        } elseif (is_numeric($arrAnswer['value'] ?? null)) {
+            return $arrChoices[$arrAnswer['value']]['choice'];
         }
-
-        return $arrChoices[is_numeric($arrAnswer['value']) ? $arrAnswer['value'] : -1]['choice']['choice'];
 
         if (!empty($arrAnswer['other'])) {
             return $arrAnswer['other'];
@@ -301,12 +308,12 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             if (\is_array($arrAnswer['value'])) {
                 foreach ($arrAnswer['value'] as $answervalue) {
                     if (!empty($answervalue)) {
-                        ++$cumulated[$answervalue];
+                        $cumulated[$answervalue] = ($cumulated[$answervalue] ?? 0) + 1;
                     }
                 }
             } else {
                 if (!empty($arrAnswer['value'])) {
-                    ++$cumulated[$arrAnswer['value']];
+                    $cumulated[$arrAnswer['value']] = ($cumulated[$arrAnswer['value']] ?? 0) + 1;
                 }
             }
 
@@ -574,4 +581,24 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                   return $arrAnswer['other'];
               }
           }*/
+    /**
+     * @param array $result
+     * @return array
+     */
+    protected function getQuestionChoices(): array
+    {
+        if ($this->arrData['multiplechoice_subtype'] === 'mc_dichotomous') {
+            $choices = [
+                1 => [
+                    'choice' => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
+                ],
+                2 => [
+                    'choice' => $GLOBALS['TL_LANG']['tl_survey_question']['no'],
+                ]
+            ];
+        } else {
+            $choices = StringUtil::deserialize($this->arrData['choices'], true);
+        }
+        return $choices;
+    }
 }
