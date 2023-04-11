@@ -7,17 +7,12 @@
 </thead>
 <tbody>
 <?php $counter = 1; ?>
-<?php if (count($this->choices) > 0): ?>
-    <?php foreach ($this->choices as $id => $choice):
-        $_choice = is_array($choice) ? $choice['choice'] : $choice; ?>
+<?php if (count($this->choices ?? []) > 0): ?>
+    <?php foreach ($this->choices as $id => $choice): ?>
         <tr>
             <td class="counter"><?php echo $counter; ?>.</td>
-            <td class="answer">
-                <?= $_choice; ?>
-                <?php if ($this->useCategories && ($_choice ?? false)):?>
-                <span style="color:#999;">[<?= $this->survey->getCategoryName((int)$choice['category']) ?>]</span>
-                <?php endif; ?>
-            </td>
+            <td class="answer"><?php echo $choice['choice']; ?><?php if ($this->useCategories && (isset($choice['category']) && null !== $choice['category'])):?>
+                <span style="color:#999;">[<?= $this->survey->getCategoryName((int) $choice['category']) ?>]</span><?php endif; ?></td>
             <td class="selections"><?php echo ($this->statistics['cumulated'][$id] ?? 0); ?></td>
         </tr>
     <?php $counter++; ?>

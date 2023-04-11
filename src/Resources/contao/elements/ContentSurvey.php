@@ -86,7 +86,7 @@ class ContentSurvey extends ContentElement
             $GLOBALS['TL_JAVASCRIPT'] = ['bundles/hschottmsurvey/js/survey.js'];
         }
 
-        $surveyID = !empty(Input::post('survey')) ? Input::post('survey') : $this->survey;
+        $surveyID = Input::post('survey') ? Input::post('survey') : $this->survey;
 
         $this->objSurvey = $this->Database->prepare('SELECT * FROM tl_survey WHERE id=?')
             ->execute($surveyID)
@@ -1131,7 +1131,7 @@ class ContentSurvey extends ContentElement
                     'id' => $categoryId,
                     'name' => ($surveyModel ? $surveyModel->getCategoryName((int) $categoryId) : ''),
                     'count' => $categoryCount,
-                    'percent' => ceil($categoryCount / $allUserQuestionsSolvedCount * 100),
+                    'percent' => $allUserQuestionsSolvedCount > 0 ? ceil($categoryCount / $allUserQuestionsSolvedCount * 100) : 0,
                 ];
             }
             $resultPageTemplate->resultCategories = $resultCategories;
