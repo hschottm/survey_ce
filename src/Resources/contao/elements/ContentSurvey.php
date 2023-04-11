@@ -1133,6 +1133,7 @@ class ContentSurvey extends ContentElement
                     'count' => $categoryCount,
                     'percent' => $allUserQuestionsSolvedCount > 0 ? ceil($categoryCount / $allUserQuestionsSolvedCount * 100) : 0,
                 ];
+
             }
             $resultPageTemplate->resultCategories = $resultCategories;
 
