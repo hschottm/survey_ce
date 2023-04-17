@@ -216,7 +216,12 @@ class SurveyQuestionMatrix extends SurveyQuestion
                             ++$cumulated[$row][$singleanswervalue];
                         }
                     } else {
-                        ++$cumulated[$row][$answervalue];
+                        // ToDo: fix this workaround
+                        try {
+                            ++$cumulated[$row][$answervalue];
+                        } catch (\Exception $e) {
+
+                        }
                     }
                 }
             }

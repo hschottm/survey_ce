@@ -52,13 +52,21 @@
 		<td class="rowtext"><span><?php echo $row; ?></span></td>
 <?php $colcounter = 1; ?>
 <?php foreach ($this->columns as $column): ?>
-		<td class="c-<?php echo $this->col_classes[$colcounter]; ?>">
-<?php if ($this->singleResponse): ?>
-			<input type="radio" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="radio<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>"<?php if ($this->values[$rowcounter] == $colcounter): ?> checked="checked"<?php endif; ?> />
-<?php else: ?>
-<?php $foundvalues = is_array($this->values[$rowcounter]) ? $this->values[$rowcounter] : array(); ?>
-			<input type="checkbox" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>][<?php echo $colcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="checkbox<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>"<?php if (in_array($colcounter, $foundvalues)): ?> checked="checked"<?php endif; ?> />
-<?php endif; ?>
+		<td class="c-<?php echo $this->col_classes[$colcounter]; ?>"><?php
+		if ($this->singleResponse):
+			if(is_null($this->values)): ?>
+				<input type="radio" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="radio<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>" /><?php
+ 			else: ?>
+				<input type="radio" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="radio<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>"<?php if ($this->values[$rowcounter] == $colcounter): ?> checked="checked"<?php endif; ?> /><?php
+			endif;
+		else:
+			if(is_null($this->values)): ?>
+				<input type="checkbox" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="radio<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>" /><?php
+ 			else: ?>
+			$foundvalues = is_array($this->values[$rowcounter]) ? $this->values[$rowcounter] : array(); ?>
+				<input type="checkbox" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>][<?php echo $colcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="checkbox<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>"<?php if (in_array($colcounter, $foundvalues)): ?> checked="checked"<?php endif; ?> /<?php
+			endif;
+		endif; ?>
 		</td>
 <?php $colcounter++; ?>
 <?php endforeach; ?>

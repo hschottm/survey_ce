@@ -33,6 +33,14 @@ A special thanks goes to Georg Rehfeld for his development of the detailed surve
 
 Made with [contributors-img](https://contrib.rocks).
 
-# run before commit
+# Notes for developers
+
+#### run before commit
 
     vendor/bin/ecs check src tests
+
+#### Test your changes using the survey tables included in the package.
+
+With version 3.4.3, we have added survey tables to the bundle to enable consistent testing. So if you want to test the behavior of a survey in a reproducible way, use these tables. At the moment you still have to manually load these tables into your DB, but we are working on automating the tests a bit more.
+
+

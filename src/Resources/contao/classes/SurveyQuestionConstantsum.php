@@ -203,7 +203,8 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
             if (\is_array($arrAnswer)) {
                 foreach ($arrAnswer as $answerkey => $answervalue) {
-                    ++$cumulated[$answerkey][$answervalue];
+                    // ToDo: fix the following workaround
+                    @++$cumulated[$answerkey][$answervalue];
                 }
             }
         }

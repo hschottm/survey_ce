@@ -55,7 +55,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
         switch ($strKey) {
             case 'surveydata':
                 parent::__set($strKey, $varValue);
-                $this->strClass = 'openended'.((\strlen($varValue['cssClass']) ? ' '.$varValue['cssClass'] : ''));
+                $this->strClass = 'openended'.((!empty($varValue['cssClass']) ? ' '.$varValue['cssClass'] : ''));
                 $this->strTextBefore = $varValue['openended_textbefore'];
                 $this->strTextAfter = $varValue['openended_textafter'];
                 $this->questiontype = $varValue['openended_subtype'];
@@ -143,7 +143,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
         $template = new FrontendTemplate('survey_question_openended');
         $template->ctrl_name = StringUtil::specialchars($this->strName);
         $template->ctrl_id = StringUtil::specialchars($this->strId);
-        $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
+        $template->ctrl_class = (!empty($this->strClass) ? ' '.$this->strClass : '');
         $template->multiLine = 0 === strcmp($this->questiontype, 'oe_multiline');
         $template->singleLine = 0 === strcmp($this->questiontype, 'oe_singleline');
         $template->value = $this->varValue;
@@ -151,7 +151,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
         $template->textAfter = $this->strTextAfter;
         $template->attributes = $this->getAttributes();
         $strError = $this->getErrorAsHTML();
-        $template->blnError = (\strlen($strError) ? true : false);
+        $template->blnError = (!empty($strError) ? true : false);
         $widget = $template->parse();
         $widget .= $this->addSubmit();
 
@@ -160,19 +160,19 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 
     protected function setData_oe_singleline($varValue): void
     {
-        if (\strlen($varValue['openended_width'])) {
+        if (!empty($varValue['openended_width'])) {
             $this->arrAttributes['size'] = StringUtil::specialchars($varValue['openended_width']);
         }
 
-        if (\strlen($varValue['openended_maxlen'])) {
+        if (!empty($varValue['openended_maxlen'])) {
             $this->arrAttributes['maxlength'] = StringUtil::specialchars($varValue['openended_maxlen']);
         }
 
-        if (\strlen($varValue['openended_textinside'])) {
+        if (!empty($varValue['openended_textinside'])) {
             $this->arrAttributes['value'] = StringUtil::specialchars($varValue['openended_textinside']);
         }
 
-        if (\strlen($this->varValue)) {
+        if (!empty($this->varValue)) {
             $this->arrAttributes['value'] = StringUtil::specialchars($this->varValue);
         }
     }
@@ -199,16 +199,16 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 
     protected function setData_oe_multiline($varValue): void
     {
-        if (\strlen($varValue['openended_rows'])) {
+        if (!empty($varValue['openended_rows'])) {
             $this->arrAttributes['rows'] = StringUtil::specialchars($varValue['openended_rows']);
         }
 
-        if (\strlen($varValue['openended_cols'])) {
+        if (!empty($varValue['openended_cols'])) {
             $this->arrAttributes['cols'] = StringUtil::specialchars($varValue['openended_cols']);
         }
 
-        if (!\strlen($this->varValue)) {
-            if (\strlen($varValue['openended_textinside'])) {
+        if (!!empty($this->varValue)) {
+            if (!empty($varValue['openended_textinside'])) {
                 $this->varValue = $varValue['openended_textinside'];
             }
         }
@@ -225,7 +225,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
     protected function validator($varInput)
     {
         $oldlabel = $this->label;
-        $label = \strlen($this->label) ? $this->label : $this->title;
+        $label = !empty($this->label) ? $this->label : $this->title;
         $this->label = $label;
 
         if (\is_array($varInput)) {
@@ -249,14 +249,14 @@ class FormOpenEndedQuestion extends FormQuestionWidget
      */
     protected function check_bounds($varInput)
     {
-        if ($this->hasErrors() || !\strlen($varInput)) {
+        if ($this->hasErrors() || empty($varInput)) {
             // Don't check any further, value might not be a valid string to be compared against bounds
             return $varInput;
         }
 
         $result = $varInput;
 
-        if (\strlen($this->strLowerBound)) {
+        if (!empty($this->strLowerBound)) {
             $strErrMsg = $GLOBALS['TL_LANG']['ERR']['lower_bound'];
             $lower = (int) ($this->strLowerBound);
 
@@ -306,7 +306,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
             }
         }
 
-        if (\strlen($this->strUpperBound)) {
+        if (!empty($this->strUpperBound)) {
             $strErrMsg = $GLOBALS['TL_LANG']['ERR']['upper_bound'];
             $upper = (int) ($this->strUpperBound);
 
