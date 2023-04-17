@@ -62,8 +62,8 @@
 		else:
 			if(is_null($this->values)): ?>
 				<input type="checkbox" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="radio<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>" /><?php
- 			else: ?>
-			$foundvalues = is_array($this->values[$rowcounter]) ? $this->values[$rowcounter] : array(); ?>
+ 			else:
+				$foundvalues = (!is_null($this->values) && is_array($this->values[$rowcounter])) ? $this->values[$rowcounter] : [];	?>
 				<input type="checkbox" name="<?php echo $this->ctrl_name; ?>[<?php echo $rowcounter; ?>][<?php echo $colcounter; ?>]" id="ctrl_<?php echo $this->ctrl_id; ?>_<?php echo $rowcounter; ?>_<?php echo $colcounter; ?>" class="checkbox<?php echo $this->ctrl_class; ?>" value="<?php echo $colcounter; ?>"<?php if (in_array($colcounter, $foundvalues)): ?> checked="checked"<?php endif; ?> /<?php
 			endif;
 		endif; ?>
