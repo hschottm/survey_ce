@@ -35,12 +35,24 @@ Made with [contributors-img](https://contrib.rocks).
 
 # Notes for developers
 
-#### run before commit
+#### run before your commit
 
     vendor/bin/ecs check src tests
 
 #### Test your changes using the survey tables included in the package.
 
-With version 3.4.3, we have added survey tables to the bundle to enable consistent testing. So if you want to test the behavior of a survey in a reproducible way, use these tables. At the moment you still have to manually load these tables into your DB, but we are working on automating the tests a bit more.
+With version 3.4.3 we have added survey tables to the package to allow consistent testing. You can find the tables in the 
+reference-survey.sql file in the _misc folder. So if you want to test the behavior of your changed code in a 
+reproducible way, please use these tables. 
+
+If you make changes to the survey tables, please commit them also to the reference-survey.sql so developers can 
+test their own code against this reference survey.
+
+Load the tables into your DB and activate Survey 1, which consists of 
+five question pages and one results page. For now, you'll need to manually load these tables into your DB, but 
+we're working on automating the tests a bit more.
+
+The question pages cover all the questions that the package currently offers. The results page shows the results 
+of the question pages. Currently, however, there are unfortunately still errors on the results page. 
 
 
