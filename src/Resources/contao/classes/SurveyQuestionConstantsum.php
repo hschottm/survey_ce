@@ -203,8 +203,15 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
             if (\is_array($arrAnswer)) {
                 foreach ($arrAnswer as $answerkey => $answervalue) {
-                    // ToDo: fix the following workaround
-                    @++$cumulated[$answerkey][$answervalue];
+                    if(array_key_exists($answerkey, $cumulated)) {
+                        if(array_key_exists($answervalue, $cumulated[$answerkey])) {
+                            ++$cumulated[$answerkey][$answervalue];
+                        } else {
+                            $cumulated[$answerkey][$answervalue] = 0;
+                        }
+                    } else {
+                        $cumulated[$answerkey] = [];
+                    }
                 }
             }
         }

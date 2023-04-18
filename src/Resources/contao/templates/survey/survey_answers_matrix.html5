@@ -10,17 +10,15 @@
 </thead>
 <tbody>
 <?php $colcounter = 1; ?>
-<?php foreach ($this->choices as $choiceid => $choice):
-dump(array_key_exists($counter, $this->statistics['cumulated']));
-?>
+<?php foreach ($this->choices as $choiceid => $choice): ?>
 	<tr>
 		<td class="counter"><?php echo $colcounter; ?>.</td>
 		<td class="answer"><?php echo $choice; ?></td>
 		<td class="selections">
 			<?php
 			if(array_key_exists($counter, $this->statistics['cumulated'])):
-				if(array_key_exists($colcounter, $this->statistics['cumulated'][$colcounter])):
-					echo (($this->statistics['cumulated'][$counter][$colcounter]) ? $this->statistics['cumulated'][$counter][$colcounter] : 0);
+				if(array_key_exists($colcounter, $this->statistics['cumulated'][$counter])):
+					echo ($this->statistics['cumulated'][$counter][$colcounter] ?? '?');
 				else:
 					echo '?';
 				endif;
