@@ -181,7 +181,9 @@ class SurveyQuestionMatrix extends SurveyQuestion
         $arrAnswer = deserialize($res, true);
 
         if (\is_array($arrAnswer)) {
-            return implode(', ', $arrAnswer);
+            // ToDo: fix the following workaround
+            // $arrAnswer can also be a multidimensional array here, which then does not work
+            return @implode(', ', $arrAnswer);
         }
 
         return '';
@@ -216,7 +218,8 @@ class SurveyQuestionMatrix extends SurveyQuestion
                             ++$cumulated[$row][$singleanswervalue];
                         }
                     } else {
-                        ++$cumulated[$row][$answervalue];
+                        // ToDo: fix this workaround
+                        @++$cumulated[$row][$answervalue];
                     }
                 }
             }

@@ -10,6 +10,14 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
+## [3.4.3](https://github.com/pdir/contao-survey/tree/3.4.3) – 2023-04-18
+
+- [Removed] ...the obsolete attribute **summary** were replaced by the html5-attribute **details** in the templates.
+- [Added] ...survey reference tables to define a consistent basis for survey testing [#36](https://github.com/pdir/contao-survey/issues/36).
+- [Fixed] ...an error in the widget title display [#33](https://github.com/pdir/contao-survey/issues/33).
+- [Fixed] ...some more PHP8 warnings caused by wrong array keys. The answer option 'other' is now displayed correctly in all cases [#31](https://github.com/pdir/contao-survey/issues/31).
+- [Fixed] ...some PHP8 warnings caused by wrong array keys [#30](https://github.com/pdir/contao-survey/issues/30).
+
 ## [3.4.2](https://github.com/pdir/contao-survey/tree/3.4.2) – 2023-02-27
 
 - [Fixed] An error in the condition that determines the necessity of choices field migration. 🤗 [akroii](https://github.com/akroii) for the financial support.

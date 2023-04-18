@@ -63,8 +63,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
          * an array of the form question.id => result, where result can be array or string|int
          * like
          *      [5 => "1", 6 => [2 => "1", 4 => "1"]]
-         * where "1" means selected,
-         *
+         * where "1" means that the answer was selected,
          */
         if (null === $this->resultData) {
             $result = [];
@@ -102,6 +101,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (!empty($resultData = $this->getResultData())) {
+
             $survey = SurveyModel::findByQuestionId((int) $this->id);
 
             $template = new FrontendTemplate('survey_answers_multiplechoice');
@@ -118,7 +118,8 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
             if (\count($this->statistics['cumulated']['other'])) {
                 foreach ($this->statistics['cumulated']['other'] as $value) {
-                    ++$otherchoices[StringUtil::specialchars($value)];
+                    $key = StringUtil::specialchars($value);
+                    if(array_key_exists($key, $otherchoices)) ++$otherchoices[$key]; else $otherchoices[$key] = 1;
                 }
             }
             $template->otherchoices = $otherchoices;
