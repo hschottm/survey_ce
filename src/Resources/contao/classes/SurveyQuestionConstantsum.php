@@ -207,7 +207,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
                         if(array_key_exists($answervalue, $cumulated[$answerkey])) {
                             ++$cumulated[$answerkey][$answervalue];
                         } else {
-                            $cumulated[$answerkey][$answervalue] = 0;
+                            $cumulated[$answerkey][$answervalue] = 1;
                         }
                     } else {
                         $cumulated[$answerkey] = [];
