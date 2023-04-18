@@ -12,8 +12,9 @@ Types of changes
 
 ## [3.4.3](https://github.com/pdir/contao-survey/tree/3.4.3) – 2023-04-18
 
-- [Added] ...survey reference tables to define a consistent basis for survey testing. 
-- [Fixed] ...an error in the widget title display [#33](https://github.com/pdir/contao-survey/issues/33). 
+- [Removed] ...the obsolete attribute **summary** were replaced by the html5-attribute **details** in the templates.
+- [Added] ...survey reference tables to define a consistent basis for survey testing [#36](https://github.com/pdir/contao-survey/issues/36).
+- [Fixed] ...an error in the widget title display [#33](https://github.com/pdir/contao-survey/issues/33).
 - [Fixed] ...some more PHP8 warnings caused by wrong array keys. The answer option 'other' is now displayed correctly in all cases [#31](https://github.com/pdir/contao-survey/issues/31).
 - [Fixed] ...some PHP8 warnings caused by wrong array keys [#30](https://github.com/pdir/contao-survey/issues/30).
 
