@@ -10,7 +10,7 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
-## [3.4.3](https://github.com/pdir/contao-survey/tree/3.4.3) – 2023-04-17
+## [3.4.3](https://github.com/pdir/contao-survey/tree/3.4.3) – 2023-04-18
 
 - [Added] ...survey reference tables to define a consistent basis for survey testing. 
 - [Fixed] ...an error in the widget title display [#33](https://github.com/pdir/contao-survey/issues/33). 
