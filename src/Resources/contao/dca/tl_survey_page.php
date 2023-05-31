@@ -84,7 +84,7 @@ $GLOBALS['TL_DCA']['tl_survey_page'] = [
     'palettes' => [
         '__selector__' => ['type', 'useCustomNextButtonTitle'],
         'default' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
-        'result' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{config_legend},useCustomNextButtonTitle;{template_legend},page_template',
+        'result' => '{type_legend},type;{title_legend},title,description;{intro_legend},introduction;{config_legend},useCustomNextButtonTitle,markSurveyAsFinished;{template_legend},page_template',
     ],
     'subpalettes' => [
         'useCustomNextButtonTitle' => 'customNextButtonTitle',
@@ -174,6 +174,12 @@ $GLOBALS['TL_DCA']['tl_survey_page'] = [
             'eval' => ['tl_class' => 'w50'],
             'sql' => "char(1) NOT NULL default ''",
         ],
+        'markSurveyAsFinished' => [
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w50'],
+            'sql' => "char(1) NOT NULL default ''",
+        ]
     ],
 ];
 
