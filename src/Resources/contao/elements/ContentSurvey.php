@@ -1025,8 +1025,6 @@ class ContentSurvey extends ContentElement
 
     protected function createResultPage(array $pageData): void
     {
-
-
         if ($pageData['markSurveyAsFinished'] ?? false) {
             switch ($this->objSurvey->access) {
                 case 'anon':
