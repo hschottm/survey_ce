@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Controller;
 use Contao\Database;
 use Contao\FrontendTemplate;
 use Contao\StringUtil;
@@ -149,21 +150,26 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $this->statistics['skipped'], Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
         ++$row;
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
-        $exporter->setCellValue($sheet, $row + 1, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['nrOfSelections'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
+        $exporter->setCellValue($sheet, $row + 1, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
 
-        $arrChoices = 0 !== strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        $arrChoices = $this->getQuestionChoices();
+
         $col = 2;
 
         foreach ($arrChoices as $id => $choice) {
-            $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice['choice']['choice']]);
+            $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice['choice']]);
+
             $exporter->setCellValue($sheet, $row + 1, $col++, [Exporter::DATA => ($this->statistics['cumulated'][$id] ?: 0), Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
         }
 
         if ($this->arrData['addother']) {
             $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $this->arrData['othertitle']]);
-            $exporter->setCellValue($sheet, $row + 1, $col++, [Exporter::DATA => \count($this->statistics['cumulated']['other']), Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
+            $exporter->setCellValue($sheet, $row + 1, $col++, [
+                Exporter::DATA => \count(($this->statistics['cumulated']['other'] ?? [])),
+                Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
+            ]);
 
-            if (\count($this->statistics['cumulated']['other'])) {
+            if (!empty($this->statistics['cumulated']['other'])) {
                 $otherchoices = [];
 
                 foreach ($this->statistics['cumulated']['other'] as $value) {
