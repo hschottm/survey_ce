@@ -12,7 +12,7 @@ Types of changes
 
 ## [3.5.0](https://github.com/pdir/contao-survey/tree/3.5.0) – 2023-06-05
 
-- [Added] "mark as finished" option to result page 🤗 [koertho](https://github.com/koertho)
+- [Added] "mark as finished" option to result page 🤗 [koertho](https://github.com/koertho) [#35](https://github.com/pdir/contao-survey/issues/35).
 - [Fixed] issues with export 🤗 [koertho](https://github.com/koertho)
 
 ## [3.4.3](https://github.com/pdir/contao-survey/tree/3.4.3) – 2023-04-18
