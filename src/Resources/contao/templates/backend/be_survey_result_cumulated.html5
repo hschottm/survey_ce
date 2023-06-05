@@ -50,9 +50,9 @@
             <div><?php echo $this->lngSkipped; ?>: <?php echo $data["skipped"] ?></div>
           </div>
         </td>
-        <td class="tl_file_list tl_right_nowrap"><a href="<?php echo $data[" hrefdetails"] ?>"
+        <td class="tl_file_list tl_right_nowrap"><a href="<?php echo $data["hrefdetails"] ?>"
           title="<?php echo $data["titledetails"] ?>"><img src="<?php echo $this->imgdetails; ?>" width="16" height="16"
-                                                           alt="<?php echo $data[" titledetails"] ?>" /></a> </td>
+                                                           alt="<?php echo $data["titledetails"] ?>" /></a> </td>
       </tr>
       <?php endforeach; ?>
     </table>
