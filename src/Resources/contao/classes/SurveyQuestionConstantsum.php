@@ -105,7 +105,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
             $arrChoices = deserialize($this->arrData['sumchoices'], true);
             $counter = 1;
 
-            foreach ($arrChoices as $id => $choice) {
+            foreach ($arrChoices as $choice) {
                 $exporter->setCellValue($sheet, $row + $counter - 1, $col, [Exporter::DATA => $choice]);
                 ++$counter;
                 $exporter->setCellValue($sheet, $row + $counter - 1, $col, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['nr_of_selections']]);
@@ -114,7 +114,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
             $counter = 1;
             $idx = 1;
 
-            foreach ($arrChoices as $id => $choice) {
+            foreach ($arrChoices as $choice) {
                 $acounter = 3;
 
                 foreach ($this->statistics['cumulated'][$idx] as $answervalue => $nrOfAnswers) {
@@ -203,8 +203,8 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
             if (\is_array($arrAnswer)) {
                 foreach ($arrAnswer as $answerkey => $answervalue) {
-                    if(array_key_exists($answerkey, $cumulated)) {
-                        if(array_key_exists($answervalue, $cumulated[$answerkey])) {
+                    if (\array_key_exists($answerkey, $cumulated)) {
+                        if (\array_key_exists($answervalue, $cumulated[$answerkey])) {
                             ++$cumulated[$answerkey][$answervalue];
                         } else {
                             $cumulated[$answerkey][$answervalue] = 1;

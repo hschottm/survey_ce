@@ -85,7 +85,7 @@ class SurveyQuestionModel extends Model
                 || 0 === $choices[$choice]['category']
                 || '0' === $choices[$choice]['category'])
         ) {
-            return (int)$choices[$choice]['category'];
+            return (int) $choices[$choice]['category'];
         }
 
         return null;

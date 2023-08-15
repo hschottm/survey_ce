@@ -124,8 +124,20 @@ class SurveyQuestionMatrix extends SurveyQuestion
                     if (1 === $row_counter) {
                         $exporter->setCellValue($sheet, $row, $col + $col_counter, [Exporter::DATA => $choice, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
                     }
+                    // pdir
+                    $data = \array_key_exists($col_counter, $this->statistics['cumulated'][$row_counter]) ?
+                        $this->statistics['cumulated'][$row_counter][$col_counter] :
+                        0;
 
-                    $exporter->setCellValue($sheet, $row + $row_counter, $col + $col_counter, [Exporter::DATA => ($this->statistics['cumulated'][$row_counter][$col_counter] ?: 0), Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
+                    $exporter->setCellValue(
+                        $sheet,
+                        $row + $row_counter,
+                        $col + $col_counter,
+                        [
+                            Exporter::DATA => $data, // ($this->statistics['cumulated'][$row_counter][$col_counter] ?: 0)
+                            Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
+                        ]
+                    );
                     ++$col_counter;
                 }
                 ++$row_counter;

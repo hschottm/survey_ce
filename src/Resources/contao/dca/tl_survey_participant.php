@@ -15,11 +15,13 @@ declare(strict_types=1);
  */
 
 use Contao\Backend;
+use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\Input;
 use Contao\MemberModel;
 use Contao\System;
 use Hschottm\SurveyBundle\SurveyPageModel;
 use Hschottm\SurveyBundle\SurveyParticipantModel;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 $GLOBALS['TL_DCA']['tl_survey_participant'] = [
     // Config
@@ -155,7 +157,7 @@ class tl_survey_participant extends Backend
     /**
      * Check permissions to edit table tl_survey_participant.
      *
-     * @throws Contao\CoreBundle\Exception\AccessDeniedException
+     * @throws AccessDeniedException
      */
     public function checkPermission(): void
     {
@@ -171,7 +173,7 @@ class tl_survey_participant extends Backend
           case 'editAll':
           case 'deleteAll':
           case 'overrideAll':
-              /** @var Symfony\Component\HttpFoundation\Session\SessionInterface $objSession */
+              /** @var SessionInterface $objSession */
               $objSession = System::getContainer()->get('session');
               $session = $objSession->all();
               $res = SurveyParticipantModel::findBy('pid', Input::get('id'));
@@ -184,7 +186,7 @@ class tl_survey_participant extends Backend
 
           default:
               if (Input::get('act')) {
-                  throw new Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "'.Input::get('act').'.');
+                  throw new AccessDeniedException('Invalid command "'.Input::get('act').'.');
               }
               break;
       }
@@ -196,9 +198,9 @@ class tl_survey_participant extends Backend
 
         if (null !== $res) {
             setcookie('TLsvy_'.$res->pid, $res->pin, time() - 3600, '/');
-            $objDelete = $this->Database->prepare('DELETE FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
-            $objDelete = $this->Database->prepare('DELETE FROM tl_survey_result WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
-            $objDelete = $this->Database->prepare('DELETE FROM tl_survey_navigation WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
+            $this->Database->prepare('DELETE FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
+            $this->Database->prepare('DELETE FROM tl_survey_result WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
+            $this->Database->prepare('DELETE FROM tl_survey_navigation WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
         }
     }
 

@@ -51,7 +51,7 @@ class SurveyResultDetails extends Backend
             return '';
         }
         $return = '';
-        $qid = (int)Input::get('id');
+        $qid = (int) Input::get('id');
         $qtype = $this->Database->prepare('SELECT questiontype, pid FROM tl_survey_question WHERE id = ?')
             ->execute($qid)
             ->fetchAssoc()
@@ -180,7 +180,7 @@ class SurveyResultDetails extends Backend
             $exporter = ExportHelper::getExporter();
             $sheet = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults'];
             $intRowCounter = 0;
-            $intColCounter = 0;
+            // $intColCounter = 0; # ToDo: remove
             $exporter->addSheet($sheet);
 
             while ($arrQuestions->next()) {
@@ -253,7 +253,13 @@ class SurveyResultDetails extends Backend
             $colCounter = 0;
 
             $participants = $this->fetchParticipants($surveyID);
-            $this->exportParticipantRowHeaders($exporter, $sheet, $rowCounter, $colCounter, $participants);
+            $this->exportParticipantRowHeaders(
+                $exporter,
+                $sheet,
+                $rowCounter,
+                $colCounter,
+                $participants
+            );
 
             // init question counters
             $page_no = 0;
@@ -494,15 +500,20 @@ class SurveyResultDetails extends Backend
      *
      * Every participant has it's own row with several header columns.
      *
+     * @param $exporter
      * @param mixed $sheet
+     * @param $rowCounter
+     * @param $colCounter
      * @param mixed $participants
+     * @return array
      */
-    protected function exportParticipantRowHeaders(& $exporter, $sheet, & $rowCounter, & $colCounter, $participants)
+    protected function exportParticipantRowHeaders(& $exporter, $sheet, & $rowCounter, & $colCounter, $participants): array
     {
         $result = [];
         $row = $rowCounter;
+        $col = 0;
 
-        foreach ($participants as $key => $participant) {
+        foreach ($participants as $participant) {
             $col = $colCounter;
 
             foreach ($participant as $k => $v) {

@@ -161,7 +161,7 @@ class SurveyPINTAN extends Backend
                 foreach ($export as $line) {
                     $intColCounter = 0;
 
-                    foreach ($line as $key => $data) {
+                    foreach ($line as $data) {
                         $celldata = [
                             Exporter::DATA => $data,
                         ];

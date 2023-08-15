@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Hschottm\SurveyBundle;
 
-use Contao\Controller;
 use Contao\Database;
 use Contao\FrontendTemplate;
 use Contao\StringUtil;
@@ -87,7 +86,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
                     if (isset($choice['category'])) {
                         $result['categories'][$choice['category']] =
-                            (($result['categories'][$choice['category']] ?? 0) + ($this->statistics['cumulated'][$id] ?? 0));
+                            ($result['categories'][$choice['category']] ?? 0) + ($this->statistics['cumulated'][$id] ?? 0);
                     }
 
                     ++$counter;
@@ -102,7 +101,6 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (!empty($resultData = $this->getResultData())) {
-
             $survey = SurveyModel::findByQuestionId((int) $this->id);
 
             $template = new FrontendTemplate('survey_answers_multiplechoice');
@@ -120,7 +118,12 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             if (\count($this->statistics['cumulated']['other'])) {
                 foreach ($this->statistics['cumulated']['other'] as $value) {
                     $key = StringUtil::specialchars($value);
-                    if(array_key_exists($key, $otherchoices)) ++$otherchoices[$key]; else $otherchoices[$key] = 1;
+
+                    if (\array_key_exists($key, $otherchoices)) {
+                        ++$otherchoices[$key];
+                    } else {
+                        $otherchoices[$key] = 1;
+                    }
                 }
             }
             $template->otherchoices = $otherchoices;
@@ -158,22 +161,36 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
         foreach ($arrChoices as $id => $choice) {
             $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice['choice']]);
+            // pdir
+            $data = \array_key_exists($id, $this->statistics['cumulated']) ?
+                $this->statistics['cumulated'][$id] :
+                0;
 
-            $exporter->setCellValue($sheet, $row + 1, $col++, [Exporter::DATA => ($this->statistics['cumulated'][$id] ?: 0), Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
+            $exporter->setCellValue(
+                $sheet,
+                $row + 1,
+                $col++,
+                [
+                    Exporter::DATA => $data,
+                    Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
+                ]
+            );
         }
 
         if ($this->arrData['addother']) {
             $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $this->arrData['othertitle']]);
             $exporter->setCellValue($sheet, $row + 1, $col++, [
                 Exporter::DATA => \count(($this->statistics['cumulated']['other'] ?? [])),
-                Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT
+                Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
             ]);
 
             if (!empty($this->statistics['cumulated']['other'])) {
                 $otherchoices = [];
 
                 foreach ($this->statistics['cumulated']['other'] as $value) {
-                    ++$otherchoices[$value];
+                    if (\array_key_exists($value, $otherchoices)) {
+                        ++$otherchoices[$value];
+                    }
                 }
 
                 foreach ($otherchoices as $key => $count) {
@@ -239,7 +256,9 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             }
 
             return implode(', ', $selections);
-        } elseif (is_numeric($arrAnswer['value'] ?? null)) {
+        }
+
+        if (is_numeric($arrAnswer['value'] ?? null)) {
             return $arrChoices[$arrAnswer['value']]['choice'];
         }
 
@@ -588,24 +607,25 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                   return $arrAnswer['other'];
               }
           }*/
+
     /**
      * @param array $result
-     * @return array
      */
     protected function getQuestionChoices(): array
     {
-        if ($this->arrData['multiplechoice_subtype'] === 'mc_dichotomous') {
+        if ('mc_dichotomous' === $this->arrData['multiplechoice_subtype']) {
             $choices = [
                 1 => [
                     'choice' => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
                 ],
                 2 => [
                     'choice' => $GLOBALS['TL_LANG']['tl_survey_question']['no'],
-                ]
+                ],
             ];
         } else {
             $choices = StringUtil::deserialize($this->arrData['choices'], true);
         }
+
         return $choices;
     }
 }

@@ -124,11 +124,11 @@ class FormConstantSumQuestion extends FormQuestionWidget
     public function getResultStringRepresentation()
     {
         $result = '';
-        $choices = [];
+        //$choices = []; # ToDo: remove
         $counter = 1;
 
         foreach ($this->arrChoices as $choice) {
-            if (\strlen($this->varValue[$counter])) {
+            if (!empty($this->varValue[$counter])) {
                 $result .= $choice.': '.$this->varValue[$counter]."\n";
             }
             ++$counter;

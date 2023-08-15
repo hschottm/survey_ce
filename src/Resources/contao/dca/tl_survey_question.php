@@ -129,12 +129,12 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'alias' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['alias'],
-                'inputType' => 'text',
-                'eval' => ['rgxp' => 'alias', 'maxlength' => 128, 'tl_class' => 'w50'],
-                'save_callback' => [['tl_survey_question', 'generateAlias']],
-                'sql' => "varchar(128) NOT NULL default ''",
-            ],
+            'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['alias'],
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'alias', 'maxlength' => 128, 'tl_class' => 'w50'],
+            'save_callback' => [['tl_survey_question', 'generateAlias']],
+            'sql' => "varchar(128) NOT NULL default ''",
+        ],
         'questiontype' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['questiontype'],
             'default' => 'openended',

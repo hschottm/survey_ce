@@ -167,7 +167,7 @@ abstract class Exporter
 
         if (null !== $this->spreadsheet) {
             foreach ($this->sheets as $sheet_title => $sheet) {
-                foreach ($sheet as $cellpos => $celldata) {
+                foreach ($sheet as $celldata) {
                     $this->setCellSpreadsheet($sheet_title, $celldata);
                 }
             }
@@ -200,7 +200,7 @@ abstract class Exporter
             $char = $cell[$i];
 
             if (ctype_alpha($char)) {
-                $col .= $char;
+                //$col .= $char; # ToDo: remove and refactor
             } else {
                 $row .= $char;
             }
@@ -219,9 +219,8 @@ abstract class Exporter
 
             if (ctype_alpha($char)) {
                 $col .= $char;
-            } else {
-                $row .= $char;
             }
+            //$row .= $char; # ToDo: remove and refactor
         }
 
         return $this->columnToIndex($col);
