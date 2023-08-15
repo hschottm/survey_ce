@@ -38,6 +38,9 @@ Made with [contributors-img](https://contrib.rocks).
 #### Run before commit
 
     vendor/bin/ecs check src tests
+    vendor/bin/phpstan analyse
+    vendor/bin/phpunit --colors=always
+
 
 #### Test your changes using the survey tables included in the package.
 
