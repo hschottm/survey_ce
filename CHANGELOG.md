@@ -10,6 +10,10 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
+## [3.5.1](https://github.com/pdir/contao-survey/tree/3.5.1) – 2023-08-20
+
+- [Fixed] the error whilst creating TANs [#33](https://github.com/pdir/contao-survey/issues/42)
+
 ## [3.5.0](https://github.com/pdir/contao-survey/tree/3.5.0) – 2023-06-05
 
 - [Added] "mark as finished" option to result page  [#35](https://github.com/pdir/contao-survey/issues/35) 🤗 [koertho](https://github.com/koertho)
