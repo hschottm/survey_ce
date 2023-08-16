@@ -49,7 +49,6 @@ class SurveyPINTAN extends Backend
 
         if ('tl_survey_pin_tan' === Input::get('table')) {
             $this->redirect(Backend::addToUrl('table=tl_survey', true, ['table']));
-            return '';
         }
 
         $this->loadLanguageFile('tl_survey_pin_tan');
