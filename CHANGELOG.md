@@ -10,6 +10,15 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
+## [3.5.1](https://github.com/pdir/contao-survey/tree/3.5.1) – 2023-08-20
+
+- [Fixed] Error message whilst exporting TANS from the backend [#43](https://github.com/pdir/contao-survey/issues/43)
+
+## [3.5.0](https://github.com/pdir/contao-survey/tree/3.5.0) – 2023-06-05
+
+- [Added] "mark as finished" option to result page  [#35](https://github.com/pdir/contao-survey/issues/35) 🤗 [koertho](https://github.com/koertho)
+- [Fixed] issues with export 🤗 [koertho](https://github.com/koertho)
+
 ## [3.4.3](https://github.com/pdir/contao-survey/tree/3.4.3) – 2023-04-18
 
 - [Removed] ...the obsolete attribute **summary** were replaced by the html5-attribute **details** in the templates.
