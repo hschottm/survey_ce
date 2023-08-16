@@ -41,7 +41,7 @@ class SurveyPINTAN extends Backend
 {
     protected $blnSave = true;
 
-    public function exportTAN(DataContainer $dc)
+    public function exportTAN(DataContainer $dc): string
     {
         if ('exporttan' !== Input::get('key')) {
             return '';
@@ -49,8 +49,7 @@ class SurveyPINTAN extends Backend
 
         if ('tl_survey_pin_tan' === Input::get('table')) {
             $this->redirect(Backend::addToUrl('table=tl_survey', true, ['table']));
-
-            return;
+            return '';
         }
 
         $this->loadLanguageFile('tl_survey_pin_tan');
@@ -223,7 +222,7 @@ class SurveyPINTAN extends Backend
 
         // Create import form
         if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave) {
-            $nrOfTAN = $this->Template->nrOfTAN->value;
+            $nrOfTAN = (int)$this->Template->nrOfTAN->value;
             $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 
             for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
