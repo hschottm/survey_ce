@@ -12,7 +12,8 @@ Types of changes
 
 ## [3.5.1](https://github.com/pdir/contao-survey/tree/3.5.1) – 2023-08-20
 
-- [Fixed] the error whilst creating TANs [#33](https://github.com/pdir/contao-survey/issues/42)
+- [Fixed] Error message whilst exporting TANS from the backend [#43](https://github.com/pdir/contao-survey/issues/43)
+- [Fixed] the error whilst creating TANs [#43](https://github.com/pdir/contao-survey/issues/42)
 
 ## [3.5.0](https://github.com/pdir/contao-survey/tree/3.5.0) – 2023-06-05
 

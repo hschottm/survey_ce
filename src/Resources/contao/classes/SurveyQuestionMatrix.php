@@ -80,7 +80,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
         }
     }
 
-    public function exportDataToExcel(& $exporter, $sheet, & $row): void
+    public function exportDataToExcel(&$exporter, $sheet, &$row): void
     {
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => 'ID', Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
         $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $this->id, Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
@@ -124,8 +124,20 @@ class SurveyQuestionMatrix extends SurveyQuestion
                     if (1 === $row_counter) {
                         $exporter->setCellValue($sheet, $row, $col + $col_counter, [Exporter::DATA => $choice, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
                     }
+                    // pdir
+                    $data = \array_key_exists($col_counter, $this->statistics['cumulated'][$row_counter]) ?
+                        $this->statistics['cumulated'][$row_counter][$col_counter] :
+                        0;
 
-                    $exporter->setCellValue($sheet, $row + $row_counter, $col + $col_counter, [Exporter::DATA => ($this->statistics['cumulated'][$row_counter][$col_counter] ?: 0), Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT]);
+                    $exporter->setCellValue(
+                        $sheet,
+                        $row + $row_counter,
+                        $col + $col_counter,
+                        [
+                            Exporter::DATA => $data, // ($this->statistics['cumulated'][$row_counter][$col_counter] ?: 0)
+                            Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT,
+                        ]
+                    );
                     ++$col_counter;
                 }
                 ++$row_counter;
@@ -166,7 +178,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
      *
      * @TODO: eventually give out just indexes instead of choice strings to save width? Then the possible coices must be shown in the header.
      */
-    public function exportDetailsToExcel(& $exporter, $sheet, & $row, & $col, $questionNumbers, $participants)
+    public function exportDetailsToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, $participants)
     {
         $valueCol = $col;
         $rotateInfo = [];
@@ -242,7 +254,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
      *
      * @return array the cells to be added to the export
      */
-    protected function exportQuestionHeadersToExcel(& $exporter, $sheet, & $row, & $col, $questionNumbers, & $rotateInfo)
+    protected function exportQuestionHeadersToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
     {
         $this->subquestions = deserialize($this->arrData['matrixrows'], true);
 
@@ -407,7 +419,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
      *
      * @TODO: make alignment and max colwidth configurable in dcaconfig.php ?
      */
-    protected function exportDetailResults(& $exporter, $sheet, & $row, & $col, $participants)
+    protected function exportDetailResults(&$exporter, $sheet, &$row, &$col, $participants)
     {
         $cells = [];
         $startCol = $col;

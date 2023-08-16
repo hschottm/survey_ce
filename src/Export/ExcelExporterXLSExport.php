@@ -77,7 +77,7 @@ class ExcelExporterXLSExport extends Exporter
 
     protected function setCellSpreadsheet($sheet, $cell): void
     {
-        $pos = $this->getCell($cell[self::ROW] + 1, $cell[self::COL]);
+        //$pos = $this->getCell($cell[self::ROW] + 1, $cell[self::COL]); # ToDo: remove
         $found = false;
 
         foreach ($this->spreadsheet->worksheets as $sheetarray) {

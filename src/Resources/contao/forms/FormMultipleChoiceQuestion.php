@@ -149,7 +149,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         $template->lngNo = $GLOBALS['TL_LANG']['tl_survey_question']['no'];
         $template->otherTitle = StringUtil::specialchars($this->strOtherTitle);
 
-        $template->values = $template->values ?? ['value'=>'', 'other'=>''];
+        $template->values = $template->values ?? ['value' => '', 'other' => ''];
 
         $strOptions = $template->parse();
 

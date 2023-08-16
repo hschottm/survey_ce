@@ -207,7 +207,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
             $this->arrAttributes['cols'] = StringUtil::specialchars($varValue['openended_cols']);
         }
 
-        if (!!empty($this->varValue)) {
+        if ((bool) empty($this->varValue)) {
             if (!empty($varValue['openended_textinside'])) {
                 $this->varValue = $varValue['openended_textinside'];
             }

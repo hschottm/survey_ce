@@ -2,6 +2,18 @@
 
 declare(strict_types=1);
 
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
+ */
+
 namespace Hschottm\SurveyBundle\Migration;
 
 /*
@@ -15,7 +27,6 @@ namespace Hschottm\SurveyBundle\Migration;
  * @author     Mathias Arzberger <develop@pdir.de>
  * @link       https://github.com/pdir/contao-survey
  */
-
 
 use Contao\CoreBundle\Migration\MigrationInterface;
 use Contao\CoreBundle\Migration\MigrationResult;
@@ -93,9 +104,11 @@ class ChoicesFieldMigration implements MigrationInterface
     private function hasOldFormat(): bool
     {
         $validRecords = $this->connection->executeQuery($this->strSqlCondition);
+
         if ($validRecords) {
             foreach ($validRecords as $record) {
                 $arrChoices = StringUtil::deserialize($record['choices']);
+
                 foreach ($arrChoices as $choice) {
                     if ('string' === \gettype($choice)) {
                         return true;

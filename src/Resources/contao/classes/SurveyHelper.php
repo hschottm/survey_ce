@@ -101,7 +101,7 @@ class SurveyHelper extends Backend
      *
      * @return bool
      */
-    public function replaceConditionTags(& $strBuffer)
+    public function replaceConditionTags(&$strBuffer)
     {
         if (!\strlen($strBuffer)) {
             return false;
@@ -141,16 +141,14 @@ class SurveyHelper extends Backend
     /**
      * Eval code.
      *
-     * @param string $strBuffer
-     *
      * @throws \Exception
      *
      * @return mixed|string
      */
-    public function evalConditionTags($strBuffer)
+    public function evalConditionTags(string $strBuffer): string
     {
-        if (!\strlen($strBuffer)) {
-            return;
+        if (empty($strBuffer)) {
+            return '';
         }
 
         $strReturn = str_replace('?><br />', '?>', $strBuffer);

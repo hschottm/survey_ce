@@ -96,11 +96,15 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
     {
         $params = ['do' => 'survey'];
 
-        if (null === $config || !$config->getValue() || false === strpos($config->getValue(), '{{news_url::')) {
+        if (
+            null === $config ||
+            !$config->getValue() ||
+            false === strpos($config->getValue(), '{{news_url::')
+        ) {
             return $params;
         }
-
-        $value = str_replace(['{{news_url::', '}}'], '', $config->getValue());
+        // ToDo: remove or refactor this whole function
+        //$value = str_replace(['{{news_url::', '}}'], '', $config->getValue());
 
         return $params;
     }

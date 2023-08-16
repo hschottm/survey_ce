@@ -33,7 +33,7 @@ use Hschottm\SurveyBundle\DataContainer\SurveyPageContainer;
 
 /**
  * @property SurveyModel|Result $objSurvey
- * @property Survey $svy
+ * @property Survey             $svy
  */
 class ContentSurvey extends ContentElement
 {
@@ -100,13 +100,13 @@ class ContentSurvey extends ContentElement
         $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 
         // check date activation
-        if ((!empty($this->objSurvey->online_start)) && ($this->objSurvey->online_start > time())) {
+        if (!empty($this->objSurvey->online_start) && ($this->objSurvey->online_start > time())) {
             $this->Template->protected = true;
 
             return;
         }
 
-        if ((!empty($this->objSurvey->online_end)) && ($this->objSurvey->online_end < time())) {
+        if (!empty($this->objSurvey->online_end) && ($this->objSurvey->online_end < time())) {
             $this->Template->protected = true;
 
             return;
@@ -227,7 +227,7 @@ class ContentSurvey extends ContentElement
                         }
                     }
                 }
-                $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id?? 0, $previouspage, $page);
+                $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id ?? 0, $previouspage, $page);
             }
 
             if (!empty(Input::post('finish'))) {
@@ -244,7 +244,7 @@ class ContentSurvey extends ContentElement
                 }
             }
 
-            $surveypage = $this->createSurveyPage(($pages[(($page > 0) ? $page - 1 : 0)] ?? null), $page, false);
+            $surveypage = $this->createSurveyPage(($pages[($page > 0 ? $page - 1 : 0)] ?? null), $page, false);
         }
 
         // save position of last page (for resume)
@@ -637,9 +637,9 @@ class ContentSurvey extends ContentElement
 
                                         if ($objFile->size) {
                                             $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
-                                                        'file' => TL_ROOT.'/'.$objFile->path,
-                                                        'name' => $objFile->basename,
-                                                        'mime' => $objFile->mime, ];
+                                                'file' => TL_ROOT.'/'.$objFile->path,
+                                                'name' => $objFile->basename,
+                                                'mime' => $objFile->mime, ];
                                         }
                                     }
                                 }
@@ -672,7 +672,7 @@ class ContentSurvey extends ContentElement
                     //$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
 
                     // Send Mail
-                    $blnConfirmationSent = false;
+                    //$blnConfirmationSent = false; # ToDo: remove
 
                     if (!empty($objMailProperties->recipients)) {
                         $objMail = new Email();
@@ -691,7 +691,7 @@ class ContentSurvey extends ContentElement
                         $objMail->subject = $objMailProperties->subject;
 
                         if (!empty($objMailProperties->attachments)) {
-                            foreach ($objMailProperties->attachments as $strFile => $varParams) {
+                            foreach ($objMailProperties->attachments as $varParams) {
                                 $strContent = file_get_contents($varParams['file'], false);
                                 $objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
                             }
@@ -707,7 +707,7 @@ class ContentSurvey extends ContentElement
 
                         foreach ($objMailProperties->recipients as $recipient) {
                             $objMail->sendTo($recipient);
-                            $blnConfirmationSent = true;
+                            //$blnConfirmationSent = true; # ToDo: remove
                         }
                     }
                 }
@@ -775,9 +775,9 @@ class ContentSurvey extends ContentElement
 
                                             if ($objFile->size) {
                                                 $objMailProperties->attachments[TL_ROOT.'/'.$objFile->path] = [
-                                                          'file' => TL_ROOT.'/'.$objFile->path,
-                                                          'name' => $objFile->basename,
-                                                          'mime' => $objFile->mime, ];
+                                                    'file' => TL_ROOT.'/'.$objFile->path,
+                                                    'name' => $objFile->basename,
+                                                    'mime' => $objFile->mime, ];
                                             }
                                         }
                                     }
@@ -810,7 +810,7 @@ class ContentSurvey extends ContentElement
                         //$objMailProperties = $this->Formdata->prepareMailData($objMailProperties, $arrSubmitted, $arrFiles, $arrForm, $arrFormFields);
 
                         // Send Mail
-                        $blnConfirmationSent = false;
+                        //$blnConfirmationSent = false; # ToDo: remove
 
                         if (!empty($objMailProperties->recipients)) {
                             $objMail = new Email();
@@ -829,7 +829,7 @@ class ContentSurvey extends ContentElement
                             $objMail->subject = $objMailProperties->subject;
 
                             if (!empty($objMailProperties->attachments)) {
-                                foreach ($objMailProperties->attachments as $strFile => $varParams) {
+                                foreach ($objMailProperties->attachments as $varParams) {
                                     $strContent = file_get_contents($varParams['file'], false);
                                     $objMail->attachFileFromString($strContent, $varParams['name'], $varParams['mime']);
                                 }
@@ -845,7 +845,7 @@ class ContentSurvey extends ContentElement
 
                             foreach ($objMailProperties->recipients as $recipient) {
                                 $objMail->sendTo($recipient);
-                                $blnConfirmationSent = true;
+                                //$blnConfirmationSent = true; # ToDo: remove
                             }
                         }
                     }
@@ -916,7 +916,7 @@ class ContentSurvey extends ContentElement
                     $status = $this->svy->getSurveyStatus($this->objSurvey->id, $_COOKIE['TLsvy_'.$this->objSurvey->id] ?? null);
                 }
 
-                if (is_string($status) && (0 === strcmp($status, 'finished'))) {
+                if (\is_string($status) && (0 === strcmp($status, 'finished'))) {
                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                     $this->Template->hideStartButtons = true;
                 }
@@ -1150,7 +1150,6 @@ class ContentSurvey extends ContentElement
                     'count' => $categoryCount,
                     'percent' => $allUserQuestionsSolvedCount > 0 ? ceil($categoryCount / $allUserQuestionsSolvedCount * 100) : 0,
                 ];
-
             }
             $resultPageTemplate->resultCategories = $resultCategories;
 
