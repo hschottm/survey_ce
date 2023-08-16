@@ -14,6 +14,7 @@ declare(strict_types=1);
  * @link       https://github.com/pdir/contao-survey
  */
 
+use Contao\ArrayUtil;
 use Contao\Backend;
 use Contao\BackendUser;
 use Contao\Database;
@@ -297,10 +298,10 @@ $GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'sendConfirmatio
 $GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'addConfirmationMailAttachments';
 $GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'addConfirmationMailAlternateAttachments';
 
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), ['sendConfirmationMail' => 'confirmationMailRecipientField,confirmationMailRecipient,confirmationMailSender,confirmationMailReplyto,confirmationMailSubject,confirmationMailText,confirmationMailTemplate,addConfirmationMailAttachments']);
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), ['sendConfirmationMailAlternate' => 'confirmationMailAlternateCondition,confirmationMailAlternateRecipient,confirmationMailAlternateSender,confirmationMailAlternateReplyto,confirmationMailAlternateSubject,confirmationMailAlternateText,confirmationMailAlternateTemplate,addConfirmationMailAlternateAttachments']);
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), ['addConfirmationMailAttachments' => 'confirmationMailAttachments']);
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), ['addConfirmationMailAlternateAttachments' => 'confirmationMailAlternateAttachments']);
+ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), ['sendConfirmationMail' => 'confirmationMailRecipientField,confirmationMailRecipient,confirmationMailSender,confirmationMailReplyto,confirmationMailSubject,confirmationMailText,confirmationMailTemplate,addConfirmationMailAttachments']);
+ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), ['sendConfirmationMailAlternate' => 'confirmationMailAlternateCondition,confirmationMailAlternateRecipient,confirmationMailAlternateSender,confirmationMailAlternateReplyto,confirmationMailAlternateSubject,confirmationMailAlternateText,confirmationMailAlternateTemplate,addConfirmationMailAlternateAttachments']);
+ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), ['addConfirmationMailAttachments' => 'confirmationMailAttachments']);
+ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), ['addConfirmationMailAlternateAttachments' => 'confirmationMailAlternateAttachments']);
 
 $GLOBALS['TL_DCA']['tl_survey']['fields']['sendConfirmationMail'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_survey']['sendConfirmationMail'],

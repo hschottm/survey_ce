@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\ArrayUtil;
 use Contao\BackendTemplate;
 use Contao\ContentElement;
 use Contao\Database\Result;
@@ -81,7 +82,7 @@ class ContentSurvey extends ContentElement
 
         // add survey javascript
         if (\is_array($GLOBALS['TL_JAVASCRIPT'])) {
-            array_insert($GLOBALS['TL_JAVASCRIPT'], 1, 'bundles/hschottmsurvey/js/survey.js');
+            ArrayUtil::arrayInsert($GLOBALS['TL_JAVASCRIPT'], 1, 'bundles/hschottmsurvey/js/survey.js');
         } else {
             $GLOBALS['TL_JAVASCRIPT'] = ['bundles/hschottmsurvey/js/survey.js'];
         }
@@ -1036,6 +1037,7 @@ class ContentSurvey extends ContentElement
                     $participant = SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
                     break;
             }
+
             if ($participant) {
                 $participant->finished = 1;
                 $participant->save();

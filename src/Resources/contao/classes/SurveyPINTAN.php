@@ -23,11 +23,13 @@ use Contao\Environment;
 use Contao\Input;
 use Contao\PageModel;
 use Contao\PageTree;
+use Contao\SelectMenu;
 use Contao\StringUtil;
 use Contao\TextField;
 use Contao\Widget;
 use Hschottm\SurveyBundle\Export\Exporter;
 use Hschottm\SurveyBundle\Export\ExportHelper;
+use Symfony\Component\DomCrawler\Field\InputFormField;
 
 /**
  * Class SurveyPINTAN.
@@ -202,7 +204,7 @@ class SurveyPINTAN extends Backend
         return $this->Template->parse();
     }
 
-    public function createTAN(DataContainer $dc)
+    public function createTAN(DataContainer $dc): string
     {
         if ('createtan' !== Input::get('key')) {
             return '';
@@ -212,6 +214,7 @@ class SurveyPINTAN extends Backend
         $this->Template = new BackendTemplate('be_survey_create_tan');
 
         $this->Template->nrOfTAN = $this->getTANWidget();
+        $this->Template->memberMode = $this->getMemberWidget();
 
         $this->Template->hrefBack = ampersand(str_replace('&key=createtan', '', Environment::get('request')));
         $this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
@@ -221,7 +224,7 @@ class SurveyPINTAN extends Backend
 
         // Create import form
         if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave) {
-            $nrOfTAN = (int)$this->Template->nrOfTAN->value;
+            $nrOfTAN = (int) $this->Template->nrOfTAN->value;
             $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 
             for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
@@ -292,11 +295,43 @@ class SurveyPINTAN extends Backend
         $widget->nospace = true;
         $widget->value = $value;
         $widget->required = true;
+        $widget->tl_class = 'w50 widget';
 
         $widget->label = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][0];
 
-        if ($GLOBALS['TL_CONFIG']['showHelp'] && \strlen($GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1])) {
+        if ($GLOBALS['TL_CONFIG']['showHelp'] && !empty($GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1])) {
             $widget->help = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1];
+        }
+
+        // Valiate input
+        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT')) {
+            $widget->validate();
+
+            if ($widget->hasErrors()) {
+                $this->blnSave = false;
+            }
+        }
+
+        return $widget;
+    }
+
+    protected function getMemberWidget($value = null)
+    {
+        $widget = new SelectMenu();
+
+        $widget->id = 'memberMode';
+        $widget->name = 'memberMode';
+        $widget->mandatory = false;
+        $widget->value = $value;
+        $widget->required = true;
+
+        $widget->tl_class = 'w50 widget';
+        $widget->options = ['key' => [0 => 'alle Mitglieder', 1 => 'Gruppe 1']];
+
+        $widget->label = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberMode'][0];
+
+        if ($GLOBALS['TL_CONFIG']['showHelp'] && !empty($GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberMode'][1])) {
+            $widget->help = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberMode'][1];
         }
 
         // Valiate input

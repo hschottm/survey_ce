@@ -14,6 +14,7 @@ declare(strict_types=1);
  * @link       https://github.com/pdir/contao-survey
  */
 
+use Contao\ArrayUtil;
 use Hschottm\SurveyBundle\ConditionWizard;
 use Hschottm\SurveyBundle\ContentSurvey;
 use Hschottm\SurveyBundle\FormConstantSumQuestion;
@@ -30,7 +31,7 @@ use Hschottm\SurveyBundle\SurveyResultDetails;
 /*
  * Add survey element
  */
-array_insert($GLOBALS['TL_CTE']['includes'], 2, [
+ArrayUtil::arrayInsert($GLOBALS['TL_CTE']['includes'], 2, [
     'survey' => ContentSurvey::class,
 ]);
 
@@ -45,7 +46,7 @@ array_insert($GLOBALS['TL_CTE']['includes'], 2, [
 /*
  * BACK END FORM FIELDS
  */
-array_insert($GLOBALS['BE_MOD'], 3, [
+ArrayUtil::arrayInsert($GLOBALS['BE_MOD'], 3, [
     'surveys' => [
         'survey' => [
             'tables' => [
@@ -71,7 +72,7 @@ if (TL_MODE === 'BE') {
     $GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/survey.css|static';
 }
 
-array_insert($GLOBALS['BE_FFL'], 15, [
+ArrayUtil::arrayInsert($GLOBALS['BE_FFL'], 15, [
     'conditionwizard' => ConditionWizard::class,
 ]);
 

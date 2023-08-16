@@ -25,6 +25,7 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] = 'Die TAN wurde bereits ve
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] = 'Die TAN ist noch nicht verwendet worden';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN']['0'] = 'Anzahl der TAN-Codes';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN']['1'] = 'Bitte geben Sie die Anzahl der TAN-Codes ein, die Sie erzeugen möchten.';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberMode'] = ['für Mitglieder der Gruppe', 'Wählen Sie hier eine Mitgliedergruppe oder &raquo;alle Mitglieder&laquo; für alle Mitglieder.'];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan']['0'] = 'TAN';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan']['1'] = 'Transaktionnummer (TAN)';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp']['0'] = 'Erstellungsdatum';
