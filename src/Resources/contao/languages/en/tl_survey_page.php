@@ -42,6 +42,10 @@ $GLOBALS['TL_LANG']['tl_survey_page']['hideBackButton'] = [
     'Hide "back"',
     'Choose this option to hide the back button on the current page.',
 ];
+$GLOBALS['TL_LANG']['tl_survey_page']['markSurveyAsFinished'] = [
+    'Mark survey as finished',
+    'Choose this option to mark the survey as finished when reaching the current page.',
+];
 
 /*
 * Legends

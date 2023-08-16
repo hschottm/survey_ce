@@ -1025,6 +1025,23 @@ class ContentSurvey extends ContentElement
 
     protected function createResultPage(array $pageData): void
     {
+        if ($pageData['markSurveyAsFinished'] ?? false) {
+            switch ($this->objSurvey->access) {
+                case 'anon':
+                case 'anoncode':
+                    $participant = SurveyParticipantModel::findOneBy(['pid=?', 'pin=?'], [$this->objSurvey->id, $this->pin]);
+                    break;
+
+                case 'nonanoncode':
+                    $participant = SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
+                    break;
+            }
+            if ($participant) {
+                $participant->finished = 1;
+                $participant->save();
+            }
+        }
+
         $templateName = ($pageData['page_template'] ?? '');
 
         if (!str_starts_with($templateName, 'surveypage_result_')) {

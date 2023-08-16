@@ -51,6 +51,10 @@ $GLOBALS['TL_LANG']['tl_survey_page']['hideBackButton'] = [
     '"Zurück" ausblenden',
     'Wählen Sie diese Option, um die "Zurück"-Schaltfläche auf dieser Seite auszublenden.',
 ];
+$GLOBALS['TL_LANG']['tl_survey_page']['markSurveyAsFinished'] = [
+    'Umfrage als beendet markieren',
+    'Wählen Sie diese Option, um die Umfrage beim erreichen dieser Seite als beendet zu markieren.',
+];
 
 /*
  * Legends
