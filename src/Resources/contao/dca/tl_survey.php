@@ -18,7 +18,7 @@ use Contao\Backend;
 use Contao\BackendUser;
 use Contao\Database;
 use Contao\Input;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\AbstractMySQLPlatform;
 
 /*
  * Table tl_survey
@@ -285,7 +285,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             ],
             'sql' => [
                 'type' => 'blob',
-                'length' => MySqlPlatform::LENGTH_LIMIT_BLOB,
+                'length' => AbstractMySQLPlatform::LENGTH_LIMIT_BLOB,
                 'notnull' => false,
             ],
         ],
