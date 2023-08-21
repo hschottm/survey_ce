@@ -101,7 +101,7 @@ class SurveyHelper extends Backend
      *
      * @return bool
      */
-    public function replaceConditionTags(& $strBuffer)
+    public function replaceConditionTags(&$strBuffer)
     {
         if (!\strlen($strBuffer)) {
             return false;
@@ -154,7 +154,7 @@ class SurveyHelper extends Backend
         $strReturn = str_replace('?><br />', '?>', $strBuffer);
         // Eval the code
         ob_start();
-        $blnEval = eval('?>'.$strReturn);
+        eval('?>'.$strReturn); // ToDo: unsafe solution, replace that
         $strReturn = ob_get_contents();
         ob_end_clean();
 

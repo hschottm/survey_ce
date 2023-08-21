@@ -80,7 +80,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
         }
     }
 
-    public function exportDataToExcel(& $exporter, $sheet, & $row): void
+    public function exportDataToExcel(&$exporter, $sheet, &$row): void
     {
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => 'ID', Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
         $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $this->id, Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
@@ -178,7 +178,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
      *
      * @TODO: eventually give out just indexes instead of choice strings to save width? Then the possible coices must be shown in the header.
      */
-    public function exportDetailsToExcel(& $exporter, $sheet, & $row, & $col, $questionNumbers, $participants)
+    public function exportDetailsToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, $participants)
     {
         $valueCol = $col;
         $rotateInfo = [];
@@ -254,7 +254,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
      *
      * @return array the cells to be added to the export
      */
-    protected function exportQuestionHeadersToExcel(& $exporter, $sheet, & $row, & $col, $questionNumbers, & $rotateInfo)
+    protected function exportQuestionHeadersToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
     {
         $this->subquestions = deserialize($this->arrData['matrixrows'], true);
 
@@ -419,7 +419,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
      *
      * @TODO: make alignment and max colwidth configurable in dcaconfig.php ?
      */
-    protected function exportDetailResults(& $exporter, $sheet, & $row, & $col, $participants)
+    protected function exportDetailResults(&$exporter, $sheet, &$row, &$col, $participants)
     {
         $cells = [];
         $startCol = $col;

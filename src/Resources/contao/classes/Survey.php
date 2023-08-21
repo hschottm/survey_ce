@@ -84,7 +84,7 @@ class Survey extends Backend
         return false;
     }
 
-    public function isUserAllowedToTakeSurvey(& $objSurvey)
+    public function isUserAllowedToTakeSurvey(&$objSurvey)
     {
         $groups = !\strlen($objSurvey->allowed_groups) ? [] : deserialize($objSurvey->allowed_groups, true);
 

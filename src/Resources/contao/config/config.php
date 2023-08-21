@@ -75,7 +75,10 @@ array_insert($GLOBALS['BE_FFL'], 15, [
     'conditionwizard' => ConditionWizard::class,
 ]);
 
+// register button handler for global operations of tl_survey_participiants
 $GLOBALS['BE_MOD']['surveys']['survey']['exportraw'] = [SurveyResultDetails::class, 'exportResultsRaw'];
+$GLOBALS['BE_MOD']['surveys']['survey']['invite'] = [SurveyResultDetails::class, 'invite'];
+$GLOBALS['BE_MOD']['surveys']['survey']['remember'] = [SurveyResultDetails::class, 'remember'];
 
 $GLOBALS['TL_SVY']['openended'] = FormOpenEndedQuestion::class;
 $GLOBALS['TL_SVY']['multiplechoice'] = FormMultipleChoiceQuestion::class;

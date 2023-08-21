@@ -27,7 +27,7 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'] = ['Anzahl der TAN-Codes', '
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'] = [
     'für Mitglieder der Gruppe',
     'Wählen Sie hier eine Mitgliedergruppe oder &raquo;alle Mitglieder&laquo; für alle Mitglieder.',
-    'keine Gruppe (alle aktiven Mitglieder)'
+    'keine Gruppe (alle aktiven Mitglieder)',
 ];
 // only for the xls exporter
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['member_id'] = ['Mitglied', ''];

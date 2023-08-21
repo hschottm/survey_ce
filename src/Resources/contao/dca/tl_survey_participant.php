@@ -58,6 +58,18 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
             'label_callback' => ['tl_survey_participant', 'getLabel'],
         ],
         'global_operations' => [
+            'invite' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['invite'],
+                'href' => 'key=invite',
+                'class' => 'invite',
+                'attributes' => 'onclick="Backend.getScrollOffset();"',
+            ],
+            'remember' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['remember'],
+                'href' => 'key=remember',
+                'class' => 'remember',
+                'attributes' => 'onclick="Backend.getScrollOffset();"',
+            ],
             'exportraw' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['exportraw'],
                 'href' => 'key=exportraw',
@@ -222,7 +234,7 @@ class tl_survey_participant extends Backend
 
         return sprintf(
             '<div>%s, <strong>%s</strong> <span style="color: #7f7f7f;">[%s%s]</span></div>',
-            date($GLOBALS['TL_CONFIG']['datimFormat'], $row['tstamp']),
+            date($GLOBALS['TL_CONFIG']['datimFormat'], (int) $row['tstamp']),
             $row['uid'] > 0
                 ? $this->getUsername($row['uid'])
                 : $row['pin'],

@@ -27,7 +27,7 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'] = ['Number of TAN codes', 'P
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'] = [
     'for members of the group',
     'Select here a member group or &raquo;all members&laquo; for all members.',
-    'no group (all active members)'
+    'no group (all active members)',
 ];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'] = ['TAN', 'Transaction number (TAN code)'];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'] = ['Created', 'Created'];

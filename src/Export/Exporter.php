@@ -101,55 +101,6 @@ abstract class Exporter
         return [$this->getRowFromCell($res[0]), $this->getColFromCell($res[0]), $this->getRowFromCell($res[1]), $this->getColFromCell($res[1])];
     }
 
-    protected function getRowFromCell($cell)
-    {
-        $col = '';
-        $row = '';
-
-        for ($i = 0; $i < \strlen($cell); ++$i) {
-            $char = $cell[$i];
-
-            if (ctype_alpha($char)) {
-                //$col .= $char; # ToDo: remove and refactor
-            } else {
-                $row .= $char;
-            }
-        }
-
-        return (int)$row - 1;
-    }
-
-    protected function getColFromCell($cell)
-    {
-        $col = '';
-        $row = '';
-
-        for ($i = 0; $i < \strlen($cell); ++$i) {
-            $char = $cell[$i];
-
-            if (ctype_alpha($char)) {
-                $col .= $char;
-            }
-            //$row .= $char; # ToDo: remove and refactor
-        }
-
-        return $this->columnToIndex($col);
-    }
-
-    protected function columnToIndex($col)
-    {
-        $index = 0;
-        $pow = \strlen($col) - 1;
-        $alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-
-        for ($i = 0; $i < \strlen($col); ++$i) {
-            $index += pow(26, $pow) * (array_search(strtoupper($col[$i]), $alphabet, true) + 1);
-            --$pow;
-        }
-
-        return $index - 1;
-    }
-
     public function addSheet($name): void
     {
         $this->sheets[$name] = [];
@@ -180,7 +131,7 @@ abstract class Exporter
 
     public function getCell($row, $col)
     {
-        return $this->getColumnIndex($col) . (string)($row + 1);
+        return $this->getColumnIndex($col).(string) ($row + 1);
     }
 
     public function getColumnIndex($index)
@@ -191,7 +142,7 @@ abstract class Exporter
             return $alphabet[$index];
         }
 
-        return $alphabet[floor($index / 26) - 1] . $alphabet[$index - (floor($index / 26) * 26)];
+        return $alphabet[floor($index / 26) - 1].$alphabet[$index - (floor($index / 26) * 26)];
     }
 
     public function setFilename($filename): void
@@ -225,6 +176,50 @@ abstract class Exporter
     }
 
     abstract public function createSpreadsheet();
+
+    protected function getRowFromCell($cell)
+    {
+        $row = '';
+
+        for ($i = 0; $i < \strlen($cell); ++$i) {
+            $char = $cell[$i];
+
+            if (!ctype_alpha($char)) {
+                $row .= $char;
+            }
+        }
+
+        return (int) $row - 1;
+    }
+
+    protected function getColFromCell($cell)
+    {
+        $col = '';
+
+        for ($i = 0; $i < \strlen($cell); ++$i) {
+            $char = $cell[$i];
+
+            if (ctype_alpha($char)) {
+                $col .= $char;
+            }
+        }
+
+        return $this->columnToIndex($col);
+    }
+
+    protected function columnToIndex($col)
+    {
+        $index = 0;
+        $pow = \strlen($col) - 1;
+        $alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
+        for ($i = 0; $i < \strlen($col); ++$i) {
+            $index += pow(26, $pow) * (array_search(strtoupper($col[$i]), $alphabet, true) + 1);
+            --$pow;
+        }
+
+        return $index - 1;
+    }
 
     abstract protected function setCellSpreadsheet($sheet, $cell);
 

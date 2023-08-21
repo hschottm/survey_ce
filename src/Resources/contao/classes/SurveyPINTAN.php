@@ -63,7 +63,7 @@ class SurveyPINTAN extends Backend
         $this->Template->hrefBack = Backend::addToUrl('table=tl_survey_pin_tan', true, ['table', 'key']);
         $this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['exporttan'];
-        $this->Template->request = ampersand(str_replace('&id=', '&pid=', Environment::get('request')));
+        $this->Template->request = StringUtil::ampersand(str_replace('&id=', '&pid=', Environment::get('request')));
         $this->Template->submit = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
 
         // Create import form
@@ -80,7 +80,7 @@ class SurveyPINTAN extends Backend
                 $row = $objPINTAN->row();
                 $line = [];
                 $line['tan'] = $row['tan'];
-                $line['tstamp'] = date($GLOBALS['TL_CONFIG']['datimFormat'], $row['tstamp']);
+                $line['tstamp'] = date($GLOBALS['TL_CONFIG']['datimFormat'], (int)$row['tstamp']);
                 $line['used'] = $row['used'] ? 1 : 0;
 
                 if((int)$row['member_id'] > 0) {
@@ -386,7 +386,7 @@ class SurveyPINTAN extends Backend
             foreach($memberGroups as $member_id => $member) {
                 $options[$member->id] = ['value' => $member->id, 'label' => $member->name];
             }
-        } 
+        }
         $widget->options = $options;
 
 

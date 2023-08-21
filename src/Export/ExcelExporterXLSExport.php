@@ -71,7 +71,7 @@ class ExcelExporterXLSExport extends Exporter
 
     protected function send(): void
     {
-        $this->spreadsheet->sendFile(StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)) . '.xls');
+        $this->spreadsheet->sendFile(StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xls');
         exit;
     }
 

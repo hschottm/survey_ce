@@ -96,7 +96,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
         ],
         // 0 means: the TAN is valid for all member
         'member_id' => [
-            'sql'       => "int(10) unsigned NOT NULL default '0'",
+            'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'pin' => [
             'sql' => "varchar(16) NOT NULL default ''",
