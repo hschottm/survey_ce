@@ -101,7 +101,7 @@ class SurveyHelper extends Backend
      *
      * @return bool
      */
-    public function replaceConditionTags(&$strBuffer)
+    public function replaceConditionTags(& $strBuffer)
     {
         if (!\strlen($strBuffer)) {
             return false;

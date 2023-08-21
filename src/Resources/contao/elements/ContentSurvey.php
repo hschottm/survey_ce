@@ -94,7 +94,7 @@ class ContentSurvey extends ContentElement
         $this->objSurvey->next();
         //$this->objSurvey = \Hschottm\SurveyBundle\SurveyModel::findByPk($surveyId);
         if (null === $this->objSurvey) {
-            return;
+            return '';
         }
 
         $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
@@ -103,13 +103,13 @@ class ContentSurvey extends ContentElement
         if (!empty($this->objSurvey->online_start) && ($this->objSurvey->online_start > time())) {
             $this->Template->protected = true;
 
-            return;
+            return '';
         }
 
         if (!empty($this->objSurvey->online_end) && ($this->objSurvey->online_end < time())) {
             $this->Template->protected = true;
 
-            return;
+            return '';
         }
 
         $pages = SurveyPageModel::findBy('pid', $surveyID, ['order' => 'sorting']);
@@ -1036,6 +1036,7 @@ class ContentSurvey extends ContentElement
                     $participant = SurveyParticipantModel::findOneBy(['pid=?', 'uid=?'], [$this->objSurvey->id, $this->User->id]);
                     break;
             }
+
             if ($participant) {
                 $participant->finished = 1;
                 $participant->save();

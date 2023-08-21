@@ -53,7 +53,7 @@ class CSVExporter extends Exporter
             }
 
             if (self::CELLTYPE_STRING === $celldata[self::CELLTYPE]) {
-                $celldata[self::DATA] = utf8_decode($celldata[self::DATA]);
+                $celldata[self::DATA] = utf8_decode((string) $celldata[self::DATA]);
             }
             $this->sheets[$sheet][$this->getCell($row, $col)] = $celldata;
 

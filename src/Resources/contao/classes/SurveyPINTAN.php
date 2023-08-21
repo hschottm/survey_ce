@@ -21,13 +21,17 @@ use Contao\BackendTemplate;
 use Contao\DataContainer;
 use Contao\Environment;
 use Contao\Input;
+use Contao\MemberGroupModel;
+use Contao\MemberModel;
 use Contao\PageModel;
 use Contao\PageTree;
+use Contao\SelectMenu;
 use Contao\StringUtil;
 use Contao\TextField;
 use Contao\Widget;
 use Hschottm\SurveyBundle\Export\Exporter;
 use Hschottm\SurveyBundle\Export\ExportHelper;
+use Symfony\Component\DomCrawler\Field\InputFormField;
 
 /**
  * Class SurveyPINTAN.
@@ -79,6 +83,12 @@ class SurveyPINTAN extends Backend
                 $line['tstamp'] = date($GLOBALS['TL_CONFIG']['datimFormat'], $row['tstamp']);
                 $line['used'] = $row['used'] ? 1 : 0;
 
+                if((int)$row['member_id'] > 0) {
+                    $line['member_id'] = trim(self::formatMember($row['member_id']));
+                } else {
+                    $line['member_id'] = 'alle';
+                }
+
                 if (null !== $pagedata) {
                     $line['url'] = ampersand($domain.$this->generateFrontendUrl($pagedata, '/code/'.$row['tan']));
                 }
@@ -123,6 +133,17 @@ class SurveyPINTAN extends Backend
                     $intColCounter,
                     [
                         Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'][0],
+                        Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
+                    ]
+                );
+                ++$intColCounter;
+
+                $exporter->setCellValue(
+                    $sheet,
+                    $intRowCounter,
+                    $intColCounter,
+                    [
+                        Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_pin_tan']['member_id'][0],
                         Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
                     ]
                 );
@@ -202,7 +223,13 @@ class SurveyPINTAN extends Backend
         return $this->Template->parse();
     }
 
-    public function createTAN(DataContainer $dc)
+    /**
+     * this function handles the createTAN action
+     *
+     * @param DataContainer $dc
+     * @return string
+     */
+    public function createTAN(DataContainer $dc): string
     {
         if ('createtan' !== Input::get('key')) {
             return '';
@@ -212,6 +239,7 @@ class SurveyPINTAN extends Backend
         $this->Template = new BackendTemplate('be_survey_create_tan');
 
         $this->Template->nrOfTAN = $this->getTANWidget();
+        $this->Template->memberGroupId = $this->getMemberGroupWidget();
 
         $this->Template->hrefBack = ampersand(str_replace('&key=createtan', '', Environment::get('request')));
         $this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
@@ -221,26 +249,49 @@ class SurveyPINTAN extends Backend
 
         // Create import form
         if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave) {
-            $nrOfTAN = (int)$this->Template->nrOfTAN->value;
+            $nrOfTAN = (int) $this->Template->nrOfTAN->value;
+            $group_id = (string)$this->Template->memberGroupId->value;
+
             $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 
-            for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
-                $pintan = $this->svy->generatePIN_TAN();
-                $this->insertPinTan(Input::get('id'), $pintan['PIN'], $pintan['TAN']);
+            $members = MemberModel::findAll();
+
+            foreach($members as $id => $member) {
+                $groups = StringUtil::deserialize($member->groups);
+
+                if(in_array($group_id, $groups)) {
+                    for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
+                        $pintan = $this->svy->generatePIN_TAN();
+                        $this->insertPinTan(Input::get('id'), $pintan['PIN'], $pintan['TAN'], $member->id);
+                    }
+                }
             }
+
             $this->redirect(Backend::addToUrl('', true, ['key']));
         }
 
         return $this->Template->parse();
     }
 
-    protected function insertPinTan($pid, $pin, $tan): void
+    /**
+     * a group_id was added to this function at 08/2023 to support
+     * TAN generation for specific member groups
+     *
+     * @param $pid
+     * @param $pin
+     * @param $tan
+     * @param $group_id
+     *
+     * @return void
+     */
+    protected function insertPinTan($pid, $pin, $tan, $member_id = '0'): void
     {
         $newParticipant = new SurveyPinTanModel();
         $newParticipant->tstamp = time();
         $newParticipant->pid = $pid;
         $newParticipant->pin = $pin;
         $newParticipant->tan = $tan;
+        $newParticipant->member_id = $member_id;
         $newParticipant->save();
     }
 
@@ -292,10 +343,11 @@ class SurveyPINTAN extends Backend
         $widget->nospace = true;
         $widget->value = $value;
         $widget->required = true;
+        $widget->tl_class = 'w50 widget';
 
         $widget->label = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][0];
 
-        if ($GLOBALS['TL_CONFIG']['showHelp'] && \strlen($GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1])) {
+        if ($GLOBALS['TL_CONFIG']['showHelp'] && !empty($GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1])) {
             $widget->help = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1];
         }
 
@@ -309,5 +361,65 @@ class SurveyPINTAN extends Backend
         }
 
         return $widget;
+    }
+
+    protected function getMemberGroupWidget($value = null)
+    {
+        $widget = new SelectMenu();
+
+        $widget->id = 'memberGroupId';
+        $widget->name = 'memberGroupId';
+        $widget->mandatory = false;
+        $widget->value = $value;
+        $widget->required = true;
+
+        $widget->tl_class = 'w50 widget';
+
+        // build the member list
+        $memberGroups = MemberGroupModel::findAllActive();
+
+        $label = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'][2];
+
+        $options = [0 => ['value' => '0', 'label' => $label]];
+
+        if($memberGroups) {
+            foreach($memberGroups as $member_id => $member) {
+                $options[$member->id] = ['value' => $member->id, 'label' => $member->name];
+            }
+        } 
+        $widget->options = $options;
+
+
+        $widget->label = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'][0];
+
+        if ($GLOBALS['TL_CONFIG']['showHelp'] && !empty($GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'][1])) {
+            $widget->help = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'][1];
+        }
+
+        // Valiate input
+        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT')) {
+            $widget->validate();
+
+            if ($widget->hasErrors()) {
+                $this->blnSave = false;
+            }
+        }
+
+        return $widget;
+    }
+
+    public static function formatMember($member_id): string
+    {
+        if((int)$member_id > 0) {
+            if($m = MemberModel::findByPk($member_id)) {
+                $member = " $m->firstname $m->lastname";
+            } else {
+                $member = " Mitglied gelöscht?";
+            }
+        } else {
+            $member = ' alle Mitglieder';
+        }
+
+        return $member;
     }
 }

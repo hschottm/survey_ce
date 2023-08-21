@@ -179,7 +179,7 @@ $GLOBALS['TL_DCA']['tl_survey_page'] = [
             'inputType' => 'checkbox',
             'eval' => ['tl_class' => 'w50'],
             'sql' => "char(1) NOT NULL default ''",
-        ]
+        ],
     ],
 ];
 

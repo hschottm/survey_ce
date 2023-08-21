@@ -24,6 +24,11 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['export'] = 'Export';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] = 'The TAN code is in use';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] = 'The TAN code is not in use';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'] = ['Number of TAN codes', 'Please enter the number of the TAN codes you want to create.'];
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'] = [
+    'for members of the group',
+    'Select here a member group or &raquo;all members&laquo; for all members.',
+    'no group (all active members)'
+];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'] = ['TAN', 'Transaction number (TAN code)'];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'] = ['Created', 'Created'];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'] = ['TAN is used', 'The TAN has been used by a survey participant'];

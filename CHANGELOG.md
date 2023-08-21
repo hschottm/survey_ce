@@ -12,6 +12,8 @@ Types of changes
 
 ## [3.5.1](https://github.com/pdir/contao-survey/tree/3.5.1) – 2023-08-20
 
+- [Added] extended member related TAN generation added
+- [Added] TAN export extended by members
 - [Fixed] Error message whilst exporting TANS from the backend [#43](https://github.com/pdir/contao-survey/issues/43)
 - [Fixed] the error whilst creating TANs [#43](https://github.com/pdir/contao-survey/issues/42)
 
