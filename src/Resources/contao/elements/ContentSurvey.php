@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Hschottm\SurveyBundle;
 
-use Contao\ArrayUtil;
 use Contao\BackendTemplate;
 use Contao\ContentElement;
 use Contao\Database\Result;

@@ -14,7 +14,6 @@ declare(strict_types=1);
  * @link       https://github.com/pdir/contao-survey
  */
 
-use Contao\ArrayUtil;
 use Contao\Backend;
 use Contao\BackendUser;
 use Contao\Database;
