@@ -85,16 +85,15 @@ class SurveyPINTAN extends Backend
 
                 if((int)$row['member_id'] > 0) {
                     $line['member_id'] = trim(self::formatMember($row['member_id']));
+                } else {
+                    $line['member_id'] = 'alle';
                 }
-
-#dump(trim(self::formatMember($row['member_id'])));
 
                 if (null !== $pagedata) {
                     $line['url'] = ampersand($domain.$this->generateFrontendUrl($pagedata, '/code/'.$row['tan']));
                 }
                 $export[] = $line;
             }
-#die();
 
             if (\count($export)) {
                 $exporter = ExportHelper::getExporter();
@@ -387,8 +386,7 @@ class SurveyPINTAN extends Backend
             foreach($memberGroups as $member_id => $member) {
                 $options[$member->id] = ['value' => $member->id, 'label' => $member->name];
             }
-        } else {
-        }
+        } 
         $widget->options = $options;
 
 
