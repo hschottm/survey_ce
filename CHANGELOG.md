@@ -14,7 +14,6 @@ Types of changes
 
 - [Added] extended member related TAN generation added
 - [Added] TAN export extended by members
-- [Fixed] replaced all occurrences of the deprecated array_insert() with ArrayUtil::insert() an
 - [Fixed] Error message whilst exporting TANS from the backend [#43](https://github.com/pdir/contao-survey/issues/43)
 - [Fixed] the error whilst creating TANs [#43](https://github.com/pdir/contao-survey/issues/42)
 
