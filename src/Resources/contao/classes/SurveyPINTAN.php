@@ -27,6 +27,7 @@ use Contao\PageModel;
 use Contao\PageTree;
 use Contao\SelectMenu;
 use Contao\StringUtil;
+use Contao\System;
 use Contao\TextField;
 use Contao\Widget;
 use Hschottm\SurveyBundle\Export\Exporter;
@@ -236,18 +237,18 @@ class SurveyPINTAN extends Backend
         }
 
         $this->loadLanguageFile('tl_survey_pin_tan');
+        $this->loadLanguageFile('tl_survey');
+
+        // prepare template
         $this->Template = new BackendTemplate('be_survey_create_tan');
 
-        $this->Template->nrOfTAN = $this->getTANWidget();
-        $this->Template->memberGroupId = $this->getMemberGroupWidget();
+        $this->Template->hrefBack   = StringUtil::ampersand(str_replace('&key=createtan', '', Environment::get('request')));
+        $this->Template->goBack     = $GLOBALS['TL_LANG']['MSC']['goBack'];
+        $this->Template->headline   = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'][0];
+        $this->Template->request    = StringUtil::ampersand(Environment::get('request'));
+        $this->Template->submit     = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
 
-        $this->Template->hrefBack = ampersand(str_replace('&key=createtan', '', Environment::get('request')));
-        $this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
-        $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'];
-        $this->Template->request = StringUtil::ampersand(Environment::get('request'));
-        $this->Template->submit = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
-
-        // Create import form
+        // handle POST request and redirect
         if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave) {
             $nrOfTAN = (int) $this->Template->nrOfTAN->value;
             $group_id = (string)$this->Template->memberGroupId->value;
@@ -268,6 +269,37 @@ class SurveyPINTAN extends Backend
             }
 
             $this->redirect(Backend::addToUrl('', true, ['key']));
+        }
+        // handle GET request and render template
+
+        // get the survey data record
+        $survey= SurveyModel::findByPk($dc->id);
+
+        if($survey) {
+            // a survey is available - test access mode
+            switch($survey->access) {
+                case 'anon':
+                    $this->redirect(Backend::addToUrl('', true, ['key']));
+                    break;
+                case 'anoncode':
+                    break;
+                case 'nonanoncode':
+                    break;
+                default:
+
+            }
+
+            $this->Template->nrOfTAN = $this->getTANWidget();
+            $this->Template->memberGroupId = $this->getMemberGroupWidget();
+
+            $this->Template->note = sprintf(
+                $GLOBALS['TL_LANG']['tl_survey_pin_tan']['access_template'],
+                $GLOBALS['TL_LANG']['tl_survey']['access'][$survey->access][0],
+                $GLOBALS['TL_LANG']['tl_survey']['access'][$survey->access][1],
+            );
+
+        } else {
+            // survey not found
         }
 
         return $this->Template->parse();
@@ -417,7 +449,7 @@ class SurveyPINTAN extends Backend
                 $member = " Mitglied gelöscht?";
             }
         } else {
-            $member = ' alle Mitglieder';
+            $member = '';
         }
 
         return $member;

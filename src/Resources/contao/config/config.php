@@ -20,6 +20,7 @@ use Hschottm\SurveyBundle\FormConstantSumQuestion;
 use Hschottm\SurveyBundle\FormMatrixQuestion;
 use Hschottm\SurveyBundle\FormMultipleChoiceQuestion;
 use Hschottm\SurveyBundle\FormOpenEndedQuestion;
+use Hschottm\SurveyBundle\SurveyParticipant;
 use Hschottm\SurveyBundle\SurveyPINTAN;
 use Hschottm\SurveyBundle\SurveyQuestionConstantsum;
 use Hschottm\SurveyBundle\SurveyQuestionMatrix;
@@ -49,14 +50,22 @@ array_insert($GLOBALS['BE_MOD'], 3, [
     'surveys' => [
         'survey' => [
             'tables' => [
-                'tl_survey', 'tl_survey_page', 'tl_survey_question', 'tl_survey_participant', 'tl_survey_pin_tan',
+                'tl_survey',
+                'tl_survey_page',
+                'tl_survey_question',
+                'tl_survey_participant',
+                'tl_survey_pin_tan',
             ],
-            'scale' => ['tl_survey_question', 'addScale'],
-            'export' => [SurveyResultDetails::class, 'exportResults'],
+            'scale'     => ['tl_survey_question', 'addScale'],
+            'export'    => [SurveyResultDetails::class, 'exportResults'],
             'createtan' => [SurveyPINTAN::class, 'createTAN'],
             'exporttan' => [SurveyPINTAN::class, 'exportTAN'],
             'cumulated' => [SurveyResultDetails::class, 'showCumulated'],
-            'details' => [SurveyResultDetails::class, 'showDetails'],
+            'details'   => [SurveyResultDetails::class, 'showDetails'],
+            // tl_survey_participant
+            'exportraw' => [SurveyResultDetails::class, 'exportResultsRaw'],
+            'invite'    => [SurveyParticipant::class, 'invite'],
+            'remind'    => [SurveyParticipant::class, 'remind'],
         ],
         'scale' => [
             'tables' => [
@@ -75,10 +84,10 @@ array_insert($GLOBALS['BE_FFL'], 15, [
     'conditionwizard' => ConditionWizard::class,
 ]);
 
-// register button handler for global operations of tl_survey_participiants
-$GLOBALS['BE_MOD']['surveys']['survey']['exportraw'] = [SurveyResultDetails::class, 'exportResultsRaw'];
-$GLOBALS['BE_MOD']['surveys']['survey']['invite'] = [SurveyResultDetails::class, 'invite'];
-$GLOBALS['BE_MOD']['surveys']['survey']['remember'] = [SurveyResultDetails::class, 'remember'];
+// register button handler for global operations of tl_survey_participants
+#$GLOBALS['BE_MOD']['surveys']['survey']['exportraw'] = [SurveyResultDetails::class, 'exportResultsRaw'];
+#$GLOBALS['BE_MOD']['surveys']['survey']['invite'] = [SurveyParticipant::class, 'invite'];
+#$GLOBALS['BE_MOD']['surveys']['survey']['remind'] = [SurveyParticipant::class, 'remind'];
 
 $GLOBALS['TL_SVY']['openended'] = FormOpenEndedQuestion::class;
 $GLOBALS['TL_SVY']['multiplechoice'] = FormMultipleChoiceQuestion::class;

@@ -24,5 +24,7 @@ $GLOBALS['TL_LANG']['tl_survey_participant']['lastpage']['0'] = 'Letzte Seite';
 $GLOBALS['TL_LANG']['tl_survey_participant']['lastpage']['1'] = 'Letzte Seite, die der Teilnehmer angesehen hat';
 $GLOBALS['TL_LANG']['tl_survey_participant']['finished'] = 'beendet';
 $GLOBALS['TL_LANG']['tl_survey_participant']['running'] = 'begonnen';
-$GLOBALS['TL_LANG']['tl_survey_participant']['exportraw']['0'] = 'Detaillierter Export';
-$GLOBALS['TL_LANG']['tl_survey_participant']['exportraw']['1'] = 'Export mit allen Teilnehmer-Antworten, filter- und sortierbar';
+
+$GLOBALS['TL_LANG']['tl_survey_participant']['exportraw']   = ['Detaillierter Export', 'Export mit allen Teilnehmer-Antworten, filter- und sortierbar'];
+$GLOBALS['TL_LANG']['tl_survey_participant']['invite']      = ['Einladen', 'Alle Mitglieder zur Umfrage einladen. Es werden alle Mitglieder zur Umfrage eingeladen, die ihre Umfrage noch nicht &raquo;begonnen&laquo; oder noch nicht &raquo;beendet&laquo; haben.'];
+$GLOBALS['TL_LANG']['tl_survey_participant']['remind']      = ['Erinnern', 'Alle Mitglieder an die Umfrage erinnern. Es werden alle Mitglieder an die Umfrage erinnert, die ihre Umfrage noch nicht &raquo;begonnen&laquo; haben.'];

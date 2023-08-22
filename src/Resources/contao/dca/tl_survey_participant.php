@@ -61,13 +61,13 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
             'invite' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['invite'],
                 'href' => 'key=invite',
-                'class' => 'invite',
+                'class' => 'header_invite',
                 'attributes' => 'onclick="Backend.getScrollOffset();"',
             ],
-            'remember' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['remember'],
-                'href' => 'key=remember',
-                'class' => 'remember',
+            'remind' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['remind'],
+                'href' => 'key=remind',
+                'class' => 'header_remind',
                 'attributes' => 'onclick="Backend.getScrollOffset();"',
             ],
             'exportraw' => [

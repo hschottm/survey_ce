@@ -1,15 +1,18 @@
 <div id="tl_buttons">
-  <a href="<?php echo $this->hrefBack; ?>" class="header_back" title="<?php echo $this->goBack; ?>" accesskey="b"
-     onclick="Backend.getScrollOffset();"><?php echo $this->goBack; ?></a>
+  <a href="<?= $this->hrefBack; ?>" class="header_back" title="<?= $this->goBack; ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?= $this->goBack; ?></a>
 </div>
 
-<form action="<?php echo $this->request; ?>" id="tl_export_survey_pin_tan" class="tl_form" method="post">
+<form action="<?= $this->request; ?>" id="tl_export_survey_pin_tan" class="tl_form" method="post">
   <div class="tl_formbody_edit">
     <input type="hidden" name="FORM_SUBMIT" value="tl_export_survey_pin_tan"/>
     <input type="hidden" name="REQUEST_TOKEN" value="<?php echo REQUEST_TOKEN; ?>"/>
 
+    <div class='access_template'>
+      <?= $this->note; ?>
+    </div>
+
     <fieldset id="pal_createtan_legend" class="tl_tbox">
-      <legend><?php echo $this->headline; ?></legend>
+      <legend><?= $this->headline; ?></legend>
       <div class="<?= $this->nrOfTAN->tl_class; ?>">
         <h3><?php echo $this->nrOfTAN->generateLabel(); ?></h3>
         <?php echo $this->nrOfTAN->generateWithError(); if ($this->nrOfTAN->help): ?>
@@ -28,8 +31,8 @@
 
   <div class="tl_formbody_submit">
     <div class="tl_submit_container">
-      <input type="submit" name="import" id="save" class="tl_submit" alt="<?php echo $this->submit; ?>" accesskey="s"
-             value="<?php echo $this->submit; ?>"/>
+      <input type="submit" name="import" id="save" class="tl_submit" alt="<?php echo $this->submit; ?>" accesskey="s" value="<?php echo $this->submit; ?>"/>
     </div>
   </div>
+
 </form>

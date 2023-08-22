@@ -18,6 +18,7 @@ use Contao\Backend;
 use Contao\BackendUser;
 use Contao\Database;
 use Contao\Input;
+use Contao\DC_Table;
 
 /*
  * Table tl_survey
@@ -25,8 +26,13 @@ use Contao\Input;
 $GLOBALS['TL_DCA']['tl_survey'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
-        'ctable' => ['tl_survey_page', 'tl_survey_participant', 'tl_survey_result', 'tl_survey_pin_tan'],
+        'dataContainer' => DC_Table::class,
+        'ctable' => [
+            'tl_survey_page',
+            'tl_survey_participant',
+            'tl_survey_result',
+            'tl_survey_pin_tan'
+        ],
         'switchToEdit' => true,
         'enableVersioning' => true,
         'sql' => [
@@ -67,6 +73,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
                 'href' => 'table=tl_survey_pin_tan',
                 'icon' => 'bundles/hschottmsurvey/images/pintan.png',
+                'button_callback' => ['tl_survey', 'pintanButton'],
             ],
             'participants' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['participants'],
@@ -529,6 +536,34 @@ class tl_survey extends Backend
     protected function __construct()
     {
         parent::__construct();
+    }
+
+    public function pintanButton(
+        array $row,
+        ?string $href,
+        string $label,
+        string $title,
+        ?string $icon,
+        string $attributes,
+        string $table,
+        ?array $rootRecordIds,
+        ?array $childRecordIds,
+        bool $circularReference,
+        ?string $previous,
+        ?string $next,
+        DataContainer $dc
+    )
+    {
+        if($row['access'] === 'anon') {
+            return '';
+        }
+        return sprintf(
+            '<a href="%s" title="%s"%s>%s</a> ',
+            Backend::addToUrl($href . '&amp;id=' . $row['id']),
+            StringUtil::specialchars($title),
+            $attributes,
+            Image::getHtml($icon, $label)
+        );
     }
 
     /**

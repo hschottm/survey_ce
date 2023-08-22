@@ -1,0 +1,25 @@
+<div id="tl_buttons">
+  <a href="<?php echo $this->hrefBack; ?>" class="header_back" title="<?php echo $this->goBack; ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $this->goBack; ?></a>
+</div>
+
+<form action="<?= $this->request; ?>" id="tl_participants_invite" class="tl_form" method="post">
+  <div class="tl_formbody_edit">
+    <input type="hidden" name="FORM_SUBMIT" value="tl_participants_invite"/>
+    <input type="hidden" name="REQUEST_TOKEN" value="<?php echo REQUEST_TOKEN; ?>"/>
+
+    <fieldset id="pal_createtan_legend" class="tl_tbox">
+      <legend><?php echo $this->headline; ?></legend>
+
+    </fieldset>
+
+  </div>
+
+  <div class="tl_formbody_submit">
+    <div class="tl_submit_container">
+      <input type="submit" name="send" id="send" class="tl_submit" alt="<?= $this->send; ?>" accesskey="s" value="<?= $this->send; ?>"/>
+      <input type="submit" name="cancel" id="cancel" class="tl_submit" alt="<?= $this->cancel; ?>" accesskey="s" value="<?= $this->cancel; ?>" onclick="window.location.href='<?= $this->hrefBack; ?>'"/>
+      <a href="<?= $this->hrefBack; ?>" class="header_back" title="<?php echo $this->goBack; ?>" accesskey="b" onclick="Backend.getScrollOffset();"><?php echo $this->goBack; ?></a>
+    </div>
+  </div>
+
+</form>

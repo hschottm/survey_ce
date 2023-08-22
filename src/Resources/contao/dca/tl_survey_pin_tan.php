@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 
 use Contao\Backend;
+use Hschottm\SurveyBundle\SurveyModel;
 use Hschottm\SurveyBundle\SurveyPINTAN;
 
 $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
@@ -24,7 +25,11 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
         'ptable' => 'tl_survey',
         'doNotCopyRecords' => true,
         'closed' => true,
-        'enableVersioning' => true,
+        'enableVersioning'  => true,
+        'onload_callback'   =>
+            [
+                ['tl_survey_pin_tan', 'checkActions'],
+            ],
         'sql' => [
             'keys' => [
                 'id' => 'primary',
@@ -152,5 +157,38 @@ class tl_survey_pin_tan extends Backend
         $member = SurveyPINTAN::formatMember($row['member_id']);
 
         return sprintf("<div>%s <strong>%s</strong> (%s)$member</div>", $used, $matches[1], $matches[2]);
+    }
+
+    /**
+     * @param DataContainer $dc
+     * @return void
+     */
+    public function checkActions(DataContainer $dc):void
+    {
+        if($dc->id) {
+            // we have a valid survey - get the survey data record
+            $survey= SurveyModel::findByPk($dc->id);
+
+            if($survey) {
+                // a survey is available - test access mode
+                switch ($survey->access) {
+                    case 'anon':
+                        unset($GLOBALS['TL_DCA']['tl_survey_pin_tan']['list']['global_operations']['createtan']);
+                        unset($GLOBALS['TL_DCA']['tl_survey_pin_tan']['list']['global_operations']['exporttan']);
+                        break;
+                    case 'anoncode':
+                        break;
+                    case 'nonanoncode':
+                        break;
+                    default:
+
+                }
+            }
+
+        } else {
+            // we don't have a survey
+
+        }
+
     }
 }

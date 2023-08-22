@@ -45,38 +45,6 @@ class SurveyResultDetails extends Backend
         parent::__construct();
     }
 
-    /**
-     * action handler for participiants -> invite
-     *
-     *  Creates a list of participants to be invited by mail
-     *  to a new survey and sends them a message
-     *
-     * @param DataContainer $dc
-     * @return string
-     */
-    public function invite(DataContainer $dc):string
-    {
-        if (__FUNCTION__ !== Input::get('key')) return '';
-
-        return __FUNCTION__;
-    }
-
-    /**
-     * action handler for participiant -> remember
-     *
-     * Creates a list of participants to be reminded by mail about their unfinished
-     * survey and sends them a message
-     *
-     * @param DataContainer $dc
-     * @return string
-     */
-    public function remember(DataContainer $dc):string
-    {
-        if (__FUNCTION__ !== Input::get('key')) return '';
-
-        return __FUNCTION__;
-    }
-
     public function showDetails(DataContainer $dc)
     {
         if ('details' !== Input::get('key')) {
