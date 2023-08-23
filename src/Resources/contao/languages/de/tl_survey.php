@@ -36,15 +36,36 @@ $GLOBALS['TL_LANG']['tl_survey']['limit_groups']['0'] = 'Limitieren auf Mitglied
 $GLOBALS['TL_LANG']['tl_survey']['limit_groups']['1'] = 'Limitieren Sie den Zugriff auf ausgewählte Mitgliedergruppen.';
 $GLOBALS['TL_LANG']['tl_survey']['allowed_groups']['0'] = 'Mitgliedergruppen';
 $GLOBALS['TL_LANG']['tl_survey']['allowed_groups']['1'] = 'Wählen Sie die Mitgliedergruppen aus, welche die Umfrage durchführen dürfen.';
-$GLOBALS['TL_LANG']['tl_survey']['access']['0'] = 'Umfrageverfahren';
-$GLOBALS['TL_LANG']['tl_survey']['access']['1'] = 'Bitte wählen Sie das von Ihnen gewünschte Umfrageverfahren aus.';
+
+$GLOBALS['TL_LANG']['tl_survey']['access'] = [
+    'Umfrageverfahren',
+    'Bitte wählen Sie das von Ihnen gewünschte Umfrageverfahren aus.'
+];
 $GLOBALS['TL_LANG']['tl_survey']['access']['explanation'] = 'Bitte wählen Sie das von Ihnen gewünschte Umfrageverfahren aus.';
-$GLOBALS['TL_LANG']['tl_survey']['access']['anon']['0'] = 'Anonymisierte Umfrage';
-$GLOBALS['TL_LANG']['tl_survey']['access']['anon']['1'] = 'Umfrageteilnehmer benötigen keinen Zugangscode für die Umfrage. Eine Zuordnung der Umfrageteilnehmer zu den Umfrageergebnissen ist nicht möglich.';
-$GLOBALS['TL_LANG']['tl_survey']['access']['anoncode']['0'] = 'Anonymisierte Umfrage mit TAN';
-$GLOBALS['TL_LANG']['tl_survey']['access']['anoncode']['1'] = 'Umfrageteilnehmer können die Umfrage nur mit einem Zugangscode (Transaktiosnnummer, TAN) starten. Eine Umfrage kann nur genau ein Mal pro Teilnehmer durchgeführt werden. Eine Zuordnung der Umfrageteilnehmer zu den Umfrageergebnissen ist nicht möglich.';
-$GLOBALS['TL_LANG']['tl_survey']['access']['nonanoncode']['0'] = 'Personalisierte Umfrage';
-$GLOBALS['TL_LANG']['tl_survey']['access']['nonanoncode']['1'] = 'Umfrageteilnehmer können die Umfrage nur starten, wenn Sie angemeldete Mitglieder sind. Eine Umfrage kann nur genau ein Mal pro Teilnehmer durchgeführt werden. Die Umfrageergebnisse können in der Auswertung den einzelnen Umfrageteilnehmern zugeordnet werden.';
+
+// new TAN dialog
+$GLOBALS['TL_LANG']['tl_survey']['access_template'] = "<h1>Sie generieren TANs für eine &raquo;%s&laquo;</h1><p>%s</p><p style='color:#F47C00;'>%s</p>";
+
+$GLOBALS['TL_LANG']['tl_survey']['access']['anon'] = [
+    'Anonymisierte Umfrage',
+    'Umfrageteilnehmer benötigen keinen Zugangscode für die Umfrage. Eine Zuordnung der Umfrageteilnehmer zu den Umfrageergebnissen ist nicht möglich.',
+    ''
+];
+$GLOBALS['TL_LANG']['tl_survey']['access']['anoncode'] = [
+    'Anonymisierte Umfrage mit TAN',
+    'Umfrageteilnehmer können die Umfrage nur mit einem Zugangscode (Transaktiosnnummer, TAN) starten. Eine Umfrage kann nur genau ein Mal pro Teilnehmer durchgeführt werden. Eine Zuordnung der Umfrageteilnehmer zu den Umfrageergebnissen ist nicht möglich.',
+    'Sie können hier weiterhin angeben, wie viele TANs Sie für die Umfrage generieren wollen. Auf diese Weise können Sie festlegen, wie viele Personen anonym an der Umfrage teilnehmen können. Sind alle TANs aufgebraucht, so ist auch die Umfrage abgeschlossen.'
+];
+$GLOBALS['TL_LANG']['tl_survey']['access']['nonanoncode'] = [
+    'Personalisierte Umfrage',
+    'Umfrageteilnehmer können die Umfrage nur starten, wenn Sie angemeldete Mitglieder sind. Eine Umfrage kann nur genau ein Mal pro Teilnehmer durchgeführt werden. Die Umfrageergebnisse können in der Auswertung den einzelnen Umfrageteilnehmern zugeordnet werden.',
+    'Diese personalisierte Umfrage ist %s beschränkt!'
+];
+$GLOBALS['TL_LANG']['tl_survey']['access']['group'] = [
+    'auf keine Mitgliedergruppe', // beschränkt
+    'auf folgende Mitgliedergruppen: %s' // beschränkt
+];
+
 $GLOBALS['TL_LANG']['tl_survey']['usecookie']['0'] = 'Teilnehmer wiedererkennen';
 $GLOBALS['TL_LANG']['tl_survey']['usecookie']['1'] = 'Bitte wählen Sie, ob Teilnehmer mit Hilfe eines Cookies wiedererkannt werden sollen.';
 $GLOBALS['TL_LANG']['tl_survey']['show_title']['0'] = 'Umfragetitel anzeigen';

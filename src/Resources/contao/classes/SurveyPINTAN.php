@@ -248,61 +248,110 @@ class SurveyPINTAN extends Backend
         $this->Template->request    = StringUtil::ampersand(Environment::get('request'));
         $this->Template->submit     = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
 
-        // handle POST request and redirect
-        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave) {
-            $nrOfTAN = (int) $this->Template->nrOfTAN->value;
-            $group_id = (string)$this->Template->memberGroupId->value;
-
-            $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
-
-            $members = MemberModel::findAll();
-
-            foreach($members as $id => $member) {
-                $groups = StringUtil::deserialize($member->groups);
-
-                if(in_array($group_id, $groups)) {
-                    for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
-                        $pintan = $this->svy->generatePIN_TAN();
-                        $this->insertPinTan(Input::get('id'), $pintan['PIN'], $pintan['TAN'], $member->id);
-                    }
-                }
-            }
-
-            $this->redirect(Backend::addToUrl('', true, ['key']));
-        }
         // handle GET request and render template
 
         // get the survey data record
         $survey= SurveyModel::findByPk($dc->id);
+        $memberGroup = '';
 
         if($survey) {
             // a survey is available - test access mode
             switch($survey->access) {
                 case 'anon':
+                    // no TAN generation available here
                     $this->redirect(Backend::addToUrl('', true, ['key']));
                     break;
                 case 'anoncode':
+                    // generate anonymous TANs
+                    $this->Template->nrOfTAN = $this->getTANWidget();
+                    // handle a POST request
+                    $this->handlePOST($survey);
                     break;
                 case 'nonanoncode':
+                    // generate member-related TANs
+                    $this->Template->memberGroupId = $this->getMemberGroupWidget();
+
+                    // check member groups
+                    if($survey->allowed_groups) {
+                        // specific groups
+                        $groups = $survey->getRelated('allowed_groups');
+
+                        foreach($groups->getModels() as $k => $group) {
+                            $groupNames[] = $group->name;
+                        }
+
+                        $memberGroup = sprintf(
+                            $GLOBALS['TL_LANG']['tl_survey']['access']['group'][1],
+                            implode(', ', $groupNames)
+                        );
+                    } else {
+                        // no groups = all members
+                        $memberGroup = sprintf($GLOBALS['TL_LANG']['tl_survey']['access']['group'][0]);
+                    }
+                    // handle a POST request
+                    $this->handlePOST($survey);
                     break;
                 default:
 
             }
 
-            $this->Template->nrOfTAN = $this->getTANWidget();
-            $this->Template->memberGroupId = $this->getMemberGroupWidget();
-
             $this->Template->note = sprintf(
-                $GLOBALS['TL_LANG']['tl_survey_pin_tan']['access_template'],
+                $GLOBALS['TL_LANG']['tl_survey']['access_template'],
                 $GLOBALS['TL_LANG']['tl_survey']['access'][$survey->access][0],
                 $GLOBALS['TL_LANG']['tl_survey']['access'][$survey->access][1],
+                sprintf(
+                    $GLOBALS['TL_LANG']['tl_survey']['access'][$survey->access][2],
+                    $memberGroup
+                ),
             );
 
         } else {
             // survey not found
+            $this->redirect(Backend::addToUrl('', true, ['key','id','table']));
         }
 
         return $this->Template->parse();
+    }
+
+    /**
+     * @param string $access
+     * @return void
+     */
+    private function handlePOST(SurveyModel $survey):void
+    {
+        // handle POST request and redirect
+        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave)
+        {
+            switch($survey->access) {
+                case 'anon':
+                    break;
+                case 'anoncode':
+                    // generate anonymous TANs
+                    $nrOfTAN = (int) $this->Template->nrOfTAN->value;
+                    $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
+                    for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
+                        $pintan = $this->svy->generatePIN_TAN();
+                        $this->insertPinTan(Input::get('id'), $pintan['PIN'], $pintan['TAN']);
+                    }
+                    break;
+                case 'nonanoncode':
+                    // generate member-related TANs
+                    $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
+                    // get all member groups
+                    $memberGroups = $survey->getRelated('allowed_groups');
+
+                    $models = $memberGroups->getModels();
+
+dump($models);
+
+die();
+                    break;
+                default:
+                    // do nothing at this time
+            }
+
+            $this->redirect(Backend::addToUrl('', true, ['key']));
+        }
     }
 
     /**

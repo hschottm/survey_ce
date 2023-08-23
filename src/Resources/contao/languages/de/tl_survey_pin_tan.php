@@ -35,6 +35,4 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['member_id'] = ['Mitglied', ''];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'] = ['TAN', 'Transaktionnummer (TAN)'];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'] = ['Erstellungsdatum', 'Erstellungsdatum'];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'] = ['TAN wurde benutzt', 'Die TAN wurde bereits von einem Teilnehmer benutzt'];
-// new TAN dialog
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['access_template'] = "<h1>Sie generieren TANs für eine &raquo;%s&laquo;</h1><p>%s</p>";
 

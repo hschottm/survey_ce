@@ -12,19 +12,14 @@
     </div>
 
     <fieldset id="pal_createtan_legend" class="tl_tbox">
-      <legend><?= $this->headline; ?></legend>
+      <?php if($this->nrOfTAN): ?>
       <div class="<?= $this->nrOfTAN->tl_class; ?>">
         <h3><?php echo $this->nrOfTAN->generateLabel(); ?></h3>
         <?php echo $this->nrOfTAN->generateWithError(); if ($this->nrOfTAN->help): ?>
         <p class="tl_help tl_tip"><?php echo $this->nrOfTAN->help; ?></p>
         <?php endif; ?>
       </div>
-      <div class="<?= $this->memberGroupId->tl_class; ?>">
-        <h3><?php echo $this->memberGroupId->generateLabel(); ?></h3>
-        <?php echo $this->memberGroupId->generateWithError(); if ($this->memberGroupId->help): ?>
-        <p class="tl_help tl_tip"><?php echo $this->memberGroupId->help; ?></p>
-        <?php endif; ?>
-      </div>
+      <?php endif; ?>
     </fieldset>
 
   </div>

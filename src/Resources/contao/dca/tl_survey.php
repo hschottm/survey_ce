@@ -64,16 +64,16 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             ],
         ],
         'operations' => [
+            'pintan' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
+                'href' => 'table=tl_survey_pin_tan',
+                'icon' => 'bundles/hschottmsurvey/images/key.svg',
+                'button_callback' => ['tl_survey', 'pintanButton'],
+            ],
             'edit' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['edit'],
                 'href' => 'table=tl_survey_page',
                 'icon' => 'edit.svg',
-            ],
-            'pintan' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
-                'href' => 'table=tl_survey_pin_tan',
-                'icon' => 'bundles/hschottmsurvey/images/pintan.png',
-                'button_callback' => ['tl_survey', 'pintanButton'],
             ],
             'participants' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['participants'],
@@ -221,6 +221,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'exclude' => true,
             'inputType' => 'checkbox',
             'foreignKey' => 'tl_member_group.name',
+            'relation' => ['type' => 'hasMany', 'load' => 'lazy'],
             'eval' => ['multiple' => true],
             'sql' => 'blob NULL',
         ],
@@ -557,6 +558,8 @@ class tl_survey extends Backend
         if($row['access'] === 'anon') {
             return '';
         }
+        dump($icon);
+        /** @noinspection HtmlUnknownTarget */
         return sprintf(
             '<a href="%s" title="%s"%s>%s</a> ',
             Backend::addToUrl($href . '&amp;id=' . $row['id']),
