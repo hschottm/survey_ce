@@ -125,10 +125,10 @@ table.tl_cumulated {
 	margin: 3px 18px 15px;
 }
 
-#tl_export_survey_pin_tan .access_template {
+#tl_generate_survey_pin_tan .access_template {
   margin: 0 0 0 15px;
 }
-#tl_export_survey_pin_tan .access_template h1 {
+#tl_generate_survey_pin_tan .access_template h1 {
   color:#0080FF;
   margin-bottom: 15px;
 }

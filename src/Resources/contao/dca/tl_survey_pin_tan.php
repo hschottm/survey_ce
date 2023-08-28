@@ -57,7 +57,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
             'createtan' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'],
                 'href' => 'key=createtan',
-                'class' => 'header_createtan',
+                'icon' => 'bundles/hschottmsurvey/images/key.svg',
                 'attributes' => 'onclick="Backend.getScrollOffset();"',
             ],
             'exporttan' => [
@@ -165,6 +165,7 @@ class tl_survey_pin_tan extends Backend
      */
     public function checkActions(DataContainer $dc):void
     {
+dump(__FUNCTION__);
         if($dc->id) {
             // we have a valid survey - get the survey data record
             $survey= SurveyModel::findByPk($dc->id);

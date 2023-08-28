@@ -44,7 +44,7 @@ $GLOBALS['TL_LANG']['tl_survey']['access'] = [
 $GLOBALS['TL_LANG']['tl_survey']['access']['explanation'] = 'Bitte wählen Sie das von Ihnen gewünschte Umfrageverfahren aus.';
 
 // new TAN dialog
-$GLOBALS['TL_LANG']['tl_survey']['access_template'] = "<h1>Sie generieren TANs für eine &raquo;%s&laquo;</h1><p>%s</p><p style='color:#F47C00;'>%s</p>";
+$GLOBALS['TL_LANG']['tl_survey']['access_template'] = "<h1>Sie beabsichtigen TANs für eine &raquo;%s&laquo; zu generieren</h1><p>%s</p><p style='color:#F47C00;'>%s</p>";
 
 $GLOBALS['TL_LANG']['tl_survey']['access']['anon'] = [
     'Anonymisierte Umfrage',

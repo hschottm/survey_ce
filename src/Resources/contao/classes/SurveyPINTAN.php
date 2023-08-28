@@ -21,7 +21,8 @@ use Contao\BackendTemplate;
 use Contao\DataContainer;
 use Contao\Environment;
 use Contao\Input;
-use Contao\MemberGroupModel;
+#use Contao\MemberGroupModel;
+// use a derivative
 use Contao\MemberModel;
 use Contao\PageModel;
 use Contao\PageTree;
@@ -32,6 +33,7 @@ use Contao\TextField;
 use Contao\Widget;
 use Hschottm\SurveyBundle\Export\Exporter;
 use Hschottm\SurveyBundle\Export\ExportHelper;
+
 use Symfony\Component\DomCrawler\Field\InputFormField;
 
 /**
@@ -269,10 +271,8 @@ class SurveyPINTAN extends Backend
                     break;
                 case 'nonanoncode':
                     // generate member-related TANs
-                    $this->Template->memberGroupId = $this->getMemberGroupWidget();
-
                     // check member groups
-                    if($survey->allowed_groups) {
+                    if($survey->limit_groups === '1' && $survey->allowed_groups) {
                         // specific groups
                         $groups = $survey->getRelated('allowed_groups');
 
@@ -314,13 +314,14 @@ class SurveyPINTAN extends Backend
     }
 
     /**
+     * handles a POST request from the tl_survey_pin_tan
      * @param string $access
      * @return void
      */
     private function handlePOST(SurveyModel $survey):void
     {
         // handle POST request and redirect
-        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave)
+        if ('tl_generate_survey_pin_tan' === Input::post('FORM_SUBMIT') && $this->blnSave)
         {
             switch($survey->access) {
                 case 'anon':
@@ -339,10 +340,21 @@ class SurveyPINTAN extends Backend
                     $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
                     // get all member groups
                     $memberGroups = $survey->getRelated('allowed_groups');
+                    $memberGroups = MemberGroupModel::findAllActive();
 
-                    $models = $memberGroups->getModels();
 
-dump($models);
+                    if($memberGroups) {
+                        // group-restricted survey
+                        foreach($memberGroups->getModels() as $memberGroup) {
+dump($memberGroup->name);
+dump($memberGroup->findAllMember());
+                        }
+                    } else {
+                        // survey for all members
+dump('all members');
+
+                    }
+
 
 die();
                     break;
@@ -430,51 +442,6 @@ die();
 
         if ($GLOBALS['TL_CONFIG']['showHelp'] && !empty($GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1])) {
             $widget->help = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1];
-        }
-
-        // Valiate input
-        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT')) {
-            $widget->validate();
-
-            if ($widget->hasErrors()) {
-                $this->blnSave = false;
-            }
-        }
-
-        return $widget;
-    }
-
-    protected function getMemberGroupWidget($value = null)
-    {
-        $widget = new SelectMenu();
-
-        $widget->id = 'memberGroupId';
-        $widget->name = 'memberGroupId';
-        $widget->mandatory = false;
-        $widget->value = $value;
-        $widget->required = true;
-
-        $widget->tl_class = 'w50 widget';
-
-        // build the member list
-        $memberGroups = MemberGroupModel::findAllActive();
-
-        $label = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'][2];
-
-        $options = [0 => ['value' => '0', 'label' => $label]];
-
-        if($memberGroups) {
-            foreach($memberGroups as $member_id => $member) {
-                $options[$member->id] = ['value' => $member->id, 'label' => $member->name];
-            }
-        }
-        $widget->options = $options;
-
-
-        $widget->label = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'][0];
-
-        if ($GLOBALS['TL_CONFIG']['showHelp'] && !empty($GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'][1])) {
-            $widget->help = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'][1];
         }
 
         // Valiate input

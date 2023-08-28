@@ -84,11 +84,6 @@ array_insert($GLOBALS['BE_FFL'], 15, [
     'conditionwizard' => ConditionWizard::class,
 ]);
 
-// register button handler for global operations of tl_survey_participants
-#$GLOBALS['BE_MOD']['surveys']['survey']['exportraw'] = [SurveyResultDetails::class, 'exportResultsRaw'];
-#$GLOBALS['BE_MOD']['surveys']['survey']['invite'] = [SurveyParticipant::class, 'invite'];
-#$GLOBALS['BE_MOD']['surveys']['survey']['remind'] = [SurveyParticipant::class, 'remind'];
-
 $GLOBALS['TL_SVY']['openended'] = FormOpenEndedQuestion::class;
 $GLOBALS['TL_SVY']['multiplechoice'] = FormMultipleChoiceQuestion::class;
 $GLOBALS['TL_SVY']['matrix'] = FormMatrixQuestion::class;
@@ -105,3 +100,5 @@ $GLOBALS['TL_SVY']['q_constantsum'] = SurveyQuestionConstantsum::class;
 if (isset($GLOBALS['TL_CONFIG']['urlKeywords'])) {
     $GLOBALS['TL_CONFIG']['urlKeywords'] .= (strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '').'code';
 }
+
+#$GLOBALS['TL_MODELS']['tl_member_group'] = \Hschottm\SurveyBundle\MemberGroupModel::class;
