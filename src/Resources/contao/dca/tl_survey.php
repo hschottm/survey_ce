@@ -68,7 +68,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
                 'href' => 'table=tl_survey_pin_tan',
                 'icon' => 'bundles/hschottmsurvey/images/key.svg',
-                #'button_callback' => ['tl_survey', 'pintanButton'],
+                'button_callback' => ['tl_survey', 'pintanButton'],
             ],
             'edit' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['edit'],

@@ -101,4 +101,4 @@ if (isset($GLOBALS['TL_CONFIG']['urlKeywords'])) {
     $GLOBALS['TL_CONFIG']['urlKeywords'] .= (strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '').'code';
 }
 
-#$GLOBALS['TL_MODELS']['tl_member_group'] = \Hschottm\SurveyBundle\MemberGroupModel::class;
+$GLOBALS['TL_MODELS']['tl_member_group'] = \Hschottm\SurveyBundle\MemberGroupModel::class;

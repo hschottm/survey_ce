@@ -21,9 +21,8 @@ use Contao\BackendTemplate;
 use Contao\DataContainer;
 use Contao\Environment;
 use Contao\Input;
-#use Contao\MemberGroupModel;
-// use a derivative
 use Contao\MemberModel;
+use Contao\Message;
 use Contao\PageModel;
 use Contao\PageTree;
 use Contao\SelectMenu;
@@ -332,31 +331,45 @@ class SurveyPINTAN extends Backend
                     $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
                     for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
                         $pintan = $this->svy->generatePIN_TAN();
-                        $this->insertPinTan(Input::get('id'), $pintan['PIN'], $pintan['TAN']);
+                        $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN']);
                     }
                     break;
                 case 'nonanoncode':
                     // generate member-related TANs
                     $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
-                    // get all member groups
+                    // get all member-groups for this survey
                     $memberGroups = $survey->getRelated('allowed_groups');
-                    $memberGroups = MemberGroupModel::findAllActive();
-
-
+                    // contains all members for which a TAN is to be generated, duplicates are excluded by the index
+                    $targetMembers = [];
+                    // check for valid groups
                     if($memberGroups) {
+dump('es gibt Gruppen');
                         // group-restricted survey
                         foreach($memberGroups->getModels() as $memberGroup) {
-dump($memberGroup->name);
-dump($memberGroup->findAllMember());
+dump("generiere für Gruppe [$memberGroup->name] hat folgende Mitglieder: ");
+                            if($members = $memberGroup->findAllMembers()) {
+                                foreach ($members as $member) {
+                                    $pintan = $this->svy->generatePIN_TAN();
+                                    $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN'],$member->id);
+                                }
+                            };
                         }
                     } else {
                         // survey for all members
-dump('all members');
+                        $members = MemberModel::findBy(['disable = ?', 'locked = ?'], ['', '']);
 
+                        if($members) {
+                            foreach ($members as $member) {
+                                $pintan = $this->svy->generatePIN_TAN();
+                                $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN'],$member->id);
+                            }
+                            $c = count($members);
+                            Message::addInfo("Es wurden $c TANs generiert.");
+                        } else {
+                            Message::addError('Es wurden eine TANs generiert');
+                        };
                     }
-
-
-die();
+#die();
                     break;
                 default:
                     // do nothing at this time

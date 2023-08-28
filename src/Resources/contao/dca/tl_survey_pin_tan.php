@@ -154,7 +154,7 @@ class tl_survey_pin_tan extends Backend
             $used = '<img src="bundles/hschottmsurvey/images/tan_new.png" alt="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'].'" title="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'].'" />';
         }
 
-        $member = SurveyPINTAN::formatMember($row['member_id']);
+        $member = ' &#10132; '.SurveyPINTAN::formatMember($row['member_id']);
 
         return sprintf("<div>%s <strong>%s</strong> (%s)$member</div>", $used, $matches[1], $matches[2]);
     }
@@ -165,7 +165,6 @@ class tl_survey_pin_tan extends Backend
      */
     public function checkActions(DataContainer $dc):void
     {
-dump(__FUNCTION__);
         if($dc->id) {
             // we have a valid survey - get the survey data record
             $survey= SurveyModel::findByPk($dc->id);
