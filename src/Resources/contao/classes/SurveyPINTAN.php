@@ -327,7 +327,8 @@ class SurveyPINTAN extends Backend
                     break;
                 case 'anoncode':
                     // generate anonymous TANs
-                    $nrOfTAN = (int) $this->Template->nrOfTAN->value;
+                    $nrOfTAN = (int) Input::post('nrOfTAN');
+
                     $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
                     for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
                         $pintan = $this->svy->generatePIN_TAN();
@@ -339,8 +340,6 @@ class SurveyPINTAN extends Backend
                     $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
                     // get all member-groups for this survey
                     $memberGroups = $survey->getRelated('allowed_groups');
-                    // contains all members for which a TAN is to be generated, duplicates are excluded by the index
-                    $targetMembers = [];
                     // check for valid groups
                     if($memberGroups) {
                         // group-restricted survey

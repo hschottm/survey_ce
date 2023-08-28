@@ -7,10 +7,9 @@
     <input type="hidden" name="FORM_SUBMIT" value="tl_participants_invite"/>
     <input type="hidden" name="REQUEST_TOKEN" value="<?php echo REQUEST_TOKEN; ?>"/>
 
-    <fieldset id="pal_createtan_legend" class="tl_tbox">
-      <legend><?php echo $this->headline; ?></legend>
-
-    </fieldset>
+    <div class='access_template'>
+      <?= $this->note; ?>
+    </div>
 
   </div>
 

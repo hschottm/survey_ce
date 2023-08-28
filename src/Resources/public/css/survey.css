@@ -132,3 +132,11 @@ table.tl_cumulated {
   color:#0080FF;
   margin-bottom: 15px;
 }
+
+#tl_participants_invite .access_template {
+  margin: 0 0 0 15px;
+}
+#tl_participants_invite .access_template h1 {
+  color:#0080FF;
+  margin-bottom: 15px;
+}

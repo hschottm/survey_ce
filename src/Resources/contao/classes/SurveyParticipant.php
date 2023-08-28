@@ -36,13 +36,17 @@ class SurveyParticipant extends Backend
         $id = (int) Input::get('id');
         $hrefBack = "table={$dc->table}&id=".$id;
 
+        if($id === 0 && is_null($survey = SurveyModel::findByPk($id))) {
+            $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
+        }
+
+        $survey = SurveyModel::findByPk($id);
+
         $this->Template = new BackendTemplate('be_participants_invite');
         // preape header
-        $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-        $this->Template->hrefBack = Backend::addToUrl($hrefBack, true, ['key','table','id']);
-        // prepare actions
-        $this->Template->send = StringUtil::specialchars('Jetzt einladen');
-        $this->Template->cancel = StringUtil::specialchars('Abbrechen');
+        $this->Template->back       = $GLOBALS['TL_LANG']['MSC']['goBack'];
+        $this->Template->hrefBack   = Backend::addToUrl($hrefBack, true, ['key','table','id']);
+        $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_participant']['invite'][0];
 
         // check request method
         if($_SERVER['REQUEST_METHOD'] === 'POST')
@@ -50,13 +54,26 @@ class SurveyParticipant extends Backend
             if(array_key_exists('send', $_POST)) {
                 // send all invitations
 
-
+                $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
             }
             elseif(array_key_exists('cancel', $_POST)) {
                 // cancel sending
                 $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
             }
         }
+
+        $
+
+        // prepare buttons
+        $this->Template->send       = StringUtil::specialchars("Jetzt einladen");
+        $this->Template->cancel     = StringUtil::specialchars('Abbrechen');
+
+        $this->Template->note = sprintf(
+            $GLOBALS['TL_LANG']['tl_survey_participant']['note_template'],
+            $survey->title,
+            $GLOBALS['TL_LANG']['tl_survey_participant']['invite_text'],
+            $GLOBALS['TL_LANG']['tl_survey_participant']['invite_warn'],
+        );
 
         return $this->Template->parse();
     }

@@ -154,12 +154,15 @@ class tl_survey_pin_tan extends Backend
             $used = '<img src="bundles/hschottmsurvey/images/tan_new.png" alt="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'].'" title="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'].'" />';
         }
 
-        $member = ' &#10132; '.SurveyPINTAN::formatMember($row['member_id']);
+        $member = (int) $row['member_id'] !== 0 ? ' &#10132; '.SurveyPINTAN::formatMember($row['member_id']) : '';
 
         return sprintf("<div>%s <strong>%s</strong> (%s)$member</div>", $used, $matches[1], $matches[2]);
     }
 
     /**
+     * handles some states onLoad
+     * - suppress buttons etc.
+     *
      * @param DataContainer $dc
      * @return void
      */
