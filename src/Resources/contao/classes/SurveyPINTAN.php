@@ -343,10 +343,8 @@ class SurveyPINTAN extends Backend
                     $targetMembers = [];
                     // check for valid groups
                     if($memberGroups) {
-dump('es gibt Gruppen');
                         // group-restricted survey
                         foreach($memberGroups->getModels() as $memberGroup) {
-dump("generiere für Gruppe [$memberGroup->name] hat folgende Mitglieder: ");
                             if($members = $memberGroup->findAllMembers()) {
                                 foreach ($members as $member) {
                                     $pintan = $this->svy->generatePIN_TAN();
