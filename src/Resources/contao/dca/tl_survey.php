@@ -58,15 +58,16 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             ],
         ],
         'operations' => [
+            'pintan' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
+                'href' => 'table=tl_survey_pin_tan',
+                'icon' => 'bundles/hschottmsurvey/images/key.svg',
+                'button_callback' => ['tl_survey', 'pintanButton'],
+            ],
             'edit' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['edit'],
                 'href' => 'table=tl_survey_page',
                 'icon' => 'edit.svg',
-            ],
-            'pintan' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
-                'href' => 'table=tl_survey_pin_tan',
-                'icon' => 'bundles/hschottmsurvey/images/pintan.png',
             ],
             'participants' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['participants'],
@@ -566,6 +567,38 @@ class tl_survey extends Backend
     protected function __construct()
     {
         parent::__construct();
+    }
+
+    public function pintanButton(
+        array $row,
+        ?string $href,
+        string $label,
+        string $title,
+        ?string $icon,
+        string $attributes,
+        string $table,
+        ?array $rootRecordIds,
+        ?array $childRecordIds,
+        bool $circularReference,
+        ?string $previous,
+        ?string $next,
+        DataContainer $dc
+    )
+    {
+        if($row['access'] === 'anon') {
+            return '';
+        }
+
+        $html = sprintf(
+            '<a href="%s" title="%s"%s>%s</a> ',
+            Backend::addToUrl($href . '&amp;id=' . $row['id']),
+            StringUtil::specialchars($title),
+            $attributes,
+            Image::getHtml($icon, $label)
+        );
+
+        /** @noinspection HtmlUnknownTarget */
+        return $html;
     }
 
     /**

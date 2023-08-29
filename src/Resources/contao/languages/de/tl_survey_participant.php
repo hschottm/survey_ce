@@ -30,7 +30,7 @@ $GLOBALS['TL_LANG']['tl_survey_participant']['invite']      = ['Einladen', 'Alle
 $GLOBALS['TL_LANG']['tl_survey_participant']['remind']      = ['Erinnern', 'Alle Mitglieder an die Umfrage erinnern. Es werden alle Mitglieder an die Umfrage erinnert, die ihre Umfrage noch nicht &raquo;begonnen&laquo; haben.'];
 
 $GLOBALS['TL_LANG']['tl_survey_participant']['note_template'] =<<< EOT
-<h1>Sie möchten für die Umfrage &raquo;%s&laquo; an alle teilnehmenden Personen eine Einladung versenden.</h1>
+<h1>Sie möchten für die Umfrage &raquo;%s&laquo; eine Einladung an alle teilnehmenden Personen versenden.</h1>
 <p>%s</p>
 <p style='color:#F47C00;'>%s</p>
 <p style='color:#F47C00;'>%s</p>

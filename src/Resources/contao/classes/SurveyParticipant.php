@@ -65,9 +65,9 @@ class SurveyParticipant extends Backend
                 $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
             }
         }
-        // count member
-        $member = SurveyPinTanModel::findBy(['pid = ?', 'used = 0'],[$survey->id]);
-        $mailsCount = count($member);
+        // count member ToDo: member locked? disabled? has email?
+        $pintan = SurveyPinTanModel::findBy(['pid = ?', 'used = 0'],[$survey->id]);
+        $mailsCount = count($pintan);
 
         // prepare buttons
         $this->Template->send       = StringUtil::specialchars("Jetzt einladen");
