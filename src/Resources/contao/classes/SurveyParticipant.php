@@ -6,6 +6,8 @@ use Contao\Backend;
 use Contao\BackendTemplate;
 use Contao\DataContainer;
 use Contao\Input;
+use Contao\MemberModel;
+use Contao\Message;
 use Contao\StringUtil;
 
 class SurveyParticipant extends Backend
@@ -46,13 +48,15 @@ class SurveyParticipant extends Backend
         // preape header
         $this->Template->back       = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->hrefBack   = Backend::addToUrl($hrefBack, true, ['key','table','id']);
-        $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_participant']['invite'][0];
+        $this->Template->headline   = $GLOBALS['TL_LANG']['tl_survey_participant']['invite'][0];
 
         // check request method
         if($_SERVER['REQUEST_METHOD'] === 'POST')
         {
             if(array_key_exists('send', $_POST)) {
                 // send all invitations
+
+                Message::addInfo('versendet');
 
                 $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
             }
@@ -61,8 +65,9 @@ class SurveyParticipant extends Backend
                 $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
             }
         }
-
-        $
+        // count member
+        $member = SurveyPinTanModel::findBy(['pid = ?', 'used = 0'],[$survey->id]);
+        $mailsCount = count($member);
 
         // prepare buttons
         $this->Template->send       = StringUtil::specialchars("Jetzt einladen");
@@ -71,8 +76,13 @@ class SurveyParticipant extends Backend
         $this->Template->note = sprintf(
             $GLOBALS['TL_LANG']['tl_survey_participant']['note_template'],
             $survey->title,
-            $GLOBALS['TL_LANG']['tl_survey_participant']['invite_text'],
+            sprintf(
+                $GLOBALS['TL_LANG']['tl_survey_participant']['invite_text'],
+                'Name der Notification'
+            ),
             $GLOBALS['TL_LANG']['tl_survey_participant']['invite_warn'],
+            $GLOBALS['TL_LANG']['tl_survey_participant']['invite_hint'],
+            $mailsCount,
         );
 
         return $this->Template->parse();
