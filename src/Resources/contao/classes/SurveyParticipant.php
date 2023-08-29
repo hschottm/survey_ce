@@ -9,6 +9,7 @@ use Contao\Input;
 use Contao\MemberModel;
 use Contao\Message;
 use Contao\StringUtil;
+use NotificationCenter\Model\Notification;
 
 class SurveyParticipant extends Backend
 {
@@ -38,11 +39,15 @@ class SurveyParticipant extends Backend
         $id = (int) Input::get('id');
         $hrefBack = "table={$dc->table}&id=".$id;
 
-        if($id === 0 && is_null($survey = SurveyModel::findByPk($id))) {
+        if($id === 0) {
+            // no id available or manipulated
             $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
         }
-
-        $survey = SurveyModel::findByPk($id);
+        // find associated survey
+        if(is_null($survey = SurveyModel::findByPk($id))) {
+            // requested survey not found
+            $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
+        }
 
         $this->Template = new BackendTemplate('be_participants_invite');
         // preape header
@@ -50,13 +55,37 @@ class SurveyParticipant extends Backend
         $this->Template->hrefBack   = Backend::addToUrl($hrefBack, true, ['key','table','id']);
         $this->Template->headline   = $GLOBALS['TL_LANG']['tl_survey_participant']['invite'][0];
 
+        // get all valid participants alias members ToDo: member locked? disabled? has email?
+        $pintan = SurveyPinTanModel::findBy(['pid = ?', 'used = 0'],[$survey->id]);
+dump($pintan->fetchEach('member_id'));
+
+        $mailsCount = count($pintan);
+
         // check request method
         if($_SERVER['REQUEST_METHOD'] === 'POST')
         {
-            if(array_key_exists('send', $_POST)) {
+            if(array_key_exists('send', $_POST))
+            {
                 // send all invitations
 
-                Message::addInfo('versendet');
+                // get the notification, see TL_LANG tl_nc_notification for valid values
+                $notification = Notification::findByPk($survey->invitationNotificationId);
+                // send it
+                if (null !== $notification) {
+                    // we have a valid notification
+                    // 1. get the participants=member emails
+
+                    // 2. prepare tokens
+                    $arrTokens = [
+                        'survey_title' => $survey->title,
+                        'survey_member_emails' => 0,
+                    ];
+                    // send
+                    $boolResult = $notification->send($arrTokens); // Language is optional
+                } else {
+
+                }
+#die();
 
                 $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
             }
@@ -65,10 +94,6 @@ class SurveyParticipant extends Backend
                 $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
             }
         }
-        // count member ToDo: member locked? disabled? has email?
-        $pintan = SurveyPinTanModel::findBy(['pid = ?', 'used = 0'],[$survey->id]);
-        $mailsCount = count($pintan);
-
         // prepare buttons
         $this->Template->send       = StringUtil::specialchars("Jetzt einladen");
         $this->Template->cancel     = StringUtil::specialchars('Abbrechen');

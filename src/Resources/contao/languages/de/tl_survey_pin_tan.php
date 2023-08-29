@@ -35,4 +35,5 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['member_id'] = ['Mitglied', ''];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'] = ['TAN', 'Transaktionnummer (TAN)'];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'] = ['Erstellungsdatum', 'Erstellungsdatum'];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['used'] = ['TAN wurde benutzt', 'Die TAN wurde bereits von einem Teilnehmer benutzt'];
-
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['success'] = "Es wurden %s TANs neu generiert. %s TANs wurden unverändert beibehalten.";
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['error']   = 'Es wurden keine TANs generiert, weil für diese Umfrage keine Mitglieder ermittelt werden konnten. Bitte prüfen Sie, ob die betreffenden Mitglieder aktiviert bzw. nicht gesperrt sind. Für gesperrte und deaktivierte Mitglieder werden keine TANs generiert.';

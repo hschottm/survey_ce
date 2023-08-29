@@ -102,3 +102,17 @@ if (isset($GLOBALS['TL_CONFIG']['urlKeywords'])) {
 }
 
 $GLOBALS['TL_MODELS']['tl_member_group'] = \Hschottm\SurveyBundle\MemberGroupModel::class;
+
+// configures the tokens of the notification form
+$CF = &$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['contao']['core_form'];
+
+// allow field             this token
+$CF['recipients'][]     = 'survey_title';
+$CF['recipients'][]     = 'survey_member_emails';
+
+$CF['email_subject'][]  = 'survey_title';
+
+$CF['email_text'][]     = 'survey_title';
+
+$CF['email_html'][]     = 'survey_title';
+

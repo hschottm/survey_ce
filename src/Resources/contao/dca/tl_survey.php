@@ -100,7 +100,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
 
     // Palettes
     'palettes' => [
-        '__selector__' => ['access', 'limit_groups', 'useResultCategories', 'sendConfirmationMail', 'sendConfirmationMailAlternate', 'addConfirmationMailAttachments', 'addConfirmationMailAlternateAttachments'],
+        '__selector__' => ['access', 'limit_groups', 'useResultCategories', 'sendConfirmationMail', 'sendConfirmationMailAlternate', 'addConfirmationMailAttachments', 'addConfirmationMailAlternateAttachments', 'useInvitation', 'useReminder'],
         'default' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end',
         'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
         'anoncode' =>
@@ -236,6 +236,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'exclude' => true,
             'inputType' => 'checkbox',
             'foreignKey' => 'tl_member_group.name',
+            'relation' => ['type' => 'hasMany', 'load' => 'lazy'],
             'eval' => ['multiple' => true],
             'sql' => 'blob NULL',
         ],
@@ -528,11 +529,12 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'sql' => "char(1) NOT NULL default ''",
         ],
         'invitationNotificationId' => [
-            'exclude' => true,
-            'filter' => true,
-            'inputType' => 'select',
-            'eval' => [],
-            'sql' => "char(1) NOT NULL default ''",
+            'exclude'       => true,
+            'inputType'     => 'select',
+            'foreignKey'    => 'tl_nc_notification.title',
+            'flag'          => 1, // 1 Sort by initial letter ascending
+            'eval'          => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => false],
+            'sql'           => "int(10) NOT NULL default '0'",
         ],
         'useReminder' => [
             'exclude' => true,
@@ -542,11 +544,12 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'sql' => "char(1) NOT NULL default ''",
         ],
         'reminderNotificationId' => [
-            'exclude' => true,
-            'filter' => true,
-            'inputType' => 'select',
-            'eval' => [],
-            'sql' => "char(1) NOT NULL default ''",
+            'exclude'       => true,
+            'inputType'     => 'select',
+            'foreignKey'    => 'tl_nc_notification.title',
+            'flag'          => 1, // 1 Sort by initial letter ascending
+            'eval'          => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => false],
+            'sql'           => "int(10) NOT NULL default '0'",
         ],
     ],
 ];
@@ -569,6 +572,24 @@ class tl_survey extends Backend
         parent::__construct();
     }
 
+    /**
+     * move optional action at first position
+     *
+     * @param array $row
+     * @param string|null $href
+     * @param string $label
+     * @param string $title
+     * @param string|null $icon
+     * @param string $attributes
+     * @param string $table
+     * @param array|null $rootRecordIds
+     * @param array|null $childRecordIds
+     * @param bool $circularReference
+     * @param string|null $previous
+     * @param string|null $next
+     * @param DataContainer $dc
+     * @return string
+     */
     public function pintanButton(
         array $row,
         ?string $href,
