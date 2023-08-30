@@ -19,6 +19,8 @@ use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\Input;
 use Contao\MemberModel;
 use Contao\System;
+
+use Hschottm\SurveyBundle\SurveyModel;
 use Hschottm\SurveyBundle\SurveyPageModel;
 use Hschottm\SurveyBundle\SurveyParticipantModel;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -33,6 +35,7 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
         'closed' => true,
         'onload_callback' => [
             ['tl_survey_participant', 'checkPermission'],
+            ['tl_survey_participant', 'onLoadCheckSurveyType'],
         ],
         'ondelete_callback' => [
             ['tl_survey_participant', 'deleteParticipant'],
@@ -216,24 +219,20 @@ class tl_survey_participant extends Backend
         }
     }
 
-    public function getUsername($uid)
-    {
-        $user = MemberModel::findOneBy('id', $uid);
-
-        if (null !== $user) {
-            return trim($user->firstname.' '.$user->lastname);
-        }
-
-        return '';
-    }
-
-    public function getLabel($row, $label)
+    /**
+     * @param $row
+     * @param $label
+     * @param DataContainer $dc
+     * @return string
+     */
+    public function getLabel($row, $label, DataContainer $dc)
     {
         // we ignore the label param, the row has it all
         $finished = (int) ($row['finished']);
 
         return sprintf(
-            '<div>%s, <strong>%s</strong> <span style="color: #7f7f7f;">[%s%s]</span></div>',
+            '<div>%s %s, <strong>%s</strong> <span style="color: #7f7f7f;">[%s%s]</span></div>',
+            Image::getHtml('bundles/hschottmsurvey/images/key.svg', 'Label', "title='Titel'"),
             date($GLOBALS['TL_CONFIG']['datimFormat'], (int) $row['tstamp']),
             $row['uid'] > 0
                 ? $this->getUsername($row['uid'])
@@ -245,6 +244,12 @@ class tl_survey_participant extends Backend
                 ? ''
                 : ' ('.$row['lastpage'].'/'.$this->getPageCount($row['pid']).')'
         );
+    }
+    public function getUsername($uid)
+    {
+        if($user = MemberModel::findOneBy('id', $uid)) return trim("$user->firstname $user->lastname");
+
+        return '';
     }
 
     /**
@@ -268,5 +273,38 @@ class tl_survey_participant extends Backend
         }
 
         return $this->pageCount;
+    }
+
+    /**
+     * handles some states onLoad
+     * - suppress buttons etc.
+     *
+     * @param DataContainer $dc
+     * @return void
+     */
+    public function onLoadCheckSurveyType(DataContainer $dc):void
+    {
+        // id holds the survey.id
+        if($dc->id) {
+            // we have a valid survey - get the survey data record
+            $survey= SurveyModel::findByPk($dc->id);
+
+            if($survey) {
+                // a survey is available - test access mode
+                switch ($survey->access) {
+                    case 'anon':
+                    case 'anoncode':
+                        unset($GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['invite']);
+                        unset($GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['remind']);
+                        break;
+                    case 'nonanoncode':
+                        break;
+                    default:
+                }
+            }
+
+        } else {
+            // we don't have a survey
+        }
     }
 }

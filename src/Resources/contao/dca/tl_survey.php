@@ -88,7 +88,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['delete'],
                 'href' => 'act=delete',
                 'icon' => 'delete.svg',
-                'attributes' => 'onclick="if (!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\')) return false; Backend.getScrollOffset();"',
+                'attributes' => 'onclick="if (!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).'\')) return false; Backend.getScrollOffset();"',
             ],
             'show' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['show'],
@@ -103,22 +103,20 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
         '__selector__' => ['access', 'limit_groups', 'useResultCategories', 'sendConfirmationMail', 'sendConfirmationMailAlternate', 'addConfirmationMailAttachments', 'addConfirmationMailAlternateAttachments', 'useInvitation', 'useReminder'],
         'default' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end',
         'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
-        'anoncode' =>
-            '{title_legend},title,author,description,language;' .
-            '{activation_legend},online_start,online_end;' .
-            '{access_legend},access,usecookie;' .
-            '{texts_legend},introduction,finalsubmission;' .
-            '{head_legend},show_title,show_cancel;' .
-            '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;' .
+        'anoncode' => '{title_legend},title,author,description,language;'.
+            '{activation_legend},online_start,online_end;'.
+            '{access_legend},access,usecookie;'.
+            '{texts_legend},introduction,finalsubmission;'.
+            '{head_legend},show_title,show_cancel;'.
+            '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;'.
             '{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
-        'nonanoncode' =>
-            '{title_legend},title,author,description,language;'.
+        'nonanoncode' => '{title_legend},title,author,description,language;'.
             '{activation_legend},online_start,online_end;'.
             '{access_legend},access,usecookie,limit_groups;'.
             '{texts_legend},introduction,finalsubmission;'.
             '{head_legend},show_title,show_cancel;'.
             '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;'.
-            '{notification_legend},useInvitation,useReminder;' .
+            '{notification_legend},useInvitation,useReminder;'.
             '{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
     ],
 
@@ -529,12 +527,12 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'sql' => "char(1) NOT NULL default ''",
         ],
         'invitationNotificationId' => [
-            'exclude'       => true,
-            'inputType'     => 'select',
-            'foreignKey'    => 'tl_nc_notification.title',
-            'flag'          => 1, // 1 Sort by initial letter ascending
-            'eval'          => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => false],
-            'sql'           => "int(10) NOT NULL default '0'",
+            'exclude' => true,
+            'inputType' => 'select',
+            'foreignKey' => 'tl_nc_notification.title',
+            'flag' => 1, // 1 Sort by initial letter ascending
+            'eval' => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => false],
+            'sql' => "int(10) NOT NULL default '0'",
         ],
         'useReminder' => [
             'exclude' => true,
@@ -544,12 +542,12 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'sql' => "char(1) NOT NULL default ''",
         ],
         'reminderNotificationId' => [
-            'exclude'       => true,
-            'inputType'     => 'select',
-            'foreignKey'    => 'tl_nc_notification.title',
-            'flag'          => 1, // 1 Sort by initial letter ascending
-            'eval'          => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => false],
-            'sql'           => "int(10) NOT NULL default '0'",
+            'exclude' => true,
+            'inputType' => 'select',
+            'foreignKey' => 'tl_nc_notification.title',
+            'flag' => 1, // 1 Sort by initial letter ascending
+            'eval' => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => false],
+            'sql' => "int(10) NOT NULL default '0'",
         ],
     ],
 ];
@@ -573,53 +571,23 @@ class tl_survey extends Backend
     }
 
     /**
-     * move optional action at first position
+     * move optional action at first position.
      *
-     * @param array $row
-     * @param string|null $href
-     * @param string $label
-     * @param string $title
-     * @param string|null $icon
-     * @param string $attributes
-     * @param string $table
-     * @param array|null $rootRecordIds
-     * @param array|null $childRecordIds
-     * @param bool $circularReference
-     * @param string|null $previous
-     * @param string|null $next
-     * @param DataContainer $dc
      * @return string
      */
-    public function pintanButton(
-        array $row,
-        ?string $href,
-        string $label,
-        string $title,
-        ?string $icon,
-        string $attributes,
-        string $table,
-        ?array $rootRecordIds,
-        ?array $childRecordIds,
-        bool $circularReference,
-        ?string $previous,
-        ?string $next,
-        DataContainer $dc
-    )
+    public function pintanButton(array $row, ?string $href, string $label, string $title, ?string $icon, string $attributes, string $table, ?array $rootRecordIds, ?array $childRecordIds, bool $circularReference, ?string $previous, ?string $next, DataContainer $dc)
     {
-        if($row['access'] === 'anon') {
+        if ('anon' === $row['access']) {
             return '';
         }
 
-        $html = sprintf(
+        return sprintf(
             '<a href="%s" title="%s"%s>%s</a> ',
-            Backend::addToUrl($href . '&amp;id=' . $row['id']),
+            Backend::addToUrl($href.'&amp;id='.$row['id']),
             StringUtil::specialchars($title),
             $attributes,
             Image::getHtml($icon, $label)
         );
-
-        /** @noinspection HtmlUnknownTarget */
-        return $html;
     }
 
     /**
@@ -643,7 +611,8 @@ class tl_survey extends Backend
 
         // Get all form fields which can be used to define recipient of confirmation mail
         $objFields = Database::getInstance()->prepare('SELECT tl_survey_question.id,tl_survey_question.title FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? AND tl_survey_question.questiontype=? ORDER BY tl_survey_question.title ASC')
-            ->execute(Input::get('id'), 'openended');
+            ->execute(Input::get('id'), 'openended')
+        ;
 
         $fields[] = '-';
 
@@ -652,7 +621,7 @@ class tl_survey extends Backend
 
             if (strlen($k)) {
                 $v = $objFields->title;
-                $v = strlen($v) ? $v . ' [' . $k . ']' : $k;
+                $v = strlen($v) ? $v.' ['.$k.']' : $k;
                 $fields[$k] = $v;
             }
         }

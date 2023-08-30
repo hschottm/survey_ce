@@ -1,12 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @author     Helmut Schottmüller (hschottm)
+ * @package    contao-survey
+ * @license    LGPL-3.0+, CC-BY-NC-3.0
+ * @see	       https://github.com/hschottm/survey_ce
+ *
+ * forked by pdir
+ * @author     Mathias Arzberger <develop@pdir.de>
+ * @link       https://github.com/pdir/contao-survey
+ */
+
 namespace Hschottm\SurveyBundle;
 
 use Contao\Backend;
 use Contao\BackendTemplate;
 use Contao\DataContainer;
 use Contao\Input;
-use Contao\MemberModel;
 use Contao\Message;
 use Contao\StringUtil;
 use NotificationCenter\Model\Notification;
@@ -24,79 +37,86 @@ class SurveyParticipant extends Backend
     }
 
     /**
-     * action handler for participiants -> invite
+     * action handler for participiants -> invite.
      *
      *  Creates a list of participants to be invited by mail
      *  to a new survey and sends them a message
-     *
-     * @param DataContainer $dc
-     * @return string
      */
-    public function invite(DataContainer $dc):string
+    public function invite(DataContainer $dc): string
     {
-        if (__FUNCTION__ !== Input::get('key')) return '';
+        if (__FUNCTION__ !== Input::get('key')) {
+            return '';
+        }
 
         $id = (int) Input::get('id');
         $hrefBack = "table={$dc->table}&id=".$id;
 
-        if($id === 0) {
+        if (0 === $id) {
             // no id available or manipulated
-            $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
+            $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
         }
         // find associated survey
-        if(is_null($survey = SurveyModel::findByPk($id))) {
+        if (null === ($survey = SurveyModel::findByPk($id))) {
             // requested survey not found
-            $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
+            $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
         }
 
         $this->Template = new BackendTemplate('be_participants_invite');
-        // preape header
-        $this->Template->back       = $GLOBALS['TL_LANG']['MSC']['goBack'];
-        $this->Template->hrefBack   = Backend::addToUrl($hrefBack, true, ['key','table','id']);
-        $this->Template->headline   = $GLOBALS['TL_LANG']['tl_survey_participant']['invite'][0];
+        // prepare header
+        $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
+        $this->Template->hrefBack = Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']);
+        $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_participant']['invite'][0];
 
         // get all valid participants alias members ToDo: member locked? disabled? has email?
-        $pintan = SurveyPinTanModel::findBy(['pid = ?', 'used = 0'],[$survey->id]);
-dump($pintan->fetchEach('member_id'));
+        //$pintan = SurveyPinTanModel::findBy(['pid = ?', 'used = 0'], [$survey->id]);
+        // get all members of this survey
+        $members = $survey->findAllUniqueParticipants();
+        // suppress missing emails
+        $arrEmails = null === $members ? [] : array_filter($members->fetchEach('email'), static fn ($item) => !empty($item));
 
-        $mailsCount = count($pintan);
+        $strEmails = implode(',', $arrEmails);
 
         // check request method
-        if($_SERVER['REQUEST_METHOD'] === 'POST')
-        {
-            if(array_key_exists('send', $_POST))
-            {
-                // send all invitations
+        if ('POST' === $_SERVER['REQUEST_METHOD']) {
+            if (\array_key_exists('send', $_POST)) {
+                // send invitations
 
-                // get the notification, see TL_LANG tl_nc_notification for valid values
+                // 1. get the invitation notification
                 $notification = Notification::findByPk($survey->invitationNotificationId);
-                // send it
+                // 2. prepare the notification
                 if (null !== $notification) {
                     // we have a valid notification
-                    // 1. get the participants=member emails
 
-                    // 2. prepare tokens
+                    // prepare tokens
                     $arrTokens = [
                         'survey_title' => $survey->title,
-                        'survey_member_emails' => 0,
+                        'survey_all_member_emails' => $strEmails,
                     ];
                     // send
-                    $boolResult = $notification->send($arrTokens); // Language is optional
+                    if ($notification->send($arrTokens)) {
+                        Message::addInfo(
+                            sprintf(
+                                $GLOBALS['TL_LANG']['tl_survey_participant']['invite_success'],
+                                \count($arrEmails)
+                            )
+                        );
+                    } else {
+                        Message::addInfo($GLOBALS['TL_LANG']['tl_survey_participant']['invite_error']);
+                    }
                 } else {
-
+                    // no notification available
+                    Message::addError($GLOBALS['TL_LANG']['tl_survey_participant']['invite_no_invitation_available']);
                 }
-#die();
 
-                $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
-            }
-            elseif(array_key_exists('cancel', $_POST)) {
+                $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
+            } elseif (\array_key_exists('cancel', $_POST)) {
                 // cancel sending
-                $this::redirect(Backend::addToUrl($hrefBack, true, ['key','table','id']));
+                $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
             }
         }
         // prepare buttons
-        $this->Template->send       = StringUtil::specialchars("Jetzt einladen");
-        $this->Template->cancel     = StringUtil::specialchars('Abbrechen');
+        $this->Template->send = StringUtil::specialchars('Jetzt einladen');
+        $this->Template->cancel = StringUtil::specialchars('Abbrechen');
 
         $this->Template->note = sprintf(
             $GLOBALS['TL_LANG']['tl_survey_participant']['note_template'],
@@ -107,24 +127,23 @@ dump($pintan->fetchEach('member_id'));
             ),
             $GLOBALS['TL_LANG']['tl_survey_participant']['invite_warn'],
             $GLOBALS['TL_LANG']['tl_survey_participant']['invite_hint'],
-            $mailsCount,
+            \count($arrEmails),
         );
 
         return $this->Template->parse();
     }
 
     /**
-     * action handler for participiant -> remind
+     * action handler for participiant -> remind.
      *
      * Creates a list of participants to be reminded by mail about their unfinished
      * survey and sends them a message
-     *
-     * @param DataContainer $dc
-     * @return string
      */
-    public function remind(DataContainer $dc):string
+    public function remind(DataContainer $dc): string
     {
-        if (__FUNCTION__ !== Input::get('key')) return '';
+        if (__FUNCTION__ !== Input::get('key')) {
+            return '';
+        }
 
         return $this->Template->parse();
     }

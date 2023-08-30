@@ -20,6 +20,7 @@ use Hschottm\SurveyBundle\FormConstantSumQuestion;
 use Hschottm\SurveyBundle\FormMatrixQuestion;
 use Hschottm\SurveyBundle\FormMultipleChoiceQuestion;
 use Hschottm\SurveyBundle\FormOpenEndedQuestion;
+use Hschottm\SurveyBundle\MemberGroupModel;
 use Hschottm\SurveyBundle\SurveyParticipant;
 use Hschottm\SurveyBundle\SurveyPINTAN;
 use Hschottm\SurveyBundle\SurveyQuestionConstantsum;
@@ -56,16 +57,16 @@ array_insert($GLOBALS['BE_MOD'], 3, [
                 'tl_survey_participant',
                 'tl_survey_pin_tan',
             ],
-            'scale'     => ['tl_survey_question', 'addScale'],
-            'export'    => [SurveyResultDetails::class, 'exportResults'],
+            'scale' => ['tl_survey_question', 'addScale'],
+            'export' => [SurveyResultDetails::class, 'exportResults'],
             'createtan' => [SurveyPINTAN::class, 'createTAN'],
             'exporttan' => [SurveyPINTAN::class, 'exportTAN'],
             'cumulated' => [SurveyResultDetails::class, 'showCumulated'],
-            'details'   => [SurveyResultDetails::class, 'showDetails'],
+            'details' => [SurveyResultDetails::class, 'showDetails'],
             // tl_survey_participant
             'exportraw' => [SurveyResultDetails::class, 'exportResultsRaw'],
-            'invite'    => [SurveyParticipant::class, 'invite'],
-            'remind'    => [SurveyParticipant::class, 'remind'],
+            'invite' => [SurveyParticipant::class, 'invite'],
+            'remind' => [SurveyParticipant::class, 'remind'],
         ],
         'scale' => [
             'tables' => [
@@ -101,18 +102,25 @@ if (isset($GLOBALS['TL_CONFIG']['urlKeywords'])) {
     $GLOBALS['TL_CONFIG']['urlKeywords'] .= (strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '').'code';
 }
 
-$GLOBALS['TL_MODELS']['tl_member_group'] = \Hschottm\SurveyBundle\MemberGroupModel::class;
+$GLOBALS['TL_MODELS']['tl_member_group'] = MemberGroupModel::class;
 
 // configures the tokens of the notification form
 $CF = &$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['contao']['core_form'];
 
-// allow field             this token
-$CF['recipients'][]     = 'survey_title';
-$CF['recipients'][]     = 'survey_member_emails';
+// allowed field = token, add comments in langauges\*\tokens.php or tokens.xlf
+$CF['recipients'][] = 'survey_title';
+$CF['recipients'][] = 'survey_all_member_emails';
 
-$CF['email_subject'][]  = 'survey_title';
+$CF['email_recipient_cc'][] = 'survey_all_member_emails';
 
-$CF['email_text'][]     = 'survey_title';
+$CF['email_recipient_bcc'][] = 'survey_all_member_emails';
 
-$CF['email_html'][]     = 'survey_title';
+$CF['email_subject'][] = 'survey_title';
 
+$CF['email_text'][] = 'survey_title';
+$CF['email_text'][] = 'survey_all_member_emails';
+$CF['email_text'][] = 'survey_duration';
+
+$CF['email_html'][] = 'survey_title';
+$CF['email_html'][] = 'survey_all_member_emails';
+$CF['email_html'][] = 'survey_duration';

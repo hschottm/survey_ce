@@ -328,13 +328,21 @@ class SurveyPINTAN extends Backend
                     break;
                 case 'anoncode':
                     // generate anonymous TANs
-                    $nrOfTAN = (int) Input::post('nrOfTAN');
-
+                    $nrOfTAN = abs((int) Input::post('nrOfTAN'));
                     $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
-                    for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
-                        $pintan = $this->svy->generatePIN_TAN();
-                        $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN']);
+
+                    $newCount = $exiCount = 0;
+                    $exiCount = SurveyPinTanModel::countBy(['pid = ? AND used = 0', 'member_id = 0'],[$survey->id]);
+
+                    if($exiCount <= $nrOfTAN) {
+                        for ($i = 0; $i < ($nrOfTAN - $exiCount); ++$i) {
+                            $pintan = $this->svy->generatePIN_TAN();
+                            $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN'], 0);
+                            $newCount++;
+                        }
                     }
+                    // show generator result
+                    Message::addInfo(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['success'], $newCount, $exiCount));
                     break;
                 case 'nonanoncode':
                     // generate member-related TANs
@@ -345,25 +353,30 @@ class SurveyPINTAN extends Backend
                     if($memberGroups) {
                         // group-restricted survey
                         $newCount = $exiCount = 0;
-                        $newCount = $exiCount = 0;
                         foreach($memberGroups->getModels() as $memberGroup) {
-                            // $members is NULL if the group is empty
-                            if($memberGroup->disabled !== '1' && $members = $memberGroup->findAllMembers()) {
-                                foreach ($members as $member) {
-                                    $isExisting = SurveyPinTanModel::findBy(['pid = ? AND used = 0', 'member_id = ?'],[$survey->id, $member->id]);
-                                    if(!$isExisting) {
-                                        $pintan = $this->svy->generatePIN_TAN();
-                                        $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN'], $member->id);
-                                        $newCount++;
-                                    } else {
-                                        $exiCount++;
+                            if($memberGroup->disable !== '1') {
+                                // $members is NULL if the group is empty
+                                if($members = $memberGroup->findAllMembers()) {
+                                    foreach ($members as $member) {
+                                        $isExisting = SurveyPinTanModel::findBy(['pid = ? AND used = 0', 'member_id = ?'], [$survey->id, $member->id]);
+                                        if (!$isExisting) {
+                                            $pintan = $this->svy->generatePIN_TAN();
+                                            $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN'], $member->id);
+                                            $newCount++;
+                                        } else {
+                                            $exiCount++;
+                                        }
                                     }
+                                } else {
+                                    // group is empty
+                                    Message::addError(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['group_empty'],$memberGroup->name));
                                 }
                             } else {
-                                // no group available or group is disabled
-                                Message::addError($GLOBALS['TL_LANG']['tl_survey_pin_tan']['error']);
+                                // group is disabled
+                                Message::addError(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['group_disabled'],$memberGroup->name));
                             };
                         }
+                        // show generator result
                         Message::addInfo(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['success'],$newCount,$exiCount));
                     } else {
                         // survey for all members
@@ -381,8 +394,10 @@ class SurveyPINTAN extends Backend
                                     $exiCount++;
                                 }
                             }
+                            // show generator result
                             Message::addInfo(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['success'],$newCount,$exiCount));
                         } else {
+                            // no members given
                             Message::addError($GLOBALS['TL_LANG']['tl_survey_pin_tan']['error']);
                         };
                     }
@@ -460,8 +475,10 @@ class SurveyPINTAN extends Backend
         $widget->id = 'nrOfTAN';
         $widget->name = 'nrOfTAN';
         $widget->mandatory = true;
-        $widget->maxlength = 5;
-        $widget->rgxp = 'digit';
+        $widget->maxlength = 4;
+        $widget->minval = 1;
+        $widget->maxval = 9999;
+        $widget->rgxp = 'natural';
         $widget->nospace = true;
         $widget->value = $value;
         $widget->required = true;
@@ -474,7 +491,7 @@ class SurveyPINTAN extends Backend
         }
 
         // Valiate input
-        if ('tl_export_survey_pin_tan' === Input::post('FORM_SUBMIT')) {
+        if ('tl_generate_survey_pin_tan' === Input::post('FORM_SUBMIT')) {
             $widget->validate();
 
             if ($widget->hasErrors()) {

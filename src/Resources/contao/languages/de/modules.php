@@ -15,7 +15,5 @@ declare(strict_types=1);
  */
 
 $GLOBALS['TL_LANG']['MOD']['surveys'] = 'Umfragen';
-$GLOBALS['TL_LANG']['MOD']['survey']['0'] = 'Umfragen';
-$GLOBALS['TL_LANG']['MOD']['survey']['1'] = 'Mit diesem Modul können Sie Umfragen erstellen und bearbeiten.';
-$GLOBALS['TL_LANG']['MOD']['scale']['0'] = 'Skalen';
-$GLOBALS['TL_LANG']['MOD']['scale']['1'] = 'Mit diesem Modul können Sie ordinale Skalen für Umfragen erstellen und bearbeiten.';
+$GLOBALS['TL_LANG']['MOD']['survey'] = ['Umfragen', 'Mit diesem Modul können Sie Umfragen erstellen und bearbeiten.'];
+$GLOBALS['TL_LANG']['MOD']['scale'] = ['Skalen', 'Mit diesem Modul können Sie ordinale Skalen für Umfragen erstellen und bearbeiten.'];

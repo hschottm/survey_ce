@@ -20,9 +20,6 @@ use Contao\MemberGroupModel as ContaoMemberGroupModel;
 use Contao\MemberModel;
 use Contao\StringUtil;
 
-/**
- *
- */
 class MemberGroupModel extends ContaoMemberGroupModel
 {
     public function __construct($objResult = null)
@@ -31,22 +28,25 @@ class MemberGroupModel extends ContaoMemberGroupModel
     }
 
     /**
-	 * Find all members of the current group
-	 */
-	public function findAllMembers()
-	{
+     * Find all members of the current group.
+     */
+    public function findAllMembers()
+    {
         // get all members within groups
         $members = MemberModel::findBy(['groups IS NOT NULL', 'disable = ?', 'locked = ?'], ['', '']);
 
-        if($members) {
+        if ($members) {
             $groupMembers = array_filter($members->getModels(), function ($member) {
                 $arrGroups = StringUtil::deserialize($member->groups);
-                if (in_array($this->id, $arrGroups)) return $member;
+
+                if (\in_array($this->id, $arrGroups, true)) {
+                    return $member;
+                }
             });
         } else {
             $groupMembers = null;
         }
 
         return $groupMembers;
-	}
+    }
 }
