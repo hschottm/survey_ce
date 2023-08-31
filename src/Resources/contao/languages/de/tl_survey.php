@@ -33,7 +33,7 @@ $GLOBALS['TL_LANG']['tl_survey']['online_start']['1'] = 'Wenn Sie hier ein Datum
 $GLOBALS['TL_LANG']['tl_survey']['online_end']['0'] = 'Aktiviert bis';
 $GLOBALS['TL_LANG']['tl_survey']['online_end']['1'] = 'Wenn Sie hier ein Datum erfassen, wird die Umfrage nur bis zu diesem Tag aktiviert.';
 $GLOBALS['TL_LANG']['tl_survey']['limit_groups']['0'] = 'Limitieren auf Mitgliedergruppen';
-$GLOBALS['TL_LANG']['tl_survey']['limit_groups']['1'] = 'Limitieren Sie den Zugriff auf ausgewählte Mitgliedergruppen.';
+$GLOBALS['TL_LANG']['tl_survey']['limit_groups']['1'] = 'Limitieren Sie hier den Zugriff auf ausgewählte Mitgliedergruppen. Wenn Sie keine Gruppe auswählen, werden alle aktiven Mitglieder als Teilnehmer verwendet.';
 $GLOBALS['TL_LANG']['tl_survey']['allowed_groups']['0'] = 'Mitgliedergruppen';
 $GLOBALS['TL_LANG']['tl_survey']['allowed_groups']['1'] = 'Wählen Sie die Mitgliedergruppen aus, welche die Umfrage durchführen dürfen.';
 
@@ -52,8 +52,8 @@ $GLOBALS['TL_LANG']['tl_survey']['access']['anon'] = [
     '',
 ];
 $GLOBALS['TL_LANG']['tl_survey']['access']['anoncode'] = [
-    'Anonymisierte Umfrage mit TAN',
-    'Umfrageteilnehmer können die Umfrage nur mit einem Zugangscode (Transaktiosnnummer, TAN) starten. Eine Umfrage kann nur genau ein Mal pro Teilnehmer durchgeführt werden. Eine Zuordnung der Umfrageteilnehmer zu den Umfrageergebnissen ist nicht möglich.',
+    'Anonymisierte oder Personalisierte Umfrage mit TAN',
+    'Umfrageteilnehmer können die Umfrage nur mit einem Zugangscode (Transaktiosnnummer, TAN) starten. Eine Umfrage kann nur genau ein Mal pro Teilnehmer durchgeführt werden. Eine Zuordnung der Umfrageteilnehmer zu den Umfrageergebnissen ist bei der &raquo;anonymisierten Form&laquo; nicht möglich. Wählen Sie die &raquo;personalisierte Form&laquo;, um die Teilnehmer der Umfrage zuzordnen.',
     'Sie können hier weiterhin angeben, wie viele TANs Sie für die Umfrage generieren wollen. Auf diese Weise können Sie festlegen, wie viele Personen anonym an der Umfrage teilnehmen können. Sind alle TANs aufgebraucht, so ist auch die Umfrage abgeschlossen.',
 ];
 $GLOBALS['TL_LANG']['tl_survey']['access']['nonanoncode'] = [

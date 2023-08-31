@@ -105,7 +105,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
         'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
         'anoncode' => '{title_legend},title,author,description,language;'.
             '{activation_legend},online_start,online_end;'.
-            '{access_legend},access,usecookie;'.
+            '{access_legend},access,usecookie,limit_groups;'.
             '{texts_legend},introduction,finalsubmission;'.
             '{head_legend},show_title,show_cancel;'.
             '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;'.

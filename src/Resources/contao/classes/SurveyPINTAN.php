@@ -33,6 +33,7 @@ use Contao\Widget;
 use Hschottm\SurveyBundle\Export\Exporter;
 use Hschottm\SurveyBundle\Export\ExportHelper;
 
+use stdClass;
 use Symfony\Component\DomCrawler\Field\InputFormField;
 
 /**
@@ -263,16 +264,36 @@ class SurveyPINTAN extends Backend
                     $this->redirect(Backend::addToUrl('', true, ['key']));
                     break;
                 case 'anoncode':
-                    // generate anonymous TANs
-                    $this->Template->nrOfTAN = $this->getTANWidget();
+                    // generate anonymous or member-related TANs
+                    // limit to groups?
+                    if($survey->limit_groups === '1')
+                    {
+                        // check for member groups
+                        if($survey->allowed_groups) {
+                            // show groups
+                            $groups = $survey->getRelated('allowed_groups');
+                            foreach($groups->getModels() as $k => $group) $groupNames[] = $group->name;
+                            $memberGroup = sprintf(
+                                $GLOBALS['TL_LANG']['tl_survey']['access']['group'][1],
+                                implode(', ', $groupNames)
+                            );
+                        } else {
+                            // empty groups = all members
+                            $memberGroup = sprintf($GLOBALS['TL_LANG']['tl_survey']['access']['group'][0]);
+                        }
+                    } else {
+                        // not limited to a group = show the input field
+                        $this->Template->nrOfTAN = $this->getTANWidget();
+                        $memberGroup = sprintf($GLOBALS['TL_LANG']['tl_survey']['access']['group'][0]);
+                    }
                     // handle a POST request
                     $this->handlePOST($survey);
                     break;
                 case 'nonanoncode':
                     // generate member-related TANs
-                    // check member groups
+                    // check for member groups
                     if($survey->limit_groups === '1' && $survey->allowed_groups) {
-                        // specific groups
+                        // get allowed groups
                         $groups = $survey->getRelated('allowed_groups');
 
                         foreach($groups->getModels() as $k => $group) {
@@ -291,7 +312,6 @@ class SurveyPINTAN extends Backend
                     $this->handlePOST($survey);
                     break;
                 default:
-
             }
 
             $this->Template->note = sprintf(
@@ -327,22 +347,43 @@ class SurveyPINTAN extends Backend
                 case 'anon':
                     break;
                 case 'anoncode':
-                    // generate anonymous TANs
-                    $nrOfTAN = abs((int) Input::post('nrOfTAN'));
+                    // generate anonymous or member-related TANs
                     $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 
-                    $newCount = $exiCount = 0;
-                    $exiCount = SurveyPinTanModel::countBy(['pid = ? AND used = 0', 'member_id = 0'],[$survey->id]);
+                    // limit to groups?
+                    if($survey->limit_groups === '1')
+                    {
+                        // check groups
+                        if($survey->allowed_groups) {
+                            // get all member-groups for this survey
+                            $memberGroups = $survey->getRelated('allowed_groups');
+                            // check for valid groups
+                            if($memberGroups) {
+                                // group-restricted survey
+                                $c = $this->generateTANsForGroups($memberGroups, $survey);
+                            } else {
+                                // empty groups = all members
+                            }
+                        } else {
+                            // not limited to a group = all members
 
-                    if($exiCount <= $nrOfTAN) {
-                        for ($i = 0; $i < ($nrOfTAN - $exiCount); ++$i) {
-                            $pintan = $this->svy->generatePIN_TAN();
-                            $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN'], 0);
-                            $newCount++;
+                        }
+                    } else {
+                        // not limited to a group = generate from input field
+                        $nrOfTAN = abs((int) Input::post('nrOfTAN'));
+                        $newCount = $exiCount = 0;
+                        $exiCount = SurveyPinTanModel::countBy(['pid = ? AND used = 0', 'member_id = 0'],[$survey->id]);
+
+                        if($exiCount <= $nrOfTAN) {
+                            for ($i = 0; $i < ($nrOfTAN - $exiCount); ++$i) {
+                                $pintan = $this->svy->generatePIN_TAN();
+                                $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN'], 0);
+                                $newCount++;
+                            }
                         }
                     }
                     // show generator result
-                    Message::addInfo(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['success'], $newCount, $exiCount));
+                    Message::addInfo(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['success'], $c->new, $c->exist));
                     break;
                 case 'nonanoncode':
                     // generate member-related TANs
@@ -352,32 +393,9 @@ class SurveyPINTAN extends Backend
                     // check for valid groups
                     if($memberGroups) {
                         // group-restricted survey
-                        $newCount = $exiCount = 0;
-                        foreach($memberGroups->getModels() as $memberGroup) {
-                            if($memberGroup->disable !== '1') {
-                                // $members is NULL if the group is empty
-                                if($members = $memberGroup->findAllMembers()) {
-                                    foreach ($members as $member) {
-                                        $isExisting = SurveyPinTanModel::findBy(['pid = ? AND used = 0', 'member_id = ?'], [$survey->id, $member->id]);
-                                        if (!$isExisting) {
-                                            $pintan = $this->svy->generatePIN_TAN();
-                                            $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN'], $member->id);
-                                            $newCount++;
-                                        } else {
-                                            $exiCount++;
-                                        }
-                                    }
-                                } else {
-                                    // group is empty
-                                    Message::addError(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['group_empty'],$memberGroup->name));
-                                }
-                            } else {
-                                // group is disabled
-                                Message::addError(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['group_disabled'],$memberGroup->name));
-                            };
-                        }
+                        $c = $this->generateTANsForGroups($memberGroups, $survey);
                         // show generator result
-                        Message::addInfo(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['success'],$newCount,$exiCount));
+                        Message::addInfo(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['success'],$c->new,$c->exist));
                     } else {
                         // survey for all members
                         $members = MemberModel::findBy(['disable = ?', 'locked = ?'], ['', '']);
@@ -408,6 +426,45 @@ class SurveyPINTAN extends Backend
 
             $this->redirect(Backend::addToUrl('', true, ['key']));
         }
+    }
+
+    /**
+     * generates TANs for all members of all given groups
+     *
+     * @param $memberGroups
+     * @return void
+     */
+    private function generateTANsForGroups($memberGroups, $survey): stdClass {
+
+        $counter        = new stdClass();
+        $counter->new   =  0;
+        $counter->exist = 0;
+
+        foreach($memberGroups->getModels() as $memberGroup) {
+            if($memberGroup->disable !== '1') {
+                // $members is NULL if the group is empty
+                if($members = $memberGroup->findAllMembers()) {
+                    foreach ($members as $member) {
+                        $isExisting = SurveyPinTanModel::findBy(['pid = ? AND used = 0', 'member_id = ?'], [$survey->id, $member->id]);
+                        if (!$isExisting) {
+                            $pintan = $this->svy->generatePIN_TAN();
+                            $this->insertPinTan($survey->id, $pintan['PIN'], $pintan['TAN'], $member->id);
+                            $counter->new++;
+                        } else {
+                            $counter->exist++;
+                        }
+                    }
+                } else {
+                    // group is empty
+                    Message::addError(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['group_empty'],$memberGroup->name));
+                }
+            } else {
+                // group is disabled
+                Message::addError(sprintf($GLOBALS['TL_LANG']['tl_survey_pin_tan']['group_disabled'],$memberGroup->name));
+            };
+        }
+
+        return $counter;
     }
 
     /**
@@ -471,13 +528,12 @@ class SurveyPINTAN extends Backend
     protected function getTANWidget($value = null)
     {
         $widget = new TextField();
-
         $widget->id = 'nrOfTAN';
         $widget->name = 'nrOfTAN';
         $widget->mandatory = true;
-        $widget->maxlength = 4;
+        $widget->maxlength = empty($_ENV['MAX_ALLOWED_TAN']) ? 3 : strlen($_ENV['MAX_ALLOWED_TAN']);
         $widget->minval = 1;
-        $widget->maxval = 9999;
+        $widget->maxval = $_ENV['MAX_ALLOWED_TAN'] ?? 999;
         $widget->rgxp = 'natural';
         $widget->nospace = true;
         $widget->value = $value;
