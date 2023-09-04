@@ -158,7 +158,7 @@ class ContentSurvey extends ContentElement
                         } else {
                             $this->pin = $this->svy->getPINforTAN($this->objSurvey->id, $tan);
 
-                            if (0 === $result) {
+                            if ('0' === $result) {
                                 $res = SurveyPinTanModel::findOneBy(['tan=?', 'pid=?'], [$tan, $this->objSurvey->id]);
 
                                 if (null !== $res) {
@@ -174,7 +174,7 @@ class ContentSurvey extends ContentElement
                             } else {
                                 $status = $this->svy->getSurveyStatus($this->objSurvey->id, $this->pin);
 
-                                if (0 === strcmp($status, 'finished')) {
+                                if ('finished' === $status) {
                                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                                     $this->Template->hideStartButtons = true;
                                 } else {
