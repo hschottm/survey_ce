@@ -96,8 +96,9 @@ $GLOBALS['TL_LANG']['tl_survey']['copy']['0'] = 'Umfrage duplizieren';
 $GLOBALS['TL_LANG']['tl_survey']['copy']['1'] = 'Umfrage ID %s duplizieren';
 $GLOBALS['TL_LANG']['tl_survey']['delete']['0'] = 'Umfrage löschen';
 $GLOBALS['TL_LANG']['tl_survey']['delete']['1'] = 'Umfrage ID %s löschen';
-$GLOBALS['TL_LANG']['tl_survey']['surveyPage']['0'] = 'Seite der Umfrage';
-$GLOBALS['TL_LANG']['tl_survey']['surveyPage']['1'] = 'Bitte wählen Sie die Seite aus, auf der Sie die Umfrage durchführen wollen. Bei einer ausgewählten Seite wird eine Start-URL mit dem zugehörigen TAN-Code generiert.';
+
+#$GLOBALS['TL_LANG']['tl_survey']['surveyPage']  = ['Seite der Umfrage' , 'Bitte wählen Sie die Seite aus, auf der Sie die Umfrage durchführen wollen. Bei einer ausgewählten Seite wird eine Start-URL mit dem zugehörigen TAN-Code generiert.'];
+$GLOBALS['TL_LANG']['tl_survey']['surveyPage']  = ['Seite der Umfrage' , 'Wenn Sie Empfänger*Innen einladen oder erinnern möchten, dann müssen Sie hier die Umfrage auswählen, auf die sich die Einladung oder Erinnerung bezieht.'];
 
 $GLOBALS['TL_LANG']['tl_survey']['skipEmpty'] = ['Leere Felder auslassen', 'Leere Felder in der E-Mail nicht anzeigen.'];
 $GLOBALS['TL_LANG']['tl_survey']['sendConfirmationMail'] = ['Bestätigung per E-Mail versenden', 'Wenn Sie diese Option wählen, wird eine Bestätigung per E-Mail an den Absender des Formulars versendet.'];
@@ -148,5 +149,6 @@ $GLOBALS['TL_LANG']['tl_survey']['activation_legend'] = 'Aktivierung';
 $GLOBALS['TL_LANG']['tl_survey']['access_legend'] = 'Zugriff';
 $GLOBALS['TL_LANG']['tl_survey']['texts_legend'] = 'Einleitende und abschließende Bemerkung';
 $GLOBALS['TL_LANG']['tl_survey']['misc_legend'] = 'Allgemeine Einstellungen';
+$GLOBALS['TL_LANG']['tl_survey']['notification_legend'] = 'Benachrichtigungen verwenden';
 $GLOBALS['TL_LANG']['tl_survey']['sendformattedmail_legend'] = 'Per E-Mail versenden';
 $GLOBALS['TL_LANG']['tl_survey']['sendconfirmationmail_legend'] = 'Bestätigung per E-Mail versenden';

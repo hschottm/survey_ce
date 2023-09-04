@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 use Contao\Backend;
 use Contao\CoreBundle\Exception\AccessDeniedException;
+use Contao\DC_Table;
 use Contao\Input;
 use Contao\MemberModel;
 use Contao\System;
@@ -28,14 +29,13 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 $GLOBALS['TL_DCA']['tl_survey_participant'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_survey',
         'doNotCopyRecords' => true,
         'enableVersioning' => true,
         'closed' => true,
         'onload_callback' => [
             ['tl_survey_participant', 'checkPermission'],
-            ['tl_survey_participant', 'onLoadCheckSurveyType'],
         ],
         'ondelete_callback' => [
             ['tl_survey_participant', 'deleteParticipant'],
@@ -61,18 +61,6 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
             'label_callback' => ['tl_survey_participant', 'getLabel'],
         ],
         'global_operations' => [
-            'invite' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['invite'],
-                'href' => 'key=invite',
-                'class' => 'header_invite',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
-            ],
-            'remind' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['remind'],
-                'href' => 'key=remind',
-                'class' => 'header_remind',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
-            ],
             'exportraw' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['exportraw'],
                 'href' => 'key=exportraw',
@@ -273,38 +261,5 @@ class tl_survey_participant extends Backend
         }
 
         return $this->pageCount;
-    }
-
-    /**
-     * handles some states onLoad
-     * - suppress buttons etc.
-     *
-     * @param DataContainer $dc
-     * @return void
-     */
-    public function onLoadCheckSurveyType(DataContainer $dc):void
-    {
-        // id holds the survey.id
-        if($dc->id) {
-            // we have a valid survey - get the survey data record
-            $survey= SurveyModel::findByPk($dc->id);
-
-            if($survey) {
-                // a survey is available - test access mode
-                switch ($survey->access) {
-                    case 'anon':
-                    case 'anoncode':
-                        unset($GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['invite']);
-                        unset($GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['remind']);
-                        break;
-                    case 'nonanoncode':
-                        break;
-                    default:
-                }
-            }
-
-        } else {
-            // we don't have a survey
-        }
     }
 }

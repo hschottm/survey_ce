@@ -65,6 +65,18 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
                 'class' => 'header_export',
                 'attributes' => 'onclick="Backend.getScrollOffset();"',
             ],
+            'invite' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite'],
+                'href' => 'key=invite',
+                'class' => 'header_invite',
+                'attributes' => 'onclick="Backend.getScrollOffset();"',
+            ],
+            'remind' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind'],
+                'href' => 'key=remind',
+                'class' => 'header_remind',
+                'attributes' => 'onclick="Backend.getScrollOffset();"',
+            ],
             'all' => [
                 'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href' => 'act=select',
@@ -159,8 +171,9 @@ class tl_survey_pin_tan extends Backend
     }
 
     /**
-     * handles some states onLoad
-     * - suppress buttons etc.
+     * onLoadCallback
+     *   - check the access method = survey type
+     *   - suppress buttons etc.
      */
     public function onLoadCheckSurveyType(DataContainer $dc): void
     {
@@ -172,14 +185,15 @@ class tl_survey_pin_tan extends Backend
                 // a survey is available - test access mode
                 switch ($survey->access) {
                     case 'anon':
-                        unset($GLOBALS['TL_DCA']['tl_survey_pin_tan']['list']['global_operations']['createtan'], $GLOBALS['TL_DCA']['tl_survey_pin_tan']['list']['global_operations']['exporttan']);
-
-                        break;
-
-                    case 'anoncode':
-                        break;
-
                     case 'nonanoncode':
+                        unset(
+                            $GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['createtan'],
+                            $GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['exporttan'],
+                            $GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['invite'],
+                            $GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['remind']
+                        );
+                        break;
+                    case 'anoncode':
                         break;
 
                     default:

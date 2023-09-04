@@ -100,7 +100,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
 
     // Palettes
     'palettes' => [
-        '__selector__' => ['access', 'limit_groups', 'useResultCategories', 'sendConfirmationMail', 'sendConfirmationMailAlternate', 'addConfirmationMailAttachments', 'addConfirmationMailAlternateAttachments', 'useInvitation', 'useReminder'],
+        '__selector__' => ['access', 'limit_groups', 'useResultCategories', 'sendConfirmationMail', 'sendConfirmationMailAlternate', 'addConfirmationMailAttachments', 'addConfirmationMailAlternateAttachments', 'useNotifications'],
         'default' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end',
         'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
         'anoncode' => '{title_legend},title,author,description,language;'.
@@ -109,6 +109,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             '{texts_legend},introduction,finalsubmission;'.
             '{head_legend},show_title,show_cancel;'.
             '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;'.
+            '{notification_legend},useNotifications;'.
             '{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
         'nonanoncode' => '{title_legend},title,author,description,language;'.
             '{activation_legend},online_start,online_end;'.
@@ -116,7 +117,6 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             '{texts_legend},introduction,finalsubmission;'.
             '{head_legend},show_title,show_cancel;'.
             '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;'.
-            '{notification_legend},useInvitation,useReminder;'.
             '{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
     ],
 
@@ -128,8 +128,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
         'sendConfirmationMailAlternate' => 'confirmationMailAlternateCondition,confirmationMailAlternateRecipient,confirmationMailAlternateSender,confirmationMailAlternateReplyto,confirmationMailAlternateSubject,confirmationMailAlternateText,confirmationMailAlternateTemplate,addConfirmationMailAlternateAttachments',
         'addConfirmationMailAttachments' => 'confirmationMailAttachments',
         'addConfirmationMailAlternateAttachments' => 'confirmationMailAlternateAttachments',
-        'useInvitation' => 'invitationNotificationId',
-        'useReminder' => 'reminderNotificationId',
+        'useNotifications' => 'invitationNotificationId,reminderNotificationId,surveyPage',
     ],
 
     // Fields
@@ -277,11 +276,6 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'explanation' => 'jumpTo',
             'eval' => ['fieldType' => 'radio', 'helpwizard' => true, 'tl_class' => 'clr'],
             'sql' => "int(10) unsigned NOT NULL default '0'",
-        ],
-        'surveyPage' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey']['surveyPage'],
-            'inputType' => 'pageTree',
-            'eval' => ['mandatory' => false, 'fieldType' => 'radio'],
         ],
         'useResultCategories' => [
             'exclude' => true,
@@ -519,7 +513,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'sql' => 'blob NULL',
         ],
         // nc extension for survey
-        'useInvitation' => [
+        'useNotifications' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'checkbox',
@@ -531,23 +525,22 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'inputType' => 'select',
             'foreignKey' => 'tl_nc_notification.title',
             'flag' => 1, // 1 Sort by initial letter ascending
-            'eval' => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => false],
+            'eval' => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => true],
             'sql' => "int(10) NOT NULL default '0'",
-        ],
-        'useReminder' => [
-            'exclude' => true,
-            'filter' => true,
-            'inputType' => 'checkbox',
-            'eval' => ['submitOnChange' => true],
-            'sql' => "char(1) NOT NULL default ''",
         ],
         'reminderNotificationId' => [
             'exclude' => true,
             'inputType' => 'select',
             'foreignKey' => 'tl_nc_notification.title',
             'flag' => 1, // 1 Sort by initial letter ascending
-            'eval' => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => false],
+            'eval' => ['tl_class' => 'w50', 'chosen' => true, 'includeBlankOption' => true],
             'sql' => "int(10) NOT NULL default '0'",
+        ],
+        'surveyPage' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_survey']['surveyPage'],
+            'inputType' => 'pageTree',
+            'eval' => ['mandatory' => true, 'fieldType' => 'radio', 'tl_class' => 'clr'],
+            'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
     ],
 ];

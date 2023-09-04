@@ -21,7 +21,6 @@ use Hschottm\SurveyBundle\FormMatrixQuestion;
 use Hschottm\SurveyBundle\FormMultipleChoiceQuestion;
 use Hschottm\SurveyBundle\FormOpenEndedQuestion;
 use Hschottm\SurveyBundle\MemberGroupModel;
-use Hschottm\SurveyBundle\SurveyParticipant;
 use Hschottm\SurveyBundle\SurveyPINTAN;
 use Hschottm\SurveyBundle\SurveyQuestionConstantsum;
 use Hschottm\SurveyBundle\SurveyQuestionMatrix;
@@ -65,8 +64,8 @@ array_insert($GLOBALS['BE_MOD'], 3, [
             'details' => [SurveyResultDetails::class, 'showDetails'],
             // tl_survey_participant
             'exportraw' => [SurveyResultDetails::class, 'exportResultsRaw'],
-            'invite' => [SurveyParticipant::class, 'invite'],
-            'remind' => [SurveyParticipant::class, 'remind'],
+            'invite' => [SurveyPINTAN::class, 'invite'],
+            'remind' => [SurveyPINTAN::class, 'remind'],
         ],
         'scale' => [
             'tables' => [
@@ -109,18 +108,22 @@ $CF = &$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['contao']['core_form
 
 // allowed field = token, add comments in langauges\*\tokens.php or tokens.xlf
 $CF['recipients'][] = 'survey_title';
-$CF['recipients'][] = 'survey_all_member_emails';
+$CF['recipients'][] = 'survey_recipient_email';
 
-$CF['email_recipient_cc'][] = 'survey_all_member_emails';
+$CF['email_recipient_cc'][] = 'survey_recipient_email';
 
-$CF['email_recipient_bcc'][] = 'survey_all_member_emails';
+$CF['email_recipient_bcc'][] = 'survey_recipient_email';
 
 $CF['email_subject'][] = 'survey_title';
+$CF['email_subject'][] = 'survey_link';
 
 $CF['email_text'][] = 'survey_title';
-$CF['email_text'][] = 'survey_all_member_emails';
+$CF['email_text'][] = 'survey_recipient_email';
+$CF['email_text'][] = 'survey_link';
 $CF['email_text'][] = 'survey_duration';
 
 $CF['email_html'][] = 'survey_title';
-$CF['email_html'][] = 'survey_all_member_emails';
+$CF['email_html'][] = 'survey_recipient_email';
+$CF['email_html'][] = 'survey_link';
 $CF['email_html'][] = 'survey_duration';
+

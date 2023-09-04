@@ -40,3 +40,34 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['success'] = 'Es wurden %s TANs generie
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['error'] = 'Es wurden keine TANs generiert, weil für diese Umfrage keine Mitglieder ermittelt werden konnten. Bitte prüfen Sie, ob die betreffenden Mitglieder aktiviert bzw. nicht gesperrt sind. Für gesperrte und deaktivierte Mitglieder werden keine TANs generiert.';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['group_empty'] = 'Gruppe &raquo;%s&laquo; ist aktiviert, enthält jedoch keine Mitglieder. Für diese Gruppe wurden keine TANs generiert.';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['group_disabled'] = 'Gruppe &raquo;%s&laquo; ist deaktiviert. Für Mitglieder dieser Gruppe wurden keine TANs generiert.';
+
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite'] = ['Einladen', 'Alle Mitglieder zur Umfrage einladen. Es werden alle Mitglieder zur Umfrage eingeladen, die ihre Umfrage noch nicht &raquo;begonnen&laquo; oder noch nicht &raquo;beendet&laquo; haben.'];
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind'] = ['Erinnern', 'Alle Mitglieder an die Umfrage erinnern. Es werden alle Mitglieder an die Umfrage erinnert, die ihre Umfrage noch nicht &raquo;begonnen&laquo; haben.'];
+
+// partcipant invite view
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['note_template'] = <<< 'EOT'
+    <h1>Sie möchten für die Umfrage &raquo;%s&laquo; eine Einladung an alle teilnehmenden Personen versenden.</h1>
+    <p>%s</p>
+    <p style='color:#F47C00;'>%s</p>
+    <p style='color:#F47C00;'>%s</p>
+    <h1>Es werden %s Mitglieder eingeladen.</h1>
+    EOT;
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_text'] = <<< 'EOT'
+    Alle Teilnehmenden Personen erhalten eine Einladungsmail. Sie haben dafür die Nachricht &raquo;<strong>%s</strong>&laquo; im Notification Center festgelegt. Die Einladung enthält einen personalisierten Link, mit dem die eingeladene Person die Umfrage aufrufen kann.
+    EOT;
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_warn'] = <<< 'EOT'
+    Je nach Größe der Zielgruppe kann das Versenden der Einladungen einige Zeit in Anspruch nehmen.
+    Stellen Sie auch bitte sicher, dass Sie über Ihr System Massenmails versenden dürfen, damit der Hoster
+    nicht versehentlich Ihr Konto wegen des Verdachts auf einen Spam-Versand sperrt.
+    EOT;
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_hint'] = <<< 'EOT'
+    Es werden nur Personen eingeladen, die ihre Umfrage &raquo;<strong style='color:#F47C00;'>noch
+    nicht begonnen</strong>&laquo; haben. Personen die ihre Umfrage
+    bereits &raquo;<strong style='color:#F47C00;'>abgeschlossen</strong>&laquo;
+    oder &raquo;<strong style='color:#F47C00;'>begonnen</strong>&laquo; haben, werden nicht eingeladen.
+    EOT;
+
+// partcipant invite messages
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_success'] = 'Es wurden %s Einladungen versandt.';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_error'] = 'Der Versand der Einladungen war nicht erfolgreich. Bitte prüfen Sie das System-Log.';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_no_invitation_available'] = 'Die in der Umfrage angegebene Einladung ist nicht vorhanden.';
