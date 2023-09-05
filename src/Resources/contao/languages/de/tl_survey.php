@@ -97,7 +97,6 @@ $GLOBALS['TL_LANG']['tl_survey']['copy']['1'] = 'Umfrage ID %s duplizieren';
 $GLOBALS['TL_LANG']['tl_survey']['delete']['0'] = 'Umfrage löschen';
 $GLOBALS['TL_LANG']['tl_survey']['delete']['1'] = 'Umfrage ID %s löschen';
 
-#$GLOBALS['TL_LANG']['tl_survey']['surveyPage']  = ['Seite der Umfrage' , 'Bitte wählen Sie die Seite aus, auf der Sie die Umfrage durchführen wollen. Bei einer ausgewählten Seite wird eine Start-URL mit dem zugehörigen TAN-Code generiert.'];
 $GLOBALS['TL_LANG']['tl_survey']['surveyPage']  = ['Seite der Umfrage' , 'Wenn Sie Empfänger*Innen einladen oder erinnern möchten, dann müssen Sie hier die Umfrage auswählen, auf die sich die Einladung oder Erinnerung bezieht.'];
 
 $GLOBALS['TL_LANG']['tl_survey']['skipEmpty'] = ['Leere Felder auslassen', 'Leere Felder in der E-Mail nicht anzeigen.'];

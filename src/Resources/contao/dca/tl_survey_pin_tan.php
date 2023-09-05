@@ -134,11 +134,31 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'],
             'sorting' => true,
             'flag' => 6, // desc, grouped by day (side effect: tstamp label is now in 'datimFormat')
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'maxlength' => 16, 'insertTag' => true],
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'invited' => [
+            'sorting' => true,
+            'flag' => 6, // desc, grouped by day (side effect: tstamp label is now in 'datimFormat')
+            'inputType' => 'text',
+            'eval' => ['mandatory' => false, 'maxlength' => 16],
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'reminded' => [
+            'sorting' => true,
+            'flag' => 6, // desc, grouped by day (side effect: tstamp label is now in 'datimFormat')
+            'inputType' => 'text',
+            'eval' => ['mandatory' => false, 'maxlength' => 16],
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'reminded_count' => [
+            'sorting' => true,
+            'flag' => 6, // desc, grouped by day (side effect: tstamp label is now in 'datimFormat')
+            'inputType' => 'text',
+            'eval' => ['mandatory' => false, 'maxlength' => 16],
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
     ],
@@ -156,18 +176,47 @@ class tl_survey_pin_tan extends Backend
 {
     public function getLabel($row, $label)
     {
-        preg_match('/^(.*?)::(.*?)::(.*?)$/', $label, $matches);
+        $L = $GLOBALS['TL_LANG']['tl_survey_pin_tan'];
+        // used icon
+        $key = $row['used'] === '0' ? 'tan_new' : 'tan_used';
+        $alt = $L[$key];
+        $attributes = "title='{$L[$key]}'";
+        $usedIcon = Image::getHtml("bundles/hschottmsurvey/images/$key.svg", $alt, $attributes);
 
-        if ($matches[3]) {
-            // tan is used
-            $used = '<img src="bundles/hschottmsurvey/images/tan_used.png" alt="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'].'" title="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'].'" />';
-        } else {
-            $used = '<img src="bundles/hschottmsurvey/images/tan_new.png" alt="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'].'" title="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'].'" />';
-        }
+        // generated
+        $key = 'key';
+        $alt = $L[$key];
+        $generatedAt   = date($GLOBALS['TL_CONFIG']['datimFormat'], (int) $row['tstamp']);
+        $attributes = "title='{$L[$key]} $generatedAt'";
+        $generatedIcon = Image::getHtml("bundles/hschottmsurvey/images/$key.svg", $alt, $attributes);
+        $generated     = "$generatedIcon <span $attributes>$generatedAt</span>";
+
+        $key = 'invite';
+        $alt = $L['invited'];
+        $invitedAt  = (int) $row['invited'] === 0 ? $L['not_yet'] : date($GLOBALS['TL_CONFIG']['datimFormat'], (int) $row['invited']);
+        $attributes = "title='{$L['invited']} $invitedAt'";
+        $inviteIcon = Image::getHtml("bundles/hschottmsurvey/images/$key.svg", $alt, $attributes);
+        $invited    = "$inviteIcon <span $attributes>$invitedAt</span>";
+
+        $key = 'remind';
+        $alt = $L['reminded'];
+        $remindedAt  = (int) $row['reminded'] === 0 ?
+            $L['not_yet'] :
+            $row['reminded_count'] . $L['reminder'] . date($GLOBALS['TL_CONFIG']['datimFormat'], (int) $row['reminded']);
+        $attributes = "title='{$L['reminded']} $remindedAt'";
+        $remindIcon = Image::getHtml("bundles/hschottmsurvey/images/$key.svg", $alt, $attributes);
+        $reminded    = "$remindIcon <span $attributes>$remindedAt</span>";
 
         $member = 0 !== (int) $row['member_id'] ? ' &#10132; '.SurveyPINTAN::formatMember($row['member_id']) : '';
 
-        return sprintf("<div>%s <strong>%s</strong> (%s)$member</div>", $used, $matches[1], $matches[2]);
+        return sprintf(
+            "<div>%s <strong>%s</strong> %s $member %s %s</div>",
+            $usedIcon,
+            $row['tan'],
+            $generated,
+            $invited,
+            $reminded
+        );
     }
 
     /**
@@ -185,7 +234,6 @@ class tl_survey_pin_tan extends Backend
                 // a survey is available - test access mode
                 switch ($survey->access) {
                     case 'anon':
-                    case 'nonanoncode':
                         unset(
                             $GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['createtan'],
                             $GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['exporttan'],
@@ -194,6 +242,14 @@ class tl_survey_pin_tan extends Backend
                         );
                         break;
                     case 'anoncode':
+                        if($survey->useNotifications !== '1') {
+                            unset(
+                                $GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['invite'],
+                                $GLOBALS['TL_DCA'][$dc->table]['list']['global_operations']['remind']
+                            );
+                        }
+                        break;
+                    case 'nonanoncode':
                         break;
 
                     default:

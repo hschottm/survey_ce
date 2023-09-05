@@ -70,12 +70,18 @@ class SurveyModel extends Model
      * retrieves all members of a survey and returns them as a unique collection
      * duplicate members are supressed
      *
-     * @param $blnIncludeDisable    prepared for future use
-     * @param $blnIncludeLocked     prepared for future use
+     * @param null $invited if null, then all members are returned,
+     *                      if string like 'invited = 0', only members without an invitation returned
+     * @param bool $blnIncludeDisable prepared for future use
+     * @param bool $blnIncludeLocked prepared for future use
      * @return array|null
      * @throws \Exception
      */
-    public function findAllUniqueParticipants($blnIncludeDisable = false, $blnIncludeLocked = false): ?Model\Collection
+    public function findAllUniqueParticipants(
+        $invited = null,
+        $blnIncludeDisable = false,
+        $blnIncludeLocked = false
+    ): ?Model\Collection
     {
         $result = null;
         // decode groups
@@ -91,16 +97,39 @@ class SurveyModel extends Model
                 if ($memberGroup->disable !== '1') {
                     // $members is NULL if the group is empty
                     if ($members = $memberGroup->findAllMembers())
-                        foreach ($members as $member) { $result[$member->id] = $member; }
+                        $this->aggregateMember($result, $members, $invited);
                 }
             }
         } else {
             // survey has no group = return all members
             if($members = MemberModel::findBy(['disable = ?', 'locked = ?'], ['', '']))
-                foreach ($members as $member) { $result[$member->id] = $member; }
+                #foreach ($members as $member) { $result[$member->id] = $member; }
+                $this->aggregateMember($result, $members, $invited);
         }
 
         return is_null($result) ? $result : new Model\Collection(array_values($result), self::$strTable);
+    }
+
+    /**
+     * aggregates all members in one array
+     *
+     * @param array|null $result
+     * @param $members
+     * @param string|null $invited
+     * @return void
+     */
+    private function aggregateMember(?array &$result, $members,?string $invited) {
+        foreach ($members as $member) {
+            if (is_null($invited)) {
+                $result[$member->id] = $member;
+            } elseif (gettype($invited) === 'string') {
+                $pintan = SurveyPinTanModel::findOneBy(['pid = ?', 'used = ?','member_id = ?', $invited],[$this->id,'0',$member->id]);
+                if($pintan) {
+                    $member->_pintan = $pintan;
+                    $result[$member->id] = $member;
+                }
+            }
+        }
     }
 }
 

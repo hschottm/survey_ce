@@ -140,3 +140,8 @@ table.tl_cumulated {
   color:#0080FF;
   margin-bottom: 15px;
 }
+#tl_participants_invite .access_template ul li {
+  list-style-type: square;
+  list-style-position: inside;
+  margin: 0 0 2px 0;
+}

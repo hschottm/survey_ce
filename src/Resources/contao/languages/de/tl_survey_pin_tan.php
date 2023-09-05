@@ -21,8 +21,15 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['sort'] = 'Sortierung';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['url'] = 'URL zur Umfrage';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['create'] = 'Erzeugen';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['export'] = 'Exportieren';
+// list labels
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'] = 'Die TAN wurde bereits verwendet';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'] = 'Die TAN ist noch nicht verwendet worden';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['key'] = 'TAN wurde generiert am:';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invited'] = 'Mitglied wurde zur Umfrage eingeladen am:';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['reminded'] = 'Mitglied wurde an die Umfrage erinnert am:';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['reminder'] = '. Erinnerung am: ';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['not_yet'] = 'noch nicht';
+
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'] = ['Anzahl der TAN-Codes', 'Bitte geben Sie die Anzahl der TAN-Codes ein, die Sie erzeugen möchten.'];
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['memberGroupId'] = [
     'für Mitglieder der Gruppe',
@@ -45,29 +52,78 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite'] = ['Einladen', 'Alle Mitglied
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind'] = ['Erinnern', 'Alle Mitglieder an die Umfrage erinnern. Es werden alle Mitglieder an die Umfrage erinnert, die ihre Umfrage noch nicht &raquo;begonnen&laquo; haben.'];
 
 // partcipant invite view
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['note_template'] = <<< 'EOT'
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_note_template'] = <<< 'EOT'
     <h1>Sie möchten für die Umfrage &raquo;%s&laquo; eine Einladung an alle teilnehmenden Personen versenden.</h1>
     <p>%s</p>
-    <p style='color:#F47C00;'>%s</p>
-    <p style='color:#F47C00;'>%s</p>
-    <h1>Es werden %s Mitglieder eingeladen.</h1>
+    <p>%s</p>
+    <p>%s</p>
+    <h1>Es werden %s Mitglieder eingeladen.%s</h1>
     EOT;
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_text'] = <<< 'EOT'
-    Alle Teilnehmenden Personen erhalten eine Einladungsmail. Sie haben dafür die Nachricht &raquo;<strong>%s</strong>&laquo; im Notification Center festgelegt. Die Einladung enthält einen personalisierten Link, mit dem die eingeladene Person die Umfrage aufrufen kann.
+    Alle Teilnehmenden Personen erhalten eine Einladungsmail. Sie haben dafür die Nachricht
+    <p>&raquo;<strong>%s</strong>&laquo;</p>
+    im Notification Center festgelegt. Die Einladung enthält einen personalisierten Link, mit dem die eingeladene Person die Umfrage aufrufen kann.
     EOT;
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_warn'] = <<< 'EOT'
     Je nach Größe der Zielgruppe kann das Versenden der Einladungen einige Zeit in Anspruch nehmen.
-    Stellen Sie auch bitte sicher, dass Sie über Ihr System Massenmails versenden dürfen, damit der Hoster
+    Stellen Sie daher bitte sicher, dass Sie über Ihr System Massenmails versenden dürfen, damit der Hoster
     nicht versehentlich Ihr Konto wegen des Verdachts auf einen Spam-Versand sperrt.
     EOT;
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_hint'] = <<< 'EOT'
-    Es werden nur Personen eingeladen, die ihre Umfrage &raquo;<strong style='color:#F47C00;'>noch
-    nicht begonnen</strong>&laquo; haben. Personen die ihre Umfrage
-    bereits &raquo;<strong style='color:#F47C00;'>abgeschlossen</strong>&laquo;
-    oder &raquo;<strong style='color:#F47C00;'>begonnen</strong>&laquo; haben, werden nicht eingeladen.
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_hint'] = <<<EOT
+    Es werden nur Personen eingeladen,
+    <ul>
+    <li>die ihre Umfrage &raquo;<strong>noch nicht begonnen</strong>&laquo; haben.
+    (Personen die ihre Umfrage &raquo;<strong>begonnen</strong>&laquo;
+    oder bereits &raquo;<strong>abgeschlossen</strong>&laquo; haben, werden nicht eingeladen.)</li>
+    <li>die bisher noch nicht eingeladen wurden und</li>
+    </ul>
     EOT;
+// nobody to invite
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_none'] = ['keine', ' Es wurden bereits alle Mitglieder zu dieser Umfrage eingeladen.'];
 
-// partcipant invite messages
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_success'] = 'Es wurden %s Einladungen versandt.';
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_error'] = 'Der Versand der Einladungen war nicht erfolgreich. Bitte prüfen Sie das System-Log.';
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_no_invitation_available'] = 'Die in der Umfrage angegebene Einladung ist nicht vorhanden.';
+// buttons
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_invitation_send']   = 'Jetzt einladen';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_invitation_cancel'] = 'Abbrechen';
+
+// member invite messages
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_result_template'] = 'Es wurden %s Einladungen versandt, %s Einladungen wurden übergangen.';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_no_invitation_available'] = 'Die in der Umfrage angegebene Notification für die Einladung ist nicht vorhanden.';
+
+
+
+// partcipant remind view
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_note_template'] = <<< 'EOT'
+    <h1>Sie möchten für die Umfrage &raquo;%s&laquo; eine Erinnerung an alle teilnehmenden Personen versenden.</h1>
+    <p>%s</p>
+    <p>%s</p>
+    <p>%s</p>
+    <h1>Es werden %s Mitglieder erinnert.%s</h1>
+    EOT;
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_text'] = <<< 'EOT'
+    Alle Teilnehmenden Personen erhalten eine Erinnerungssmail. Sie haben dafür die Nachricht
+    <p>&raquo;<strong>%s</strong>&laquo;</p>
+    im Notification Center festgelegt. Die Erinnerung enthält einen personalisierten Link, mit dem die erinnerte Person die Umfrage aufrufen kann.
+    EOT;
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_warn'] = <<< 'EOT'
+    Je nach Größe der Zielgruppe kann das Versenden der Erinnerungen einige Zeit in Anspruch nehmen.
+    Stellen Sie daher bitte sicher, dass Sie über Ihr System Massenmails versenden dürfen, damit der Hoster
+    nicht versehentlich Ihr Konto wegen des Verdachts auf einen Spam-Versand sperrt.
+    EOT;
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_hint'] = <<<EOT
+    Es werden nur Personen erinnert,
+    <ul>
+    <li>die ihre Umfrage &raquo;<strong>noch nicht begonnen</strong>&laquo; haben.
+    (Personen die ihre Umfrage &raquo;<strong>begonnen</strong>&laquo;
+    oder bereits &raquo;<strong>abgeschlossen</strong>&laquo; haben, werden nicht erinnert.)</li>
+    </ul>
+    EOT;
+// nobody to invite
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_none'] = ['keine', ' Die Mitglieder dieser Umfrage wurden bereits erinnert.'];
+
+// buttons
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_reminder_send']   = 'Jetzt erinnern';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_reminder_cancel'] = 'Abbrechen';
+
+// member invite messages
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_result_template'] = 'Es wurden %s Erinnerungen versandt, %s Erinnerungen wurden übergangen.';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_no_invitation_available'] = 'Die in der Umfrage angegebene Notification für die Erinnerung ist nicht vorhanden.';

@@ -606,55 +606,64 @@ class SurveyPINTAN extends Backend
             $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
         }
 
+        $L = $GLOBALS['TL_LANG']['tl_survey_pin_tan'];
+
         $this->Template = new BackendTemplate('be_participants_invite');
         // prepare header
-        $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-        $this->Template->hrefBack = Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']);
-        $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite'][0];
+        $this->Template->goBack     = $GLOBALS['TL_LANG']['MSC']['goBack'];
+        $this->Template->hrefBack   = Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']);
+        $this->Template->headline   = $L['invite'][0];
 
-        // get all valid participants alias members ToDo: member locked? disabled? has email?
-        //$pintan = SurveyPinTanModel::findBy(['pid = ?', 'used = 0'], [$survey->id]);
-        // get all members of this survey
-        $members = $survey->findAllUniqueParticipants();
+        // get all participants of this survey who have not been invited yet
+        $members = $survey->findAllUniqueParticipants("invited = 0");
+        // get the invitation notification
+        $notification = Notification::findByPk($survey->invitationNotificationId);
 
         // check request method
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
             if (\array_key_exists('send', $_POST)) {
                 // send invitations
-
-                // get the invitation notification
-                $notification = Notification::findByPk($survey->invitationNotificationId);
-
                 if (null !== $notification) {
                     // each member
+                    $counter = new stdClass();
+                    $counter->sent = $counter->fail = 0;
+
                     foreach($members as $member) {
                         // prepare the notification tokens
                         $pageModel = PageModel::findOneBy('id', $survey->surveyPage);
                         $domain = Environment::get('base');
                         $pagedata = null !== $pageModel ? $pageModel->row() : null;
-                        $pintan = SurveyPinTanModel::findOneBy(['pid = ?', 'used = ?','member_id = ?'],[$survey->id,'0',$member->id]);
-                        $survey_link = StringUtil::ampersand($domain.$this->generateFrontendUrl($pagedata, "/code/$pintan->tan"));
+
+                        // an unused TAN for this member does exist
+                        $survey_link = StringUtil::ampersand($domain . $this->generateFrontendUrl($pagedata, "/code/{$member->_pintan->tan}"));
                         //
                         $arrTokens = [
                             'survey_title' => $survey->title,
                             'survey_recipient_email' => $member->email,
-                            'survey_link' => $survey_link
+                            'survey_link' => $survey_link,
+                            'survey_duration' => '12min',
                         ];
                         // send notification
                         if ($notification->send($arrTokens)) {
-                            Message::addInfo(
-                                sprintf(
-                                    $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_success'],
-                                    count($members)
-                                )
-                            );
+                            // success
+                            $member->_pintan->invited = time();
+                            $member->_pintan->save();
+                            $counter->sent++;
                         } else {
-                            Message::addInfo($GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_error']);
+                            $counter->fail++;
                         }
                     } // end foreach members
+                    // construct a result message
+                    Message::addInfo(
+                        sprintf(
+                            $L['invite_result_template'],
+                            $counter->sent,
+                            $counter->fail
+                        )
+                    );
                 } else {
                     // no notification available
-                    Message::addError($GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_no_invitation_available']);
+                    Message::addError($L['invite_no_invitation_available']);
                 }
 
                 $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
@@ -664,19 +673,20 @@ class SurveyPINTAN extends Backend
             }
         }
         // prepare buttons
-        $this->Template->send = StringUtil::specialchars('Jetzt einladen');
-        $this->Template->cancel = StringUtil::specialchars('Abbrechen');
+        $this->Template->send = is_null($members) ? '' : StringUtil::specialchars($L['button_invitation_send']);
+        $this->Template->cancel = StringUtil::specialchars($L['button_invitation_cancel']);
 
         $this->Template->note = sprintf(
-            $GLOBALS['TL_LANG']['tl_survey_pin_tan']['note_template'],
+            $L['invite_note_template'],
             $survey->title,
             sprintf(
-                $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_text'],
-                'Name der Notification'
+                $L['invite_text'],
+                $notification->title
             ),
-            $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_warn'],
-            $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_hint'],
-            count($members)
+            $L['invite_warn'],
+            $L['invite_hint'],
+            is_null($members) ? $L['invite_none'][0] : count($members),
+            is_null($members) ? $L['invite_none'][1] : '',
         );
 
         return $this->Template->parse();
@@ -693,6 +703,103 @@ class SurveyPINTAN extends Backend
         if (__FUNCTION__ !== Input::get('key')) {
             return '';
         }
+
+        $id = (int) Input::get('id');
+        $hrefBack = "table={$dc->table}&id=".$id;
+
+        if (0 === $id) {
+            // no id available or manipulated
+            $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
+        }
+        // find associated survey
+        if (null === ($survey = SurveyModel::findByPk($id))) {
+            // requested survey not found
+            $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
+        }
+
+        $L = $GLOBALS['TL_LANG']['tl_survey_pin_tan'];
+
+        $this->Template = new BackendTemplate('be_participants_remind');
+        // prepare header
+        $this->Template->goBack     = $GLOBALS['TL_LANG']['MSC']['goBack'];
+        $this->Template->hrefBack   = Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']);
+        $this->Template->headline   = $L['remind'][0];
+
+        // get all participants of this survey who have not been invited yet
+        $members = $survey->findAllUniqueParticipants("invited > 0");
+        // get the invitation notification
+        $notification = Notification::findByPk($survey->reminderNotificationId);
+
+        // check request method
+        if ('POST' === $_SERVER['REQUEST_METHOD']) {
+            if (\array_key_exists('send', $_POST)) {
+                // send invitations
+                if (null !== $notification) {
+                    // each member
+                    $counter = new stdClass();
+                    $counter->sent = $counter->fail = 0;
+
+                    foreach($members as $member) {
+                        // prepare the notification tokens
+                        $pageModel = PageModel::findOneBy('id', $survey->surveyPage);
+                        $domain = Environment::get('base');
+                        $pagedata = null !== $pageModel ? $pageModel->row() : null;
+
+                        // an unused TAN for this member does exist
+                        $survey_link = StringUtil::ampersand($domain . $this->generateFrontendUrl($pagedata, "/code/{$member->_pintan->tan}"));
+                        //
+                        $arrTokens = [
+                            'survey_title' => $survey->title,
+                            'survey_recipient_email' => $member->email,
+                            'survey_link' => $survey_link,
+                            'survey_duration' => '12min',
+                        ];
+                        // send notification
+                        if ($notification->send($arrTokens)) {
+                            // success
+                            $member->_pintan->reminded = time();
+                            $member->_pintan->reminded_count++;
+                            $member->_pintan->save();
+                            $counter->sent++;
+                        } else {
+                            $counter->fail++;
+                        }
+                    } // end foreach members
+                    // construct a result message
+                    Message::addInfo(
+                        sprintf(
+                            $L['invite_result_template'],
+                            $counter->sent,
+                            $counter->fail
+                        )
+                    );
+                } else {
+                    // no notification available
+                    Message::addError($L['invite_no_invitation_available']);
+                }
+
+                $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
+            } elseif (\array_key_exists('cancel', $_POST)) {
+                // cancel sending
+                $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
+            }
+        }
+        // prepare buttons
+        $this->Template->send = is_null($members) ? '' : StringUtil::specialchars($L['button_reminder_send']);
+        $this->Template->cancel = StringUtil::specialchars($L['button_reminder_cancel']);
+
+        $this->Template->note = sprintf(
+            $L['remind_note_template'],
+            $survey->title,
+            sprintf(
+                $L['remind_text'],
+                $notification->title
+            ),
+            $L['remind_warn'],
+            $L['remind_hint'],
+            is_null($members) ? $L['remind_none'][0] : count($members),
+            is_null($members) ? $L['remind_none'][1] : '',
+        );
 
         return $this->Template->parse();
     }

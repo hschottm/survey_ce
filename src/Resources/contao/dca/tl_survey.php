@@ -109,7 +109,6 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             '{texts_legend},introduction,finalsubmission;'.
             '{head_legend},show_title,show_cancel;'.
             '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;'.
-            '{notification_legend},useNotifications;'.
             '{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
         'nonanoncode' => '{title_legend},title,author,description,language;'.
             '{activation_legend},online_start,online_end;'.
@@ -122,7 +121,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
 
     // Palettes
     'subpalettes' => [
-        'limit_groups' => 'allowed_groups',
+        'limit_groups' => 'allowed_groups,{notification_legend},useNotifications',
         'useResultCategories' => 'resultCategories',
         'sendConfirmationMail' => 'confirmationMailRecipientField,confirmationMailRecipient,confirmationMailSender,confirmationMailReplyto,confirmationMailSubject,confirmationMailText,confirmationMailTemplate,addConfirmationMailAttachments',
         'sendConfirmationMailAlternate' => 'confirmationMailAlternateCondition,confirmationMailAlternateRecipient,confirmationMailAlternateSender,confirmationMailAlternateReplyto,confirmationMailAlternateSubject,confirmationMailAlternateText,confirmationMailAlternateTemplate,addConfirmationMailAlternateAttachments',
