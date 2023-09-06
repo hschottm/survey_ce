@@ -114,7 +114,8 @@ class SurveyQuestionConstantsum extends SurveyQuestion
             $counter = 1;
             $idx = 1;
 
-            foreach ($arrChoices as $ignored) {
+            //foreach ($arrChoices as $unused) {
+            while ($arrChoices->next()) {
                 $acounter = 3;
 
                 foreach ($this->statistics['cumulated'][$idx] as $answervalue => $nrOfAnswers) {
@@ -182,6 +183,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
     protected function calculateStatistics(): void
     {
         if (\array_key_exists('id', $this->arrData) && \array_key_exists('parentID', $this->arrData)) {
+            /** @noinspection PhpNamedArgumentMightBeUnresolvedInspection */
             $objResult = Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
                 ->execute($this->arrData['id'], $this->arrData['parentID'])
             ;
@@ -348,10 +350,10 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         } else {
             // output all choice columns
             $rotateInfo[$row] = [];
-            $narrowWidth = 2 * 640;
-            $sumWidth = 0;
+            // $narrowWidth = 2 * 640;  // ToDo: remove later
+            // $sumWidth = 0;
 
-            foreach ($this->choices as $key => $choice) {
+            foreach ($this->choices as $choice) {
                 $data = [
                     Exporter::DATA => $choice,
                     Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,

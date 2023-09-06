@@ -25,6 +25,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SurveyPinTanContainer
 {
+    /**
+     * @noinspection PhpPropertyOnlyWrittenInspection
+     */
     private RequestStack $requestStack;
 
     public function __construct(RequestStack $requestStack)

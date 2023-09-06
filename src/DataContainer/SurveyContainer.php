@@ -67,6 +67,7 @@ class SurveyContainer
             return '';
         }
 
+        /** @noinspection HtmlUnknownTarget */
         return sprintf(
             '<a href="%s" title="%s"%s>%s</a> ',
             Backend::addToUrl($href.'&amp;id='.$row['id']),
