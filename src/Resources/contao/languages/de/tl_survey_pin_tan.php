@@ -69,7 +69,7 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_warn'] = <<< 'EOT'
     Stellen Sie daher bitte sicher, dass Sie über Ihr System Massenmails versenden dürfen, damit der Hoster
     nicht versehentlich Ihr Konto wegen des Verdachts auf einen Spam-Versand sperrt.
     EOT;
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_hint'] = <<<EOT
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_hint'] = <<<'EOT'
     Es werden nur Personen eingeladen,
     <ul>
     <li>die ihre Umfrage &raquo;<strong>noch nicht begonnen</strong>&laquo; haben.
@@ -82,14 +82,12 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_hint'] = <<<EOT
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_none'] = ['keine', ' Es wurden bereits alle Mitglieder zu dieser Umfrage eingeladen.'];
 
 // buttons
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_invitation_send']   = 'Jetzt einladen';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_invitation_send'] = 'Jetzt einladen';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_invitation_cancel'] = 'Abbrechen';
 
 // member invite messages
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_result_template'] = 'Es wurden %s Einladungen versandt, %s Einladungen wurden übergangen.';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite_no_invitation_available'] = 'Die in der Umfrage angegebene Notification für die Einladung ist nicht vorhanden.';
-
-
 
 // partcipant remind view
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_note_template'] = <<< 'EOT'
@@ -109,7 +107,7 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_warn'] = <<< 'EOT'
     Stellen Sie daher bitte sicher, dass Sie über Ihr System Massenmails versenden dürfen, damit der Hoster
     nicht versehentlich Ihr Konto wegen des Verdachts auf einen Spam-Versand sperrt.
     EOT;
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_hint'] = <<<EOT
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_hint'] = <<<'EOT'
     Es werden nur Personen erinnert,
     <ul>
     <li>die ihre Umfrage &raquo;<strong>noch nicht begonnen</strong>&laquo; haben.
@@ -121,9 +119,9 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_hint'] = <<<EOT
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_none'] = ['keine', ' Die Mitglieder dieser Umfrage wurden bereits erinnert.'];
 
 // buttons
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_reminder_send']   = 'Jetzt erinnern';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_reminder_send'] = 'Jetzt erinnern';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_reminder_cancel'] = 'Abbrechen';
 
 // member invite messages
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_result_template'] = 'Es wurden %s Erinnerungen versandt, %s Erinnerungen wurden übergangen.';
-$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_no_invitation_available'] = 'Die in der Umfrage angegebene Notification für die Erinnerung ist nicht vorhanden.';
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_no_reminder_available'] = 'Die in der Umfrage angegebene Notification für die Erinnerung ist nicht vorhanden.';

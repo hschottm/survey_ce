@@ -107,7 +107,6 @@ $GLOBALS['TL_MODELS']['tl_member_group'] = MemberGroupModel::class;
 $CF = &$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['contao']['core_form'];
 
 // allowed field = token, add comments in langauges\*\tokens.php or tokens.xlf
-$CF['recipients'][] = 'survey_title';
 $CF['recipients'][] = 'survey_recipient_email';
 
 $CF['email_recipient_cc'][] = 'survey_recipient_email';
@@ -116,14 +115,23 @@ $CF['email_recipient_bcc'][] = 'survey_recipient_email';
 
 $CF['email_subject'][] = 'survey_title';
 $CF['email_subject'][] = 'survey_link';
+$CF['email_subject'][] = 'survey_duration';
+$CF['email_subject'][] = 'survey_recipient_firstname';
+$CF['email_subject'][] = 'survey_recipient_lastname';
+$CF['email_subject'][] = 'survey_recipient_fullname';
 
 $CF['email_text'][] = 'survey_title';
 $CF['email_text'][] = 'survey_recipient_email';
 $CF['email_text'][] = 'survey_link';
 $CF['email_text'][] = 'survey_duration';
+$CF['email_text'][] = 'survey_recipient_firstname';
+$CF['email_text'][] = 'survey_recipient_lastname';
+$CF['email_text'][] = 'survey_recipient_fullname';
 
 $CF['email_html'][] = 'survey_title';
 $CF['email_html'][] = 'survey_recipient_email';
 $CF['email_html'][] = 'survey_link';
 $CF['email_html'][] = 'survey_duration';
-
+$CF['email_html'][] = 'survey_recipient_firstname';
+$CF['email_html'][] = 'survey_recipient_lastname';
+$CF['email_html'][] = 'survey_recipient_fullname';

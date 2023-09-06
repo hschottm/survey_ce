@@ -17,12 +17,6 @@ declare(strict_types=1);
 namespace Hschottm\SurveyBundle;
 
 use Contao\Backend;
-use Contao\BackendTemplate;
-use Contao\DataContainer;
-use Contao\Input;
-use Contao\Message;
-use Contao\StringUtil;
-use NotificationCenter\Model\Notification;
 
 class SurveyParticipant extends Backend
 {

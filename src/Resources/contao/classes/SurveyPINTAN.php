@@ -627,22 +627,18 @@ class SurveyPINTAN extends Backend
                     // each member
                     $counter = new stdClass();
                     $counter->sent = $counter->fail = 0;
+                    // check for valid page model
+                    $pageModel = PageModel::findOneBy('id', $survey->surveyPage);
+
+                    if(!$pageModel) {
+                        // a rare case: the pagemodel was deleted
+                        Message::addError($L['invite_no_invitation_available']);
+                        $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
+                    }
 
                     foreach($members as $member) {
-                        // prepare the notification tokens
-                        $pageModel = PageModel::findOneBy('id', $survey->surveyPage);
-                        $domain = Environment::get('base');
-                        $pagedata = null !== $pageModel ? $pageModel->row() : null;
-
-                        // an unused TAN for this member does exist
-                        $survey_link = StringUtil::ampersand($domain . $this->generateFrontendUrl($pagedata, "/code/{$member->_pintan->tan}"));
-                        //
-                        $arrTokens = [
-                            'survey_title' => $survey->title,
-                            'survey_recipient_email' => $member->email,
-                            'survey_link' => $survey_link,
-                            'survey_duration' => '12min',
-                        ];
+                        // generate tokens
+                        $arrTokens = $this->generateTokensFromSurvey($survey, $member, $pageModel);
                         // send notification
                         if ($notification->send($arrTokens)) {
                             // success
@@ -725,35 +721,31 @@ class SurveyPINTAN extends Backend
         $this->Template->hrefBack   = Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']);
         $this->Template->headline   = $L['remind'][0];
 
-        // get all participants of this survey who have not been invited yet
+        // get all participants of this survey who have been always invited yet
         $members = $survey->findAllUniqueParticipants("invited > 0");
-        // get the invitation notification
+        // get the reminder notification
         $notification = Notification::findByPk($survey->reminderNotificationId);
 
         // check request method
         if ('POST' === $_SERVER['REQUEST_METHOD']) {
             if (\array_key_exists('send', $_POST)) {
-                // send invitations
+                // send reminders
                 if (null !== $notification) {
                     // each member
                     $counter = new stdClass();
                     $counter->sent = $counter->fail = 0;
+                    // check for valid page model
+                    $pageModel = PageModel::findOneBy('id', $survey->surveyPage);
+
+                    if(!$pageModel) {
+                        // a rare case: the pagemodel was deleted
+                        Message::addError($L['remind_no_reminder_available']);
+                        $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
+                    }
 
                     foreach($members as $member) {
-                        // prepare the notification tokens
-                        $pageModel = PageModel::findOneBy('id', $survey->surveyPage);
-                        $domain = Environment::get('base');
-                        $pagedata = null !== $pageModel ? $pageModel->row() : null;
-
-                        // an unused TAN for this member does exist
-                        $survey_link = StringUtil::ampersand($domain . $this->generateFrontendUrl($pagedata, "/code/{$member->_pintan->tan}"));
-                        //
-                        $arrTokens = [
-                            'survey_title' => $survey->title,
-                            'survey_recipient_email' => $member->email,
-                            'survey_link' => $survey_link,
-                            'survey_duration' => '12min',
-                        ];
+                        // generate tokens
+                        $arrTokens = $this->generateTokensFromSurvey($survey, $member, $pageModel);
                         // send notification
                         if ($notification->send($arrTokens)) {
                             // success
@@ -768,14 +760,14 @@ class SurveyPINTAN extends Backend
                     // construct a result message
                     Message::addInfo(
                         sprintf(
-                            $L['invite_result_template'],
+                            $L['remind_result_template'],
                             $counter->sent,
                             $counter->fail
                         )
                     );
                 } else {
                     // no notification available
-                    Message::addError($L['invite_no_invitation_available']);
+                    Message::addError($L['remind_no_reminder_available']);
                 }
 
                 $this::redirect(Backend::addToUrl($hrefBack, true, ['key', 'table', 'id']));
@@ -800,7 +792,25 @@ class SurveyPINTAN extends Backend
             is_null($members) ? $L['remind_none'][0] : count($members),
             is_null($members) ? $L['remind_none'][1] : '',
         );
-
         return $this->Template->parse();
+    }
+
+    private function generateTokensFromSurvey($survey, $member, $pageModel) : array
+    {
+        // build the survey url
+        $survey_link = Environment::get('base') . $pageModel->getFrontendUrl("/code/{$member->_pintan->tan}");
+
+        #$CF['email_html'][] = 'survey_participant_fullname';
+        #$CF['email_html'][] = 'survey_participant_full_title';
+
+        return [
+            'survey_title'      => $survey->title,
+            'survey_recipient_email'    => $member->email,
+            'survey_link'       => $survey_link,
+            'survey_duration'   => "{$survey->duration} min",
+            'survey_recipient_firstname'  => $member->firstname,
+            'survey_recipient_lastname'   => $member->lastname,
+            'survey_recipient_fullname'   => "$member->firstname $member->lastname",
+        ];
     }
 }

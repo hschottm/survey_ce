@@ -15,6 +15,10 @@ declare(strict_types=1);
  */
 
 $GLOBALS['TL_LANG']['NOTIFICATION_CENTER_TOKEN']['core_form']['survey_title'] = 'Der Titel der Umfrage';
-$GLOBALS['TL_LANG']['NOTIFICATION_CENTER_TOKEN']['core_form']['survey_recipient_email'] = 'E-Mail-Adresse des/der Teilnehmer*In der Umfrage.';
-$GLOBALS['TL_LANG']['NOTIFICATION_CENTER_TOKEN']['core_form']['survey_link'] = 'Der personalisierte Link zur Umfrage.';
+$GLOBALS['TL_LANG']['NOTIFICATION_CENTER_TOKEN']['core_form']['survey_link'] = 'Der personalisierte Link zur Umfrage';
 $GLOBALS['TL_LANG']['NOTIFICATION_CENTER_TOKEN']['core_form']['survey_duration'] = 'Die maximale geschätzte Dauer für die Beantwortung dieser Umfrage';
+
+$GLOBALS['TL_LANG']['NOTIFICATION_CENTER_TOKEN']['core_form']['survey_recipient_email'] = 'E-Mail-Adresse des/der Teilnehmer*In der Umfrage';
+$GLOBALS['TL_LANG']['NOTIFICATION_CENTER_TOKEN']['core_form']['survey_recipient_firstname'] = 'Der Vorname des/der Teilnehmer*In';
+$GLOBALS['TL_LANG']['NOTIFICATION_CENTER_TOKEN']['core_form']['survey_recipient_lastname'] = 'Der Familienname des/der Teilnehmer*In';
+$GLOBALS['TL_LANG']['NOTIFICATION_CENTER_TOKEN']['core_form']['survey_recipient_fullname'] = 'Der Vorname und der Familienname des/der Teilnehmer*In';

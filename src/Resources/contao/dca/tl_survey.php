@@ -14,10 +14,7 @@ declare(strict_types=1);
  * @link       https://github.com/pdir/contao-survey
  */
 
-use Contao\Backend;
 use Contao\BackendUser;
-use Contao\Database;
-use Contao\Input;
 
 /*
  * Table tl_survey
@@ -47,7 +44,6 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
         'label' => [
             'fields' => ['title'],
             'format' => '%s',
-            'label_callback' => ['tl_survey', 'addIcon'],
         ],
         'global_operations' => [
             'all' => [
@@ -62,7 +58,6 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
                 'href' => 'table=tl_survey_pin_tan',
                 'icon' => 'bundles/hschottmsurvey/images/key.svg',
-                'button_callback' => ['tl_survey', 'pintanButton'],
             ],
             'edit' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['edit'],
@@ -101,16 +96,16 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
     // Palettes
     'palettes' => [
         '__selector__' => ['access', 'limit_groups', 'useResultCategories', 'sendConfirmationMail', 'sendConfirmationMailAlternate', 'addConfirmationMailAttachments', 'addConfirmationMailAlternateAttachments', 'useNotifications'],
-        'default' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end',
+        'default' => '{title_legend},title,author,description,language,duration;{activation_legend},online_start,online_end',
         'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
-        'anoncode' => '{title_legend},title,author,description,language;'.
+        'anoncode' => '{title_legend},title,author,description,language,duration;'.
             '{activation_legend},online_start,online_end;'.
             '{access_legend},access,usecookie,limit_groups;'.
             '{texts_legend},introduction,finalsubmission;'.
             '{head_legend},show_title,show_cancel;'.
             '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;'.
             '{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
-        'nonanoncode' => '{title_legend},title,author,description,language;'.
+        'nonanoncode' => '{title_legend},title,author,description,language,duration;'.
             '{activation_legend},online_start,online_end;'.
             '{access_legend},access,usecookie,limit_groups;'.
             '{texts_legend},introduction,finalsubmission;'.
@@ -121,7 +116,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
 
     // Palettes
     'subpalettes' => [
-        'limit_groups' => 'allowed_groups,{notification_legend},useNotifications',
+        'limit_groups' => 'allowed_groups,useNotifications',
         'useResultCategories' => 'resultCategories',
         'sendConfirmationMail' => 'confirmationMailRecipientField,confirmationMailRecipient,confirmationMailSender,confirmationMailReplyto,confirmationMailSubject,confirmationMailText,confirmationMailTemplate,addConfirmationMailAttachments',
         'sendConfirmationMailAlternate' => 'confirmationMailAlternateCondition,confirmationMailAlternateRecipient,confirmationMailAlternateSender,confirmationMailAlternateReplyto,confirmationMailAlternateSubject,confirmationMailAlternateText,confirmationMailAlternateTemplate,addConfirmationMailAlternateAttachments',
@@ -166,6 +161,13 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'foreignKey' => 'tl_user.name',
             'eval' => ['tl_class' => 'w50'],
             'sql' => "smallint(5) unsigned NOT NULL default '0'",
+        ],
+        'duration' => [
+            'exclude' => true,
+            'filter' => false,
+            'inputType' => 'text',
+            'eval' => ['maxlength' => 3, 'rgxp' => 'natural', 'minval' => 0, 'maxval' => 255, 'nospace' => true, 'tl_class' => 'w50'],
+            'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'online_start' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey']['online_start'],
@@ -331,7 +333,6 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'exclude' => true,
             'filter' => false,
             'inputType' => 'select',
-            'options_callback' => ['tl_survey', 'getEmailFormFields'],
             'eval' => ['chosen' => true, 'mandatory' => true, 'maxlength' => 64, 'tl_class' => 'w50'],
             'sql' => "varchar(64) NOT NULL default ''",
         ],
@@ -543,81 +544,3 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
         ],
     ],
 ];
-
-/**
- * Class tl_survey.
- *
- * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @copyright  Helmut Schottmüller 2009
- * @author     Helmut Schottmüller <typolight@aurealis.de>
- */
-class tl_survey extends Backend
-{
-    /**
-     * Load database object.
-     */
-    protected function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
-     * move optional action at first position.
-     *
-     * @return string
-     */
-    public function pintanButton(array $row, ?string $href, string $label, string $title, ?string $icon, string $attributes, string $table, ?array $rootRecordIds, ?array $childRecordIds, bool $circularReference, ?string $previous, ?string $next, DataContainer $dc)
-    {
-        if ('anon' === $row['access']) {
-            return '';
-        }
-
-        return sprintf(
-            '<a href="%s" title="%s"%s>%s</a> ',
-            Backend::addToUrl($href.'&amp;id='.$row['id']),
-            StringUtil::specialchars($title),
-            $attributes,
-            Image::getHtml($icon, $label)
-        );
-    }
-
-    /**
-     * Add an image to each record.
-     *
-     * @param array
-     * @param string
-     * @param mixed $row
-     * @param mixed $label
-     *
-     * @return string
-     */
-    public function addIcon($row, $label)
-    {
-        return sprintf('<div class="list_icon" style="background-image:url(\'bundles/hschottmsurvey/images/survey-outline.svg\');">%s</div>', $label);
-    }
-
-    public function getEmailFormFields()
-    {
-        $fields = [];
-
-        // Get all form fields which can be used to define recipient of confirmation mail
-        $objFields = Database::getInstance()->prepare('SELECT tl_survey_question.id,tl_survey_question.title FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? AND tl_survey_question.questiontype=? ORDER BY tl_survey_question.title ASC')
-            ->execute(Input::get('id'), 'openended')
-        ;
-
-        $fields[] = '-';
-
-        while ($objFields->next()) {
-            $k = $objFields->id;
-
-            if (strlen($k)) {
-                $v = $objFields->title;
-                $v = strlen($v) ? $v.' ['.$k.']' : $k;
-                $fields[$k] = $v;
-            }
-        }
-
-        return $fields;
-    }
-}

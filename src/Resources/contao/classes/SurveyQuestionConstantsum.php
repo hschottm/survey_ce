@@ -114,7 +114,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
             $counter = 1;
             $idx = 1;
 
-            foreach ($arrChoices as $choice) {
+            foreach ($arrChoices as $ignored) {
                 $acounter = 3;
 
                 foreach ($this->statistics['cumulated'][$idx] as $answervalue => $nrOfAnswers) {
