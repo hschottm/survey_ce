@@ -18,6 +18,7 @@ namespace Hschottm\SurveyBundle;
 
 use Contao\BackendTemplate;
 use Contao\ContentElement;
+use Contao\Controller;
 use Contao\Database\Result;
 use Contao\Email;
 use Contao\Environment;
@@ -99,13 +100,13 @@ class ContentSurvey extends ContentElement
 
         $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 
-        // check date activation
+        // is the survey already open?
         if (!empty($this->objSurvey->online_start) && ($this->objSurvey->online_start > time())) {
             $this->Template->protected = true;
 
             return '';
         }
-
+        // is the survey already closed?
         if (!empty($this->objSurvey->online_end) && ($this->objSurvey->online_end < time())) {
             $this->Template->protected = true;
 
@@ -158,7 +159,7 @@ class ContentSurvey extends ContentElement
                         } else {
                             $this->pin = $this->svy->getPINforTAN($this->objSurvey->id, $tan);
 
-                            if (0 === $result) {
+                            if ('0' === $result) {
                                 $res = SurveyPinTanModel::findOneBy(['tan=?', 'pid=?'], [$tan, $this->objSurvey->id]);
 
                                 if (null !== $res) {
