@@ -10,6 +10,16 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
+## [3.6.0](https://github.com/pdir/contao-survey/tree/3.5.1) – 2023-09-07
+
+- [Changed] Logic for limiting surveys to user groups
+- [Changed] Added rules to lock and unlock certain features for surveys and TANs
+- [Changed] Processing of survey types was extended. Now also personalized surveys with a TAN are possible, to which the participants can be invited and reminded if the Notifications Center is installed, implements: [#45](https://github.com/pdir/contao-survey/issues/45)
+- [Added] font awesome svg icons
+- [Added] new field **survey duration** to show the estimated duration of a survey
+- [Added] Possibility of using invitation and reminder e-mails together with some new tokens for the Notification Center, implements: [#46](https://github.com/pdir/contao-survey/issues/46)
+- [Added] Support for [Notification Center](https://github.com/terminal42/contao-notification_center), implements: [#46](https://github.com/pdir/contao-survey/issues/46)
+
 ## [3.5.1](https://github.com/pdir/contao-survey/tree/3.5.1) – 2023-08-20
 
 - [Added] extended member related TAN generation added
