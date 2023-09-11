@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Hschottm\SurveyBundle;
 
 use Contao\Database;
+use Contao\MemberModel;
 use Contao\Model;
 use Contao\StringUtil;
 
@@ -63,6 +64,72 @@ class SurveyModel extends Model
         $categories = array_column($categories, 'category', 'id');
 
         return $categories[$id] ?? '';
+    }
+
+    /**
+     * retrieves all members of a survey and returns them as a unique collection
+     * duplicate members are supressed
+     *
+     * @param null $invited if null, then all members are returned,
+     *                      if string like 'invited = 0', only members without an invitation returned
+     * @param bool $blnIncludeDisable prepared for future use
+     * @param bool $blnIncludeLocked prepared for future use
+     * @return array|null
+     * @throws \Exception
+     */
+    public function findAllUniqueParticipants(
+        $invited = null,
+        $blnIncludeDisable = false,
+        $blnIncludeLocked = false
+    ): ?Model\Collection
+    {
+        $result = null;
+        // decode groups
+        $allowed_groups = StringUtil::deserialize($this->allowed_groups);
+        // do we have valid groups?
+        if($this->limit_groups === '1' && $allowed_groups) {
+            // survey has valid groups
+            // get all groups for this survey
+            $memberGroups = $this->getRelated('allowed_groups');
+            // iterate over each group
+            foreach($memberGroups->getModels() as $memberGroup) {
+                // only use enabled groups at this time
+                if ($memberGroup->disable !== '1') {
+                    // $members is NULL if the group is empty
+                    if ($members = $memberGroup->findAllMembers())
+                        $this->aggregateMember($result, $members, $invited);
+                }
+            }
+        } else {
+            // survey has no group = return all members
+            if($members = MemberModel::findBy(['disable = ?', 'locked = ?'], ['', '']))
+                #foreach ($members as $member) { $result[$member->id] = $member; }
+                $this->aggregateMember($result, $members, $invited);
+        }
+
+        return is_null($result) ? $result : new Model\Collection(array_values($result), self::$strTable);
+    }
+
+    /**
+     * aggregates all members in one array
+     *
+     * @param array|null $result
+     * @param $members
+     * @param string|null $invited
+     * @return void
+     */
+    private function aggregateMember(?array &$result, $members,?string $invited) {
+        foreach ($members as $member) {
+            if (is_null($invited)) {
+                $result[$member->id] = $member;
+            } elseif (gettype($invited) === 'string') {
+                $pintan = SurveyPinTanModel::findOneBy(['pid = ?', 'used = ?','member_id = ?', $invited],[$this->id,'0',$member->id]);
+                if($pintan) {
+                    $member->_pintan = $pintan;
+                    $result[$member->id] = $member;
+                }
+            }
+        }
     }
 }
 

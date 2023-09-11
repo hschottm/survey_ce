@@ -16,9 +16,12 @@ declare(strict_types=1);
 
 use Contao\Backend;
 use Contao\CoreBundle\Exception\AccessDeniedException;
+use Contao\DC_Table;
 use Contao\Input;
 use Contao\MemberModel;
 use Contao\System;
+
+use Hschottm\SurveyBundle\SurveyModel;
 use Hschottm\SurveyBundle\SurveyPageModel;
 use Hschottm\SurveyBundle\SurveyParticipantModel;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -26,7 +29,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 $GLOBALS['TL_DCA']['tl_survey_participant'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_survey',
         'doNotCopyRecords' => true,
         'enableVersioning' => true,
@@ -204,25 +207,21 @@ class tl_survey_participant extends Backend
         }
     }
 
-    public function getUsername($uid)
-    {
-        $user = MemberModel::findOneBy('id', $uid);
-
-        if (null !== $user) {
-            return trim($user->firstname.' '.$user->lastname);
-        }
-
-        return '';
-    }
-
-    public function getLabel($row, $label)
+    /**
+     * @param $row
+     * @param $label
+     * @param DataContainer $dc
+     * @return string
+     */
+    public function getLabel($row, $label, DataContainer $dc)
     {
         // we ignore the label param, the row has it all
         $finished = (int) ($row['finished']);
 
         return sprintf(
-            '<div>%s, <strong>%s</strong> <span style="color: #7f7f7f;">[%s%s]</span></div>',
-            date($GLOBALS['TL_CONFIG']['datimFormat'], $row['tstamp']),
+            '<div>%s %s, <strong>%s</strong> <span style="color: #7f7f7f;">[%s%s]</span></div>',
+            Image::getHtml('bundles/hschottmsurvey/images/key.svg', 'Label', "title='Titel'"),
+            date($GLOBALS['TL_CONFIG']['datimFormat'], (int) $row['tstamp']),
             $row['uid'] > 0
                 ? $this->getUsername($row['uid'])
                 : $row['pin'],
@@ -233,6 +232,12 @@ class tl_survey_participant extends Backend
                 ? ''
                 : ' ('.$row['lastpage'].'/'.$this->getPageCount($row['pid']).')'
         );
+    }
+    public function getUsername($uid)
+    {
+        if($user = MemberModel::findOneBy('id', $uid)) return trim("$user->firstname $user->lastname");
+
+        return '';
     }
 
     /**

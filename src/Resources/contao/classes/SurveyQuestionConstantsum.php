@@ -76,7 +76,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         }
     }
 
-    public function exportDataToExcel(& $exporter, $sheet, & $row): void
+    public function exportDataToExcel(&$exporter, $sheet, &$row): void
     {
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => 'ID', Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
         $exporter->setCellValue($sheet, $row, 1, [Exporter::DATA => $this->id, Exporter::CELLTYPE => Exporter::CELLTYPE_FLOAT, Exporter::COLWIDTH => Exporter::COLWIDTH_AUTO]);
@@ -114,7 +114,8 @@ class SurveyQuestionConstantsum extends SurveyQuestion
             $counter = 1;
             $idx = 1;
 
-            foreach ($arrChoices as $choice) {
+            //foreach ($arrChoices as $unused) {
+            while ($arrChoices->next()) {
                 $acounter = 3;
 
                 foreach ($this->statistics['cumulated'][$idx] as $answervalue => $nrOfAnswers) {
@@ -158,7 +159,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
      *
      * @TODO: eventually give out just indexes instead of choice strings to save width? Then the possible coices must be shown in the header.
      */
-    public function exportDetailsToExcel(& $exporter, $sheet, & $row, & $col, $questionNumbers, $participants)
+    public function exportDetailsToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, $participants)
     {
         $valueCol = $col;
         $rotateInfo = [];
@@ -182,6 +183,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
     protected function calculateStatistics(): void
     {
         if (\array_key_exists('id', $this->arrData) && \array_key_exists('parentID', $this->arrData)) {
+            /** @noinspection PhpNamedArgumentMightBeUnresolvedInspection */
             $objResult = Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
                 ->execute($this->arrData['id'], $this->arrData['parentID'])
             ;
@@ -238,7 +240,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
      *
      * @return array the cells to be added to the export
      */
-    protected function exportQuestionHeadersToExcel(& $exporter, $sheet, & $row, & $col, $questionNumbers, & $rotateInfo)
+    protected function exportQuestionHeadersToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
     {
         $this->choices = deserialize($this->arrData['sumchoices'], true);
 
@@ -348,10 +350,10 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         } else {
             // output all choice columns
             $rotateInfo[$row] = [];
-            $narrowWidth = 2 * 640;
-            $sumWidth = 0;
+            // $narrowWidth = 2 * 640;  // ToDo: remove later
+            // $sumWidth = 0;
 
-            foreach ($this->choices as $key => $choice) {
+            foreach ($this->choices as $choice) {
                 $data = [
                     Exporter::DATA => $choice,
                     Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
@@ -384,7 +386,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
      *
      * @TODO: make alignment and max colwidth configurable in dcaconfig.php ?
      */
-    protected function exportDetailResults(& $exporter, $sheet, & $row, & $col, $participants)
+    protected function exportDetailResults(&$exporter, $sheet, &$row, &$col, $participants)
     {
         $cells = [];
         $startCol = $col;

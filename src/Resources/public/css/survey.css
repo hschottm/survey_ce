@@ -89,6 +89,24 @@ table.tl_cumulated {
   margin-left: 15px;
 }
 
+.header_invite
+{
+  padding: 3px 0 3px 21px;
+  background-image:url("../images/invite.svg");
+  background-position:left center;
+  background-repeat:no-repeat;
+  margin-left: 15px;
+}
+
+.header_remind
+{
+  padding: 3px 0 3px 21px;
+  background-image:url("../images/remind.svg");
+  background-position:left center;
+  background-repeat:no-repeat;
+  margin-left: 15px;
+}
+
 .tl_left.surveypage {
 	line-height: normal;
 }
@@ -111,4 +129,25 @@ table.tl_cumulated {
   width: calc(33% - 30px);
   float: left;
   min-height: 80px;
+}
+
+#tl_generate_survey_pin_tan .access_template {
+  margin: 0 0 0 15px;
+}
+#tl_generate_survey_pin_tan .access_template h1 {
+  color:#0080FF;
+  margin-bottom: 15px;
+}
+
+#tl_participants_invite .access_template {
+  margin: 0 0 0 15px;
+}
+#tl_participants_invite .access_template h1 {
+  color:#0080FF;
+  margin-bottom: 15px;
+}
+#tl_participants_invite .access_template ul li {
+  list-style-type: square;
+  list-style-position: inside;
+  margin: 0 0 2px 0;
 }

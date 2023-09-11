@@ -20,6 +20,7 @@ use Hschottm\SurveyBundle\FormConstantSumQuestion;
 use Hschottm\SurveyBundle\FormMatrixQuestion;
 use Hschottm\SurveyBundle\FormMultipleChoiceQuestion;
 use Hschottm\SurveyBundle\FormOpenEndedQuestion;
+use Hschottm\SurveyBundle\MemberGroupModel;
 use Hschottm\SurveyBundle\SurveyPINTAN;
 use Hschottm\SurveyBundle\SurveyQuestionConstantsum;
 use Hschottm\SurveyBundle\SurveyQuestionMatrix;
@@ -49,7 +50,11 @@ array_insert($GLOBALS['BE_MOD'], 3, [
     'surveys' => [
         'survey' => [
             'tables' => [
-                'tl_survey', 'tl_survey_page', 'tl_survey_question', 'tl_survey_participant', 'tl_survey_pin_tan',
+                'tl_survey',
+                'tl_survey_page',
+                'tl_survey_question',
+                'tl_survey_participant',
+                'tl_survey_pin_tan',
             ],
             'scale' => ['tl_survey_question', 'addScale'],
             'export' => [SurveyResultDetails::class, 'exportResults'],
@@ -57,6 +62,10 @@ array_insert($GLOBALS['BE_MOD'], 3, [
             'exporttan' => [SurveyPINTAN::class, 'exportTAN'],
             'cumulated' => [SurveyResultDetails::class, 'showCumulated'],
             'details' => [SurveyResultDetails::class, 'showDetails'],
+            // tl_survey_participant
+            'exportraw' => [SurveyResultDetails::class, 'exportResultsRaw'],
+            'invite' => [SurveyPINTAN::class, 'invite'],
+            'remind' => [SurveyPINTAN::class, 'remind'],
         ],
         'scale' => [
             'tables' => [
@@ -75,8 +84,6 @@ array_insert($GLOBALS['BE_FFL'], 15, [
     'conditionwizard' => ConditionWizard::class,
 ]);
 
-$GLOBALS['BE_MOD']['surveys']['survey']['exportraw'] = [SurveyResultDetails::class, 'exportResultsRaw'];
-
 $GLOBALS['TL_SVY']['openended'] = FormOpenEndedQuestion::class;
 $GLOBALS['TL_SVY']['multiplechoice'] = FormMultipleChoiceQuestion::class;
 $GLOBALS['TL_SVY']['matrix'] = FormMatrixQuestion::class;
@@ -93,3 +100,38 @@ $GLOBALS['TL_SVY']['q_constantsum'] = SurveyQuestionConstantsum::class;
 if (isset($GLOBALS['TL_CONFIG']['urlKeywords'])) {
     $GLOBALS['TL_CONFIG']['urlKeywords'] .= (strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '').'code';
 }
+
+$GLOBALS['TL_MODELS']['tl_member_group'] = MemberGroupModel::class;
+
+// configures the tokens of the notification form
+$CF = &$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['contao']['core_form'];
+
+// allowed field = token, add comments in langauges\*\tokens.php or tokens.xlf
+$CF['recipients'][] = 'survey_recipient_email';
+
+$CF['email_recipient_cc'][] = 'survey_recipient_email';
+
+$CF['email_recipient_bcc'][] = 'survey_recipient_email';
+
+$CF['email_subject'][] = 'survey_title';
+$CF['email_subject'][] = 'survey_link';
+$CF['email_subject'][] = 'survey_duration';
+$CF['email_subject'][] = 'survey_recipient_firstname';
+$CF['email_subject'][] = 'survey_recipient_lastname';
+$CF['email_subject'][] = 'survey_recipient_fullname';
+
+$CF['email_text'][] = 'survey_title';
+$CF['email_text'][] = 'survey_recipient_email';
+$CF['email_text'][] = 'survey_link';
+$CF['email_text'][] = 'survey_duration';
+$CF['email_text'][] = 'survey_recipient_firstname';
+$CF['email_text'][] = 'survey_recipient_lastname';
+$CF['email_text'][] = 'survey_recipient_fullname';
+
+$CF['email_html'][] = 'survey_title';
+$CF['email_html'][] = 'survey_recipient_email';
+$CF['email_html'][] = 'survey_link';
+$CF['email_html'][] = 'survey_duration';
+$CF['email_html'][] = 'survey_recipient_firstname';
+$CF['email_html'][] = 'survey_recipient_lastname';
+$CF['email_html'][] = 'survey_recipient_fullname';

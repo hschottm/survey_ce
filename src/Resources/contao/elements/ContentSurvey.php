@@ -175,7 +175,7 @@ class ContentSurvey extends ContentElement
                             } else {
                                 $status = $this->svy->getSurveyStatus($this->objSurvey->id, $this->pin);
 
-                                if (0 === strcmp($status, 'finished')) {
+                                if ('finished' === $status) {
                                     $this->Template->errorMsg = $GLOBALS['TL_LANG']['ERR']['survey_already_finished'];
                                     $this->Template->hideStartButtons = true;
                                 } else {
