@@ -14,6 +14,19 @@ declare(strict_types=1);
  * @link       https://github.com/pdir/contao-survey
  */
 
-$GLOBALS['TL_LANG']['MOD']['surveys'] = 'Umfragen';
-$GLOBALS['TL_LANG']['MOD']['survey'] = ['Umfragen', 'Mit diesem Modul können Sie Umfragen erstellen und bearbeiten.'];
-$GLOBALS['TL_LANG']['MOD']['scale'] = ['Skalen', 'Mit diesem Modul können Sie ordinale Skalen für Umfragen erstellen und bearbeiten.'];
+namespace Hschottm\SurveyBundle;
+
+use Contao\Backend;
+
+class SurveyParticipant extends Backend
+{
+    protected $blnSave = true;
+
+    /**
+     * Load the database object.
+     */
+    protected function __construct()
+    {
+        parent::__construct();
+    }
+}

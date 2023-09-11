@@ -123,7 +123,7 @@ abstract class SurveyQuestion extends Backend
         return $result;
     }
 
-    public function getAnswersAsHTML()
+    public function getAnswersAsHTML(): string
     {
         if (!empty($resultData = $this->getResultData())) {
             $template = new FrontendTemplate('survey_answers_default');
@@ -131,6 +131,8 @@ abstract class SurveyQuestion extends Backend
 
             return $template->parse();
         }
+
+        return '';
     }
 
     public static function createInstance(int $questionId, string $questionType = null): ?self
@@ -158,7 +160,7 @@ abstract class SurveyQuestion extends Backend
         $this->arrStatistics = [];
     }
 
-    public function exportDataToExcel(& $exporter, $sheet, & $row)
+    public function exportDataToExcel(&$exporter, $sheet, &$row)
     {
         // overwrite in parent classes
         return [];
@@ -171,7 +173,7 @@ abstract class SurveyQuestion extends Backend
 
     abstract protected function calculateStatistics();
 
-    protected function calculateAnsweredSkipped(& $objResult): void
+    protected function calculateAnsweredSkipped(&$objResult): void
     {
         $this->arrStatistics = [];
         $this->arrStatistics['answered'] = 0;

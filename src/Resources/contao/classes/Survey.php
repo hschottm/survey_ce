@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Hschottm\SurveyBundle;
 
 use Contao\Backend;
+use Contao\StringUtil;
 
 class Survey extends Backend
 {
@@ -84,9 +85,11 @@ class Survey extends Backend
         return false;
     }
 
-    public function isUserAllowedToTakeSurvey(& $objSurvey)
+    public function isUserAllowedToTakeSurvey(&$objSurvey)
     {
-        $groups = !\strlen($objSurvey->allowed_groups) ? [] : deserialize($objSurvey->allowed_groups, true);
+        $allowed_groups = StringUtil::deserialize($objSurvey->allowed_groups, true);
+
+        $groups = null === $allowed_groups ? [] : $allowed_groups;
 
         if (0 === \count($groups)) {
             return false;
@@ -96,7 +99,7 @@ class Survey extends Backend
         if (!$this->User->id) {
             return false;
         }
-        $usergroups = deserialize($this->User->groups, true);
+        $usergroups = StringUtil::deserialize($this->User->groups, true);
 
         if (\count(array_intersect($usergroups, $groups))) {
             return true;

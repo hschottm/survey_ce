@@ -14,9 +14,6 @@ declare(strict_types=1);
  * @link       https://github.com/pdir/contao-survey
  */
 
-use Contao\Backend;
-use Hschottm\SurveyBundle\SurveyPINTAN;
-
 $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
     // Config
     'config' => [
@@ -46,19 +43,30 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
         'label' => [
             'fields' => ['tan', 'tstamp', 'used'],
             'format' => '%s::%s::%s',
-            'label_callback' => ['tl_survey_pin_tan', 'getLabel'],
         ],
         'global_operations' => [
             'createtan' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'],
                 'href' => 'key=createtan',
-                'class' => 'header_createtan',
+                'icon' => 'bundles/hschottmsurvey/images/key.svg',
                 'attributes' => 'onclick="Backend.getScrollOffset();"',
             ],
             'exporttan' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['exporttan'],
                 'href' => 'key=exporttan',
                 'class' => 'header_export',
+                'attributes' => 'onclick="Backend.getScrollOffset();"',
+            ],
+            'invite' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['invite'],
+                'href' => 'key=invite',
+                'class' => 'header_invite',
+                'attributes' => 'onclick="Backend.getScrollOffset();"',
+            ],
+            'remind' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind'],
+                'href' => 'key=remind',
+                'class' => 'header_remind',
                 'attributes' => 'onclick="Backend.getScrollOffset();"',
             ],
             'all' => [
@@ -96,7 +104,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
         ],
         // 0 means: the TAN is valid for all member
         'member_id' => [
-            'sql'       => "int(10) unsigned NOT NULL default '0'",
+            'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'pin' => [
             'sql' => "varchar(16) NOT NULL default ''",
@@ -118,39 +126,32 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
         'tstamp' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'],
             'sorting' => true,
             'flag' => 6, // desc, grouped by day (side effect: tstamp label is now in 'datimFormat')
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'maxlength' => 16, 'insertTag' => true],
             'sql' => "int(10) unsigned NOT NULL default '0'",
         ],
+        'invited' => [
+            'sorting' => true,
+            'flag' => 6,
+            'inputType' => 'text',
+            'eval' => ['mandatory' => false, 'maxlength' => 16],
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'reminded' => [
+            'sorting' => true,
+            'flag' => 6,
+            'inputType' => 'text',
+            'eval' => ['mandatory' => false, 'maxlength' => 16],
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
+        'reminded_count' => [
+            'sorting' => true,
+            'flag' => 6,
+            'inputType' => 'text',
+            'eval' => ['mandatory' => false, 'maxlength' => 16],
+            'sql' => "int(10) unsigned NOT NULL default '0'",
+        ],
     ],
 ];
-
-/**
- * Class tl_survey_pin_tan.
- *
- * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @copyright  Helmut Schottmüller 2009
- * @author     Helmut Schottmüller <typolight@aurealis.de>
- */
-class tl_survey_pin_tan extends Backend
-{
-    public function getLabel($row, $label)
-    {
-        preg_match('/^(.*?)::(.*?)::(.*?)$/', $label, $matches);
-
-        if ($matches[3]) {
-            // tan is used
-            $used = '<img src="bundles/hschottmsurvey/images/tan_used.png" alt="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'].'" title="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_used'].'" />';
-        } else {
-            $used = '<img src="bundles/hschottmsurvey/images/tan_new.png" alt="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'].'" title="'.$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan_new'].'" />';
-        }
-
-        $member = SurveyPINTAN::formatMember($row['member_id']);
-
-        return sprintf("<div>%s <strong>%s</strong> (%s)$member</div>", $used, $matches[1], $matches[2]);
-    }
-}
