@@ -217,6 +217,7 @@ class ContentSurvey extends ContentElement
 
         if (0 === \count($surveypage)) {
             if (!empty(Input::post('next'))) {
+
                 $pageid = $this->evaluateConditions($pages[$page - 1]);
 
                 if (null === $pageid) {
@@ -228,6 +229,7 @@ class ContentSurvey extends ContentElement
                         }
                     }
                 }
+
                 $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id ?? 0, $previouspage, $page);
             }
 
@@ -246,6 +248,7 @@ class ContentSurvey extends ContentElement
             }
 
             $surveypage = $this->createSurveyPage(($pages[($page > 0 ? $page - 1 : 0)] ?? null), $page, false);
+
         }
 
         // save position of last page (for resume)
@@ -316,7 +319,7 @@ class ContentSurvey extends ContentElement
         $this->Template->start = $GLOBALS['TL_LANG']['MSC']['survey_start'];
         $this->Template->finish = $GLOBALS['TL_LANG']['MSC']['survey_finish'];
         $this->Template->pin = $this->pin;
-        $this->Template->action = ampersand($formaction);
+        $this->Template->action = StringUtil::ampersand($formaction);
     }
 
     protected function evaluateConditions($page)
@@ -931,7 +934,7 @@ class ContentSurvey extends ContentElement
                 $this->Template->txtTANInput = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start'];
 
                 if (!empty(Input::get('code'))) {
-                    $this->Template->tancode = Input::get('code');
+                    $this->Template->tancode = trim(Input::get('code'));
                 }
                 break;
 
