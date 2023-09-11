@@ -10,6 +10,12 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
+## [3.6.0](https://github.com/pdir/contao-survey/tree/3.5.1) – 2023-09-11
+
+- [Added] an **autostart** feature for an anonymous survey with TAN. To use this feature,
+the page with the corresponding survey **must be accessed using a link**
+of the form https://domain/my-survey-page/code/NNNNNN.html with N as the TAN.
+
 ## [3.5.1](https://github.com/pdir/contao-survey/tree/3.5.1) – 2023-08-20
 
 - [Added] extended member related TAN generation added

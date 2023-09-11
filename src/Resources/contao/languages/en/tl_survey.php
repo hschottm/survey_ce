@@ -36,6 +36,7 @@ $GLOBALS['TL_LANG']['tl_survey']['show_cancel'] = ['Show cancel', 'Always show a
 $GLOBALS['TL_LANG']['tl_survey']['allowback'] = ['Show "Previous" button', 'Shows a "Previous" button in the survey navigation to go back to the previous page.'];
 $GLOBALS['TL_LANG']['tl_survey']['immediate_start'] = ['Start survey immediately', 'Check this option if you want to show the form immediately.'];
 $GLOBALS['TL_LANG']['tl_survey']['jumpto'] = ['Redirect to page', 'Select a page to redirect the survey after it was finished.'];
+$GLOBALS['TL_LANG']['tl_survey']['allow_autostart'] = ['Start survey automatically','If you activate this function, then when you call up the survey page via a link with TAN, the survey is started automatically. The TAN does not have to be entered and confirmed separately.'];
 $GLOBALS['TL_LANG']['tl_survey']['surveyPage'] = ['Survey page', 'Please choose the page that contains the survey. If a page is selected an URL to the survey containing the TAN code will be created for export.'];
 
 $GLOBALS['TL_LANG']['tl_survey']['new'] = ['New survey', 'Create a new survey'];

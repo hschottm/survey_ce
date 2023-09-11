@@ -11,9 +11,16 @@ jQuery(function ($) {
   });
 
   // perform autostart of personalized survey with TAN
-  let submit = document.querySelector('input.submit');
-  // the start page of a survey contains the element input=value=tl_survey_form, this value indicates that it is the start page of a survey with TAN query
-  let form = document.querySelector("input[value='tl_survey_form']");
-  // start the survey
-  if(form) submit.click();
+  let submit = document.querySelector('input.submit'),
+    // the start page of a survey contains the element input=value=tl_survey_form, this value indicates that it is the start page of a survey with TAN query
+    form = document.querySelector("input[value='tl_survey_form']"),
+    // do we have a tan?
+    tan = document.querySelector("input#tan"),
+    // is the TAN is valid?
+    tanerror = document.querySelector("p.tl_error"),
+    // if autostart is allowed
+    autostart = document.querySelector("input[name='allowAutostart']");
+
+  // if all conditions are met - start the survey automatically
+  if(form && tan.value.length > 0 && !tanerror && autostart.value === '1') submit.click();
 });

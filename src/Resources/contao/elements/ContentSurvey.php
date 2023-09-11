@@ -926,6 +926,7 @@ class ContentSurvey extends ContentElement
             case 'anoncode':
                 $this->loadLanguageFile('tl_content');
                 $this->Template->needsTAN = true;
+                $this->Template->allowAutostart = $this->objSurvey->allow_autostart;
                 $this->Template->txtTANInputDesc = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start_desc'];
                 $this->Template->txtTANInput = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start'];
 
