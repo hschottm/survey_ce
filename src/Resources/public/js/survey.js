@@ -11,37 +11,9 @@ jQuery(function ($) {
   });
 
   // perform autostart of personalized survey with TAN
-  // at first check some boundary conditions
-
-  // we need a div class ce_survey
-  // we need a form inside
-  // we need a form action with pattern /xxxxxx.html?start=now
-
-  /*
-  noch nicht begonnen = erste seite
-
-  <input type="hidden" name="FORM_SUBMIT" value="tl_survey_form">
-	<input type="hidden" name="REQUEST_TOKEN" value="_zQvpDq81UrfTaFRtLxr2OlXJ6kurHwOBEz7BdZPKro">
-
-
-  umfrage hat begonnen
-
-  <input type="hidden" name="FORM_SUBMIT" value="tl_survey">
-  <input type="hidden" name="REQUEST_TOKEN" value="_zQvpDq81UrfTaFRtLxr2OlXJ6kurHwOBEz7BdZPKro">
-  <input type="hidden" name="survey" value="6">
-	<input type="hidden" name="page" value="1">
-	<input type="hidden" name="pin" value="Q5mLl0">
-   */
-
   let submit = document.querySelector('input.submit');
-  console.log(submit);
+  // the start page of a survey contains the element input=value=tl_survey_form, this value indicates that it is the start page of a survey with TAN query
   let form = document.querySelector("input[value='tl_survey_form']");
-  console.log(form);
-
-  if(form) {
-console.log('start form gefunden');
-    submit.click();
-  } else {
-console.log('keine startform ');
-  }
+  // start the survey
+  if(form) submit.click();
 });
