@@ -36,7 +36,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
      */
     protected $strTemplate = 'form_constantsum';
     protected $strSumOption = 'exact';
-    protected $dblSum = 100;
+    protected float $dblSum = 100.0;
     protected $arrChoices = [];
     protected $blnInputFirst = false;
 
@@ -55,7 +55,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
                 parent::__set($strKey, $varValue);
                 $this->strClass = 'constantsum'.((\strlen($varValue['cssClass']) ? ' '.$varValue['cssClass'] : ''));
                 $this->strSumOption = $varValue['sumoption'];
-                $this->dblSum = $varValue['sum'];
+                $this->dblSum = (float)$varValue['sum'];
                 $this->blnInputFirst = $varValue['inputfirst'] ? true : false;
                 $this->arrChoices = deserialize($varValue['sumchoices']);
 
@@ -149,18 +149,17 @@ class FormConstantSumQuestion extends FormQuestionWidget
     {
         if (!\is_array($varInput) || 0 === \count($varInput)) {
             $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_constantsum'], $this->title));
-
             return $varInput;
         }
         $sum = 0.0;
 
         foreach ($varInput as $value) {
-            if (0 === \strlen($value)) {
+            if (empty($value)) {
                 $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_constantsum'], $this->title));
 
                 return $varInput;
             }
-            $sum += $value;
+            $sum += (float)$value;
         }
 
         switch ($this->strSumOption) {
