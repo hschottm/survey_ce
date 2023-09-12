@@ -161,7 +161,7 @@ class FormQuestionWidget extends Widget
 
     public function hasLabel()
     {
-        if ('' === $this->title || $this->showTitle) {
+        if (empty($this->title) || !$this->showTitle) {
             return false;
         }
 
@@ -181,7 +181,7 @@ class FormQuestionWidget extends Widget
 
         return sprintf(
             '<label%s%s>%s%s%s</label>',
-            (\strlen($this->strId) ? ' for="ctrl_'.$this->strId.'"' : ''),
+            (!empty((string)$this->strId) ? ' for="ctrl_'.$this->strId.'"' : ''),
             ('' !== $this->strClass ? ' class="'.$this->strClass.'"' : ''),
             ($this->mandatory ? '<span class="invisible">'.$GLOBALS['TL_LANG']['MSC']['mandatory'].' </span>' : ''),
             $this->title,
