@@ -122,6 +122,9 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_none'] = ['keine', ' Die Mitgli
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_reminder_send'] = 'Jetzt erinnern';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_reminder_cancel'] = 'Abbrechen';
 
-// member invite messages
+// member remind messages
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_result_template'] = 'Es wurden %s Erinnerungen versandt, %s Erinnerungen wurden übergangen.';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_no_reminder_available'] = 'Die in der Umfrage angegebene Notification für die Erinnerung ist nicht vorhanden.';
+
+// export label
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['surveyPage'] = $GLOBALS['TL_LANG']['tl_survey']['surveyPage'];

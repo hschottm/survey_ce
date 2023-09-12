@@ -427,10 +427,10 @@ class SurveyQuestionMatrix extends SurveyQuestion
         foreach ($participants as $key => $value) {
             $data = false;
 
-            if (\strlen($this->statistics['participants'][$key]['result'])) {
+            if (!empty($this->statistics['participants'][$key]['result'])) {
                 // future state of survey_ce
                 $data = $this->statistics['participants'][$key]['result'];
-            } elseif (\strlen($this->statistics['participants'][$key][0]['result'])) {
+            } elseif (!empty($this->statistics['participants'][$key][0]['result'])) {
                 // current state of survey_ce: additional subarray with always 1 entry
                 $data = $this->statistics['participants'][$key][0]['result'];
             }
