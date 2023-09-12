@@ -315,6 +315,13 @@ class ContentSurvey extends ContentElement
         $this->Template->start = $GLOBALS['TL_LANG']['MSC']['survey_start'];
         $this->Template->finish = $GLOBALS['TL_LANG']['MSC']['survey_finish'];
         $this->Template->pin = $this->pin;
+
+        // fix for /survey/code/xyz.html urls
+        if (isset($tan) && str_contains($formaction, '/code/')) {
+            $url = parse_url($formaction);
+            $formaction = str_replace('/code/'.$tan, '', $url['path']);
+        }
+        
         $this->Template->action = ampersand($formaction);
     }
 
