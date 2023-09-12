@@ -16,9 +16,9 @@ jQuery(function ($) {
     form = document.querySelector("input[value='tl_survey_form']"),
     // do we have a tan?
     tan = document.querySelector("input#tan"),
-    // is the TAN is valid?
+    // if the TAN is valid?
     tanerror = document.querySelector("p.tl_error"),
-    // if autostart is allowed
+    // if autostart allowed?
     autostart = document.querySelector("input[name='allowAutostart']");
 
   // if all conditions are met - start the survey automatically

@@ -795,12 +795,12 @@ class SurveyPINTAN extends Backend
         return $this->Template->parse();
     }
 
-    private function generateTokensFromSurvey($survey, $member, $pageModel) : array
+    private function generateTokensFromSurvey($survey, $member, PageModel $pageModel) : array
     {
         // build the survey url
         // this method does not work properly, I do not know why
-        //$survey_link = Environment::get('base') . $pageModel->getFrontendUrl("/code/{$member->_pintan->tan}");
-        $survey_link = Environment::get('base') . $pageModel->getFrontendUrl(".html?code={$member->_pintan->tan}");
+        //$survey_link = Environment::get('base') . $pageModel->getFrontendUrl();
+        $survey_link = Environment::get('base') . $pageModel->getFrontendUrl() . "?code={$member->_pintan->tan}";
 
         return [
             'survey_title'      => $survey->title,
