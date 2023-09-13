@@ -319,7 +319,7 @@ class ContentSurvey extends ContentElement
         $this->Template->start = $GLOBALS['TL_LANG']['MSC']['survey_start'];
         $this->Template->finish = $GLOBALS['TL_LANG']['MSC']['survey_finish'];
         $this->Template->pin = $this->pin;
-        $this->Template->action = StringUtil::ampersand($formaction);
+        $this->Template->action = ampersand($formaction);
     }
 
     protected function evaluateConditions($page)

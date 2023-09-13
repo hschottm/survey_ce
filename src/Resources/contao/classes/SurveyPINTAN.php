@@ -66,7 +66,7 @@ class SurveyPINTAN extends Backend
         $this->Template->hrefBack = Backend::addToUrl('table=tl_survey_pin_tan', true, ['table', 'key']);
         $this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['exporttan'];
-        $this->Template->request = StringUtil::ampersand(str_replace('&id=', '&pid=', Environment::get('request')));
+        $this->Template->request = ampersand(str_replace('&id=', '&pid=', Environment::get('request')));
         $this->Template->submit = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
 
         // Create import form
@@ -244,10 +244,10 @@ class SurveyPINTAN extends Backend
         // prepare template
         $this->Template = new BackendTemplate('be_survey_create_tan');
 
-        $this->Template->hrefBack   = StringUtil::ampersand(str_replace('&key=createtan', '', Environment::get('request')));
+        $this->Template->hrefBack   = ampersand(str_replace('&key=createtan', '', Environment::get('request')));
         $this->Template->goBack     = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->headline   = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'][0];
-        $this->Template->request    = StringUtil::ampersand(Environment::get('request'));
+        $this->Template->request    = ampersand(Environment::get('request'));
         $this->Template->submit     = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
 
         // handle GET request and render template
