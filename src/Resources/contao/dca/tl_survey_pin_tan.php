@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Contao\DC_Table;
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
@@ -17,7 +19,7 @@ declare(strict_types=1);
 $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_survey',
         'doNotCopyRecords' => true,
         'closed' => true,

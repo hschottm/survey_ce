@@ -360,7 +360,7 @@ class SurveyResultDetails extends Backend
             $result[$pin_uid] = [
                 'id' => $objParticipant->id,
                 'count' => $count,
-                'date' => date('Y-m-d H:i:s', $objParticipant->tstamp),
+                'date' => date($GLOBALS['TL_CONFIG']['datimFormat'], (int)$objParticipant->tstamp),
                 'lastpage' => $objParticipant->lastpage,
                 'finished' => $objParticipant->finished,
                 'display' => $display,

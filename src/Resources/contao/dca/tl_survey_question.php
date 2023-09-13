@@ -658,7 +658,7 @@ class tl_survey_question extends Backend
 
 '.$this->getMessages().'
 
-<form action="'.StringUtil::ampersand(Environment::get('request')).'" id="tl_add_scale" class="tl_form" method="post">
+<form action="'.ampersand(Environment::get('request')).'" id="tl_add_scale" class="tl_form" method="post">
 <div class="tl_formbody_edit">
 <input type="hidden" name="FORM_SUBMIT" value="tl_add_scale" />
 <input type="hidden" name="REQUEST_TOKEN" value="'.REQUEST_TOKEN.'" />

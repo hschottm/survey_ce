@@ -54,15 +54,15 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             ],
         ],
         'operations' => [
-            'pintan' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
-                'href' => 'table=tl_survey_pin_tan',
-                'icon' => 'bundles/hschottmsurvey/images/key.svg',
-            ],
             'edit' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['edit'],
                 'href' => 'table=tl_survey_page',
                 'icon' => 'edit.svg',
+            ],
+            'pintan' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
+                'href' => 'table=tl_survey_pin_tan',
+                'icon' => 'bundles/hschottmsurvey/images/key.svg',
             ],
             'participants' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['participants'],
@@ -474,7 +474,6 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'sql' => 'binary(16) NULL',
         ],
         'formattedMailSkipEmpty' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey']['skipEmtpy'],
             'exclude' => true,
             'filter' => false,
             'inputType' => 'checkbox',
@@ -482,7 +481,6 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
         ],
 
         'addConfirmationMailAttachments' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey']['addConfirmationMailAttachments'],
             'exclude' => true,
             'filter' => true,
             'inputType' => 'checkbox',
@@ -490,7 +488,6 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'sql' => "char(1) NOT NULL default ''",
         ],
         'addConfirmationMailAlternateAttachments' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey']['addConfirmationMailAlternateAttachments'],
             'exclude' => true,
             'filter' => true,
             'inputType' => 'checkbox',
