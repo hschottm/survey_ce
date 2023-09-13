@@ -10,10 +10,10 @@ Types of changes
     Security in case of vulnerabilities.
 )
 
-## [3.6.0](https://github.com/pdir/contao-survey/tree/3.5.1) – 2023-09-12
+## [3.6.0](https://github.com/pdir/contao-survey/tree/3.6.0) – 2023-09-13
 
-- [Added] some Functions that allow contao survey to be **used without notification** center. The core functions for
-the notification center remain in contao survey, but they will not be used until it is installed.
+- [Added] an **autostart** feature for an anonymous survey with TAN. To use this feature, the page with the corresponding survey **must be accessed using a link** of the form https://domain/my-survey-page/code/NNNNNN.html with N as the TAN.
+- [Added] some Functions that allow contao survey to be **used without notification** center. The core functions for the notification center remain in contao survey, but they will not be used until it is installed.
 - [Changed] Logic for limiting surveys to user groups
 - [Changed] Added rules to lock and unlock certain features for surveys and TANs
 - [Changed] Processing of survey types was extended. Now also personalized surveys with a TAN are possible, to which the participants can be invited and reminded if the Notifications Center is installed, implements: [#45](https://github.com/pdir/contao-survey/issues/45)

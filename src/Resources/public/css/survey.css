@@ -144,6 +144,12 @@ table.tl_cumulated {
 	margin: 3px 18px 15px;
 }
 
+.w33 {
+  width: calc(33% - 30px);
+  float: left;
+  min-height: 80px;
+}
+
 #tl_generate_survey_pin_tan .access_template {
   margin: 0 0 0 15px;
 }

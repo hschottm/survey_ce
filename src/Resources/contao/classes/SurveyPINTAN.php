@@ -244,7 +244,7 @@ class SurveyPINTAN extends Backend
         // prepare template
         $this->Template = new BackendTemplate('be_survey_create_tan');
 
-        $this->Template->hrefBack   = StringUtil::ampersand(str_replace('&key=createtan', '', Environment::get('request')));
+        $this->Template->hrefBack   = ampersand(str_replace('&key=createtan', '', Environment::get('request')));
         $this->Template->goBack     = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->headline   = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'][0];
         $this->Template->request    = ampersand(Environment::get('request'));
@@ -795,13 +795,12 @@ class SurveyPINTAN extends Backend
         return $this->Template->parse();
     }
 
-    private function generateTokensFromSurvey($survey, $member, $pageModel) : array
+    private function generateTokensFromSurvey($survey, $member, PageModel $pageModel) : array
     {
         // build the survey url
-        $survey_link = Environment::get('base') . $pageModel->getFrontendUrl("/code/{$member->_pintan->tan}");
-
-        #$CF['email_html'][] = 'survey_participant_fullname';
-        #$CF['email_html'][] = 'survey_participant_full_title';
+        // this method does not work properly, I do not know why
+        //$survey_link = Environment::get('base') . $pageModel->getFrontendUrl();
+        $survey_link = Environment::get('base') . $pageModel->getFrontendUrl() . "?code={$member->_pintan->tan}";
 
         return [
             'survey_title'      => $survey->title,

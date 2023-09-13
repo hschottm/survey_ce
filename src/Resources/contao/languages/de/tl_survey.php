@@ -100,6 +100,7 @@ $GLOBALS['TL_LANG']['tl_survey']['formattedMailTemplate'] = ['HTML-Vorlage für 
 $GLOBALS['TL_LANG']['tl_survey']['misc_legend'] = 'Allgemeine Einstellungen';
 $GLOBALS['TL_LANG']['tl_survey']['allowback'] = ['Zurückgehen erlauben', 'Bitte wählen Sie, ob Teilnehmer auf eine vorherige Seite der Umfrage zurückgehen dürfen.'];
 $GLOBALS['TL_LANG']['tl_survey']['immediate_start'] = ['Umfrage sofort starten', 'Bitte wählen Sie, ob das Formular der Umfrage sofort angezeigt werden soll.'];
+$GLOBALS['TL_LANG']['tl_survey']['allow_autostart'] = ['Umfrage automatisch starten','Wenn Sie diese Funktion aktivieren, dann wird beim Aufruf der Umfrageseite durch einen Link mit TAN die Umfrage automatisch gestartet. Die TAN muss also nicht extra eingegeben und bestätigt werden. Für diese Funktion muss jQuery aktiviert sein!'];
 $GLOBALS['TL_LANG']['tl_survey']['jumpto'] = ['Weiterleitung zu Seite', 'Mit dieser Einstellung legen Sie fest, auf welche Seite ein Benutzer nach dem Beenden der Umfrage weitergeleitet wird.'];
 $GLOBALS['TL_LANG']['tl_survey']['useResultCategories'] = ['Antwort-Kategorien verwenden', 'Aktivieren Sie diese Option, um Kategorien für Antworten (nur bei Multiplie Choice) zu verwenden.'];
 $GLOBALS['TL_LANG']['tl_survey']['resultCategories'] = ['Antwort-Kategorien', 'Hier können Sie Antwort-Kategorien anlegen.'];
