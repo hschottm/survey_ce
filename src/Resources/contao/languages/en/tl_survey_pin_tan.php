@@ -122,6 +122,11 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_none'] = ['no', ' Members of th
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_reminder_send'] = 'Send reminder now';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['button_reminder_cancel'] = 'Cancel';
 
-// member invite messages
+// member remind messages
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_result_template'] = '%s reminders were sent, %s reminders were skipped.';
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_no_reminder_available'] = 'The notification for the reminder given in the survey is not available.';
+
+// export label
+System::loadLanguageFile('tl_survey');
+$GLOBALS['TL_LANG']['tl_survey_pin_tan']['surveyPage'] = $GLOBALS['TL_LANG']['tl_survey']['surveyPage'];
+

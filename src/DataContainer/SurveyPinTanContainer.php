@@ -135,7 +135,7 @@ class SurveyPinTanContainer
     {
         $L = $GLOBALS['TL_LANG']['tl_survey_pin_tan'];
         // used icon
-        $key = '0' === $row['used'] ? 'tan_new' : 'tan_used';
+        $key = 0 === (int)$row['used'] ? 'tan_new' : 'tan_used';
         $alt = $L[$key];
         $attributes = "title='{$L[$key]}'";
         $usedIcon = Image::getHtml("bundles/hschottmsurvey/images/$key.svg", $alt, $attributes);

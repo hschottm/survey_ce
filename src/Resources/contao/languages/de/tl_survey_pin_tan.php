@@ -127,4 +127,5 @@ $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_result_template'] = 'Es wurden 
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_no_reminder_available'] = 'Die in der Umfrage angegebene Notification für die Erinnerung ist nicht vorhanden.';
 
 // export label
+System::loadLanguageFile('tl_survey');
 $GLOBALS['TL_LANG']['tl_survey_pin_tan']['surveyPage'] = $GLOBALS['TL_LANG']['tl_survey']['surveyPage'];
