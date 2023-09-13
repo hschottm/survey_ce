@@ -54,15 +54,15 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             ],
         ],
         'operations' => [
-            'pintan' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
-                'href' => 'table=tl_survey_pin_tan',
-                'icon' => 'bundles/hschottmsurvey/images/key.svg',
-            ],
             'edit' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['edit'],
                 'href' => 'table=tl_survey_page',
                 'icon' => 'edit.svg',
+            ],
+            'pintan' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
+                'href' => 'table=tl_survey_pin_tan',
+                'icon' => 'bundles/hschottmsurvey/images/key.svg',
             ],
             'participants' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['participants'],

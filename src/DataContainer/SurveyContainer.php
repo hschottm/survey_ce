@@ -62,8 +62,7 @@ class SurveyContainer
      */
     public function onLoadTestIfNCIsInstalled(DataContainer $dc = null): void
     {
-        if ($GLOBALS['TL_SVY']['nc_is_installed']) {
-        } else {
+        if (!$GLOBALS['TL_SVY']['nc_is_installed']) {
             unset(
                 $GLOBALS['TL_DCA']['tl_survey']['fields']['invitationNotificationId'],
                 $GLOBALS['TL_DCA']['tl_survey']['fields']['reminderNotificationId'],
