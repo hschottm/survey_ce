@@ -58,6 +58,25 @@ class SurveyContainer
     }
 
     /**
+     * @Callback(table="tl_survey", target="config.onload")
+     */
+    public function onLoadTestIfNCIsInstalled(DataContainer $dc = null): void
+    {
+        if (!$GLOBALS['TL_SVY']['nc_is_installed']) {
+            unset(
+                $GLOBALS['TL_DCA']['tl_survey']['fields']['invitationNotificationId'],
+                $GLOBALS['TL_DCA']['tl_survey']['fields']['reminderNotificationId'],
+                $GLOBALS['TL_DCA']['tl_survey']['fields']['surveyPage'],
+            );
+            // modify label
+            $GLOBALS['TL_DCA']['tl_survey']['fields']['useNotifications']['label'] = $GLOBALS['TL_LANG']['tl_survey']['useNotificationsNotInstalled'];
+            // disable using Notifications
+            $GLOBALS['TL_DCA']['tl_survey']['fields']['useNotifications']['eval']['disabled'] = 'disabled';
+        }
+    }
+
+
+    /**
      * @Callback(table="tl_survey", target="list.operations.pintan.button")
      */
     public function pintanButton(array $row, ?string $href, string $label, string $title, ?string $icon, string $attributes, string $table, ?array $rootRecordIds, ?array $childRecordIds, bool $circularReference, ?string $previous, ?string $next, DataContainer $dc)

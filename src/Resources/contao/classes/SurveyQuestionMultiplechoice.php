@@ -162,7 +162,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         foreach ($arrChoices as $id => $choice) {
             $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice['choice']]);
             // pdir
-            $data = \array_key_exists($id, $this->statistics['cumulated']) ?
+            $data = \array_key_exists($id, (array)$this->statistics['cumulated']) ?
                 $this->statistics['cumulated'][$id] :
                 0;
 

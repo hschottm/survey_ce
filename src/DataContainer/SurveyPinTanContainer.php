@@ -16,9 +16,11 @@ declare(strict_types=1);
 
 namespace Hschottm\SurveyBundle\DataContainer;
 
+use Contao\Backend;
 use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\DataContainer;
 use Contao\Image;
+use Contao\StringUtil;
 use Hschottm\SurveyBundle\SurveyModel;
 use Hschottm\SurveyBundle\SurveyPINTAN;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -78,6 +80,53 @@ class SurveyPinTanContainer
         }
         // we don't have a survey
     }
+
+    /**
+     * @Callback(table="tl_survey_pin_tan", target="list.global_operations.invite.button")
+     */
+    public function inviteButton(
+        ?string $href,
+        string $label,
+        string $title,
+        string $class,
+        string $attributes,
+        string $table,
+        ?array $rootIds
+    ): string
+    {
+        if ($GLOBALS['TL_SVY']['nc_is_installed']) {
+            /** @noinspection HtmlUnknownTarget */
+            $html = sprintf('<a class="%s" href="%s" title="%s"%s>%s</a>',$class,Backend::addToUrl($href),StringUtil::specialchars($title),$attributes,$label);
+        } else {
+            /** @noinspection HtmlUnknownTarget */
+            $html = sprintf('<span class="%s" title="%s"%s>%s</span>',"{$class}_disabled",StringUtil::specialchars($title),$attributes,$label);
+        }
+        return $html;
+    }
+
+    /**
+     * @Callback(table="tl_survey_pin_tan", target="list.global_operations.remind.button")
+     */
+    public function remindButton(
+        ?string $href,
+        string $label,
+        string $title,
+        string $class,
+        string $attributes,
+        string $table,
+        ?array $rootIds
+    ): string
+    {
+        if ($GLOBALS['TL_SVY']['nc_is_installed']) {
+            /** @noinspection HtmlUnknownTarget */
+            $html = sprintf('<a class="%s" href="%s" title="%s"%s>%s</a>',$class,Backend::addToUrl($href),StringUtil::specialchars($title),$attributes,$label);
+        } else {
+            /** @noinspection HtmlUnknownTarget */
+            $html = sprintf('<span class="%s" title="%s"%s>%s</span>',"{$class}_disabled",StringUtil::specialchars($title),$attributes,$label);
+        }
+        return $html;
+    }
+
 
     /**
      * @Callback(table="tl_survey_pin_tan", target="list.label.label")

@@ -14,6 +14,7 @@ declare(strict_types=1);
  * @link       https://github.com/pdir/contao-survey
  */
 
+use Composer\InstalledVersions;
 use Hschottm\SurveyBundle\ConditionWizard;
 use Hschottm\SurveyBundle\ContentSurvey;
 use Hschottm\SurveyBundle\FormConstantSumQuestion;
@@ -106,7 +107,12 @@ $GLOBALS['TL_MODELS']['tl_member_group'] = MemberGroupModel::class;
 // configures the tokens of the notification form
 $CF = &$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['contao']['core_form'];
 
-// allowed field = token, add comments in langauges\*\tokens.php or tokens.xlf
+/*
+ * add comments for tokens in langauges\*\tokens.php or tokens.xlf
+ *
+ * to register new tokens use:
+ *      $CF[allowed field][] = token,
+ */
 $CF['recipients'][] = 'survey_recipient_email';
 
 $CF['email_recipient_cc'][] = 'survey_recipient_email';
@@ -135,3 +141,6 @@ $CF['email_html'][] = 'survey_duration';
 $CF['email_html'][] = 'survey_recipient_firstname';
 $CF['email_html'][] = 'survey_recipient_lastname';
 $CF['email_html'][] = 'survey_recipient_fullname';
+
+// set a global flag to indicate that NC is installed
+$GLOBALS['TL_SVY']['nc_is_installed'] = InstalledVersions::isInstalled('terminal42/notification_center');

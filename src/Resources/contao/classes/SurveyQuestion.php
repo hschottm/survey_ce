@@ -123,7 +123,7 @@ abstract class SurveyQuestion extends Backend
         return $result;
     }
 
-    public function getAnswersAsHTML(): string
+    public function getAnswersAsHTML()
     {
         if (!empty($resultData = $this->getResultData())) {
             $template = new FrontendTemplate('survey_answers_default');

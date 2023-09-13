@@ -97,6 +97,15 @@ table.tl_cumulated {
   background-repeat:no-repeat;
   margin-left: 15px;
 }
+.header_invite_disabled
+{
+  padding: 3px 0 3px 21px;
+  background-image:url("../images/invite-disabled.svg");
+  background-position:left center;
+  background-repeat:no-repeat;
+  margin-left: 15px;
+  color: gray;
+}
 
 .header_remind
 {
@@ -105,6 +114,16 @@ table.tl_cumulated {
   background-position:left center;
   background-repeat:no-repeat;
   margin-left: 15px;
+}
+
+.header_remind_disabled
+{
+  padding: 3px 0 3px 21px;
+  background-image:url("../images/remind-disabled.svg");
+  background-position:left center;
+  background-repeat:no-repeat;
+  margin-left: 15px;
+  color: gray;
 }
 
 .tl_left.surveypage {

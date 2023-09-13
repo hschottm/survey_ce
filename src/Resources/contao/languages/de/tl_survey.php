@@ -14,16 +14,15 @@ declare(strict_types=1);
  * @link       https://github.com/pdir/contao-survey
  */
 
-// dca common
 $GLOBALS['TL_LANG']['tl_survey'] = [
-    // common
+    // dca commmon operations
     'new' => ['Neue Umfrage', 'Eine neue Umfrage anlegen'],
     'show' => ['Umfragedetails', 'Details der Umfrage ID %s anzeigen'],
     'edit' => ['Umfrage bearbeiten', 'Umfrage ID %s bearbeiten'],
     'edit_' => ['Umfrage kann nicht bearbeitet werden', 'Die Umfrage ID %s kann nicht bearbeitet werden, da bereits Teilnehmerdatensätze existieren.'],
     'copy' => ['Umfrage duplizieren', 'Umfrage ID %s duplizieren'],
     'delete' => ['Umfrage löschen', 'Umfrage ID %s löschen'],
-    // special
+    // special operations
     'pintan' => ['TAN-Erzeugung', 'TAN-Erzeugung für die Umfrage ID %s öffnen'],
     'participants' => ['Umfrageteilnehmer', 'Teilnehmer der Umfrage ID %s bearbeiten'],
     'statistics' => ['Statistik', 'Statistik der Umfrage ID %s anzeigen'],
@@ -53,7 +52,10 @@ $GLOBALS['TL_LANG']['tl_survey']['usecookie'] = ['Teilnehmer wiedererkennen', 'B
 $GLOBALS['TL_LANG']['tl_survey']['access']['group'] = ['auf keine Mitgliedergruppe', 'auf folgende Mitgliedergruppen: %s'];
 $GLOBALS['TL_LANG']['tl_survey']['limit_groups'] = ['Limitieren auf Mitgliedergruppen', 'Limitieren Sie hier den Zugriff auf ausgewählte Mitgliedergruppen. Wenn Sie keine Gruppe auswählen, werden alle aktiven Mitglieder als Teilnehmer verwendet.'];
 $GLOBALS['TL_LANG']['tl_survey']['allowed_groups'] = ['Mitgliedergruppen', 'Wählen Sie die Mitgliedergruppen aus, welche die Umfrage durchführen dürfen.'];
+
 $GLOBALS['TL_LANG']['tl_survey']['useNotifications'] = ['Notification Center verwenden', 'Wenn Sie die Funktionen des Notification Centers verwenden möchten, so müssen Sie zuerst geeignete Benachrichtigungen definieren.'];
+$GLOBALS['TL_LANG']['tl_survey']['useNotificationsNotInstalled'] = ["Notification Center verwenden (nicht installiert)", "<span style='color:red;'>Sie können diese Funktion nicht verwenden, da das Notification Center aktuell nicht installiert ist. Bitte wenden Sie sich an Ihren Administrator, um diese Funktion zu aktivieren.</span>"];
+
 $GLOBALS['TL_LANG']['tl_survey']['invitationNotificationId'] = ['Diese Nachricht als Einladung verwenden.', 'Wählen Sie hier die Nachricht für die Einladung aus.'];
 $GLOBALS['TL_LANG']['tl_survey']['reminderNotificationId'] = ['Diese Nachricht als Erinnerung verwenden.', 'Wählen Sie hier die Nachricht für die Erinnerung aus.'];
 $GLOBALS['TL_LANG']['tl_survey']['surveyPage'] = ['Seite der Umfrage', 'Wenn Sie Empfänger*Innen einladen oder erinnern möchten, dann müssen Sie hier die Seite auswählen, auf die sich die Umfrage befindet. Die Einladung oder Erinnerung enthält einen Link zu dieser Seite, damit die Teilnehmer*Innen die Umfrage direkt aufrufen können.'];

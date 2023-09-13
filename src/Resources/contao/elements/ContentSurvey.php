@@ -319,6 +319,13 @@ class ContentSurvey extends ContentElement
         $this->Template->start = $GLOBALS['TL_LANG']['MSC']['survey_start'];
         $this->Template->finish = $GLOBALS['TL_LANG']['MSC']['survey_finish'];
         $this->Template->pin = $this->pin;
+
+        // fix for /survey/code/xyz.html urls
+        if (isset($tan) && str_contains($formaction, '/code/')) {
+            $url = parse_url($formaction);
+            $formaction = str_replace('/code/'.$tan, '', $url['path']);
+        }
+
         $this->Template->action = ampersand($formaction);
     }
 
@@ -1074,7 +1081,7 @@ class ContentSurvey extends ContentElement
 
         $questions = [];
         /** @var SurveyQuestionModel|array<SurveyQuestionModel>|Collection|null $questionCollection */
-        $questionCollection = SurveyQuestionModel::findBySurvey($this->objSurvey->id);
+        $questionCollection = SurveyQuestionModel::findBySurvey((int)$this->objSurvey->id);
 
         if (!$questionCollection) {
             $resultPageTemplate->results = $questions;
@@ -1095,7 +1102,7 @@ class ContentSurvey extends ContentElement
 
         while ($questionCollection->next()) {
             ++$count;
-            $questionType = SurveyQuestion::createInstance($questionCollection->id, $questionCollection->questiontype);
+            $questionType = SurveyQuestion::createInstance((int)$questionCollection->id, $questionCollection->questiontype);
             $questions[$count] = [
                 'id' => $questionCollection->id,
                 'type' => $questionCollection->questiontype,
