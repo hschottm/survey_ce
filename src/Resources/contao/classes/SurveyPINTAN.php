@@ -244,7 +244,7 @@ class SurveyPINTAN extends Backend
         // prepare template
         $this->Template = new BackendTemplate('be_survey_create_tan');
 
-        $this->Template->hrefBack   = StringUtil::ampersand(str_replace('&key=createtan', '', Environment::get('request')));
+        $this->Template->hrefBack   = ampersand(str_replace('&key=createtan', '', Environment::get('request')));
         $this->Template->goBack     = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->headline   = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'][0];
         $this->Template->request    = ampersand(Environment::get('request'));
@@ -443,7 +443,6 @@ class SurveyPINTAN extends Backend
                 Message::addError(sprintf($msg['group_disabled'],$memberGroup->name));
             };
         }
-
         return $counter;
     }
 
@@ -669,15 +668,21 @@ class SurveyPINTAN extends Backend
             }
         }
         // prepare buttons
-        $this->Template->send = is_null($members) ? '' : StringUtil::specialchars($L['button_invitation_send']);
-        $this->Template->cancel = StringUtil::specialchars($L['button_invitation_cancel']);
+        if ($notification) {
+            $this->Template->send = is_null($members) ? '' : StringUtil::specialchars($L['button_invitation_send']);
+            $this->Template->cancel = StringUtil::specialchars($L['button_invitation_cancel']);
+            $notification_title = $notification->title;
+        } else {
+            $this->Template->cancel = StringUtil::specialchars($L['button_invitation_cancel']);
+            $notification_title = "<span style='color:red;'>{$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_no_invitation_available']}</span>";
+        }
 
         $this->Template->note = sprintf(
             $L['invite_note_template'],
             $survey->title,
             sprintf(
                 $L['invite_text'],
-                $notification->title
+                $notification_title
             ),
             $L['invite_warn'],
             $L['invite_hint'],
@@ -756,7 +761,7 @@ class SurveyPINTAN extends Backend
                         } else {
                             $counter->fail++;
                         }
-                    } // end foreach members
+                    }
                     // construct a result message
                     Message::addInfo(
                         sprintf(
@@ -777,21 +782,28 @@ class SurveyPINTAN extends Backend
             }
         }
         // prepare buttons
-        $this->Template->send = is_null($members) ? '' : StringUtil::specialchars($L['button_reminder_send']);
-        $this->Template->cancel = StringUtil::specialchars($L['button_reminder_cancel']);
+        if ($notification) {
+            $this->Template->send = is_null($members) ? '' : StringUtil::specialchars($L['button_reminder_send']);
+            $this->Template->cancel = StringUtil::specialchars($L['button_reminder_cancel']);
+            $notification_title = $notification->title;
+        } else {
+            $this->Template->cancel = StringUtil::specialchars($L['button_reminder_cancel']);
+            $notification_title = "<span style='color:red;'>{$GLOBALS['TL_LANG']['tl_survey_pin_tan']['remind_no_reminder_available']}</span>";
+        }
 
         $this->Template->note = sprintf(
             $L['remind_note_template'],
             $survey->title,
             sprintf(
                 $L['remind_text'],
-                $notification->title
+                $notification_title
             ),
             $L['remind_warn'],
             $L['remind_hint'],
             is_null($members) ? $L['remind_none'][0] : count($members),
             is_null($members) ? $L['remind_none'][1] : '',
         );
+
         return $this->Template->parse();
     }
 
@@ -800,17 +812,14 @@ class SurveyPINTAN extends Backend
         // build the survey url
         $survey_link = Environment::get('base') . $pageModel->getFrontendUrl("/code/{$member->_pintan->tan}");
 
-        #$CF['email_html'][] = 'survey_participant_fullname';
-        #$CF['email_html'][] = 'survey_participant_full_title';
-
         return [
-            'survey_title'      => $survey->title,
-            'survey_recipient_email'    => $member->email,
-            'survey_link'       => $survey_link,
-            'survey_duration'   => "{$survey->duration} min",
-            'survey_recipient_firstname'  => $member->firstname,
-            'survey_recipient_lastname'   => $member->lastname,
-            'survey_recipient_fullname'   => "$member->firstname $member->lastname",
+            'survey_title' => $survey->title,
+            'survey_recipient_email' => $member->email,
+            'survey_link' => $survey_link,
+            'survey_duration' => "{$survey->duration} min",
+            'survey_recipient_firstname' => $member->firstname,
+            'survey_recipient_lastname' => $member->lastname,
+            'survey_recipient_fullname' => "$member->firstname $member->lastname",
         ];
     }
 }
