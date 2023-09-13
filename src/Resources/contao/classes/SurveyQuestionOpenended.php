@@ -72,7 +72,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
 
         $col = 2;
 
-        if (\is_array($this->statistics['answers'])) {
+        if (isset($this->statistics['answers']) && \is_array($this->statistics['answers'])) {
             foreach ($this->statistics['answers'] as $answer) {
                 $exporter->setCellValue($sheet, $row, $col++, [Exporter::DATA => $answer]);
             }
