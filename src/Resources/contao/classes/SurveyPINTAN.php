@@ -807,7 +807,7 @@ class SurveyPINTAN extends Backend
         return $this->Template->parse();
     }
 
-    private function generateTokensFromSurvey($survey, $member, $pageModel) : array
+    private function generateTokensFromSurvey($survey, $member, PageModel $pageModel) : array
     {
         // build the survey url
         $survey_link = Environment::get('base') . $pageModel->getFrontendUrl("/code/{$member->_pintan->tan}");

@@ -98,20 +98,8 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
         '__selector__' => ['access', 'limit_groups', 'useResultCategories', 'sendConfirmationMail', 'sendConfirmationMailAlternate', 'addConfirmationMailAttachments', 'addConfirmationMailAlternateAttachments', 'useNotifications'],
         'default' => '{title_legend},title,author,description,language,duration;{activation_legend},online_start,online_end',
         'anon' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
-        'anoncode' => '{title_legend},title,author,description,language,duration;'.
-            '{activation_legend},online_start,online_end;'.
-            '{access_legend},access,usecookie,limit_groups;'.
-            '{texts_legend},introduction,finalsubmission;'.
-            '{head_legend},show_title,show_cancel;'.
-            '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;'.
-            '{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
-        'nonanoncode' => '{title_legend},title,author,description,language,duration;'.
-            '{activation_legend},online_start,online_end;'.
-            '{access_legend},access,usecookie,limit_groups;'.
-            '{texts_legend},introduction,finalsubmission;'.
-            '{head_legend},show_title,show_cancel;'.
-            '{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;'.
-            '{misc_legend},allowback,immediate_start,jumpto,useResultCategories',
+        'anoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,allow_autostart,jumpto,useResultCategories',
+        'nonanoncode' => '{title_legend},title,author,description,language;{activation_legend},online_start,online_end;{access_legend},access,usecookie,limit_groups;{texts_legend},introduction,finalsubmission;{head_legend},show_title,show_cancel;{sendconfirmationmail_legend:hide},sendConfirmationMail,sendConfirmationMailAlternate;{misc_legend},allowback,immediate_start,allow_autostart,jumpto,useResultCategories',
     ],
 
     // Palettes
@@ -259,19 +247,24 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'filter' => true,
             'exclude' => true,
             'inputType' => 'checkbox',
-            'eval' => ['tl_class' => 'w50'],
+            'eval' => ['tl_class' => 'w33'],
             'sql' => "char(1) NOT NULL default ''",
         ],
         'immediate_start' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey']['immediate_start'],
             'filter' => true,
             'exclude' => true,
             'inputType' => 'checkbox',
-            'eval' => ['tl_class' => 'w50'],
+            'eval' => ['tl_class' => 'w33'],
+            'sql' => "char(1) NOT NULL default ''",
+        ],
+        'allow_autostart' => [
+            'filter' => true,
+            'exclude' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['tl_class' => 'w33'],
             'sql' => "char(1) NOT NULL default ''",
         ],
         'jumpto' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey']['jumpto'],
             'exclude' => true,
             'inputType' => 'pageTree',
             'explanation' => 'jumpTo',

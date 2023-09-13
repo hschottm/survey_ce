@@ -32,6 +32,7 @@
 	<?php echo $this->introduction; ?>
 	<input type="hidden" name="FORM_SUBMIT" value="tl_survey_form" />
 	<input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}" />
+  <input type="hidden" name="allowAutostart" value="<?php echo $this->allowAutostart; ?>" />
 </div>
 <?php endif; ?>
 <?php if (($this->page > count($this->pages))): ?>
@@ -45,7 +46,7 @@
 	<input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}" />
 	<input type="hidden" name="page" value="<?php echo $this->page; ?>" />
 	<input type="hidden" name="survey" value="<?php echo $this->survey_id; ?>" />
-	<input type="hidden" name="pin" value="<?php echo $this->pin; ?>" />
+  <input type="hidden" name="pin" value="<?php echo $this->pin; ?>" />
 <?php echo $this->questionblock; ?>
 </div>
 <?php endif; ?>

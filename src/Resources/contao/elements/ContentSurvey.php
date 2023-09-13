@@ -18,6 +18,7 @@ namespace Hschottm\SurveyBundle;
 
 use Contao\BackendTemplate;
 use Contao\ContentElement;
+use Contao\Controller;
 use Contao\Database\Result;
 use Contao\Email;
 use Contao\Environment;
@@ -99,13 +100,13 @@ class ContentSurvey extends ContentElement
 
         $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
 
-        // check date activation
+        // is the survey already open?
         if (!empty($this->objSurvey->online_start) && ($this->objSurvey->online_start > time())) {
             $this->Template->protected = true;
 
             return '';
         }
-
+        // is the survey already closed?
         if (!empty($this->objSurvey->online_end) && ($this->objSurvey->online_end < time())) {
             $this->Template->protected = true;
 
@@ -216,6 +217,7 @@ class ContentSurvey extends ContentElement
 
         if (0 === \count($surveypage)) {
             if (!empty(Input::post('next'))) {
+
                 $pageid = $this->evaluateConditions($pages[$page - 1]);
 
                 if (null === $pageid) {
@@ -227,6 +229,7 @@ class ContentSurvey extends ContentElement
                         }
                     }
                 }
+
                 $this->insertNavigation($this->objSurvey->id, $this->pin, $this->User->id ?? 0, $previouspage, $page);
             }
 
@@ -245,6 +248,7 @@ class ContentSurvey extends ContentElement
             }
 
             $surveypage = $this->createSurveyPage(($pages[($page > 0 ? $page - 1 : 0)] ?? null), $page, false);
+
         }
 
         // save position of last page (for resume)
@@ -932,11 +936,12 @@ class ContentSurvey extends ContentElement
             case 'anoncode':
                 $this->loadLanguageFile('tl_content');
                 $this->Template->needsTAN = true;
+                $this->Template->allowAutostart = $this->objSurvey->allow_autostart;
                 $this->Template->txtTANInputDesc = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start_desc'];
                 $this->Template->txtTANInput = $GLOBALS['TL_LANG']['tl_content']['enter_tan_to_start'];
 
                 if (!empty(Input::get('code'))) {
-                    $this->Template->tancode = Input::get('code');
+                    $this->Template->tancode = trim(Input::get('code'));
                 }
                 break;
 
