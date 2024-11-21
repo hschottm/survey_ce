@@ -13,6 +13,7 @@ namespace Hschottm\SurveyBundle;
 use Contao\System;
 use Contao\StringUtil;
 use Contao\FrontendTemplate;
+use Contao\Input;
 
 /**
  * Class FormMultipleChoiceQuestion.
@@ -99,8 +100,8 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
      */
     public function validate()
     {
-        $submit = $this->getPost('question');
-        $submit_other = $this->getPost('other_question');
+        $submit = Input::post('question');
+        $submit_other = Input::post('other_question');
         $value = [];
         $value['value'] = $submit[$this->id];
         $value['other'] = $submit_other[$this->id];

@@ -12,6 +12,7 @@ namespace Hschottm\SurveyBundle;
 
 use Contao\StringUtil;
 use Contao\FrontendTemplate;
+use Contao\Input;
 
 /**
  * Class FormOpenEndedQuestion.
@@ -111,7 +112,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
      */
     public function validate()
     {
-        $submit = $this->getPost('question');
+        $submit = Input::post('question');
         $varInput = $this->validator(StringUtil::deserialize($submit[$this->id]));
 
         //if (!$this->hasErrors())

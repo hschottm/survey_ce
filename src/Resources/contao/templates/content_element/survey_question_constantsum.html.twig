@@ -2,7 +2,7 @@
 {% for choice in choices %}
     <tr class="{% if loop.index % 2 == 0 %}even{% else %}odd{% endif %}">
 {% if blnInputFirst %}
-        <td class="col1"><input type="text" name="{{ name }}[{{ loop.index }}]" id="ctrl_{{ ctrl_id }}_{{ loop.index }}" class="text{{ ctrl_class }}" {% if values[loop.index]|length %}value="{{ values[loop.index] }}" {% endif %}/></td>
+        <td class="col1"><input type="text" name="{{ name }}[{{ loop.index }}]" id="ctrl_{{ ctrl_id }}_{{ loop.index }}" class="text{{ ctrl_class }}" {% if values[loop.index]|length %}value="{{ values[loop.index] }}" {% endif %}/></td>
         <td class="col0"><label for="ctrl_{{ ctrl_id }}_{{ loop.index }}">{{ choice }}</label></td>
 {% else %}
         <td class="col0"><label for="ctrl_{{ ctrl_id }}_{{ loop.index }}">{{ choice }}</label></td>

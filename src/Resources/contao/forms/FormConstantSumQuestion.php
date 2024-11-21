@@ -13,6 +13,7 @@ namespace Hschottm\SurveyBundle;
 use Contao\System;
 use Contao\FrontendTemplate;
 use Contao\StringUtil;
+use Contao\Input;
 
 /**
  * Class FormConstantSumQuestion.
@@ -83,7 +84,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
      */
     public function validate()
     {
-        $submit = $this->getPost('question');
+        $submit = Input::post('question');
         $value = $submit[$this->id];
         $varInput = $this->validator($value);
         $this->value = $varInput;
@@ -154,6 +155,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
             }
             $sum += $value;
         }
+        echo "sum = " . $sum;exit;
         switch ($this->strSumOption) {
             case 'exact':
                 if ($sum != $this->dblSum) {

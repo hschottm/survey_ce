@@ -12,6 +12,7 @@ namespace Hschottm\SurveyBundle;
 
 use Contao\StringUtil;
 use Contao\FrontendTemplate;
+use Contao\Input;
 
 /**
  * Class FormMatrixQuestion.
@@ -103,7 +104,7 @@ class FormMatrixQuestion extends FormQuestionWidget
      */
     public function validate()
     {
-        $submit = $this->getPost('question');
+        $submit = Input::post('question');
         $value = [];
         $value = $submit[$this->id];
         $varInput = $this->validator($value);
