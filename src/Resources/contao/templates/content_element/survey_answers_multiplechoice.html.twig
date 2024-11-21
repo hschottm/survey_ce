@@ -1,0 +1,35 @@
+<table class="tl_cumulated multiplechoice" summary="{{ summary }}">
+    <thead>
+        <tr>
+            <th colspan="2">{{ answer }}</th>
+            <th>{{ nrOfSelections }}</th>
+        </tr>
+    </thead>
+    <tbody>
+{% set counter = 1 %}
+{% for id, choice in choices %}
+        <tr>
+            <td class="counter">{{ counter }}.</td>
+            <td class="answer">{{ choice }}</td>
+            <td class="selections">{% if statistics['cumulated'][id+1] %}{{ statistics['cumulated'][id+1] }}{%else %}0{% endif %}</td>
+        </tr>
+{% set counter = counter + 1 %}
+{% endfor %}
+{% if other %}
+        <tr>
+            <td class="counter">{{ counter }}.</td>
+            <td class="answer">{{ othertitle }}</td>
+            <td class="selections">({% if statistics['cumulated']['other'] %}{{ statistics['cumulated']['other'] }}{% else %}0{% endif %})</td>
+        </tr>
+{% if otherchoices|length %}
+{% for key, count in otherchoices %}
+        <tr>
+            <td></td>
+            <td class="answer">{{ key }}</td>
+            <td class="selections">{{ count }}</td>
+        </tr>
+{% endfor %}
+{% endif %}
+{% endif %}
+    </tbody>
+</table>

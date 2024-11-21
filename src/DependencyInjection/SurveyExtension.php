@@ -27,7 +27,8 @@ class SurveyExtension extends Extension
             new FileLocator(__DIR__.'/../Resources/config')
         );
 
-        //$loader->load('listener.yml');
-        $loader->load('services.yml');
+        $loader->load('listener.yaml');
+        $loader->load('controller.yaml');
+        $loader->load('services.yaml');
     }
 }

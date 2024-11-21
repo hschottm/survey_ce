@@ -1,12 +1,14 @@
 <?php
 
 /*
- * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @copyright  Helmut Schottmüller 2005-2024 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
  * @see	      https://github.com/hschottm/survey_ce
  */
+
+use Contao\Backend;
 
 $GLOBALS['TL_DCA']['tl_survey_result'] = [
     // Config
@@ -47,3 +49,4 @@ $GLOBALS['TL_DCA']['tl_survey_result'] = [
         ],
     ],
 ];
+

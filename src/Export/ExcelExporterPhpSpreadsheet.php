@@ -14,6 +14,12 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use Contao\StringUtil;
 
 class ExcelExporterPhpSpreadsheet extends Exporter
 {
@@ -83,7 +89,7 @@ class ExcelExporterPhpSpreadsheet extends Exporter
     {
         $objWriter = new Xlsx($this->spreadsheet);
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="'.\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xlsx"');
+        header('Content-Disposition: attachment;filename="'.StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xlsx"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
         echo '';
@@ -105,21 +111,21 @@ class ExcelExporterPhpSpreadsheet extends Exporter
 
         switch ($cell[self::CELLTYPE]) {
       case CELLTYPE_STRING:
-        $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
+        $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
         break;
       case CELLTYPE_FLOAT:
-        $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_00);
+        $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
         break;
       case CELLTYPE_PICTURE:
         break;
       case CELLTYPE_INTEGER:
       default:
-        $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
+        $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER);
         break;
     }
 
         if (array_key_exists(self::BGCOLOR, $cell)) {
-            $worksheet->getStyle($pos)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+            $worksheet->getStyle($pos)->getFill()->setFillType(Fill::FILL_SOLID);
             $worksheet->getStyle($pos)->getFill()->getStartColor()->setARGB(str_replace('#', 'FF', $cell[self::BGCOLOR]));
         }
         if (array_key_exists(self::COLOR, $cell)) {
@@ -129,25 +135,25 @@ class ExcelExporterPhpSpreadsheet extends Exporter
         if (array_key_exists(self::ALIGNMENT, $cell)) {
             switch ($cell[self::ALIGNMENT]) {
         case self::ALIGNMENT_H_GENERAL:
-            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_GENERAL);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_GENERAL);
             break;
           case self::ALIGNMENT_H_LEFT:
-            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
             break;
           case self::ALIGNMENT_H_CENTER:
-            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             break;
           case self::ALIGNMENT_H_RIGHT:
-            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
             break;
           case self::ALIGNMENT_H_FILL:
-            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_FILL);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_FILL);
             break;
           case self::ALIGNMENT_H_JUSTIFY:
-            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_JUSTIFY);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_JUSTIFY);
             break;
           case self::ALIGNMENT_H_CENTER_CONT:
-            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER_CONTINUOUS);
+            $worksheet->getStyle($pos)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER_CONTINUOUS);
             break;
       }
         }
@@ -183,205 +189,205 @@ class ExcelExporterPhpSpreadsheet extends Exporter
         if (array_key_exists(self::BORDERBOTTOM, $cell)) {
             switch ($cell[self::BORDERBOTTOM]) {
         case self::BORDER_THIN:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THIN);
           break;
         case self::BORDER_HAIR:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_HAIR);
           break;
         case self::BORDER_THICK:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_THICK);
           break;
         case self::BORDER_DOTTED:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOTTED);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_DOTTED);
           break;
         case self::BORDER_DOUBLE:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_DOUBLE);
           break;
         case self::BORDER_MEDIUM:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_MEDIUM);
           break;
         case self::BORDER_DASHED:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHED);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_DASHED);
           break;
         case self::BORDER_DASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_DASHDOT);
           break;
         case self::BORDER_DASHDOTDOT:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHDOTDOT);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_DASHDOTDOT);
           break;
         case self::BORDER_MEDIUMDASHED:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHED);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_MEDIUMDASHED);
           break;
         case self::BORDER_SLANTDASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_SLANTDASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_SLANTDASHDOT);
           break;
         case self::BORDER_MEDIUMDASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_MEDIUMDASHDOT);
           break;
         case self::BORDER_MEDIUMDASHDOTDOT:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHDOTDOT);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_MEDIUMDASHDOTDOT);
           break;
         case self::BORDER_NONE:
-          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE);
+          $worksheet->getStyle($pos)->getBorders()->getBottom()->setBorderStyle(Border::BORDER_NONE);
           break;
       }
         }
 
         if (array_key_exists(self::BORDERBOTTOMCOLOR, $cell)) {
-            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERBOTTOMCOLOR])));
+            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new Color($this->webColorToARGB($cell[self::BORDERBOTTOMCOLOR])));
         }
 
         if (array_key_exists(self::BORDERTOP, $cell)) {
             switch ($cell[self::BORDERTOP]) {
         case self::BORDER_THIN:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN);
           break;
         case self::BORDER_HAIR:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_HAIR);
           break;
         case self::BORDER_THICK:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_THICK);
           break;
         case self::BORDER_DOTTED:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOTTED);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_DOTTED);
           break;
         case self::BORDER_DOUBLE:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_DOUBLE);
           break;
         case self::BORDER_MEDIUM:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_MEDIUM);
           break;
         case self::BORDER_DASHED:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHED);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_DASHED);
           break;
         case self::BORDER_DASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_DASHDOT);
           break;
         case self::BORDER_DASHDOTDOT:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHDOTDOT);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_DASHDOTDOT);
           break;
         case self::BORDER_MEDIUMDASHED:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHED);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_MEDIUMDASHED);
           break;
         case self::BORDER_SLANTDASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_SLANTDASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_SLANTDASHDOT);
           break;
         case self::BORDER_MEDIUMDASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_MEDIUMDASHDOT);
           break;
         case self::BORDER_MEDIUMDASHDOTDOT:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHDOTDOT);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_MEDIUMDASHDOTDOT);
           break;
         case self::BORDER_NONE:
-          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE);
+          $worksheet->getStyle($pos)->getBorders()->getTop()->setBorderStyle(Border::BORDER_NONE);
           break;
       }
         }
 
         if (array_key_exists(self::BORDERTOPCOLOR, $cell)) {
-            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERTOPCOLOR])));
+            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new Color($this->webColorToARGB($cell[self::BORDERTOPCOLOR])));
         }
 
         if (array_key_exists(self::BORDERLEFT, $cell)) {
             switch ($cell[self::BORDERLEFT]) {
         case self::BORDER_THIN:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_THIN);
           break;
         case self::BORDER_HAIR:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_HAIR);
           break;
         case self::BORDER_THICK:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_THICK);
           break;
         case self::BORDER_DOTTED:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOTTED);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_DOTTED);
           break;
         case self::BORDER_DOUBLE:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_DOUBLE);
           break;
         case self::BORDER_MEDIUM:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_MEDIUM);
           break;
         case self::BORDER_DASHED:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHED);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_DASHED);
           break;
         case self::BORDER_DASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_DASHDOT);
           break;
         case self::BORDER_DASHDOTDOT:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHDOTDOT);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_DASHDOTDOT);
           break;
         case self::BORDER_MEDIUMDASHED:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHED);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_MEDIUMDASHED);
           break;
         case self::BORDER_SLANTDASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_SLANTDASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_SLANTDASHDOT);
           break;
         case self::BORDER_MEDIUMDASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_MEDIUMDASHDOT);
           break;
         case self::BORDER_MEDIUMDASHDOTDOT:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHDOTDOT);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_MEDIUMDASHDOTDOT);
           break;
         case self::BORDER_NONE:
-          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE);
+          $worksheet->getStyle($pos)->getBorders()->getLeft()->setBorderStyle(Border::BORDER_NONE);
           break;
       }
         }
 
         if (array_key_exists(self::BORDERLEFTCOLOR, $cell)) {
-            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERLEFTCOLOR])));
+            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new Color($this->webColorToARGB($cell[self::BORDERLEFTCOLOR])));
         }
 
         if (array_key_exists(self::BORDERRIGHT, $cell)) {
             switch ($cell[self::BORDERRIGHT]) {
         case self::BORDER_THIN:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_THIN);
           break;
         case self::BORDER_HAIR:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_HAIR);
           break;
         case self::BORDER_THICK:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_THICK);
           break;
         case self::BORDER_DOTTED:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOTTED);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_DOTTED);
           break;
         case self::BORDER_DOUBLE:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_DOUBLE);
           break;
         case self::BORDER_MEDIUM:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_MEDIUM);
           break;
         case self::BORDER_DASHED:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHED);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_DASHED);
           break;
         case self::BORDER_DASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_DASHDOT);
           break;
         case self::BORDER_DASHDOTDOT:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DASHDOTDOT);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_DASHDOTDOT);
           break;
         case self::BORDER_MEDIUMDASHED:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHED);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_MEDIUMDASHED);
           break;
         case self::BORDER_SLANTDASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_SLANTDASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_SLANTDASHDOT);
           break;
         case self::BORDER_MEDIUMDASHDOT:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHDOT);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_MEDIUMDASHDOT);
           break;
         case self::BORDER_MEDIUMDASHDOTDOT:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUMDASHDOTDOT);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_MEDIUMDASHDOTDOT);
           break;
         case self::BORDER_NONE:
-          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE);
+          $worksheet->getStyle($pos)->getBorders()->getRight()->setBorderStyle(Border::BORDER_NONE);
           break;
       }
         }
 
         if (array_key_exists(self::BORDERRIGHTCOLOR, $cell)) {
-            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($this->webColorToARGB($cell[self::BORDERRIGHTCOLOR])));
+            $worksheet->getStyle($pos)->getBorders()->getBottom()->setColor(new Color($this->webColorToARGB($cell[self::BORDERRIGHTCOLOR])));
         }
 
         if (array_key_exists(self::MERGE, $cell)) {

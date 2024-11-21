@@ -1,0 +1,92 @@
+{% if not protected %}
+<div class="{{ class }} block"{{ cssID }}{% if style %} style="{{ style }}"{% endif %}>
+    {% if headline %}
+<{{ hl }}>{{ headline }}</{{ hl }}>
+    {% endif %}
+    {% if (page > 0) and (page <= pages|length) %}
+<div class="progressbar_container">
+	<div class="progressbar" style="width: {{ "%1.f"|format((100*page)/(pages|length)) }}%">
+		<span>{{ pageXofY|format(page,pages|length) }}</span>
+	</div>
+</div>
+{% endif %}
+{% if show_title or show_cancel %}
+<div class="surveyhead">
+	<div class="left">
+		<span class="surveytitle">{{ surveytitle }}</span>
+	</div>
+	<div class="middle">
+	</div>
+	<div class="right">
+		{% if show_cancel %}<a href="{{ cancellink }}">{{ cancel }}</a>{% endif %}
+	</div>
+</div>
+{% endif %}
+<!-- indexer::stop -->
+<div class="form">
+
+<form action="{{ action }}" method="post">
+{% if errorMsg %}<div class="tl_error">{{ errorMsg }}</div>{% endif %}
+{% if page == 0 %}
+<div class="introduction">
+	{{ introduction|raw }}
+	<input type="hidden" name="FORM_SUBMIT" value="tl_survey_form" />
+	<input type="hidden" name="REQUEST_TOKEN" value="{{ requestToken }}" />
+</div>
+{% endif %}
+{% if page > pages|length %}
+<div class="finalstatement">{{ finalsubmission }}</div>
+{% endif %}
+{% if (page > 0) and (page <= pages|length) %}
+{% if (pages[page-1].title|length) %}<div class="pagetitle">{{ pages[page-1].title }}</div>{% endif %}
+{% if pages[page-1].introduction|length %}<div class="pageintroduction">{{ pages[page-1].introduction|raw }}</div>{% endif %}
+<div class="formbody">
+	<input type="hidden" name="FORM_SUBMIT" value="tl_survey" />
+	<input type="hidden" name="REQUEST_TOKEN" value="{{ requestToken }}" />
+	<input type="hidden" name="page" value="{{ page }}" />
+	<input type="hidden" name="survey" value="{{ survey_id }}" />
+	<input type="hidden" name="pin" value="{{ pin }}" />
+{{ questionblock|raw }}
+</div>
+{% endif %}
+{% if not (page > pages|length) %}
+<div class="submit_container">
+{% if (page == 0) %}
+{% if needsTAN %}
+	<div class="tl_survey_taninput">
+		<p>{{ txtTANInputDesc }}</p>{% if tanMsg|length %}
+		<p class="tl_error">{{ tanMsg }}></p>{% endif %}
+		<p><label for="tan">{{ txtTANInput }}:</label> <input type="text" name="tan" id="tan" {% if (tancode|length) %}value="{{ tancode }}"{% endif %}/> <input type="submit" class="submit" name="start" value="{{ start }}" /></p>
+	</div>
+{% endif %}
+{% endif %}
+	<div class="left">
+{% if allowback and page > 1 and page <= pages|length %}
+		<input type="submit" class="submit" name="prev" value="{{ prev }}" />
+{% endif %}
+	</div>
+	<div class="middle">
+	</div>
+	<div class="right">
+{% if page == 0 %}
+{% if not needsTAN %}
+{% if not hideStartButtons %}
+		<input type="submit" class="submit" name="start" value="{{ start }}" />
+{% endif %}
+{% endif %}
+{% endif %}
+{% if page > 0 and page < pages|length %}
+		<input type="submit" class="submit" name="next" value="{{ next }}" />
+{% endif %}
+{% if page == pages|length %}
+  <input type="submit" class="submit" name="finish" value="{{ finish }}" />
+{% endif %}
+	</div>
+</div>
+{% endif %}
+</form>
+
+</div>
+<!-- indexer::continue -->
+</div>
+{% endif %}

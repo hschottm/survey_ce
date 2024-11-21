@@ -10,6 +10,10 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\System;
+use Contao\FrontendTemplate;
+use Contao\StringUtil;
+
 /**
  * Class FormConstantSumQuestion.
  *
@@ -48,7 +52,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
                 $this->strSumOption = $varValue['sumoption'];
                 $this->dblSum = $varValue['sum'];
                 $this->blnInputFirst = ($varValue['inputfirst']) ? true : false;
-                $this->arrChoices = deserialize($varValue['sumchoices']);
+                $this->arrChoices = StringUtil::deserialize($varValue['sumchoices']);
                 if (!\is_array($this->arrChoices)) {
                     $this->arrChoices = [];
                 }
@@ -92,16 +96,16 @@ class FormConstantSumQuestion extends FormQuestionWidget
      */
     public function generate()
     {
-        $this->loadLanguageFile('tl_survey_question');
-        $template = new \FrontendTemplate('survey_question_constantsum');
+        System::loadLanguageFile('tl_survey_question');
+        $template = new FrontendTemplate('survey_question_constantsum');
         $template->choices = $this->arrChoices;
         $template->blnInputFirst = $this->blnInputFirst;
-        $template->name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
+        $template->name = StringUtil::specialchars($this->strName);
+        $template->ctrl_id = StringUtil::specialchars($this->strId);
         $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
         $template->values = $this->varValue;
         $widget = $template->parse();
-        $widget .= $this->addSubmit();
+        //$widget .= $this->addSubmit();
 
         return $widget;
     }

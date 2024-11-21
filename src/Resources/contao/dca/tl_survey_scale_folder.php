@@ -8,10 +8,14 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
+use Contao\Backend;
+use Contao\DC_Table;
+use Contao\DataContainer;
+
 $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ctable' => ['tl_survey_scale'],
         'switchToEdit' => true,
         'enableVersioning' => true,
@@ -25,9 +29,9 @@ $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 2,
+            'mode' => DataContainer::MODE_SORTABLE,
             'fields' => ['title'],
-            'flag' => 1,
+            'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'panelLayout' => 'filter;sort,search,limit',
         ],
         'label' => [
@@ -88,7 +92,7 @@ $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = [
             'exclude' => true,
             'search' => true,
             'sorting' => true,
-            'flag' => 1,
+            'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'maxlength' => 255],
             'sql' => "varchar(255) NOT NULL default ''",
@@ -103,14 +107,3 @@ $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = [
     ],
 ];
 
-/**
- * Class tl_survey_scale_folder.
- *
- * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @copyright  Helmut Schottmüller 2009
- * @author     Helmut Schottmüller <typolight@aurealis.de>
- */
-class tl_survey_scale_folder extends Backend
-{
-}

@@ -1,5 +1,8 @@
 <?php
 
+use Contao\DC_Table;
+use Contao\DataContainer;
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
@@ -11,7 +14,7 @@
 $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_survey',
         'doNotCopyRecords' => true,
         'closed' => true,
@@ -29,15 +32,15 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 2,
+            'mode' => DataContainer::MODE_SORTABLE,
             'fields' => ['tan'],
-            'flag' => 1,
+            'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'panelLayout' => 'filter;sort,search,limit',
         ],
         'label' => [
             'fields' => ['tan', 'tstamp', 'used'],
             'format' => '%s::%s::%s',
-            'label_callback' => ['tl_survey_pin_tan', 'getLabel'],
+            //'label_callback' => ['tl_survey_pin_tan', 'getLabel'],
         ],
         'global_operations' => [
             'createtan' => [
@@ -93,7 +96,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tan'],
             'search' => true,
             'sorting' => true,
-            'flag' => 1,
+            'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'maxlength' => 16, 'insertTag' => true],
             'sql' => "varchar(16) NOT NULL default ''",
@@ -108,7 +111,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
         'tstamp' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['tstamp'],
             'sorting' => true,
-            'flag' => 6, // desc, grouped by day (side effect: tstamp label is now in 'datimFormat')
+            'flag' => DataContainer::SORT_DAY_DESC, // desc, grouped by day (side effect: tstamp label is now in 'datimFormat')
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'maxlength' => 16, 'insertTag' => true],
             'sql' => "int(10) unsigned NOT NULL default '0'",
@@ -124,6 +127,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
+/*
 class tl_survey_pin_tan extends Backend
 {
     public function getLabel($row, $label)
@@ -139,3 +143,4 @@ class tl_survey_pin_tan extends Backend
         return sprintf('<div>%s <strong>%s</strong> (%s)</div>', $used, $matches[1], $matches[2]);
     }
 }
+    */

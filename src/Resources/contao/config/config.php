@@ -20,14 +20,25 @@ use Hschottm\SurveyBundle\SurveyQuestionMultiplechoice;
 use Hschottm\SurveyBundle\SurveyQuestionMatrix;
 use Hschottm\SurveyBundle\SurveyQuestionConstantsum;
 use Hschottm\SurveyBundle\ConditionWizard;
+use Hschottm\SurveyBundle\SurveyConditionModel;
+use Hschottm\SurveyBundle\SurveyModel;
+use Hschottm\SurveyBundle\SurveyNavigationModel;
+use Hschottm\SurveyBundle\SurveyPageModel;
+use Hschottm\SurveyBundle\SurveyParticipantModel;
+use Hschottm\SurveyBundle\SurveyPinTanModel;
+use Hschottm\SurveyBundle\SurveyQuestionModel;
+use Hschottm\SurveyBundle\SurveyResultModel;
+use Contao\ArrayUtil;
+use Contao\System;
+use Symfony\Component\HttpFoundation\Request;
 
 
 /*
  * Add survey element
  */
-array_insert($GLOBALS['TL_CTE']['includes'], 2, [
-    'survey' => ContentSurvey::class,
-]);
+//ArrayUtil::arrayInsert($GLOBALS['TL_CTE']['includes'], 2, [
+//    'survey' => ContentSurvey::class,
+//]);
 
 /*
 * Add frontend widgets
@@ -40,7 +51,7 @@ array_insert($GLOBALS['TL_CTE']['includes'], 2, [
 /*
  * BACK END FORM FIELDS
  */
-array_insert($GLOBALS['BE_MOD'], 3, [
+ArrayUtil::arrayInsert($GLOBALS['BE_MOD'], 3, [
     'surveys' => [
             'survey' => [
                     'tables' => [
@@ -62,11 +73,11 @@ array_insert($GLOBALS['BE_MOD'], 3, [
         ],
 ]);
 
-if (TL_MODE == 'BE') {
+if (System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest(System::getContainer()->get('request_stack')->getCurrentRequest() ?? Request::create(''))) {
     $GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/survey.css|static';
 }
 
-array_insert($GLOBALS['BE_FFL'], 15, array
+ArrayUtil::arrayInsert($GLOBALS['BE_FFL'], 15, array
 (
 	'conditionwizard'    => ConditionWizard::class
 ));
@@ -83,7 +94,17 @@ $GLOBALS['TL_SVY']['q_multiplechoice'] = SurveyQuestionMultiplechoice::class;
 $GLOBALS['TL_SVY']['q_matrix'] = SurveyQuestionMatrix::class;
 $GLOBALS['TL_SVY']['q_constantsum'] = SurveyQuestionConstantsum::class;
 
+$GLOBALS['TL_MODELS']['tl_survey_condition'] = SurveyConditionModel::class;
+$GLOBALS['TL_MODELS']['tl_survey'] = SurveyModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_navigation'] = SurveyNavigationModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_page'] = SurveyPageModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_participant'] = SurveyParticipantModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_pin_tan'] = SurveyPinTanModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_question'] = SurveyQuestionModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_result'] = SurveyResultModel::class;
+
 /*
  * Set the member URL parameter as url keyword
  */
-$GLOBALS['TL_CONFIG']['urlKeywords'] .= (\strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '').'code';
+
+//$GLOBALS['TL_CONFIG']['urlKeywords'] .= (\strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '').'code';

@@ -11,6 +11,7 @@
 namespace Hschottm\SurveyBundle\Export;
 
 use Hschottm\ExcelXLSBundle\xlsexport;
+use Contao\StringUtil;
 
 class ExcelExporterXLSExport extends Exporter
 {
@@ -61,7 +62,7 @@ class ExcelExporterXLSExport extends Exporter
 
     protected function send()
     {
-        $this->spreadsheet->sendFile(\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xls');
+        $this->spreadsheet->sendFile(StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xls');
         exit;
     }
 

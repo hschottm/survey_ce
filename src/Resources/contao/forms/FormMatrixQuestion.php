@@ -10,6 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\StringUtil;
+use Contao\FrontendTemplate;
+
 /**
  * Class FormMatrixQuestion.
  *
@@ -49,11 +52,11 @@ class FormMatrixQuestion extends FormQuestionWidget
             case 'surveydata':
                 parent::__set($strKey, $varValue);
                 $this->strClass = 'matrix'.((\strlen($varValue['cssClass']) ? (' '.$varValue['cssClass']) : ''));
-                $this->arrRows = deserialize($varValue['matrixrows']);
+                $this->arrRows = StringUtil::deserialize($varValue['matrixrows']);
                 if (!\is_array($this->arrRows)) {
                     $this->arrRows = [];
                 }
-                $this->arrColumns = deserialize($varValue['matrixcolumns']);
+                $this->arrColumns = StringUtil::deserialize($varValue['matrixcolumns']);
                 if (!\is_array($this->arrColumns)) {
                     $this->arrColumns = [];
                 }
@@ -117,17 +120,17 @@ class FormMatrixQuestion extends FormQuestionWidget
         $col_classes = [];
         $columncounter = 1;
         foreach ($this->arrColumns as $column) {
-            $col_classes[$columncounter] = substr(standardize($column), 0, 28);
+            $col_classes[$columncounter] = substr(StringUtil::standardize($column), 0, 28);
             ++$columncounter;
         }
         if ($this->blnBipolar) {
-            $col_classes['leftadjective'] = substr(standardize($this->strAdjective1), 0, 28);
-            $col_classes['rightadjective'] = substr(standardize($this->strAdjective2), 0, 28);
+            $col_classes['leftadjective'] = substr(StringUtil::standardize($this->strAdjective1), 0, 28);
+            $col_classes['rightadjective'] = substr(StringUtil::standardize($this->strAdjective2), 0, 28);
         }
         if ($this->blnNeutralColumn) {
-            $col_classes['neutral'] = substr(standardize($this->strNeutralColumn), 0, 28);
+            $col_classes['neutral'] = substr(StringUtil::standardize($this->strNeutralColumn), 0, 28);
         }
-        $template = new \FrontendTemplate('survey_question_matrix');
+        $template = new FrontendTemplate('survey_question_matrix');
         $template->nrOfColumns = max(1, \count($this->arrColumns)) + (($this->blnNeutralColumn) ? 1 : 0) + (($this->blnBipolar && 0 == strcmp($this->strBipolarPosition, 'aside')) ? 2 : 0);
         $template->columns = $this->arrColumns;
         $template->col_classes = $col_classes;
@@ -137,18 +140,18 @@ class FormMatrixQuestion extends FormQuestionWidget
         $template->bipolar = $this->blnBipolar;
         $template->bipolarTop = 0 == strcmp($this->strBipolarPosition, 'top');
         $template->bipolarAside = 0 == strcmp($this->strBipolarPosition, 'aside');
-        $template->leftadjective = \StringUtil::specialchars($this->strAdjective1);
-        $template->rightadjective = \StringUtil::specialchars($this->strAdjective2);
+        $template->leftadjective = StringUtil::specialchars($this->strAdjective1);
+        $template->rightadjective = StringUtil::specialchars($this->strAdjective2);
         $template->hasNeutralColumn = $this->blnNeutralColumn;
-        $template->neutralColumn = \StringUtil::specialchars($this->strNeutralColumn);
+        $template->neutralColumn = StringUtil::specialchars($this->strNeutralColumn);
         $template->singleResponse = 0 == strcmp($this->questiontype, 'matrix_singleresponse');
         $template->multipleResponse = !$template->singleResponse;
-        $template->ctrl_name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
+        $template->ctrl_name = StringUtil::specialchars($this->strName);
+        $template->ctrl_id = StringUtil::specialchars($this->strId);
         $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
         $template->values = $this->varValue;
         $widget = $template->parse();
-        $widget .= $this->addSubmit();
+        //$widget .= $this->addSubmit();
 
         return $widget;
     }

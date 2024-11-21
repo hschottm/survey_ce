@@ -1,5 +1,8 @@
 <?php
 
+use Contao\DC_Table;
+use Contao\DataContainer;
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
@@ -11,17 +14,13 @@
 $GLOBALS['TL_DCA']['tl_survey_participant'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_survey',
         'doNotCopyRecords' => true,
         'enableVersioning' => true,
         'closed' => true,
-    'onload_callback' => [
-        ['tl_survey_participant', 'checkPermission'],
-    ],
-    'ondelete_callback' => [
-            ['tl_survey_participant', 'deleteParticipant'],
-        ],
+    //'onload_callback' => [['tl_survey_participant', 'checkPermission'],],
+    //'ondelete_callback' => [['tl_survey_participant', 'deleteParticipant'],],
         'sql' => [
             'keys' => [
                 'id' => 'primary',
@@ -33,14 +32,14 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 2,
+            'mode' => DataContainer::MODE_SORTABLE,
             'fields' => ['lastpage', 'tstamp'],
-            'flag' => 11, // sort ASC ungrouped  on initial display
+            'flag' => DataContainer::SORT_ASC, // sort ASC ungrouped  on initial display
             'panelLayout' => 'filter;sort,limit',
         ],
         'label' => [
             'fields' => ['pin', 'uid', 'finished'],
-            'label_callback' => ['tl_survey_participant', 'getLabel'],
+            //'label_callback' => ['tl_survey_participant', 'getLabel'],
         ],
         'global_operations' => [
             'exportraw' => [
@@ -82,7 +81,7 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
         'tstamp' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['tstamp'],
             'sorting' => true,
-            'flag' => 5, // sort ASC grouped by day
+            'flag' => DataContainer::SORT_DAY_ASC, // sort ASC grouped by day
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'maxlength' => 16, 'rgxp' => 'datim', 'insertTag' => true],
             'sql' => "int(10) unsigned NOT NULL default '0'",
@@ -99,7 +98,7 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
         'lastpage' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['lastpage'],
             'sorting' => true,
-            'flag' => 3, // sort ASC grouped by first X chars
+            'flag' => DataContainer::SORT_INITIAL_LETTERS_ASC, // sort ASC grouped by first X chars
             'length' => 2, // group by first 2 chars
             'filter' => true,
             'inputType' => 'text',
@@ -132,15 +131,11 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
+/*
 class tl_survey_participant extends \Backend
 {
     protected $pageCount;
 
-    /**
-     * Check permissions to edit table tl_survey_participant.
-     *
-     * @throws Contao\CoreBundle\Exception\AccessDeniedException
-     */
     public function checkPermission()
     {
         switch (\Input::get('act')) {
@@ -154,7 +149,6 @@ class tl_survey_participant extends \Backend
           case 'editAll':
           case 'deleteAll':
           case 'overrideAll':
-              /** @var Symfony\Component\HttpFoundation\Session\SessionInterface $objSession */
               $objSession = \System::getContainer()->get('session');
               $session = $objSession->all();
               $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy('pid', \Input::get('id'));
@@ -176,9 +170,9 @@ class tl_survey_participant extends \Backend
         $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findOneBy('id', $dc->id);
         if (null != $res) {
             setcookie('TLsvy_'.$res->pid, $res->pin, time() - 3600, '/');
-            $objDelete = $this->Database->prepare('DELETE FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
-            $objDelete = $this->Database->prepare('DELETE FROM tl_survey_result WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
-            $objDelete = $this->Database->prepare('DELETE FROM tl_survey_navigation WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
+            $objDelete = Database::getInstance()->prepare('DELETE FROM tl_survey_pin_tan WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
+            $objDelete = Database::getInstance()->prepare('DELETE FROM tl_survey_result WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
+            $objDelete = Database::getInstance()->prepare('DELETE FROM tl_survey_navigation WHERE (pid=? AND pin=?)')->execute($res->pid, $res->pin);
         }
     }
 
@@ -213,14 +207,6 @@ class tl_survey_participant extends \Backend
         return $result;
     }
 
-    /**
-     * Returns the surveys number of pages (cached).
-     *
-     * @param int
-     * @param mixed $survey_id
-     *
-     * @return int
-     */
     protected function getPageCount($survey_id)
     {
         if (!isset($this->pageCount)) {
@@ -235,3 +221,4 @@ class tl_survey_participant extends \Backend
         return $this->pageCount;
     }
 }
+    */

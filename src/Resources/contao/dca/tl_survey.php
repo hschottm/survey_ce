@@ -1,5 +1,15 @@
 <?php
 
+use Contao\Database;
+use Contao\Input;
+use Contao\Backend;
+use Contao\System;
+use Hschottm\SurveyBundle\SurveyResultModel;
+use Contao\BackendUser;
+use Contao\ArrayUtil;
+use Contao\DC_Table;
+use Contao\DataContainer;
+
 /*
  * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
@@ -8,7 +18,7 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
- $found = (\strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
+ $found = (\strlen(Input::get('id'))) ? SurveyResultModel::findByPid(Input::get('id')) : null;
  $hasData = (null != $found && 0 < $found->count()) ? true : false;
 
 /*
@@ -17,7 +27,7 @@
 $GLOBALS['TL_DCA']['tl_survey'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ctable' => ['tl_survey_page', 'tl_survey_participant', 'tl_survey_result', 'tl_survey_pin_tan'],
         'switchToEdit' => true,
         'enableVersioning' => true,
@@ -31,15 +41,15 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 2,
+            'mode' => DataContainer::MODE_SORTABLE,
             'fields' => ['title'],
-            'flag' => 1,
+            'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'panelLayout' => 'filter;sort,search,limit',
         ],
         'label' => [
             'fields' => ['title'],
             'format' => '%s',
-            'label_callback' => ['tl_survey', 'addIcon'],
+            //'label_callback' => ['tl_survey', 'addIcon'],
         ],
         'global_operations' => [
             'all' => [
@@ -116,7 +126,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'exclude' => true,
             'search' => true,
             'sorting' => true,
-            'flag' => 1,
+            'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'maxlength' => 255, 'insertTag' => true, 'tl_class' => 'w50'],
             'sql' => "varchar(255) NOT NULL default ''",
@@ -127,7 +137,7 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options' => $this->getLanguages(),
+            'options' => System::getContainer()->get('contao.intl.locales')->getLanguages(),
             'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
@@ -144,14 +154,14 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey']['online_start'],
             'search' => true,
             'inputType' => 'text',
-            'eval' => ['maxlength' => 32, 'rgxp' => 'datim', 'datepicker' => $this->getDatePickerString(), 'tl_class' => 'w50 wizard'],
+            'eval' => ['maxlength' => 32, 'rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
         'online_end' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey']['online_end'],
             'search' => true,
             'inputType' => 'text',
-            'eval' => ['maxlength' => 32, 'rgxp' => 'datim', 'datepicker' => $this->getDatePickerString(), 'tl_class' => 'w50 wizard'],
+            'eval' => ['maxlength' => 32, 'rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
         'description' => [
@@ -261,10 +271,10 @@ $GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'sendConfirmatio
 $GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'addConfirmationMailAttachments';
 $GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'addConfirmationMailAlternateAttachments';
 
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('sendConfirmationMail' => 'confirmationMailRecipientField,confirmationMailRecipient,confirmationMailSender,confirmationMailReplyto,confirmationMailSubject,confirmationMailText,confirmationMailTemplate,addConfirmationMailAttachments'));
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('sendConfirmationMailAlternate' => 'confirmationMailAlternateCondition,confirmationMailAlternateRecipient,confirmationMailAlternateSender,confirmationMailAlternateReplyto,confirmationMailAlternateSubject,confirmationMailAlternateText,confirmationMailAlternateTemplate,addConfirmationMailAlternateAttachments'));
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('addConfirmationMailAttachments' => 'confirmationMailAttachments'));
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('addConfirmationMailAlternateAttachments' => 'confirmationMailAlternateAttachments'));
+ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('sendConfirmationMail' => 'confirmationMailRecipientField,confirmationMailRecipient,confirmationMailSender,confirmationMailReplyto,confirmationMailSubject,confirmationMailText,confirmationMailTemplate,addConfirmationMailAttachments'));
+ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('sendConfirmationMailAlternate' => 'confirmationMailAlternateCondition,confirmationMailAlternateRecipient,confirmationMailAlternateSender,confirmationMailAlternateReplyto,confirmationMailAlternateSubject,confirmationMailAlternateText,confirmationMailAlternateTemplate,addConfirmationMailAlternateAttachments'));
+ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('addConfirmationMailAttachments' => 'confirmationMailAttachments'));
+ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('addConfirmationMailAlternateAttachments' => 'confirmationMailAlternateAttachments'));
 
 $GLOBALS['TL_DCA']['tl_survey']['fields']['sendConfirmationMail'] = array
 (
@@ -299,8 +309,28 @@ $GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailRecipientField'] = ar
 	'exclude'                 => true,
 	'filter'                  => false,
 	'inputType'               => 'select',
-	'options_callback'        => array('tl_survey', 'getEmailFormFields'),
-	'eval'                    => array('chosen'=>true, 'mandatory'=>true, 'maxlength'=>64, 'tl_class'=>'w50'),
+    'options_callback' => static function () {
+        $fields = array();
+
+        // Get all form fields which can be used to define recipient of confirmation mail
+        $objFields = Database::getInstance()->prepare("SELECT tl_survey_question.id,tl_survey_question.title FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? AND tl_survey_question.questiontype=? ORDER BY tl_survey_question.title ASC")
+            ->execute(Input::get('id'), 'openended');
+
+        $fields[] = '-';
+        while ($objFields->next())
+        {
+            $k = $objFields->id;
+            if (strlen($k))
+            {
+                $v = $objFields->title;
+                $v = strlen($v) ? $v.' ['.$k.']' : $k;
+                $fields[$k] =$v;
+            }
+        }
+
+        return $fields;
+    },
+    'eval'                    => array('chosen'=>true, 'mandatory'=>true, 'maxlength'=>64, 'tl_class'=>'w50'),
 	'sql'                     => "varchar(64) NOT NULL default ''"
 );
 $GLOBALS['TL_DCA']['tl_survey']['fields']['confirmationMailRecipient'] = array
@@ -510,34 +540,15 @@ if ($hasData) {
     $GLOBALS['TL_DCA']['tl_survey']['fields']['access']['eval']['disabled'] = 'disabled';
 }
 
-/**
- * Class tl_survey.
- *
- * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @copyright  Helmut Schottmüller 2009
- * @author     Helmut Schottmüller <typolight@aurealis.de>
- */
+
+/*
 class tl_survey extends Backend
 {
-    /**
-     * Load database object.
-     */
     protected function __construct()
     {
         parent::__construct();
     }
 
-    /**
-     * Add an image to each record.
-     *
-     * @param array
-     * @param string
-     * @param mixed $row
-     * @param mixed $label
-     *
-     * @return string
-     */
     public function addIcon($row, $label)
     {
         return sprintf('<div class="list_icon" style="background-image:url(\'bundles/hschottmsurvey/images/survey-outline.svg\');">%s</div>', $label);
@@ -566,3 +577,4 @@ class tl_survey extends Backend
   		return $fields;
   	}
 }
+*/

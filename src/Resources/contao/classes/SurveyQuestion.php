@@ -10,6 +10,11 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\System;
+use Contao\FrontendTemplate;
+use Contao\Database;
+use Contao\Backend;
+
 /**
  * Class SurveyQuestion.
  *
@@ -18,7 +23,7 @@ namespace Hschottm\SurveyBundle;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-abstract class SurveyQuestion extends \Backend
+abstract class SurveyQuestion extends Backend
 {
     protected $arrData;
     protected $arrStatistics;
@@ -31,14 +36,14 @@ abstract class SurveyQuestion extends \Backend
     public function __construct($question_id = 0)
     {
         parent::__construct();
-        $this->loadLanguageFile('tl_survey_question');
-        $this->loadLanguageFile('tl_survey_result');
+        System::loadLanguageFile('tl_survey_question');
+        System::loadLanguageFile('tl_survey_result');
         $this->objQuestion = null;
         $this->arrStatistics = [];
         $this->arrStatistics['answered'] = 0;
         $this->arrStatistics['skipped'] = 0;
         if ($question_id > 0) {
-            $objQuestion = \Database::getInstance()->prepare('SELECT tl_survey_question.*, tl_survey_page.title pagetitle, tl_survey_page.pid parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_question.id = ?')
+            $objQuestion = Database::getInstance()->prepare('SELECT tl_survey_question.*, tl_survey_page.title pagetitle, tl_survey_page.pid parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_question.id = ?')
                 ->execute($question_id);
             if ($objQuestion->numRows) {
                 $this->data = $objQuestion->fetchAssoc();
@@ -93,7 +98,7 @@ abstract class SurveyQuestion extends \Backend
     public function getAnswersAsHTML()
     {
         if (\is_array($this->statistics['answers'])) {
-            $template = new \FrontendTemplate('survey_answers_default');
+            $template = new FrontendTemplate('survey_answers_default');
             $template->answers = $this->statistics['answers'];
 
             return $template->parse();

@@ -13,11 +13,12 @@ declare(strict_types=1);
 namespace Hschottm\SurveyBundle;
 
 use Hschottm\SurveyBundle\DependencyInjection\SurveyExtension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class HschottmSurveyBundle extends Bundle
 {
-    public function getContainerExtension()
+    public function getContainerExtension(): ?ExtensionInterface
     {
         return new SurveyExtension();
     }

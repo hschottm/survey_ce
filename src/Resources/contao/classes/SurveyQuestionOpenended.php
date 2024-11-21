@@ -11,6 +11,8 @@
 namespace Hschottm\SurveyBundle;
 
 use Hschottm\SurveyBundle\Export\Exporter;
+use Contao\StringUtil;
+use Contao\Database;
 
 /**
  * Class SurveyQuestionOpenended.
@@ -104,7 +106,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
     protected function calculateStatistics()
     {
         if (array_key_exists('id', $this->arrData) && array_key_exists('parentID', $this->arrData)) {
-            $objResult = \Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
+            $objResult = Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
                 ->execute($this->arrData['id'], $this->arrData['parentID']);
             if ($objResult->numRows) {
                 $this->calculateAnsweredSkipped($objResult);
@@ -168,7 +170,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
 
         // question title
         $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => \StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
+          Exporter::DATA => StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
           Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
           Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
           Exporter::TEXTWRAP => true
@@ -215,7 +217,7 @@ class SurveyQuestionOpenended extends SurveyQuestion
                 $data = $this->statistics['participants'][$key][0]['result'];
             }
             if ($data) {
-                $data = \StringUtil::decodeEntities($data);
+                $data = StringUtil::decodeEntities($data);
                 $exporter->setCellValue($sheet, $row, $col, [
                   Exporter::DATA => $data,
                   Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,

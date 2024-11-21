@@ -1,0 +1,74 @@
+<table>
+	<colgroup>
+		<col style="width: {{ rowWidth }}" class="rowtext" />
+{% if bipolar and bipolarAside %}
+		<col style="width: {{ colWidth }}" class="leftadjective l-{{ col_classes['leftadjective'] }}" />
+{% endif %}
+{% for column in columns %}
+		<col style="width: {{ colWidth }}" class="c-{{ col_classes[loop.index] }}" />
+{% endfor %}
+{% if bipolar and bipolarAside %}
+		<col style="width: {{ colWidth }}" class="rightadjective r-{{ col_classes['rightadjective'] }}" />
+{% endif %}
+{% if hasNeutralColumn %}
+		<col style="width: {{ colWidth }}" class="neutralcolumn n-{{ col_classes['neutral'] }}" />
+{% endif %}
+	</colgroup>
+{% if bipolar and bipolarTop %}
+	<tr class="bipolar">
+		<td class="rowtext"></td>
+		<td class="leftadjective l-{{ col_classes['leftadjective'] }} c-{{ col_classes[1] }}"><span>{{ leftadjective }}</span></td>
+{% for i in 2..columns|length %}
+		<td class="c-{{ col_classes[i] }}"></td>
+{% endfor %}
+		<td class="rightadjective r-{{ col_classes['rightadjective'] }} c-{{ col_classes[columns|length] }}"><span>{{ rightadjective }}</span></td>
+{% if hasNeutralColumn %}
+		<td class="neutralcolumn n-{{ col_classes['neutral'] }}"></td>
+{% endif %}
+	</tr>
+{% endif %}
+	<tr class="columnheader">
+		<td class="rowtext"></td>
+{% if bipolar and bipolarAside %}
+		<td class="leftadjective l-{{ col_classes['leftadjective'] }}" rowspan="{{ rows|length + 1 }}"><span>{{ leftadjective }}</span></td>
+{% endif %}
+{% for column in columns %}
+		<td class="columnheader c-{{ col_classes[loop.index] }}"><span>{{ column }}</span></td>
+{% endfor %}
+{% if bipolar and bipolarAside %}
+		<td class="rightadjective r-{{ col_classes['rightadjective'] }}" rowspan="{{ rows|length + 1 }}"><span>{{ rightadjective }}</span></td>
+{% endif %}
+{% if hasNeutralColumn %}
+		<td class="neutralcolumn n-{{ col_classes['neutral'] }}"><span>{{ neutralColumn }}</span></td>
+{% endif %}
+	</tr>
+{% set rowcounter = 1 %}
+{% for row in rows %}
+	<tr class="{% if rowcounter % 2 == 0 %}even{% else %}odd{% endif %}{% if rowcounter == 1 %} first{% endif %}{% if rowcounter == rows|length %} last{% endif %}">
+		<td class="rowtext"><span>{{ row }}</span></td>
+{% set colcounter = 1 %}
+{% for column in columns %}
+		<td class="c-{{ col_classes[colcounter] }}">
+{% if singleResponse %}
+			<input type="radio" name="{{ ctrl_name }}[{{ rowcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="radio{{ ctrl_class }}" value="{{ colcounter }}"{% if values[rowcounter] == colcounter %} checked="checked"{% endif %} />
+{% else %}
+{% if values[rowcounter] is iterable %}{% set foundvalues = values[rowcounter] %}{% else %}{% set foundvalues = [] %}{% endif %}
+			<input type="checkbox" name="{{ ctrl_name }}[{{ rowcounter }}][{{ colcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="checkbox{{ ctrl_class }}" value="{{ colcounter }}"{% if colcounter in foundvalues %} checked="checked"{% endif %} />
+{% endif %}
+		</td>
+{% set colcounter = colcounter + 1 %}
+{% endfor %}
+{% if hasNeutralColumn %}
+		<td class="neutralcolumn n-{{ col_classes['neutral'] }}">
+{% if singleResponse %}
+			<input type="radio" name="{{ ctrl_name }}[{{ rowcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="radio{{ ctrl_class }}" value="{{ colcounter }}"{% if values[rowcounter] == colcounter %} checked="checked"{% endif %} />
+{% else %}
+{% if values[rowcounter] is iterable %}{% set foundvalues = values[rowcounter] %}{% else %}{% set foundvalues = [] %}{% endif %}
+			<input type="checkbox" name="{{ ctrl_name }}[{{ rowcounter }}][{{ colcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="checkbox{{ ctrl_class }}" value="{{ colcounter }}"{% if colcounter in foundvalues %} checked="checked"{% endif %} />
+{% endif %}
+		</td>
+{% endif %}
+	</tr>
+{% set rowcounter = rowcounter + 1 %}
+{% endfor %}
+</table>

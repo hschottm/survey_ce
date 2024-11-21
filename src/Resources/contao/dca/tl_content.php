@@ -1,14 +1,17 @@
 <?php
 
 /*
- * @copyright  Helmut Schottmüller 2005-2018 <http://github.com/hschottm>
+ * @copyright  Helmut Schottmüller 2005-2024 <http://github.com/hschottm>
  * @author     Helmut Schottmüller (hschottm)
  * @package    contao-survey
  * @license    LGPL-3.0+, CC-BY-NC-3.0
  * @see	      https://github.com/hschottm/survey_ce
  */
 
-$GLOBALS['TL_DCA']['tl_content']['palettes']['survey'] = '{type_legend},type,headline;{survey_legend},survey;{template_legend:hide},surveyTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
+use Contao\Controller;
+use Hschottm\SurveyBundle\Controller\ContentElement\SurveyController;
+
+$GLOBALS['TL_DCA']['tl_content']['palettes'][SurveyController::TYPE] = '{type_legend},type,headline;{survey_legend},survey;{template_legend:hide},surveyTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID,space';
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['survey'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_content']['survey'],
@@ -21,28 +24,11 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['survey'] = [
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['surveyTpl'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_content']['surveyTpl'],
-    'default' => 'ce_survey',
+    'default' => 'survey',
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => ['tl_content_survey', 'getSurveyTemplates'],
+	'options_callback' => static function () {
+        return Controller::getTemplateGroup('survey');
+	},
     'sql' => "varchar(64) NOT NULL default ''",
 ];
-
-class tl_content_survey extends tl_content
-{
-    /**
-     * Return all survey templates as array.
-     *
-     * @param object
-     *
-     * @return array
-     */
-    public function getSurveyTemplates(DataContainer $dc)
-    {
-        if (version_compare(VERSION.BUILD, '2.9.0', '>=')) {
-            return $this->getTemplateGroup('ce_survey', $dc->activeRecord->pid);
-        }
-
-        return $this->getTemplateGroup('ce_survey');
-    }
-}

@@ -1,0 +1,96 @@
+{% if styleHorizontal %}
+{% if singleResponse %}
+<table>
+	<tr>
+{% for choice in choices %}
+    <td><label for="ctrl_{{ ctrl_id}}_{{ loop.index }}">{{ choice }}</label></td>
+{% endfor %}
+{% if blnOther %}
+		<td><label for="ctrl_{{ ctrl_id}}_{{ choices|length + 1 }}">{{ otherTitle }}</label> <input type="text" name="other_{{ ctrl_name }}" class="text{{ ctrl_class }}" {% if values.other|length %}value="{{ values.other }}" {% endif %}/></td>
+{% endif %}
+	</tr>
+	<tr>
+{% for choice in choices %}
+		<td><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ loop.index }}" class="radio{{ ctrl_class }}" value="{{ loop.index }}"{% if values.value == loop.index %} checked="checked"{% endif %} /></td>
+{% endfor %}
+{% if blnOther %}
+		<td><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id}}_{{ choices|length + 1 }}" class="radio{{ ctrl_class }}" value="{{ choices|length + 1 }}"{% if values.value == choices|length + 1 %} checked="checked"{% endif %} /></td>
+{% endif %}
+	</tr>
+</table>
+{% elseif dichotomous %}
+<table>
+	<tr>
+{% for counter in 1..2 %}
+		<td><label for="ctrl_{{ ctrl_id }}_{{ counter }}">{% if counter == 1 %}{{ lngYes }}{% else %}{{ lngNo }}{% endif %}</label></td>
+{% endfor %}
+	</tr>
+	<tr>
+{% for counter in 1..2 %}
+		<td><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="radio{{ ctrl_class }}" value="{{ counter }}"{% if values.value == counter %} checked="checked"{% endif %} /></td>
+{% endfor %}
+	</tr>
+</table>
+{% elseif multipleResponse %}
+{% if values.value is iterable %}{% set valueArray = values.value %}{% else %}{% set valueArray = [values.value] %}{% endif %}
+<table>
+	<tr>
+{% for choice in choices %}
+		<td><label for="ctrl_{{ ctrl_id }}_{{ loop.index }}">{{ choice }}</label></td>
+{% endfor %}
+{% if blnOther %}
+		<td><label for="ctrl_{{ ctrl_id }}_{{ choices|length + 1 }}">{{ otherTitle }}</label> <input type="text" name="other_{{ ctrl_name }}" class="text{{ ctrl_class }}" {% if values.other %}value="{{ values.other }}" {% endif %}/></td>
+{% endif %}
+	</tr>
+	<tr>
+{% for choice in choices %}
+		<td><input type="checkbox" name="{{ ctrl_name }}[{{ loop.index }}]" id="ctrl_{{ ctrl_id }}_{{ loop.index }}" class="checkbox{{ ctrl_class }}" value="{{ loop.index }}"{% if loop.index in valueArray %} checked="checked"{% endif %} /></td>
+{% endfor %}
+{% if blnOther %}
+		<td><input type="checkbox" name="{{ ctrl_name }}[{{ choices|length + 1 }}]" id="ctrl_{{ ctrl_id }}_{{ choices|length + 1 }}" class="checkbox{{ ctrl_class }}" value="{{ choices|length + 1 }}"{% if (choices|length + 1) in valueArray %} checked="checked"{% endif %} /></td>
+{% endif %}
+	</tr>
+</table>
+{% endif %}
+{% elseif styleVertical %}
+{% if singleResponse %}
+{% for choice in choices %}
+<div><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ loop.index }}" class="radio{{ ctrl_class }}" value="{{ loop.index }}"{% if values.value == loop.index %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ loop.index }}">{{ choice }}</label></div>
+{% endfor %}
+{% if blnOther %}
+<div><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ choices|length + 1 }}" class="radio{{ ctrl_class }}" value="{{ choices|length + 1 }}"{% if values.value == choices|length + 1 %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ choices|length + 1 }}">{{ otherTitle }}</label> <input type="text" name="other_{{ ctrl_name }}" class="text{{ ctrl_class }}" {% if values.other %}value="{{ values.other }}" {% endif %}/></div>
+{% endif %}
+{% elseif dichotomous %}
+{% for counter in 1..2 %}
+<div><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="radio{{ ctrl_class }}" value="{{ counter }}"{% if values.value == counter %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ counter }}">{% if counter == 1 %}{{ lngYes }}{% else %}{{ lngNo }}{% endif %}</label></div>
+{% endfor %}
+{% elseif multipleResponse %}
+{% if values.value is iterable %}{% set valueArray = values.value %}{% else %}{% set valueArray = [values.value] %}{% endif %}
+{% for choice in choices %}
+<div><input type="checkbox" name="{{ ctrl_name }}[{{ loop.index }}]" id="ctrl_{{ ctrl_id }}_{{ loop.index }}" class="checkbox{{ ctrl_class }}" value="{{ loop.index }}"{% if loop.index in valueArray %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ loop.index }}">{{ choice }}</label></div>
+{% endfor %}
+{% if blnOther %}
+<div><input type="checkbox" name="{{ ctrl_name }}[{{ choices|length + 1 }}]" id="ctrl_{{ ctrl_id }}_{{ choices|length + 1 }}" class="checkbox{{ ctrl_class }}" value="{{ choices|length + 1 }}"{% if counter in valueArray %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ choices|length + 1 }}">{{ otherTitle }}</label> <input type="text" name="other_{{ ctrl_name }}" class="text{{ ctrl_class }}" {% if values.other %}value="{{ values.other }}" {% endif %}/></div>
+{% endif %}
+{% endif %}
+{% elseif styleSelect %}
+{% if singleResponse %}
+<div>
+	<select name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ choices|length + 1 }}" class="select{{ ctrl_class }}">
+		<option value="0"></option>
+{% for choice in choices %}
+		<option value="{{ loop.index }}"{% if values.value == loop.index %} selected="selected"{% endif %}>{{ choice }}</option>
+{% endfor %}
+	</select>
+</div>
+{% elseif dichotomous %}
+<div>
+	<select name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ choices|length + 1}}" class="select{{ ctrl_class }}">
+		<option value="0"></option>
+{% for counter in 1..2 %}
+		<option value="{{ counter }}"{% if values.value == counter %} selected="selected"{% endif %}>{% if counter == 1 %}{{ lngYes }}{% else %}{{ lngNo }}{% endif %}</option>
+{% endfor %}
+	</select>
+</div>
+{% endif %}
+{% endif %}

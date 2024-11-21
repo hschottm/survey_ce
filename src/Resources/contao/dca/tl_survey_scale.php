@@ -8,10 +8,16 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
+use Contao\System;
+use Contao\Backend;
+use Contao\DC_Table;
+use Contao\DataContainer;
+use Contao\StringUtil;
+
 $GLOBALS['TL_DCA']['tl_survey_scale'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'ptable' => 'tl_survey_scale_folder',
         'enableVersioning' => true,
         'sql' => [
@@ -24,14 +30,19 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => 4,
+            'mode' => DataContainer::MODE_PARENT,
             'filter' => true,
             'fields' => ['title'],
             'panelLayout' => 'search,filter,limit',
-            'flag' => 11,
+            'flag' => DataContainer::SORT_ASC,
             'headerFields' => ['title', 'tstamp', 'description'],
-            'child_record_callback' => ['tl_survey_scale', 'compilePreview'],
+            //'child_record_callback' => ['tl_survey_scale', 'compilePreview'],
         ],
+        'label' => array
+        (
+            'fields'                  => array('title', 'description'),
+            'format'                  => '<strong>%s:</strong> %s',
+        ),
         'global_operations' => [
             'all' => [
                 'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -92,7 +103,7 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = [
             'search' => true,
             'sorting' => true,
             'filter' => true,
-            'flag' => 1,
+            'flag' => DataContainer::SORT_INITIAL_LETTER_ASC,
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'maxlength' => 255],
             'sql' => "varchar(255) NOT NULL default ''",
@@ -119,43 +130,27 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = [
             'default' => $GLOBALS['TL_LANGUAGE'],
             'filter' => true,
             'inputType' => 'select',
-            'options' => $this->getLanguages(),
+            'options' => System::getContainer()->get('contao.intl.locales')->getLanguages(),
             'eval' => ['includeBlankOption' => true],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
     ],
 ];
 
-/**
- * Class tl_survey_scale.
- *
- * Provide miscellaneous methods that are used by the data configuration array.
- *
- * @copyright  Helmut Schottmüller 2009
- * @author     Helmut Schottmüller <typolight@aurealis.de>
- */
-class tl_survey_scale extends Backend
-{
-    /**
-     * Compile format definitions and return them as string.
-     *
-     * @param array
-     * @param bool
-     * @param mixed $row
-     * @param mixed $blnWriteToFile
-     *
-     * @return string
-     */
+//class tl_survey_scale extends Backend
+//{
+    /*
     public function compilePreview($row, $blnWriteToFile = false)
     {
         $result = '<p><strong>'.$row['title'].'</strong></p>';
         $result .= '<ol>';
-        $answers = deserialize($row['scale'], true);
+        $answers = StringUtil::deserialize($row['scale'], true);
         foreach ($answers as $answer) {
-            $result .= '<li>'.\StringUtil::specialchars($answer).'</li>';
+            $result .= '<li>'.StringUtil::specialchars($answer).'</li>';
         }
         $result .= '</ol>';
 
         return $result;
     }
-}
+        */
+//}

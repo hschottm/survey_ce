@@ -10,8 +10,14 @@
 
 namespace Hschottm\SurveyBundle;
 
-class Survey extends \Backend
+use Contao\FrontendUser;
+use Contao\Backend;
+use Contao\StringUtil;
+
+class Survey extends Backend
 {
+    protected $User = null;
+
     /**
      * Import String library.
      */
@@ -76,15 +82,15 @@ class Survey extends \Backend
 
     public function isUserAllowedToTakeSurvey(&$objSurvey)
     {
-        $groups = (!\strlen($objSurvey->allowed_groups)) ? [] : deserialize($objSurvey->allowed_groups, true);
+        $groups = (!\strlen($objSurvey->allowed_groups)) ? [] : StringUtil::deserialize($objSurvey->allowed_groups, true);
         if (0 == \count($groups)) {
             return false;
         }
-        $this->import('\FrontendUser', 'User');
+        $this->User = FrontendUser::getInstance();
         if (!$this->User->id) {
             return false;
         }
-        $usergroups = deserialize($this->User->groups, true);
+        $usergroups = StringUtil::deserialize($this->User->groups, true);
         if (\count(array_intersect($usergroups, $groups))) {
             return true;
         }

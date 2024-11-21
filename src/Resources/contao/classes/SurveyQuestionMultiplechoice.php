@@ -11,6 +11,9 @@
 namespace Hschottm\SurveyBundle;
 
 use Hschottm\SurveyBundle\Export\Exporter;
+use Contao\StringUtil;
+use Contao\Database;
+use Contao\FrontendTemplate;
 
 /**
  * Class SurveyQuestionMultiplechoice.
@@ -44,18 +47,18 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (\is_array($this->statistics['cumulated'])) {
-            $template = new \FrontendTemplate('survey_answers_multiplechoice');
+            $template = new FrontendTemplate('survey_answers_multiplechoice');
             $template->statistics = $this->statistics;
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
             $template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
             $template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
-            $template->choices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+            $template->choices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
             $template->other = ($this->arrData['addother']) ? true : false;
-            $template->othertitle = \StringUtil::specialchars($this->arrData['othertitle']);
+            $template->othertitle = StringUtil::specialchars($this->arrData['othertitle']);
             $otherchoices = [];
             if (\count($this->statistics['cumulated']['other'])) {
                 foreach ($this->statistics['cumulated']['other'] as $value) {
-                    ++$otherchoices[\StringUtil::specialchars($value)];
+                    ++$otherchoices[StringUtil::specialchars($value)];
                 }
             }
             $template->otherchoices = $otherchoices;
@@ -87,7 +90,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $exporter->setCellValue($sheet, $row, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['answers'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
         $exporter->setCellValue($sheet, $row + 1, 0, [Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_question']['nrOfSelections'], Exporter::BGCOLOR => $this->titlebgcolor, Exporter::COLOR => $this->titlecolor, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
 
-        $arrChoices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
+        $arrChoices = (0 != strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous')) ? StringUtil::deserialize($this->arrData['choices'], true) : [0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']];
         $col = 2;
         foreach ($arrChoices as $id => $choice) {
             $exporter->setCellValue($sheet, $row, $col, [Exporter::DATA => $choice]);
@@ -155,7 +158,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
     protected function calculateStatistics()
     {
         if (array_key_exists('id', $this->arrData) && array_key_exists('parentID', $this->arrData)) {
-            $objResult = \Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
+            $objResult = Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
                 ->execute($this->arrData['id'], $this->arrData['parentID']);
             if ($objResult->numRows) {
                 $this->calculateAnsweredSkipped($objResult);
@@ -174,7 +177,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             $this->arrStatistics['participants'][$id][] = $objResult->row();
             $this->arrStatistics['answers'][] = $objResult->result;
             if (\strlen($objResult->result)) {
-                $arrAnswer = deserialize($objResult->result, true);
+                $arrAnswer = StringUtil::deserialize($objResult->result, true);
                 $found = false;
                 if (\is_array($arrAnswer['value'])) {
                     foreach ($arrAnswer['value'] as $answervalue) {
@@ -206,7 +209,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
         $cumulated = [];
         $cumulated['other'] = [];
         foreach ($this->arrStatistics['answers'] as $answer) {
-            $arrAnswer = deserialize($answer, true);
+            $arrAnswer = StringUtil::deserialize($answer, true);
             if (\is_array($arrAnswer['value'])) {
                 foreach ($arrAnswer['value'] as $answervalue) {
                     if (\strlen($answervalue)) {
@@ -247,7 +250,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'],
                     1 => $GLOBALS['TL_LANG']['tl_survey_question']['no'],
                 ]
-            : deserialize($this->arrData['choices'], true);
+            : StringUtil::deserialize($this->arrData['choices'], true);
         if ($this->arrData['addother']) {
             $this->choices[] = preg_replace('/[-=>:\s]+$/', '', $this->arrData['othertitle']);
         }
@@ -332,7 +335,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
         // question title
         $data = [
-          Exporter::DATA => \StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
+          Exporter::DATA => StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
           Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
           Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
           Exporter::TEXTWRAP => true
@@ -409,7 +412,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
             }
             if ($data) {
                 $col = $startCol;
-                $arrAnswers = deserialize($data, true);
+                $arrAnswers = StringUtil::deserialize($data, true);
                 if ('mc_dichotomous' == $this->arrData['multiplechoice_subtype']) {
                   $exporter->setCellValue($sheet, $row, $col, [
                     Exporter::DATA => $this->choices[$arrAnswers['value'] - 1],
@@ -424,7 +427,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     }
                     $strAnswer = (($emptyAnswer) ? ($arrAnswers['value'] . ' - ') : '') . $this->choices[$arrAnswers['value'] - 1];
                     if (($this->arrData['addother']) && ($arrAnswers['value'] == \count($this->choices))) {
-                        $strAnswer .= ': '.\StringUtil::decodeEntities($arrAnswers['other']);
+                        $strAnswer .= ': '.StringUtil::decodeEntities($arrAnswers['other']);
                     }
                     $exporter->setCellValue($sheet, $row, $col, [
                       Exporter::DATA => $strAnswer,
@@ -435,7 +438,7 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
                     foreach ($this->choices as $k => $v) {
                         $strAnswer = (\is_array($arrAnswers['value']) && array_key_exists($k + 1, $arrAnswers['value']))
                             ? ($this->arrData['addother'] && ($k + 1 == \count($this->choices)))
-                                ? \StringUtil::decodeEntities($arrAnswers['other'])
+                                ? StringUtil::decodeEntities($arrAnswers['other'])
                                 : 'x'
                             : '';
                         if (\strlen($strAnswer)) {
@@ -457,8 +460,8 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
             public function resultAsString($res)
         {
-                $arrAnswer = deserialize($res, true);
-    $arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
+                $arrAnswer = StringUtil::deserialize($res, true);
+    $arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? StringUtil::deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
                 if (is_array($arrAnswer['value']))
                 {
       foreach ($arrAnswer['value'] as $key => $val)
@@ -479,14 +482,14 @@ class SurveyQuestionMultiplechoice extends SurveyQuestion
 
 /*public function resultAsString($res)
   	{
-  		$arrAnswer = deserialize($res, true);
+  		$arrAnswer = StringUtil::deserialize($res, true);
   		if (is_array($arrAnswer['value']))
   		{
   			return implode (", ", $arrAnswer['value']);
   		}
   		else
   		{
-  			$arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
+  			$arrChoices = (strcmp($this->arrData['multiplechoice_subtype'], 'mc_dichotomous') != 0) ? StringUtil::deserialize($this->arrData['choices'], true) : array(0 => $GLOBALS['TL_LANG']['tl_survey_question']['yes'], 1 => $GLOBALS['TL_LANG']['tl_survey_question']['no']);
   			return $arrChoices[$arrAnswer['value']-1];
   		}
   		if (strlen($arrAnswer['other']))

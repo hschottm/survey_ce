@@ -1,0 +1,24 @@
+{% set counter = 1 %}
+{% for id, choice in choices %}
+<h3>{{ counter }}. {{ choice }}</h3>
+<table class="tl_cumulated constantsum" summary="{{ summary }}">
+<thead>
+	<tr>
+		<th colspan="2">{{ answer }}</th>
+		<th>{{ nrOfSelections }}</th>
+	</tr>
+</thead>
+<tbody>
+{% set linecounter = 1 %}
+{% for answervalue, nrOfAnswers in cumulated[counter] %}
+	<tr>
+		<td class="counter">{{ linecounter }}.</td>
+		<td class="answer">{{ answervalue }}</td>
+		<td class="selections">{% if nrOfAnswers %}{{ nrOfAnswers }}{% else %}0{% endif %}</td>
+	</tr>
+{% set linecounter = linecounter + 1 %}
+{% endfor %}
+{% set counter = counter + 1 %}
+</tbody>
+</table>
+{% endfor %}

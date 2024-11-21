@@ -1,0 +1,34 @@
+services:
+    _defaults:
+        autoconfigure: true
+
+    contao.listener.data_container.survey_question:
+        class: Hschottm\SurveyBundle\EventListener\DataContainer\SurveyQuestionCallbackListener
+        arguments:
+            - '@translator'
+            - '@database_connection'
+
+    contao.listener.data_container.survey_page:
+        class: Hschottm\SurveyBundle\EventListener\DataContainer\SurveyPageCallbackListener
+        arguments:
+            - '@translator'
+            - '@database_connection'
+
+    contao.listener.data_container.survey_participant:
+        class: Hschottm\SurveyBundle\EventListener\DataContainer\SurveyParticipantCallbackListener
+        arguments:
+            - '@translator'
+            - '@database_connection'
+            - '@request_stack'
+
+    contao.listener.data_container.survey_pin_tan:
+        class: Hschottm\SurveyBundle\EventListener\DataContainer\SurveyPinTanCallbackListener
+        arguments:
+            - '@translator'
+            - '@database_connection'
+
+    contao.listener.data_container.survey_scale:
+        class: Hschottm\SurveyBundle\EventListener\DataContainer\SurveyScaleCallbackListener
+        arguments:
+            - '@translator'
+            - '@database_connection'

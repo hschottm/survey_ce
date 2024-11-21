@@ -10,6 +10,10 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\System;
+use Contao\StringUtil;
+use Contao\FrontendTemplate;
+
 /**
  * Class FormMultipleChoiceQuestion.
  *
@@ -48,7 +52,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
                 $this->strOtherTitle = $varValue['othertitle'];
                 $this->blnOther = ($varValue['addother']) ? true : false;
                 $this->strStyle = $varValue['mc_style'];
-                $this->arrChoices = deserialize($varValue['choices']);
+                $this->arrChoices = StringUtil::deserialize($varValue['choices']);
                 if (!\is_array($this->arrChoices)) {
                     $this->arrChoices = [];
                 }
@@ -118,10 +122,10 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
     {
         $strOptions = '';
 
-        $this->loadLanguageFile('tl_survey_question');
-        $template = new \FrontendTemplate('survey_question_multiplechoice');
-        $template->ctrl_name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
+        System::loadLanguageFile('tl_survey_question');
+        $template = new FrontendTemplate('survey_question_mc');
+        $template->ctrl_name = StringUtil::specialchars($this->strName);
+        $template->ctrl_id = StringUtil::specialchars($this->strId);
         $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
         $template->singleResponse = 0 == strcmp($this->questiontype, 'mc_singleresponse');
         $template->multipleResponse = 0 == strcmp($this->questiontype, 'mc_multipleresponse');
@@ -134,7 +138,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         $template->blnOther = $this->blnOther;
         $template->lngYes = $GLOBALS['TL_LANG']['tl_survey_question']['yes'];
         $template->lngNo = $GLOBALS['TL_LANG']['tl_survey_question']['no'];
-        $template->otherTitle = \StringUtil::specialchars($this->strOtherTitle);
+        $template->otherTitle = StringUtil::specialchars($this->strOtherTitle);
         $strOptions = $template->parse();
         $strError = $this->getErrorAsHTML();
 
@@ -148,7 +152,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
                             $strError,
                             $this->strName,
                             $this->strTagEnding,
-                            $strOptions).$this->addSubmit();
+                            $strOptions);//.$this->addSubmit();
         }
 
         return sprintf('<fieldset id="ctrl_%s" class="radio_container%s">%s<input type="hidden" name="%s" value=""%s%s</fieldset>',
@@ -157,7 +161,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
                             $strError,
                             $this->strName,
                             $this->strTagEnding,
-                            $strOptions).$this->addSubmit();
+                            $strOptions);//.$this->addSubmit();
     }
 
     public function generateWithError($blnSwitchOrder = false)

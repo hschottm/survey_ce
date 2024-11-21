@@ -10,13 +10,18 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\StringUtil;
+use Contao\FrontendTemplate;
+use Contao\Backend;
+use Hschottm\SurveyBundle\SurveyQuestionModel;
+
 /**
  * Class SurveyQuestionPreview.
  *
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class SurveyQuestionPreview extends \Backend
+class SurveyQuestionPreview extends Backend
 {
     /**
      * Import String library.
@@ -40,17 +45,17 @@ class SurveyQuestionPreview extends \Backend
     {
         $widget = '';
         $strClass = $GLOBALS['TL_SVY'][$row['questiontype']];
-        if ($this->classFileExists($strClass)) {
+        if (class_exists($strClass)) {
             $objWidget = new $strClass();
             $objWidget->surveydata = $row;
             $widget = $objWidget->generate();
         }
 
-        $template = new \FrontendTemplate('be_survey_question_preview');
+        $template = new FrontendTemplate('be_survey_question_preview');
         $template->hidetitle = $row['hidetitle'];
-        $template->help = \StringUtil::specialchars($row['help']);
+        $template->help = StringUtil::specialchars($row['help']);
         $template->questionNumber = $this->getQuestionNumber($row);
-        $template->title = \StringUtil::specialchars($row['title']);
+        $template->title = StringUtil::specialchars($row['title']);
         $template->obligatory = $row['obligatory'];
         $template->question = $row['question'];
         $return = $template->parse();
@@ -61,7 +66,7 @@ class SurveyQuestionPreview extends \Backend
 
     protected function getQuestionNumber($row)
     {
-        $surveyQuestionCollection = \Hschottm\SurveyBundle\SurveyQuestionModel::findBy(['pid=?', 'sorting<=?'], [$row['pid'], $row['sorting']]);
+        $surveyQuestionCollection = SurveyQuestionModel::findBy(['pid=?', 'sorting<=?'], [$row['pid'], $row['sorting']]);
 
         return (null != $surveyQuestionCollection) ? $surveyQuestionCollection->count() : 0;
     }

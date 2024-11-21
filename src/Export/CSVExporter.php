@@ -10,12 +10,15 @@
 
 namespace Hschottm\SurveyBundle\Export;
 
-use Exporter\Writer\CsvWriter;
+use Sonata\Exporter\Writer\CsvWriter;
+use Contao\StringUtil;
 
 class CSVExporter extends Exporter
 {
     private $tempName;
     private $data = [];
+    private $header = array();
+    private $rows = array();
 
     public function __construct($type = self::EXPORT_TYPE_XLS)
     {
@@ -45,8 +48,17 @@ class CSVExporter extends Exporter
             if (self::CELLTYPE_STRING == $celldata[self::CELLTYPE]) {
                 $celldata[self::DATA] = utf8_decode($celldata[self::DATA]);
             }
+            /*
+            if ($row == 0) {
+                $this->header[$col] = $celldata['data'];
+            } else {
+                if (!array_key_exists($row, $this->rows)) {
+                    $this->rows[$row] = array();
+                }
+                $this->rows[$row][$col] = $celldata['data'];
+            }
+                */
             $this->sheets[$sheet][$this->getCell($row, $col)] = $celldata;
-
             return true;
         }
 
@@ -72,7 +84,7 @@ class CSVExporter extends Exporter
         }
         $this->spreadsheet->close();
         header('Content-type: text/csv');
-        header('Content-Disposition: attachment; filename="'.\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.csv'.'"');
+        header('Content-Disposition: attachment; filename="'.StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.csv'.'"');
         readfile($this->tempName);
         unlink($this->tempName);
         exit;

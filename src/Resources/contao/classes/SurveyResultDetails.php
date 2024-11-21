@@ -11,8 +11,15 @@
 namespace Hschottm\SurveyBundle;
 
 use Contao\DataContainer;
+use Contao\Backend;
+use Contao\System;
+use Contao\StringUtil;
+use Contao\BackendTemplate;
+use Contao\Input;
 use Hschottm\SurveyBundle\Export\Exporter;
 use Hschottm\SurveyBundle\Export\ExportHelper;
+use Hschottm\SurveyBundle\SurveyQuestion;
+use Hschottm\SurveyBundle\SurveyModel;
 
 /**
  * Class SurveyResultDetails.
@@ -22,9 +29,10 @@ use Hschottm\SurveyBundle\Export\ExportHelper;
  * @copyright  Helmut Schottmüller 2009-2018
  * @author     Helmut Schottmüller <https://github.com/hschottm>
  */
-class SurveyResultDetails extends \Backend
+class SurveyResultDetails extends Backend
 {
     protected $blnSave = true;
+    protected $Database = null;
 
     /**
      * Load the database object.
@@ -32,35 +40,35 @@ class SurveyResultDetails extends \Backend
     protected function __construct()
     {
         parent::__construct();
+        $this->Database = Database::getInstance();
     }
 
     public function showDetails(DataContainer $dc)
     {
-        if ('details' != \Input::get('key')) {
+        if ('details' != Input::get('key')) {
             return '';
         }
         $return = '';
-        $qid = \Input::get('id');
+        $qid = Input::get('id');
         $qtype = $this->Database->prepare('SELECT questiontype, pid FROM tl_survey_question WHERE id = ?')
             ->execute($qid)
             ->fetchAssoc();
         $parent = $this->Database->prepare('SELECT pid FROM tl_survey_page WHERE id = ?')
             ->execute($qtype['pid'])
             ->fetchAssoc();
-        $class = 'Hschottm\\SurveyBundle\\SurveyQuestion'.ucfirst($qtype['questiontype']);
-        $this->loadLanguageFile('tl_survey_result');
-        $this->loadLanguageFile('tl_survey_question');
-        $this->Template = new \BackendTemplate('be_question_result_details');
+        $class = SurveyQuestion::class.ucfirst($qtype['questiontype']);
+        System::loadLanguageFile('tl_survey_result');
+        System::loadLanguageFile('tl_survey_question');
+        $this->Template = new BackendTemplate('be_question_result_details');
         $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-        $this->Template->hrefBack = \Backend::addToUrl('key=cumulated&amp;id='.$parent['pid'], true, ['key', 'id']);
-        if ($this->classFileExists($class)) {
-            $this->import($class);
+        $this->Template->hrefBack = Backend::addToUrl('key=cumulated&amp;id='.$parent['pid'], true, ['key', 'id']);
+        if (class_exists($class)) {
             $question = new $class($qid);
             $this->Template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['detailsSummary'];
             $this->Template->heading = sprintf($GLOBALS['TL_LANG']['tl_survey_result']['detailsHeading'], $qid);
             $data = [];
             array_push($data, ['key' => 'ID:', 'value' => $question->id, 'keyclass' => 'first', 'valueclass' => 'last']);
-            array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0].':', 'value' => \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$question->questiontype]), 'keyclass' => 'first tl_bg', 'valueclass' => 'last tl_bg']);
+            array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0].':', 'value' => StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$question->questiontype]), 'keyclass' => 'first tl_bg', 'valueclass' => 'last tl_bg']);
             array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['title'][0].':', 'value' => $question->title, 'keyclass' => 'first', 'valueclass' => 'last']);
             array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['question'][0].':', 'value' => $question->question, 'keyclass' => 'first tl_bg', 'valueclass' => 'last tl_bg']);
             array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['answered'].':', 'value' => $question->statistics['answered'], 'keyclass' => 'first', 'valueclass' => 'last']);
@@ -76,43 +84,42 @@ class SurveyResultDetails extends \Backend
 
     public function showCumulated(DataContainer $dc)
     {
-        if ('cumulated' != \Input::get('key')) {
+        if ('cumulated' != Input::get('key')) {
             return '';
         }
-        $this->loadLanguageFile('tl_survey_result');
-        $this->loadLanguageFile('tl_survey_question');
+        System::loadLanguageFile('tl_survey_result');
+        System::loadLanguageFile('tl_survey_question');
         $return = '';
         $objQuestion = $this->Database->prepare('SELECT tl_survey_question.*, tl_survey_page.title as pagetitle, tl_survey_page.pid as parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
-            ->execute(\Input::get('id'));
+            ->execute(Input::get('id'));
         $data = [];
         $abs_question_no = 0;
 
         while ($row = $objQuestion->fetchAssoc()) {
             ++$abs_question_no;
-            $class = 'Hschottm\SurveyBundle\SurveyQuestion'.ucfirst($row['questiontype']);
+            $class = SurveyQuestion::class.ucfirst($row['questiontype']);
 
-            if ($this->classFileExists($class)) {
-                $this->import($class);
+            if (class_exists($class)) {
                 $question = new $class();
                 $question->data = $row;
-                $strUrl = \Backend::addToUrl('key=details&amp;id='.$question->id, true, ['key', 'id']);
+                $strUrl = Backend::addToUrl('key=details&amp;id='.$question->id, true, ['key', 'id']);
                 array_push($data, [
                     'number' => $abs_question_no,
-                    'title' => \StringUtil::specialchars($row['title']),
-                    'type' => \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$row['questiontype']]),
+                    'title' => StringUtil::specialchars($row['title']),
+                    'type' => StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$row['questiontype']]),
                     'answered' => $question->statistics['answered'],
                     'skipped' => $question->statistics['skipped'],
                     'hrefdetails' => $strUrl,
-                    'titledetails' => \StringUtil::specialchars(sprintf($GLOBALS['TL_LANG']['tl_survey_result']['details'][1], $question->id)),
+                    'titledetails' => StringUtil::specialchars(sprintf($GLOBALS['TL_LANG']['tl_survey_result']['details'][1], $question->id)),
                 ]);
             }
         }
-        $this->Template = new \BackendTemplate('be_survey_result_cumulated');
+        $this->Template = new BackendTemplate('be_survey_result_cumulated');
         $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-        $this->Template->hrefBack = \Backend::addToUrl('', true, ['key', 'id']);
+        $this->Template->hrefBack = Backend::addToUrl('', true, ['key', 'id']);
         $this->Template->export = $GLOBALS['TL_LANG']['tl_survey_result']['export'];
-        $this->Template->hrefExport = \Backend::addToUrl('key=export&amp;id='.\Input::get('id'), true, ['key', 'id']);
-        $this->Template->heading = \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
+        $this->Template->hrefExport = Backend::addToUrl('key=export&amp;id='.Input::get('id'), true, ['key', 'id']);
+        $this->Template->heading = StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
         $this->Template->summary = 'cumulated results';
         $this->Template->data = $data;
         $this->Template->imgdetails = 'bundles/hschottmsurvey/images/details.png';
@@ -124,12 +131,12 @@ class SurveyResultDetails extends \Backend
 
     public function exportResults(DataContainer $dc)
     {
-        if ('export' != \Input::get('key')) {
+        if ('export' != Input::get('key')) {
             return '';
         }
-        $this->loadLanguageFile('tl_survey_result');
+        System::loadLanguageFile('tl_survey_result');
         $arrQuestions = $this->Database->prepare('SELECT tl_survey_question.*, tl_survey_page.title as pagetitle, tl_survey_page.pid as parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
-            ->execute(\Input::get('id'));
+            ->execute(Input::get('id'));
         if ($arrQuestions->numRows) {
             $exporter = ExportHelper::getExporter();
             $sheet = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults'];
@@ -138,16 +145,15 @@ class SurveyResultDetails extends \Backend
             $exporter->addSheet($sheet);
             while ($arrQuestions->next()) {
                 $row = $arrQuestions->row();
-                $class = 'Hschottm\SurveyBundle\SurveyQuestion'.ucfirst($row['questiontype']);
-                if ($this->classFileExists($class)) {
-                    $this->import($class);
+                $class = SurveyQuestion::class.ucfirst($row['questiontype']);
+                if (class_exists($class)) {
                     $question = new $class();
                     $question->data = $row;
                     $question->exportDataToExcel($exporter, $sheet, $intRowCounter);
                 }
             }
 
-            $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('id'));
+            $surveyModel = SurveyModel::findOneBy('id', Input::get('id'));
             if (null != $surveyModel) {
                 $filename = $surveyModel->title;
             } else {
@@ -156,7 +162,7 @@ class SurveyResultDetails extends \Backend
             $exporter->setFilename($filename);
             $exporter->sendFile($objSurvey->title, $objSurvey->title, $objSurvey->title, 'Contao CMS', 'Contao CMS');
         }
-        $href = \Backend::addToUrl('', true, ['key', 'id']);
+        $href = Backend::addToUrl('', true, ['key', 'id']);
         $this->redirect($href);
     }
 
@@ -175,11 +181,11 @@ class SurveyResultDetails extends \Backend
      */
     public function exportResultsRaw(DataContainer $dc)
     {
-        if ('exportraw' != \Input::get('key')) {
+        if ('exportraw' != Input::get('key')) {
             return '';
         }
 
-        $surveyID = \Input::get('id');
+        $surveyID = Input::get('id');
         $arrQuestions = $this->Database->prepare('
 				SELECT   tl_survey_question.*,
 				         tl_survey_page.title as pagetitle,
@@ -190,7 +196,7 @@ class SurveyResultDetails extends \Backend
 				ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
             ->execute($surveyID);
         if ($arrQuestions->numRows) {
-            $this->loadLanguageFile('tl_survey_result');
+            System::loadLanguageFile('tl_survey_result');
 
             $exporter = ExportHelper::getExporter();
             $sheet = $GLOBALS['TL_LANG']['tl_survey_result']['detailedResults'];
@@ -229,16 +235,15 @@ class SurveyResultDetails extends \Backend
 
                 $rowCounter = 0; // reset rowCounter for the question headers
 
-                $class = 'Hschottm\SurveyBundle\SurveyQuestion'.ucfirst($row['questiontype']);
-                if ($this->classFileExists($class)) {
-                    $this->import($class);
+                $class = SurveyQuestion::class.ucfirst($row['questiontype']);
+                if (class_exists($class)) {
                     $question = new $class();
                     $question->data = $row;
                     $question->exportDetailsToExcel($exporter, $sheet, $rowCounter, $colCounter, $questionCounters, $participants);
                 }
             }
 
-            $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', $surveyID);
+            $surveyModel = SurveyModel::findOneBy('id', $surveyID);
             if (null != $surveyModel) {
                 $filename = $surveyModel->title . '_detail';
             } else {
@@ -248,7 +253,7 @@ class SurveyResultDetails extends \Backend
             $exporter->sendFile($surveyModel->title, $surveyModel->title, $surveyModel->title, 'Contao CMS', 'Contao CMS');
             exit;
         }
-        $this->redirect(\Environment::get('script').'?do='.\Input::get('do'));
+        $this->redirect(Environment::get('script').'?do='.Input::get('do'));
     }
 
     /**

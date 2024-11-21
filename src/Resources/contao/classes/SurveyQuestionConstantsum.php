@@ -10,6 +10,9 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\StringUtil;
+use Contao\FrontendTemplate;
+use Contao\Database;
 use Hschottm\SurveyBundle\Export\Exporter;
 
 /**
@@ -44,8 +47,8 @@ class SurveyQuestionConstantsum extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (\is_array($this->statistics['cumulated'])) {
-            $template = new \FrontendTemplate('survey_answers_constantsum');
-            $template->choices = deserialize($this->arrData['sumchoices'], true);
+            $template = new FrontendTemplate('survey_answers_constantsum');
+            $template->choices = StringUtil::deserialize($this->arrData['sumchoices'], true);
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
             $template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
             $template->nrOfSelections = $GLOBALS['TL_LANG']['tl_survey_result']['nrOfSelections'];
@@ -80,7 +83,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
         $col = 2;
         if (\is_array($this->statistics['cumulated'])) {
-            $arrChoices = deserialize($this->arrData['sumchoices'], true);
+            $arrChoices = StringUtil::deserialize($this->arrData['sumchoices'], true);
             $counter = 1;
             foreach ($arrChoices as $id => $choice) {
                 $exporter->setCellValue($sheet, $row + $counter - 1, $col, [Exporter::DATA => $choice]);
@@ -145,7 +148,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
     protected function calculateStatistics()
     {
         if (array_key_exists('id', $this->arrData) && array_key_exists('parentID', $this->arrData)) {
-            $objResult = \Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
+            $objResult = Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
                 ->execute($this->arrData['id'], $this->arrData['parentID']);
             if ($objResult->numRows) {
                 $this->calculateAnsweredSkipped($objResult);
@@ -159,7 +162,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
         $cumulated = [];
         $cumulated['other'] = [];
         foreach ($this->arrStatistics['answers'] as $answer) {
-            $arrAnswer = deserialize($answer, true);
+            $arrAnswer = StringUtil::deserialize($answer, true);
             if (\is_array($arrAnswer)) {
                 foreach ($arrAnswer as $answerkey => $answervalue) {
                     ++$cumulated[$answerkey][$answervalue];
@@ -190,9 +193,9 @@ class SurveyQuestionConstantsum extends SurveyQuestion
      */
     protected function exportQuestionHeadersToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
     {
-        $this->choices = deserialize($this->arrData['sumchoices'], true);
+        $this->choices = StringUtil::deserialize($this->arrData['sumchoices'], true);
         foreach ($this->choices as $k => $v) {
-            $this->choices[$k] = \StringUtil::decodeEntities($v);
+            $this->choices[$k] = StringUtil::decodeEntities($v);
         }
         $numcols = \count($this->choices);
         $result = [];
@@ -269,7 +272,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
         // question title
         $data = [
-          Exporter::DATA => \StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
+          Exporter::DATA => StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
           Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
           Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
           Exporter::TEXTWRAP => true
@@ -347,7 +350,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
             }
             if ($data) {
                 $col = $startCol;
-                $arrAnswers = deserialize($data, true);
+                $arrAnswers = StringUtil::deserialize($data, true);
                 foreach ($this->choices as $k => $choice) {
                     $strAnswer = '';
                     if (array_key_exists($k + 1, $arrAnswers)) {
@@ -374,7 +377,7 @@ class SurveyQuestionConstantsum extends SurveyQuestion
 
     public function resultAsString($res)
   	{
-  		$arrAnswer = deserialize($res, true);
+  		$arrAnswer = StringUtil::deserialize($res, true);
   		if (is_array($arrAnswer))
   		{
   			return implode (", ", $arrAnswer);

@@ -1,0 +1,16 @@
+services:
+    _defaults:
+        autoconfigure: true
+
+    _instanceof:
+        Symfony\Bundle\FrameworkBundle\Controller\AbstractController:
+            calls:
+                - [setContainer, ['@Psr\Container\ContainerInterface']]
+
+    Hschottm\SurveyBundle\Controller\ContentElement\SurveyController:
+        tags:
+            -
+                name: contao.content_element
+                type: survey
+                category: texts
+                template: survey

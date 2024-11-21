@@ -1,0 +1,9 @@
+{% if answers|length %}
+<ol>
+{% for answer in answers %}
+{% if answer|length %}
+	<li>{{ answer }}</li>
+{% endif %}
+{% endfor %}
+</ol>
+{% endif %}

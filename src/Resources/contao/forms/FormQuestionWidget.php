@@ -10,15 +10,17 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Widget;
+
 /**
  * Class FormQuestionWidget.
  *
  * Base class for survey question widgets
  *
- * @copyright  Helmut Schottmüller 2009-2010
+ * @copyright  Helmut Schottmüller 2009-2024
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class FormQuestionWidget extends \Widget
+class FormQuestionWidget extends Widget
 {
     /**
      * Submit user input.

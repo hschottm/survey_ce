@@ -2,16 +2,21 @@
 
 namespace Hschottm\SurveyBundle;
 
+use Contao\Backend;
+use Contao\Database;
+use Contao\System;
 
-class SurveyHelper extends \Backend
+class SurveyHelper extends Backend
 {
+	protected $Database = null;
+
 	/**
 	 * Load the database object
 	 */
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('\Database');
+		$this->Database = Database::getInstance();
 	}
 
 	public function replaceTags($source, $uidOrPin, $replacements = array(), $blnIsHtml = false)
@@ -47,7 +52,7 @@ class SurveyHelper extends \Backend
 					}
 					$strClass = $GLOBALS['TL_SVY']['q_'.$found['questiontype']];
 					// Continue if the class is not defined
-					if (!$this->classFileExists($strClass))
+					if (!$class_exists($strClass))
 					{
 						continue;
 					}
@@ -63,7 +68,7 @@ class SurveyHelper extends \Backend
 			}
 		}
 		$source = preg_replace(array('/__BRCL__/', '/__BRCR__/'), array('{{', '}}'), $source);
-		$source = $this->replaceInsertTags($source, false);
+		$source = System::getContainer()->get('contao.insert_tag.parser')->replace($source);
 		if ($blnEvalSource)
 		{
 			$source = $this->evalConditionTags($source);

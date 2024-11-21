@@ -7,7 +7,9 @@
  * @license    LGPL-3.0+, CC-BY-NC-3.0
  */
 
- namespace Hschottm\SurveyBundle;
+namespace Hschottm\SurveyBundle;
+
+use Contao\StringUtil;
 
 /**
  * Class ConditionWizard
@@ -48,7 +50,7 @@ class ConditionWizard extends \Widget
 				break;
 
 			case 'value':
-				$this->varValue = deserialize($varValue);
+				$this->varValue = StringUtil::deserialize($varValue);
 				break;
 
 			case 'mandatory':

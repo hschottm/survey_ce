@@ -1,0 +1,16 @@
+{% for objWidget in surveypage %}
+	<div class="surveyblock qid-{{ objWidget.id }}{{ objWidget.cssClass }}">
+{% if objWidget.showTitle %}
+		<div class="title">
+			{{ objWidget.title }}{% if objWidget.mandatory %}<span class="mandatory">*</span>{% endif %}
+			{% if objWidget.help|length %}<div class="help">{{ objWidget.help }}</div>{% endif %}
+		</div>
+{% endif %}
+{% if objWidget.question|length %}
+		<div class="question">{{ objWidget.question|raw }}</div>
+{% endif %}
+		<div class="widget {{ objWidget.class }}">
+			{{ objWidget.generateLabel()|raw }} {{ objWidget.generateWithError()|raw }}
+		</div>
+	</div>
+{% endfor %}
