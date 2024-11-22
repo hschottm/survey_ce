@@ -155,7 +155,6 @@ class FormConstantSumQuestion extends FormQuestionWidget
             }
             $sum += $value;
         }
-        echo "sum = " . $sum;exit;
         switch ($this->strSumOption) {
             case 'exact':
                 if ($sum != $this->dblSum) {
