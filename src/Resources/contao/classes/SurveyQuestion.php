@@ -110,7 +110,7 @@ abstract class SurveyQuestion extends Backend
         $this->arrStatistics = [];
     }
 
-    public function exportDataToExcel($sheet, &$row)
+    public function exportDataToExcel(&$exporter, $sheet, &$row)
     {
         // overwrite in parent classes
         return [];

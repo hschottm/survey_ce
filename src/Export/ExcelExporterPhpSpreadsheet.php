@@ -110,15 +110,15 @@ class ExcelExporterPhpSpreadsheet extends Exporter
         $font_array = [];
 
         switch ($cell[self::CELLTYPE]) {
-      case CELLTYPE_STRING:
+      case self::CELLTYPE_STRING:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
         break;
-      case CELLTYPE_FLOAT:
+      case self::CELLTYPE_FLOAT:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
         break;
-      case CELLTYPE_PICTURE:
+      case self::CELLTYPE_PICTURE:
         break;
-      case CELLTYPE_INTEGER:
+      case self::CELLTYPE_INTEGER:
       default:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_NUMBER);
         break;

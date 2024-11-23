@@ -92,7 +92,7 @@ class SurveyController extends AbstractContentElementController
         $page = (Input::post('page')) ? Input::post('page') : 0;
         // introduction page / status
         if (0 == $page) {
-            $this->outIntroductionPage();
+            $this->outIntroductionPage($template);
         }
         // check survey start
         if (Input::post('start') || (1 == $this->objSurvey->immediate_start && !Input::post('FORM_SUBMIT'))) {
@@ -260,6 +260,8 @@ class SurveyController extends AbstractContentElementController
         $template->finalsubmission = ($this->objSurvey->finalsubmission) ? $this->objSurvey->finalsubmission : $GLOBALS['TL_LANG']['MSC']['survey_finalsubmission'];
         $formaction = Environment::get('request');
         
+        //$translator = System::getContainer()->get('translator');
+
         $template->requestToken = System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue();
         $template->pageXofY = $GLOBALS['TL_LANG']['MSC']['page_x_of_y'];
         $template->next = $GLOBALS['TL_LANG']['MSC']['survey_next'];
@@ -549,21 +551,22 @@ class SurveyController extends AbstractContentElementController
         					}
 
         					// Set recipient(s)
+                            $arrRecipient = array();
         					if (strlen($this->objSurvey->confirmationMailRecipientField))
         					{
-                    $res = SurveyResultModel::findOneBy(['qid=?', 'pin=?'], [$this->objSurvey->confirmationMailRecipientField, $this->pin]);
-                    if (null != $res) {
-                      if (strlen($res->result))
-          						{
-          							$arrRecipient = trimsplit(',', $res->result);
-          						}
-                    }
+                                $res = SurveyResultModel::findOneBy(['qid=?', 'pin=?'], [$this->objSurvey->confirmationMailRecipientField, $this->pin]);
+                                if (null != $res) {
+                                    if (strlen($res->result))
+          						    {
+          							    $arrRecipient = StringUtil::trimsplit(',', $res->result);
+          						    }
+                                }
         					}
 
         					if (!empty($this->objSurvey->confirmationMailRecipient))
         					{
         						$varRecipient = $this->objSurvey->confirmationMailRecipient;
-        						$arrRecipient = array_merge($arrRecipient, trimsplit(',', $varRecipient));
+        						$arrRecipient = array_merge($arrRecipient, StringUtil::trimsplit(',', $varRecipient));
         					}
         					$arrRecipient = array_filter(array_unique($arrRecipient));
 
@@ -720,7 +723,7 @@ class SurveyController extends AbstractContentElementController
           					if (!empty($this->objSurvey->confirmationMailAlternateRecipient))
           					{
           						$varRecipient = $this->objSurvey->confirmationMailAlternateRecipient;
-          						$arrRecipient = array_merge($arrRecipient, trimsplit(',', $varRecipient));
+          						$arrRecipient = array_merge($arrRecipient, StringUtil::trimsplit(',', $varRecipient));
           					}
           					$arrRecipient = array_filter(array_unique($arrRecipient));
 
@@ -804,7 +807,7 @@ class SurveyController extends AbstractContentElementController
           							$objMail->replyTo($objMailProperties->replyTo);
           						}
 
-          						$helper = new \SurveyHelper();
+          						$helper = new SurveyHelper();
 
           						$objMail->subject = $objMailProperties->subject;
 
@@ -887,7 +890,7 @@ class SurveyController extends AbstractContentElementController
         return false;
     }
 
-    protected function outIntroductionPage()
+    protected function outIntroductionPage(Template $template)
     {
         switch ($this->objSurvey->access) {
             case 'anon':

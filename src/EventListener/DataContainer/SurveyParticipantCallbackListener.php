@@ -63,6 +63,7 @@ class SurveyParticipantCallbackListener
     #[AsCallback(table: 'tl_survey_participant', target: 'list.label.label')]
     public function formatListLabel(array $row, string $label, DataContainer $dc, array $labels): string
     {
+        System::loadLanguageFile('tl_survey_participant');
         // we ignore the label param, the row has it all
         $finished = (int) ($row['finished']);
         $result = sprintf(
@@ -72,8 +73,8 @@ class SurveyParticipantCallbackListener
                 ? $this->getUsername($row['uid'])
                 : $row['pin'],
             ($finished)
-                ? $this->translator->trans('tl_survey_participant.finished')
-                : $this->translator->trans('tl_survey_participant.running'),
+                ? $this->translator->trans('tl_survey_participant.finished', [], 'contao_default')
+                : $this->translator->trans('tl_survey_participant.running', [], 'contao_default'),
             ($finished)
                 ? ''
                 : ' ('.$row['lastpage'].'/'.$this->getPageCount($row['pid']).')'

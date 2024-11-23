@@ -25,9 +25,9 @@ class SurveyPinTanCallbackListener
         preg_match('/^(.*?)::(.*?)::(.*?)$/', $label, $matches);
         if ($matches[3]) {
             // tan is used
-            $used = '<img src="bundles/hschottmsurvey/images/tan_used.png" alt="'.$this->translator->trans('tl_survey_pin_tan.tan_used').'" title="'.$this->translator->trans('tl_survey_pin_tan.tan_used').'" />';
+            $used = '<img src="bundles/hschottmsurvey/images/tan_used.png" alt="'.$this->translator->trans('tl_survey_pin_tan.tan_used', [], 'contao_default').'" title="'.$this->translator->trans('tl_survey_pin_tan.tan_used', [], 'contao_default').'" />';
         } else {
-            $used = '<img src="bundles/hschottmsurvey/images/tan_new.png" alt="'.$this->translator->trans('tl_survey_pin_tan.tan_new').'" title="'.$this->translator->trans('tl_survey_pin_tan.tan_new').'" />';
+            $used = '<img src="bundles/hschottmsurvey/images/tan_new.png" alt="'.$this->translator->trans('tl_survey_pin_tan.tan_new', [], 'contao_default').'" title="'.$this->translator->trans('tl_survey_pin_tan.tan_new', [], 'contao_default').'" />';
         }
 
         return sprintf('<div>%s <strong>%s</strong> (%s)</div>', $used, $matches[1], $matches[2]);

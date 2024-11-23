@@ -50,10 +50,10 @@
 {% for column in columns %}
 		<td class="c-{{ col_classes[colcounter] }}">
 {% if singleResponse %}
-			<input type="radio" name="{{ ctrl_name }}[{{ rowcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="radio{{ ctrl_class }}" value="{{ colcounter }}"{% if values[rowcounter] == colcounter %} checked="checked"{% endif %} />
+			<input type="radio" name="{{ ctrl_name }}[{{ rowcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="matrixsr{{ ctrl_class }}" value="{{ colcounter }}"{% if values[rowcounter] == colcounter %} checked="checked"{% endif %} />
 {% else %}
 {% if values[rowcounter] is iterable %}{% set foundvalues = values[rowcounter] %}{% else %}{% set foundvalues = [] %}{% endif %}
-			<input type="checkbox" name="{{ ctrl_name }}[{{ rowcounter }}][{{ colcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="checkbox{{ ctrl_class }}" value="{{ colcounter }}"{% if colcounter in foundvalues %} checked="checked"{% endif %} />
+			<input type="checkbox" name="{{ ctrl_name }}[{{ rowcounter }}][{{ colcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="matrixmr{{ ctrl_class }}" value="{{ colcounter }}"{% if colcounter in foundvalues %} checked="checked"{% endif %} />
 {% endif %}
 		</td>
 {% set colcounter = colcounter + 1 %}
@@ -61,10 +61,10 @@
 {% if hasNeutralColumn %}
 		<td class="neutralcolumn n-{{ col_classes['neutral'] }}">
 {% if singleResponse %}
-			<input type="radio" name="{{ ctrl_name }}[{{ rowcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="radio{{ ctrl_class }}" value="{{ colcounter }}"{% if values[rowcounter] == colcounter %} checked="checked"{% endif %} />
+			<input type="radio" name="{{ ctrl_name }}[{{ rowcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="matrixsr{{ ctrl_class }}" value="{{ colcounter }}"{% if values[rowcounter] == colcounter %} checked="checked"{% endif %} />
 {% else %}
 {% if values[rowcounter] is iterable %}{% set foundvalues = values[rowcounter] %}{% else %}{% set foundvalues = [] %}{% endif %}
-			<input type="checkbox" name="{{ ctrl_name }}[{{ rowcounter }}][{{ colcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="checkbox{{ ctrl_class }}" value="{{ colcounter }}"{% if colcounter in foundvalues %} checked="checked"{% endif %} />
+			<input type="checkbox" name="{{ ctrl_name }}[{{ rowcounter }}][{{ colcounter }}]" id="ctrl_{{ ctrl_id }}_{{ rowcounter }}_{{ colcounter }}" class="matrixmr{{ ctrl_class }}" value="{{ colcounter }}"{% if colcounter in foundvalues %} checked="checked"{% endif %} />
 {% endif %}
 		</td>
 {% endif %}

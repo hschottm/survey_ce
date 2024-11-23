@@ -52,7 +52,7 @@ class SurveyHelper extends Backend
 					}
 					$strClass = $GLOBALS['TL_SVY']['q_'.$found['questiontype']];
 					// Continue if the class is not defined
-					if (!$class_exists($strClass))
+					if (!class_exists($strClass))
 					{
 						continue;
 					}

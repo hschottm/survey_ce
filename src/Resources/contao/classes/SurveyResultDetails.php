@@ -16,6 +16,7 @@ use Contao\System;
 use Contao\StringUtil;
 use Contao\BackendTemplate;
 use Contao\Input;
+use Contao\Database;
 use Hschottm\SurveyBundle\Export\Exporter;
 use Hschottm\SurveyBundle\Export\ExportHelper;
 use Hschottm\SurveyBundle\SurveyQuestion;

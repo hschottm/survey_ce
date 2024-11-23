@@ -20,12 +20,8 @@ class SurveyScaleCallbackListener
     }
     
     #[AsCallback(table: 'tl_survey_scale', target: 'list.sorting.child_record')]
-    public function sortChildRecord(array $recordData, DataContainer $dc): string
+    public function sortChildRecord(array $recordData): string
     {
-        if (!$dc->id) {
-            return "";
-        }
-
         $result = '<p><strong>'.$recordData['title'].'</strong></p>';
         $result .= '<ol>';
         $answers = StringUtil::deserialize($recordData['scale'], true);

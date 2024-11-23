@@ -142,7 +142,6 @@ class FormOpenEndedQuestion extends FormQuestionWidget
         $template->blnError = (\strlen($strError) ? true : false);
         $widget = $template->parse();
         //$widget .= $this->addSubmit();
-
         return $widget;
     }
 

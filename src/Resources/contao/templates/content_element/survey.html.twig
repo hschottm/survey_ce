@@ -35,7 +35,7 @@
 </div>
 {% endif %}
 {% if page > pages|length %}
-<div class="finalstatement">{{ finalsubmission }}</div>
+<div class="finalstatement">{{ finalsubmission|raw }}</div>
 {% endif %}
 {% if (page > 0) and (page <= pages|length) %}
 {% if (pages[page-1].title|length) %}<div class="pagetitle">{{ pages[page-1].title }}</div>{% endif %}

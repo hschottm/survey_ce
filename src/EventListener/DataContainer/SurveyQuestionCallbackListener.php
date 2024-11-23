@@ -10,6 +10,7 @@ use Contao\Input;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Hschottm\SurveyBundle\SurveyQuestionModel;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\PDO;
 
 class SurveyQuestionCallbackListener
 {
@@ -122,9 +123,9 @@ class SurveyQuestionCallbackListener
             return "";
         }
 
-        $objQuestion = $this->db->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?')
-            ->limit(1)
-            ->execute(array($dc->id));
+        $statement = $this->db->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?');
+        $statement->bindValue('limit', 1, \PDO::PARAM_INT);
+        $objQuestion = $statement->execute(array($dc->id));
         if (0 == strcmp($objQuestion->multiplechoice_subtype, 'mc_singleresponse')) {
             return '<a class="tl_submit" style="margin-top: 10px;" href="'.$this->addToUrl('key=scale').'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]).'" onclick="Backend.getScrollOffset();">'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]).'</a>';
         }

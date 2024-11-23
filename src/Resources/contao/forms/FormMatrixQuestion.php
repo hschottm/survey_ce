@@ -203,6 +203,20 @@ class FormMatrixQuestion extends FormQuestionWidget
         return $result;
     }
 
+    public function generateLabel()
+    {
+        if (!$this->hasLabel()) {
+            return '';
+        }
+
+        return sprintf('<label%s%s>%s%s%s</label>',
+            '',
+            (('' != $this->strClass) ? ' class="'.$this->strClass.'"' : ''),
+            ($this->mandatory ? '<span class="invisible">'.$GLOBALS['TL_LANG']['MSC']['mandatory'].' </span>' : ''),
+            $this->title,
+            ($this->mandatory ? '<span class="mandatory">*</span>' : ''));
+    }
+
     /**
      * Trim values.
      *

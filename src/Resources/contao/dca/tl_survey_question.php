@@ -14,8 +14,106 @@ use Contao\DC_Table;
 use Contao\DataContainer;
 use Contao\StringUtil;
 use Contao\Database;
+use Contao\Backend;
+use Contao\Input;
+use Contao\Environment;
+use Contao\Message;
 
 System::loadLanguageFile('tl_survey_question');
+
+class tl_survey_question extends Backend {
+    public function addScaleWizard(DataContainer $dc): string {
+        $objQuestion = Database::getInstance()->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?')
+        ->limit(1)
+        ->execute($dc->id);
+        if (0 == strcmp($objQuestion->multiplechoice_subtype, 'mc_singleresponse')) {
+            return '<a class="tl_submit" style="margin-top: 10px;" href="'.Backend::addToUrl('key=scale').'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]).'" onclick="Backend.getScrollOffset();">'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]).'</a>';
+        }
+        return '';
+    }
+
+    public function addScale(DataContainer $dc): string
+    {
+        if ('scale' != Input::get('key')) {
+            return '';
+        }
+
+        $objSurvey = Database::getInstance()->prepare('SELECT tl_survey.language FROM tl_survey WHERE tl_survey.id=(SELECT pid FROM tl_survey_page WHERE tl_survey_page.id=(SELECT tl_survey_question.pid FROM tl_survey_question WHERE tl_survey_question.id=?))')
+            ->limit(1)
+            ->execute($dc->id);
+
+        $objScales = Database::getInstance()->prepare('SELECT tl_survey_scale.*, tl_survey_scale_folder.title AS folder FROM tl_survey_scale, tl_survey_scale_folder WHERE tl_survey_scale.language=? AND tl_survey_scale.pid = tl_survey_scale_folder.id ORDER BY tl_survey_scale_folder.title, tl_survey_scale.title')
+            ->execute($objSurvey->language);
+
+        $arrScales = [];
+        while ($objScales->next()) {
+            $arrScales[$objScales->id] = ['title' => $objScales->title, 'scales' => StringUtil::deserialize($objScales->scale, true), 'folder' => $objScales->folder];
+        }
+
+        // Add scale
+        if ('tl_add_scale' == Input::post('FORM_SUBMIT')) {
+            if ((!Input::post('scale') || 0 == strcmp(Input::post('scale'), '-'))) {
+                $_SESSION['TL_ERROR'][] = $GLOBALS['TL_LANG']['ERR']['selectoption'];
+                $this->reload();
+            }
+
+            Database::getInstance()->prepare('UPDATE tl_survey_question SET choices=? WHERE id=?')
+                ->execute(serialize($arrScales[Input::post('scale')]['scales']), $dc->id);
+
+            System::setCookie('BE_PAGE_OFFSET', 0, 0, '/');
+            $this->redirect(str_replace('&key=scale', '', Environment::get('request')));
+        }
+
+        // Return form
+        $result = '
+<div id="tl_buttons">
+<a href="'.StringUtil::ampersand(str_replace('&key=scale', '', Environment::get('request'))).'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+</div>
+
+'.Message::generate().'
+
+<form action="'.StringUtil::ampersand(Environment::get('request'), true).'" id="tl_add_scale" class="tl_form" method="post">
+<div class="tl_formbody_edit">
+<input type="hidden" name="FORM_SUBMIT" value="tl_add_scale" />
+<input type="hidden" name="REQUEST_TOKEN" value="'.System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue().'" />
+<fieldset id="pal_scale_legend" class="tl_tbox">
+  <legend>'.$GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0].'</legend>
+  <div class="widget">
+  <h3><label for="scale">'.$GLOBALS['TL_LANG']['tl_survey_question']['scale'][0].'</label></h3>
+  <select name="scale" id="scale" class="tl_select" onfocus="Backend.getScrollOffset();">
+		<option value="-">-</option>\n';
+        $lastfolder = '';
+        foreach ($arrScales as $id => $scale) {
+            if (0 != strcmp($scale['folder'], $lastfolder)) {
+                if (\strlen($lastfolder)) {
+                    $result .= '</optgroup>';
+                }
+                $result .= '<optgroup label="'.StringUtil::specialchars($scale['folder']).'">';
+            }
+            $result .= '<option value="'.StringUtil::specialchars($id).'">'.StringUtil::specialchars($scale['title']).'</option>\n';
+            $lastfolder = $scale['folder'];
+        }
+        $result .= '</optgroup>';
+        $result .= '  </select>'.(\strlen($GLOBALS['TL_LANG']['tl_survey_question']['scale'][1]) ? '
+  <p class="tl_help">'.$GLOBALS['TL_LANG']['tl_survey_question']['scale'][1].'</p>' : '').'
+</div>
+</fieldset>
+
+</div>
+
+<div class="tl_formbody_submit">
+
+<div class="tl_submit_container">
+<input type="submit" name="save" id="save" class="tl_submit" alt="add scale" accesskey="s" value="'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['save_add_scale']).'" />
+</div>
+
+</div>
+</form>';
+
+        return $result;
+    }
+
+}
 
 $GLOBALS['TL_DCA']['tl_survey_question'] = [
     // Config
@@ -386,7 +484,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['choices'],
             'exclude' => true,
             'inputType' => 'textwizard',
-            //'wizard' => [['tl_survey_question', 'addScaleWizard']],
+            'wizard' => [['tl_survey_question', 'addScaleWizard']],
             'eval' => [
                 'allowHtml' => true,
                 'decodeEntities' => true,
@@ -518,193 +616,3 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
         ],
     ],
 ];
-
-
-/*
-class tl_survey_question extends Backend
-{
-    public function addIcon($row, $label)
-    {
-        return sprintf('<div class="list_icon" style="background-image:url(\'bundles/hschottmsurvey/images/question.png\');">%s</div>', $label);
-    }
-
-    public function getQuestiontypes()
-    {
-        $qt = [];
-
-        $qt['openended'] = $GLOBALS['TL_LANG']['tl_survey_question']['openended'];
-        $qt['multiplechoice'] = $GLOBALS['TL_LANG']['tl_survey_question']['multiplechoice'];
-        $qt['matrix'] = $GLOBALS['TL_LANG']['tl_survey_question']['matrix'];
-        $qt['constantsum'] = $GLOBALS['TL_LANG']['tl_survey_question']['constantsum'];
-
-        return $qt;
-    }
-
-    public function getOpenEndedSubtypes()
-    {
-        $oe = [];
-        $oe['oe_singleline'] = $GLOBALS['TL_LANG']['tl_survey_question']['oe_singleline'];
-        $oe['oe_multiline'] = $GLOBALS['TL_LANG']['tl_survey_question']['oe_multiline'];
-        $oe['oe_integer'] = $GLOBALS['TL_LANG']['tl_survey_question']['oe_integer'];
-        $oe['oe_float'] = $GLOBALS['TL_LANG']['tl_survey_question']['oe_float'];
-        $oe['oe_date'] = $GLOBALS['TL_LANG']['tl_survey_question']['oe_date'];
-        $oe['oe_time'] = $GLOBALS['TL_LANG']['tl_survey_question']['oe_time'];
-
-        return $oe;
-    }
-
-    public function getMultipleChoiceSubtypes()
-    {
-        $mc = [];
-        $mc['mc_singleresponse'] = $GLOBALS['TL_LANG']['tl_survey_question']['mc_singleresponse'];
-        $mc['mc_multipleresponse'] = $GLOBALS['TL_LANG']['tl_survey_question']['mc_multipleresponse'];
-        $mc['mc_dichotomous'] = $GLOBALS['TL_LANG']['tl_survey_question']['mc_dichotomous'];
-
-        return $mc;
-    }
-
-    public function getMatrixSubtypes()
-    {
-        $mc = [];
-        $mc['matrix_singleresponse'] = $GLOBALS['TL_LANG']['tl_survey_question']['mc_singleresponse'];
-        $mc['matrix_multipleresponse'] = $GLOBALS['TL_LANG']['tl_survey_question']['mc_multipleresponse'];
-
-        return $mc;
-    }
-
-    public function generateAlias($varValue, $dc)
-  	{
-  		$autoAlias = false;
-
-  		// Generiere einen Alias wenn es keinen gibt
-  		if ($varValue == '') {
-  			$autoAlias = true;
-  			$varValue = StringUtil::generateAlias($dc->activeRecord->title);
-  		}
-  		// Die gewünschte Tabelle zuweisen, aus der ein auto- Alias generiert werden soll.
-  		// Input::get('table') lassen, wenn die Tabelle dynamisch zugeordnet werden soll.
-  		$table = Input::get('table') ? Input::get('table') : 'tl_survey_question';
-  		$objAlias = Database::getInstance()->prepare("SELECT id FROM " . $table . " WHERE alias=?")->execute($varValue);
-  		// Überprüfe ob der Alias bereits existiert.
-  		if ($objAlias->numRows > 1 && !$autoAlias) {
-  			throw new \Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
-  		}
-  		// wenn alias bereits existiert, füge eine ID hinzu.
-  		if ($objAlias->numRows && $autoAlias) {
-  			$varValue .= '-' . $dc->id;
-  		}
-  		return $varValue;
-  	}
-
-    public function setCompleteStatus(DataContainer $dc)
-    {
-        Database::getInstance()->prepare('UPDATE tl_survey_question SET complete = ?, original = ? WHERE id=?')
-            ->execute(1, 1, $dc->id);
-    }
-
-    public function getMCStyleOptions(DataContainer $dc)
-    {
-        $objQuestion = Database::getInstance()->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?')
-            ->limit(1)
-            ->execute($dc->id);
-        if (0 == strcmp($objQuestion->multiplechoice_subtype, 'mc_multipleresponse')) {
-            return ['vertical', 'horizontal'];
-        }
-
-        return ['vertical', 'horizontal', 'select'];
-    }
-
-    public function addScaleWizard(DataContainer $dc)
-    {
-        $objQuestion = Database::getInstance()->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?')
-            ->limit(1)
-            ->execute($dc->id);
-        if (0 == strcmp($objQuestion->multiplechoice_subtype, 'mc_singleresponse')) {
-            return '<a class="tl_submit" style="margin-top: 10px;" href="'.$this->addToUrl('key=scale').'" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]).'" onclick="Backend.getScrollOffset();">'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]).'</a>';
-        }
-
-        return '';
-    }
-
-    public function addScale(DataContainer $dc)
-    {
-        if ('scale' != \Input::get('key')) {
-            return '';
-        }
-
-        $objSurvey = Database::getInstance()->prepare('SELECT tl_survey.language FROM tl_survey WHERE tl_survey.id=(SELECT pid FROM tl_survey_page WHERE tl_survey_page.id=(SELECT tl_survey_question.pid FROM tl_survey_question WHERE tl_survey_question.id=?))')
-            ->limit(1)
-            ->execute($dc->id);
-
-        $objScales = Database::getInstance()->prepare('SELECT tl_survey_scale.*, tl_survey_scale_folder.title AS folder FROM tl_survey_scale, tl_survey_scale_folder WHERE tl_survey_scale.language=? AND tl_survey_scale.pid = tl_survey_scale_folder.id ORDER BY tl_survey_scale_folder.title, tl_survey_scale.title')
-            ->execute($objSurvey->language);
-
-        $arrScales = [];
-        while ($objScales->next()) {
-            $arrScales[$objScales->id] = ['title' => $objScales->title, 'scales' => StringUtil::deserialize($objScales->scale, true), 'folder' => $objScales->folder];
-        }
-
-        // Add scale
-        if ('tl_add_scale' == \Input::post('FORM_SUBMIT')) {
-            if ((!\Input::post('scale') || 0 == strcmp(\Input::post('scale'), '-'))) {
-                $_SESSION['TL_ERROR'][] = $GLOBALS['TL_LANG']['ERR']['selectoption'];
-                $this->reload();
-            }
-
-            Database::getInstance()->prepare('UPDATE tl_survey_question SET choices=? WHERE id=?')
-                ->execute(serialize($arrScales[\Input::post('scale')]['scales']), $dc->id);
-
-            System::setCookie('BE_PAGE_OFFSET', 0, 0, '/');
-            $this->redirect(str_replace('&key=scale', '', \Environment::get('request')));
-        }
-
-        // Return form
-        $result = '
-<div id="tl_buttons">
-<a href="'.StringUtil::ampersand(str_replace('&key=scale', '', \Environment::get('request'))).'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
-</div>
-
-'.$this->getMessages().'
-
-<form action="'.StringUtil::ampersand(\Environment::get('request'), true).'" id="tl_add_scale" class="tl_form" method="post">
-<div class="tl_formbody_edit">
-<input type="hidden" name="FORM_SUBMIT" value="tl_add_scale" />
-<input type="hidden" name="REQUEST_TOKEN" value="'.\Contao\System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue().'" />
-<fieldset id="pal_scale_legend" class="tl_tbox">
-  <legend>'.$GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0].'</legend>
-  <div class="widget">
-  <h3><label for="scale">'.$GLOBALS['TL_LANG']['tl_survey_question']['scale'][0].'</label></h3>
-  <select name="scale" id="scale" class="tl_select" onfocus="Backend.getScrollOffset();">
-		<option value="-">-</option>\n';
-        $lastfolder = '';
-        foreach ($arrScales as $id => $scale) {
-            if (0 != strcmp($scale['folder'], $lastfolder)) {
-                if (\strlen($lastfolder)) {
-                    $result .= '</optgroup>';
-                }
-                $result .= '<optgroup label="'.StringUtil::specialchars($scale['folder']).'">';
-            }
-            $result .= '<option value="'.StringUtil::specialchars($id).'">'.StringUtil::specialchars($scale['title']).'</option>\n';
-            $lastfolder = $scale['folder'];
-        }
-        $result .= '</optgroup>';
-        $result .= '  </select>'.(\strlen($GLOBALS['TL_LANG']['tl_survey_question']['scale'][1]) ? '
-  <p class="tl_help">'.$GLOBALS['TL_LANG']['tl_survey_question']['scale'][1].'</p>' : '').'
-</div>
-</fieldset>
-
-</div>
-
-<div class="tl_formbody_submit">
-
-<div class="tl_submit_container">
-<input type="submit" name="save" id="save" class="tl_submit" alt="add scale" accesskey="s" value="'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['save_add_scale']).'" />
-</div>
-
-</div>
-</form>';
-
-        return $result;
-    }
-}
-*/
