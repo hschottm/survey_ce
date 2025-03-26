@@ -155,7 +155,7 @@ class SurveyHelper extends \Backend
 		$strReturn = str_replace('?><br />', '?>', $strBuffer);
     // Eval the code
 		ob_start();
-		$blnEval = eval("?>" . $strReturn);
+		$blnEval = eval("?>" . html_entity_decode($strReturn, ENT_QUOTES|ENT_XHTML));
 		$strReturn = ob_get_contents();
 		ob_end_clean();
 

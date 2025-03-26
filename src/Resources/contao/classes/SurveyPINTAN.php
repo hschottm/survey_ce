@@ -64,8 +64,8 @@ class SurveyPINTAN extends \Backend
                 $line['tan'] = $row['tan'];
                 $line['tstamp'] = date($GLOBALS['TL_CONFIG']['datimFormat'], $row['tstamp']);
                 $line['used'] = $row['used'] ? 1 : 0;
-                if (null != $pagedata) {
-                    $line['url'] = ampersand($domain.$this->generateFrontendUrl($pagedata, '/code/'.$row['tan']));
+                if (null != $pageModel) {
+                    $line['url'] = ampersand($domain.$pageModel->getFrontendUrl('/code/'.$row['tan']));
                 }
                 $export[] = $line;
             }

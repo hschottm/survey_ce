@@ -245,7 +245,7 @@ class ContentSurvey extends \ContentElement
         $this->Template->surveytitle = \StringUtil::specialchars($this->objSurvey->title);
         $this->Template->cancel = \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['cancel_survey']);
         global $objPage;
-        $this->Template->cancellink = $this->generateFrontendUrl($objPage->row());
+        $this->Template->cancellink = $objPage->getFrontendUrl();
         $this->Template->allowback = $this->objSurvey->allowback;
 
                 $qb = $questionBlockTemplate->parse();
@@ -439,7 +439,7 @@ class ContentSurvey extends \ContentElement
             } else {
                 // PIN got lost, restart
                 global $objPage;
-                $this->redirect($this->generateFrontendUrl($objPage->row()));
+                $this->redirect($objPage->getFrontendUrl());
             }
         }
 
@@ -447,7 +447,7 @@ class ContentSurvey extends \ContentElement
         if ($validate && 'tl_survey' == \Input::post('FORM_SUBMIT') && (!$doNotSubmit || $goback)) {
             if (!\strlen($this->pin) || !$this->isValid($this->pin)) {
                 global $objPage;
-                $this->redirect($this->generateFrontendUrl($objPage->row()));
+                $this->redirect($objPage->getFrontendUrl());
             }
             foreach ($surveypage as $question) {
                 switch ($this->objSurvey->access) {
