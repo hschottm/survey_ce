@@ -44,11 +44,11 @@ class FormConstantSumQuestion extends FormQuestionWidget
         switch ($strKey) {
             case 'surveydata':
                 parent::__set($strKey, $varValue);
-                $this->strClass = 'constantsum'.((\strlen($varValue['cssClass']) ? (' '.$varValue['cssClass']) : ''));
+                $this->strClass = 'constantsum'.((\strlen((string) $varValue['cssClass']) ? (' '.$varValue['cssClass']) : ''));
                 $this->strSumOption = $varValue['sumoption'];
                 $this->dblSum = $varValue['sum'];
                 $this->blnInputFirst = ($varValue['inputfirst']) ? true : false;
-                $this->arrChoices = deserialize($varValue['sumchoices']);
+                $this->arrChoices = \Contao\StringUtil::deserialize($varValue['sumchoices']);
                 if (!\is_array($this->arrChoices)) {
                     $this->arrChoices = [];
                 }
@@ -80,7 +80,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
     public function validate()
     {
         $submit = $this->getPost('question');
-        $value = $submit[$this->id];
+        $value = $submit[$this->id] ?? '';
         $varInput = $this->validator($value);
         $this->value = $varInput;
     }
@@ -93,15 +93,14 @@ class FormConstantSumQuestion extends FormQuestionWidget
     public function generate()
     {
         $this->loadLanguageFile('tl_survey_question');
-        $template = new \FrontendTemplate('survey_question_constantsum');
+        $template = new \Contao\FrontendTemplate('survey_question_constantsum');
         $template->choices = $this->arrChoices;
         $template->blnInputFirst = $this->blnInputFirst;
-        $template->name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
-        $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
+        $template->name = $this->strName;
+        $template->ctrl_id = $this->strId;
+        $template->ctrl_class = (\strlen((string) $this->strClass) ? ' '.$this->strClass : '');
         $template->values = $this->varValue;
         $widget = $template->parse();
-        $widget .= $this->addSubmit();
 
         return $widget;
     }
@@ -117,7 +116,7 @@ class FormConstantSumQuestion extends FormQuestionWidget
         $choices = [];
         $counter = 1;
         foreach ($this->arrChoices as $choice) {
-            if (\strlen($this->varValue[$counter])) {
+            if (\strlen((string) $this->varValue[$counter])) {
                 $result .= $choice.': '.$this->varValue[$counter]."\n";
             }
             ++$counter;
@@ -143,12 +142,12 @@ class FormConstantSumQuestion extends FormQuestionWidget
         }
         $sum = 0.0;
         foreach ($varInput as $value) {
-            if (0 == \strlen($value)) {
+            if (!is_scalar($value) || !is_numeric($value)) {
                 $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_constantsum'], $this->title));
 
                 return $varInput;
             }
-            $sum += $value;
+            $sum += (float) $value;
         }
         switch ($this->strSumOption) {
             case 'exact':

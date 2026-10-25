@@ -22,7 +22,7 @@ use Hschottm\SurveyBundle\Export\ExportHelper;
  * @copyright  Helmut Schottmüller 2009-2018
  * @author     Helmut Schottmüller <https://github.com/hschottm>
  */
-class SurveyResultDetails extends \Backend
+class SurveyResultDetails extends \Contao\Backend
 {
     protected $blnSave = true;
 
@@ -36,11 +36,11 @@ class SurveyResultDetails extends \Backend
 
     public function showDetails(DataContainer $dc)
     {
-        if ('details' != \Input::get('key')) {
+        if ('details' != \Contao\Input::get('key')) {
             return '';
         }
         $return = '';
-        $qid = \Input::get('id');
+        $qid = \Contao\Input::get('id');
         $qtype = $this->Database->prepare('SELECT questiontype, pid FROM tl_survey_question WHERE id = ?')
             ->execute($qid)
             ->fetchAssoc();
@@ -50,17 +50,17 @@ class SurveyResultDetails extends \Backend
         $class = 'Hschottm\\SurveyBundle\\SurveyQuestion'.ucfirst($qtype['questiontype']);
         $this->loadLanguageFile('tl_survey_result');
         $this->loadLanguageFile('tl_survey_question');
-        $this->Template = new \BackendTemplate('be_question_result_details');
+        $this->Template = new \Contao\BackendTemplate('be_question_result_details');
         $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-        $this->Template->hrefBack = \Backend::addToUrl('key=cumulated&amp;id='.$parent['pid'], true, ['key', 'id']);
-        if ($this->classFileExists($class)) {
+        $this->Template->hrefBack = \Contao\Backend::addToUrl('key=cumulated&amp;id='.$parent['pid'], true, ['key', 'id']);
+        if (class_exists($class)) {
             $this->import($class);
             $question = new $class($qid);
             $this->Template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['detailsSummary'];
             $this->Template->heading = sprintf($GLOBALS['TL_LANG']['tl_survey_result']['detailsHeading'], $qid);
             $data = [];
             array_push($data, ['key' => 'ID:', 'value' => $question->id, 'keyclass' => 'first', 'valueclass' => 'last']);
-            array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0].':', 'value' => \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$question->questiontype]), 'keyclass' => 'first tl_bg', 'valueclass' => 'last tl_bg']);
+            array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['questiontype'][0].':', 'value' => \Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$question->questiontype]), 'keyclass' => 'first tl_bg', 'valueclass' => 'last tl_bg']);
             array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['title'][0].':', 'value' => $question->title, 'keyclass' => 'first', 'valueclass' => 'last']);
             array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['question'][0].':', 'value' => $question->question, 'keyclass' => 'first tl_bg', 'valueclass' => 'last tl_bg']);
             array_push($data, ['key' => $GLOBALS['TL_LANG']['tl_survey_question']['answered'].':', 'value' => $question->statistics['answered'], 'keyclass' => 'first', 'valueclass' => 'last']);
@@ -76,14 +76,14 @@ class SurveyResultDetails extends \Backend
 
     public function showCumulated(DataContainer $dc)
     {
-        if ('cumulated' != \Input::get('key')) {
+        if ('cumulated' != \Contao\Input::get('key')) {
             return '';
         }
         $this->loadLanguageFile('tl_survey_result');
         $this->loadLanguageFile('tl_survey_question');
         $return = '';
         $objQuestion = $this->Database->prepare('SELECT tl_survey_question.*, tl_survey_page.title as pagetitle, tl_survey_page.pid as parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
-            ->execute(\Input::get('id'));
+            ->execute(\Contao\Input::get('id'));
         $data = [];
         $abs_question_no = 0;
 
@@ -91,28 +91,28 @@ class SurveyResultDetails extends \Backend
             ++$abs_question_no;
             $class = 'Hschottm\SurveyBundle\SurveyQuestion'.ucfirst($row['questiontype']);
 
-            if ($this->classFileExists($class)) {
+            if (class_exists($class)) {
                 $this->import($class);
                 $question = new $class();
                 $question->data = $row;
-                $strUrl = \Backend::addToUrl('key=details&amp;id='.$question->id, true, ['key', 'id']);
+                $strUrl = \Contao\Backend::addToUrl('key=details&amp;id='.$question->id, true, ['key', 'id']);
                 array_push($data, [
                     'number' => $abs_question_no,
-                    'title' => \StringUtil::specialchars($row['title']),
-                    'type' => \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$row['questiontype']]),
+                    'title' => \Contao\StringUtil::specialchars($row['title']),
+                    'type' => \Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question'][$row['questiontype']]),
                     'answered' => $question->statistics['answered'],
                     'skipped' => $question->statistics['skipped'],
                     'hrefdetails' => $strUrl,
-                    'titledetails' => \StringUtil::specialchars(sprintf($GLOBALS['TL_LANG']['tl_survey_result']['details'][1], $question->id)),
+                    'titledetails' => \Contao\StringUtil::specialchars(sprintf($GLOBALS['TL_LANG']['tl_survey_result']['details'][1], $question->id)),
                 ]);
             }
         }
-        $this->Template = new \BackendTemplate('be_survey_result_cumulated');
+        $this->Template = new \Contao\BackendTemplate('be_survey_result_cumulated');
         $this->Template->back = $GLOBALS['TL_LANG']['MSC']['goBack'];
-        $this->Template->hrefBack = \Backend::addToUrl('', true, ['key', 'id']);
+        $this->Template->hrefBack = \Contao\Backend::addToUrl('', true, ['key', 'id']);
         $this->Template->export = $GLOBALS['TL_LANG']['tl_survey_result']['export'];
-        $this->Template->hrefExport = \Backend::addToUrl('key=export&amp;id='.\Input::get('id'), true, ['key', 'id']);
-        $this->Template->heading = \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
+        $this->Template->hrefExport = \Contao\Backend::addToUrl('key=export&amp;id='.\Contao\Input::get('id'), true, ['key', 'id']);
+        $this->Template->heading = \Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
         $this->Template->summary = 'cumulated results';
         $this->Template->data = $data;
         $this->Template->imgdetails = 'bundles/hschottmsurvey/images/details.png';
@@ -124,12 +124,12 @@ class SurveyResultDetails extends \Backend
 
     public function exportResults(DataContainer $dc)
     {
-        if ('export' != \Input::get('key')) {
+        if ('export' != \Contao\Input::get('key')) {
             return '';
         }
         $this->loadLanguageFile('tl_survey_result');
         $arrQuestions = $this->Database->prepare('SELECT tl_survey_question.*, tl_survey_page.title as pagetitle, tl_survey_page.pid as parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? ORDER BY tl_survey_page.sorting, tl_survey_question.sorting')
-            ->execute(\Input::get('id'));
+            ->execute(\Contao\Input::get('id'));
         if ($arrQuestions->numRows) {
             $exporter = ExportHelper::getExporter();
             $sheet = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults'];
@@ -139,7 +139,7 @@ class SurveyResultDetails extends \Backend
             while ($arrQuestions->next()) {
                 $row = $arrQuestions->row();
                 $class = 'Hschottm\SurveyBundle\SurveyQuestion'.ucfirst($row['questiontype']);
-                if ($this->classFileExists($class)) {
+                if (class_exists($class)) {
                     $this->import($class);
                     $question = new $class();
                     $question->data = $row;
@@ -147,7 +147,7 @@ class SurveyResultDetails extends \Backend
                 }
             }
 
-            $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('id'));
+            $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Contao\Input::get('id'));
             if (null != $surveyModel) {
                 $filename = $surveyModel->title;
             } else {
@@ -156,7 +156,7 @@ class SurveyResultDetails extends \Backend
             $exporter->setFilename($filename);
             $exporter->sendFile($objSurvey->title, $objSurvey->title, $objSurvey->title, 'Contao CMS', 'Contao CMS');
         }
-        $href = \Backend::addToUrl('', true, ['key', 'id']);
+        $href = \Contao\Backend::addToUrl('', true, ['key', 'id']);
         $this->redirect($href);
     }
 
@@ -175,11 +175,11 @@ class SurveyResultDetails extends \Backend
      */
     public function exportResultsRaw(DataContainer $dc)
     {
-        if ('exportraw' != \Input::get('key')) {
+        if ('exportraw' != \Contao\Input::get('key')) {
             return '';
         }
 
-        $surveyID = \Input::get('id');
+        $surveyID = \Contao\Input::get('id');
         $arrQuestions = $this->Database->prepare('
 				SELECT   tl_survey_question.*,
 				         tl_survey_page.title as pagetitle,
@@ -230,12 +230,22 @@ class SurveyResultDetails extends \Backend
                 $rowCounter = 0; // reset rowCounter for the question headers
 
                 $class = 'Hschottm\SurveyBundle\SurveyQuestion'.ucfirst($row['questiontype']);
-                if ($this->classFileExists($class)) {
+                if (class_exists($class)) {
                     $this->import($class);
                     $question = new $class();
                     $question->data = $row;
                     $question->exportDetailsToExcel($exporter, $sheet, $rowCounter, $colCounter, $questionCounters, $participants);
                 }
+            }
+
+            $exporter->omitEmptySubheadingRow($sheet, 7);
+
+            if (!$exporter instanceof \Hschottm\SurveyBundle\Export\CSVExporter) {
+                $exporter->separateQuestionOverview(
+                    $sheet,
+                    $GLOBALS['TL_LANG']['tl_survey_result']['questionOverview'],
+                    $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_title']
+                );
             }
 
             $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', $surveyID);
@@ -248,7 +258,7 @@ class SurveyResultDetails extends \Backend
             $exporter->sendFile($surveyModel->title, $surveyModel->title, $surveyModel->title, 'Contao CMS', 'Contao CMS');
             exit;
         }
-        $this->redirect(\Environment::get('script').'?do='.\Input::get('do'));
+        $this->redirect(\Contao\Environment::get('script').'?do='.\Contao\Input::get('do'));
     }
 
     /**
@@ -285,10 +295,9 @@ class SurveyResultDetails extends \Backend
             } else {
                 $pin_uid = $objParticipant->pin;
                 $display = $objParticipant->mem_firstname.' '.$objParticipant->mem_lastname;
-                if (\strlen($objParticipant->mem_email)) {
+                if (\strlen((string) $objParticipant->mem_email)) {
                     $display .= ' <'.$objParticipant->mem_email.'>';
                 }
-                $display = utf8_decode($display);
             }
             $result[$pin_uid] = [
                 'id' => $objParticipant->id,
@@ -366,64 +375,56 @@ class SurveyResultDetails extends \Backend
           Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
         ]);
 
-        $exporter->setCellValue($sheet, $row++, $col, [
-          Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_title'].':',
-          Exporter::BGCOLOR => '#C0C0C0',
-          Exporter::COLOR => '#000000',
-          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
-        ]);
-
-        // Legends for the participant headers
+        // Participant headings share row 7 with the question titles.
+        // Row 8 is reserved for answer options and matrix subquestions.
         $col = 0;
         $exporter->setCellValue($sheet, $row, $col++, [
           Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_id_gen'],
-          Exporter::BGCOLOR => '#C0C0C0',
           Exporter::COLOR => '#000000',
           Exporter::TEXTWRAP => true,
           Exporter::COLWIDTH => 6 * 256,
-          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER
         ]);
 
         $exporter->setCellValue($sheet, $row, $col++, [
           Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_sort'],
-          Exporter::BGCOLOR => '#C0C0C0',
           Exporter::COLOR => '#000000',
           Exporter::TEXTWRAP => true,
           Exporter::COLWIDTH => 5 * 256,
-          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER
         ]);
 
         $exporter->setCellValue($sheet, $row, $col++, [
           Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_date'],
-          Exporter::BGCOLOR => '#C0C0C0',
           Exporter::COLOR => '#000000',
           Exporter::TEXTWRAP => true,
           Exporter::COLWIDTH => 14 * 256,
-          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER
         ]);
 
         $exporter->setCellValue($sheet, $row, $col++, [
           Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_lastpage'],
-          Exporter::BGCOLOR => '#C0C0C0',
           Exporter::COLOR => '#000000',
           Exporter::TEXTWRAP => true,
-          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER
         ]);
 
         $exporter->setCellValue($sheet, $row, $col++, [
           Exporter::DATA => $GLOBALS['TL_LANG']['tl_survey_result']['ex_question_participant'],
-          Exporter::BGCOLOR => '#C0C0C0',
           Exporter::COLOR => '#000000',
           Exporter::TEXTWRAP => true,
           Exporter::COLWIDTH => 14 * 256,
-          Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD,
-          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_RIGHT
+          Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER
         ]);
+
+        // Continue the question header separator across the participant columns.
+        for ($headerCol = 0; $headerCol < $col; ++$headerCol) {
+            $exporter->setCellValue($sheet, $row + 1, $headerCol, [
+                Exporter::DATA => '',
+                Exporter::BORDERBOTTOM => Exporter::BORDER_THIN,
+                Exporter::BORDERBOTTOMCOLOR => '#000000',
+            ]);
+        }
 
         return $result;
     }
@@ -455,7 +456,7 @@ class SurveyResultDetails extends \Backend
                     case 'id':
                     case 'count':
                     case 'lastpage':
-                        $cell[Exporter::CELLTYPE] = Exporter::CELLTYPE_FLOAT;
+                        $cell[Exporter::CELLTYPE] = Exporter::CELLTYPE_INTEGER;
                         break;
 
                     case 'display':

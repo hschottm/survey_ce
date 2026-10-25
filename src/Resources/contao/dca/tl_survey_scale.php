@@ -11,7 +11,7 @@
 $GLOBALS['TL_DCA']['tl_survey_scale'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => \Contao\DC_Table::class,
         'ptable' => 'tl_survey_scale_folder',
         'enableVersioning' => true,
         'sql' => [
@@ -37,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = [
                 'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store"',
             ],
         ],
         'operations' => [
@@ -55,7 +55,7 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_scale']['cut'],
                 'href' => 'act=paste&amp;mode=cut',
                 'icon' => 'cut.svg',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store"',
             ],
             'delete' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_scale']['delete'],
@@ -119,7 +119,7 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = [
             'default' => $GLOBALS['TL_LANGUAGE'],
             'filter' => true,
             'inputType' => 'select',
-            'options' => $this->getLanguages(),
+            'options_callback' => static fn (): array => \Symfony\Component\Intl\Languages::getNames($GLOBALS['TL_LANGUAGE'] ?? 'en'),
             'eval' => ['includeBlankOption' => true],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
@@ -134,7 +134,7 @@ $GLOBALS['TL_DCA']['tl_survey_scale'] = [
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
-class tl_survey_scale extends Backend
+class tl_survey_scale extends \Contao\Backend
 {
     /**
      * Compile format definitions and return them as string.
@@ -150,9 +150,9 @@ class tl_survey_scale extends Backend
     {
         $result = '<p><strong>'.$row['title'].'</strong></p>';
         $result .= '<ol>';
-        $answers = deserialize($row['scale'], true);
+        $answers = \Contao\StringUtil::deserialize($row['scale'], true);
         foreach ($answers as $answer) {
-            $result .= '<li>'.\StringUtil::specialchars($answer).'</li>';
+            $result .= '<li>'.\Contao\StringUtil::specialchars($answer).'</li>';
         }
         $result .= '</ol>';
 

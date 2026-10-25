@@ -30,7 +30,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'surveyPicker';
     }
@@ -38,7 +38,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
     /**
      * {@inheritdoc}
      */
-    public function supportsContext($context)
+    public function supportsContext(string $context): bool
     {
         return 'link' == $context; // && $this->getUser()->hasAccess('news', 'modules');
     }
@@ -46,7 +46,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
     /**
      * {@inheritdoc}
      */
-    public function supportsValue(PickerConfig $config)
+    public function supportsValue(PickerConfig $config): bool
     {
         return false; // != strpos($config->getValue(), '{{news_url::');
     }
@@ -54,7 +54,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
     /**
      * {@inheritdoc}
      */
-    public function getDcaTable()
+    public function getDcaTable(?PickerConfig $config = null): string
     {
         return 'tl_survey';
     }
@@ -62,7 +62,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
     /**
      * {@inheritdoc}
      */
-    public function getDcaAttributes(PickerConfig $config)
+    public function getDcaAttributes(PickerConfig $config): array
     {
         $attributes = ['fieldType' => 'radio'];
 
@@ -80,7 +80,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
     /**
      * {@inheritdoc}
      */
-    public function convertDcaValue(PickerConfig $config, $value)
+    public function convertDcaValue(PickerConfig $config, mixed $value): int|string
     {
         return '{{news_url::'.$value.'}}';
     }
@@ -88,7 +88,7 @@ class SurveyPickerProvider extends AbstractPickerProvider implements DcaPickerPr
     /**
      * {@inheritdoc}
      */
-    protected function getRouteParameters(PickerConfig $config = null)
+    protected function getRouteParameters(?PickerConfig $config = null): array
     {
         $params = ['do' => 'survey'];
 

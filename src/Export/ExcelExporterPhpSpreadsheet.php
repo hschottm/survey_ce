@@ -25,10 +25,10 @@ class ExcelExporterPhpSpreadsheet extends Exporter
     public function webColorToARGB($color)
     {
         $col = str_replace('#', '', $color);
-        if (6 == \strlen($col)) {
+        if (6 == \strlen((string) $col)) {
             return 'ff'.$col;
         }
-        if (8 == \strlen($color)) {
+        if (8 == \strlen((string) $color)) {
             return $col;
         }
 
@@ -82,8 +82,8 @@ class ExcelExporterPhpSpreadsheet extends Exporter
     protected function send()
     {
         $objWriter = new Xlsx($this->spreadsheet);
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="'.\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xlsx"');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.\Contao\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xlsx"');
         header('Cache-Control: max-age=0');
         $objWriter->save('php://output');
         echo '';
@@ -92,27 +92,31 @@ class ExcelExporterPhpSpreadsheet extends Exporter
 
     protected function setCellSpreadsheet($sheet, $cell)
     {
-        $pos = $this->getCell($cell[self::ROW] + 1, $cell[self::COL]);
+        $pos = $this->getCell($cell[self::ROW], $cell[self::COL]);
         $worksheet = $this->spreadsheet->getSheetByName($sheet);
         if (null == $worksheet) {
             $worksheet = $this->spreadsheet->addSheet(new Worksheet($this->spreadsheet, $sheet));
         }
 
-        $worksheet->setCellValue($pos, $cell[self::DATA]);
+        $worksheet->setCellValueExplicit($pos, $cell[self::DATA],
+            $cell[self::CELLTYPE] === self::CELLTYPE_STRING
+                ? \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
+                : \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_NUMERIC
+        );
 
         $fill_array = [];
         $font_array = [];
 
         switch ($cell[self::CELLTYPE]) {
-      case CELLTYPE_STRING:
+      case self::CELLTYPE_STRING:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
         break;
-      case CELLTYPE_FLOAT:
+      case self::CELLTYPE_FLOAT:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_00);
         break;
-      case CELLTYPE_PICTURE:
+      case self::CELLTYPE_PICTURE:
         break;
-      case CELLTYPE_INTEGER:
+      case self::CELLTYPE_INTEGER:
       default:
         $worksheet->getStyle($pos)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
         break;
@@ -169,7 +173,7 @@ class ExcelExporterPhpSpreadsheet extends Exporter
         }
 
         if (array_key_exists(self::TEXTWRAP, $cell)) {
-            $worksheet->getStyle($pos)->getAlignment()->setWrapText(true);
+            $worksheet->getStyle($pos)->getAlignment()->setWrapText((bool) $cell[self::TEXTWRAP]);
         }
 
         if (array_key_exists(self::FONTWEIGHT, $cell)) {
@@ -392,7 +396,7 @@ class ExcelExporterPhpSpreadsheet extends Exporter
             if (self::COLWIDTH_AUTO == $cell[self::COLWIDTH]) {
                 $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setAutoSize(true);
             } else {
-                $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setWidth($cell[self::COLWIDTH]);
+                $worksheet->getColumnDimension($this->getColumnIndex($cell[self::COL]))->setWidth($cell[self::COLWIDTH] / 256);
             }
         }
     }

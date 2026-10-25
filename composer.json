@@ -1,42 +1,56 @@
 {
-  "name":"hschottm/contao-survey",
-  "description":"Contao bundle to create questionnaires and run online surveys",
-  "keywords":["contao", "module", "extension", "survey", "bundle"],
-  "type":"contao-bundle",
-  "license":["LGPL-3.0-or-later", "CC-BY-NC-SA-4.0"],
-  "authors":[
+  "name": "hschottm/contao-survey",
+  "description": "Contao bundle to create questionnaires and run online surveys",
+  "keywords": [
+    "contao",
+    "module",
+    "extension",
+    "survey",
+    "bundle"
+  ],
+  "type": "contao-bundle",
+  "license": [
+    "LGPL-3.0-or-later",
+    "CC-BY-NC-SA-4.0"
+  ],
+  "authors": [
     {
-      "name":"Helmut Schottmüller",
-      "homepage":"https://github.com/hschottm"
+      "name": "Helmut Schottm\u00fcller",
+      "homepage": "https://github.com/hschottm"
     }
   ],
-  "require":{
-    "php": "^7.4 || ^8.0",
-    "contao/core-bundle":"~4.13",
-    "hschottm/contao-textwizard":"~3.4",
-    "symfony/framework-bundle": "^3.3",
-    "sonata-project/exporter": "^1.0"
+  "require": {
+    "php": "^8.3",
+    "contao/core-bundle": "^5.7",
+    "contao/manager-plugin": "^2.0",
+    "hschottm/contao-textwizard": "^3.4"
   },
   "autoload": {
-		"psr-4": {
-			"Hschottm\\SurveyBundle\\": "src/"
-		},
+    "psr-4": {
+      "Hschottm\\SurveyBundle\\": "src/"
+    },
     "classmap": [
-          "src/Resources/contao/"
-  	    ],
-  	"exclude-from-classmap": [
-          "src/Resources/contao/config/",
-          "src/Resources/contao/dca/",
-          "src/Resources/contao/languages/",
-          "src/Resources/contao/templates/"
-  	    ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Hschottm\\SurveyBundle\\Tests\\": "tests/"
-        }
-    },
-    "extra":{
-      "contao-manager-plugin": "Hschottm\\SurveyBundle\\ContaoManager\\Plugin"
+      "src/Resources/contao/"
+    ],
+    "exclude-from-classmap": [
+      "src/Resources/contao/config/",
+      "src/Resources/contao/dca/",
+      "src/Resources/contao/languages/",
+      "src/Resources/contao/templates/"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Hschottm\\SurveyBundle\\Tests\\": "tests/"
     }
+  },
+  "extra": {
+    "contao-manager-plugin": "Hschottm\\SurveyBundle\\ContaoManager\\Plugin"
+  },
+  "suggest": {
+    "phpoffice/phpspreadsheet": "Enables Excel exports; CSV export is available without additional packages."
+  },
+  "scripts": {
+    "test": "@php tests/run.php"
+  }
 }

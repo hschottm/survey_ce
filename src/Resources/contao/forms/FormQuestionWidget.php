@@ -18,7 +18,7 @@ namespace Hschottm\SurveyBundle;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class FormQuestionWidget extends \Widget
+class FormQuestionWidget extends \Contao\Widget
 {
     /**
      * Submit user input.
@@ -98,6 +98,11 @@ class FormQuestionWidget extends \Widget
      *
      * @return string
      */
+    public function __isset($strKey)
+    {
+        return in_array($strKey, ['question', 'title', 'questionNumber', 'pageQuestionNumber', 'pageNumber', 'absoluteNumber', 'showTitle', 'help', 'empty'], true) || parent::__isset($strKey);
+    }
+
     public function __get($strKey)
     {
         switch ($strKey) {
@@ -126,7 +131,7 @@ class FormQuestionWidget extends \Widget
                 return $this->help;
                 break;
             case 'empty':
-                return (!\is_array($this->varValue) && !\strlen($this->varValue)) ? true : false;
+                return (!\is_array($this->varValue) && !\strlen((string) $this->varValue)) ? true : false;
                 break;
         }
 
@@ -164,7 +169,7 @@ class FormQuestionWidget extends \Widget
         }
 
         return sprintf('<label%s%s>%s%s%s</label>',
-            (\strlen($this->strId) ? ' for="ctrl_'.$this->strId.'"' : ''),
+            (\strlen((string) $this->strId) ? ' for="ctrl_'.$this->strId.'"' : ''),
             (('' != $this->strClass) ? ' class="'.$this->strClass.'"' : ''),
             ($this->mandatory ? '<span class="invisible">'.$GLOBALS['TL_LANG']['MSC']['mandatory'].' </span>' : ''),
             $this->title,
@@ -179,7 +184,7 @@ class FormQuestionWidget extends \Widget
     public function getResultStringRepresentation()
     {
         $result = '';
-        if (!\is_array($this->varValue) && \strlen($this->varValue)) {
+        if (!\is_array($this->varValue) && \strlen((string) $this->varValue)) {
             $result .= $this->varValue."\n";
         }
 

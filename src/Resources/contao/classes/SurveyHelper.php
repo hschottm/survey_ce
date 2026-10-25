@@ -3,7 +3,7 @@
 namespace Hschottm\SurveyBundle;
 
 
-class SurveyHelper extends \Backend
+class SurveyHelper extends \Contao\Backend
 {
 	/**
 	 * Load the database object
@@ -11,7 +11,7 @@ class SurveyHelper extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('\Database');
+        $this->import(\Contao\Database::class, 'Database');
 	}
 
 	public function replaceTags($source, $uidOrPin, $replacements = array(), $blnIsHtml = false)
@@ -47,9 +47,9 @@ class SurveyHelper extends \Backend
 					}
 					$strClass = $GLOBALS['TL_SVY']['q_'.$found['questiontype']];
 					// Continue if the class is not defined
-					if (!$this->classFileExists($strClass))
+                    if (!class_exists($strClass))
 					{
-						continue;
+                        continue 2;
 					}
 					$questionObject = new $strClass($found['qid']);
           $strVal = $questionObject->resultAsString($found['result']);
@@ -63,7 +63,7 @@ class SurveyHelper extends \Backend
 			}
 		}
 		$source = preg_replace(array('/__BRCL__/', '/__BRCR__/'), array('{{', '}}'), $source);
-		$source = $this->replaceInsertTags($source, false);
+        $source = \Contao\System::getContainer()->get('contao.insert_tag.parser')->replaceInline($source);
 		if ($blnEvalSource)
 		{
 			$source = $this->evalConditionTags($source);
@@ -90,7 +90,7 @@ class SurveyHelper extends \Backend
 	 */
 	public function replaceConditionTags(&$strBuffer)
 	{
-		if (!strlen($strBuffer))
+        if (!strlen((string) $strBuffer))
 		{
 			return false;
 		}
@@ -147,7 +147,7 @@ class SurveyHelper extends \Backend
 	 */
 	public function evalConditionTags($strBuffer)
 	{
-		if (!strlen($strBuffer))
+        if (!strlen((string) $strBuffer))
 		{
 			return;
 		}

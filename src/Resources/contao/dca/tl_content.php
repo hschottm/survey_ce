@@ -28,7 +28,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['surveyTpl'] = [
     'sql' => "varchar(64) NOT NULL default ''",
 ];
 
-class tl_content_survey extends tl_content
+class tl_content_survey extends \Contao\Backend
 {
     /**
      * Return all survey templates as array.
@@ -37,7 +37,7 @@ class tl_content_survey extends tl_content
      *
      * @return array
      */
-    public function getSurveyTemplates(DataContainer $dc): array
+    public function getSurveyTemplates(\Contao\DataContainer $dc): array
     {
         return $this->getTemplateGroup('ce_survey');
     }

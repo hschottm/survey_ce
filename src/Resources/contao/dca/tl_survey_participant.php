@@ -11,7 +11,7 @@
 $GLOBALS['TL_DCA']['tl_survey_participant'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => \Contao\DC_Table::class,
         'ptable' => 'tl_survey',
         'doNotCopyRecords' => true,
         'enableVersioning' => true,
@@ -47,7 +47,7 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_participant']['exportraw'],
                 'href' => 'key=exportraw',
                 'class' => 'header_export',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-turbo="false" data-action="contao--scroll-offset#store"',
             ],
             'deleteall' => [
                 'label' => &$GLOBALS['TL_LANG']['MSC']['deleteAll'],
@@ -132,7 +132,7 @@ $GLOBALS['TL_DCA']['tl_survey_participant'] = [
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
-class tl_survey_participant extends \Backend
+class tl_survey_participant extends \Contao\Backend
 {
     protected $pageCount;
 
@@ -143,7 +143,7 @@ class tl_survey_participant extends \Backend
      */
     public function checkPermission()
     {
-        switch (\Input::get('act')) {
+        switch (\Contao\Input::get('act')) {
           case 'select':
           case 'show':
           case 'edit':
@@ -155,17 +155,17 @@ class tl_survey_participant extends \Backend
           case 'deleteAll':
           case 'overrideAll':
               /** @var Symfony\Component\HttpFoundation\Session\SessionInterface $objSession */
-              $objSession = \System::getContainer()->get('session');
+              $objSession = \Contao\System::getContainer()->get('request_stack')->getSession()->getBag('contao_backend');
               $session = $objSession->all();
-              $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy('pid', \Input::get('id'));
+              $res = \Hschottm\SurveyBundle\SurveyParticipantModel::findBy('pid', \Contao\Input::get('id'));
               if (null != $res && $res->count() >= 1) {
                   $session['CURRENT']['IDS'] = array_values($res->fetchEach('id'));
                   $objSession->replace($session);
               }
               break;
           default:
-              if (\strlen(\Input::get('act'))) {
-                  throw new Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "'.\Input::get('act').'.');
+              if (\strlen((string) \Contao\Input::get('act'))) {
+                  throw new Contao\CoreBundle\Exception\AccessDeniedException('Invalid command "'.\Contao\Input::get('act').'.');
               }
               break;
       }

@@ -1,0 +1,27 @@
+{% block survey_content %}
+<div id="tl_buttons">
+<a href="{{ hrefBack }}" class="header_back" title="{{ goBack }}" accesskey="b" data-action="contao--scroll-offset#store">{{ goBack }}</a>
+</div>
+
+<form action="{{ request }}" id="tl_export_survey_pin_tan" class="tl_form" method="post">
+  <div class="tl_formbody_edit">
+    <input type="hidden" name="FORM_SUBMIT" value="tl_export_survey_pin_tan" />
+    <input type="hidden" name="REQUEST_TOKEN" value="{{ contao.request_token }}" />
+    <fieldset id="pal_createtan_legend" class="tl_tbox">
+    <legend>{{ headline }}</legend>
+    <div class="widget block">
+      <h3>{{ nrOfTAN.generateLabel()|raw }}</h3>
+      {{ nrOfTAN.generateWithError()|raw }}{% if nrOfTAN.help %}
+        <p class="tl_help tl_tip">{{ nrOfTAN.help }}</p>
+      {% endif %}
+    </div>
+    </fieldset>
+  </div>
+
+  <div class="tl_formbody_submit">
+    <div class="tl_submit_container">
+      <input type="submit" name="import" id="save" class="tl_submit" alt="{{ submit }}" accesskey="s" value="{{ submit }}" />
+    </div>
+  </div>
+</form>
+{% endblock %}

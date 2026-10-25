@@ -22,42 +22,42 @@ use Hschottm\SurveyBundle\Export\ExportHelper;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class SurveyPINTAN extends \Backend
+class SurveyPINTAN extends \Contao\Backend
 {
     protected $blnSave = true;
 
     public function exportTAN(DataContainer $dc)
     {
-        if ('exporttan' != \Input::get('key')) {
+        if ('exporttan' != \Contao\Input::get('key')) {
             return '';
         }
 
-        if ('tl_survey_pin_tan' == \Input::get('table')) {
-            $this->redirect(\Backend::addToUrl('table=tl_survey', true, ['table']));
+        if ('tl_survey_pin_tan' == \Contao\Input::get('table')) {
+            $this->redirect(\Contao\Backend::addToUrl('table=tl_survey', true, ['table']));
 
             return;
         }
 
         $this->loadLanguageFile('tl_survey_pin_tan');
-        $this->Template = new \BackendTemplate('be_survey_export_tan');
+        $this->Template = new \Contao\BackendTemplate('be_survey_export_tan');
 
         $this->Template->surveyPage = $this->getSurveyPageWidget();
 
-        $this->Template->hrefBack = \Backend::addToUrl('table=tl_survey_pin_tan', true, ['table', 'key']);
+        $this->Template->hrefBack = \Contao\Backend::addToUrl('table=tl_survey_pin_tan', true, ['table', 'key']);
         $this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['exporttan'];
-        $this->Template->request = ampersand(str_replace('&id=', '&pid=', \Environment::get('request')));
-        $this->Template->submit = \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
+        $this->Template->request = \Contao\StringUtil::ampersand(str_replace('&id=', '&pid=', \Contao\Environment::get('request')));
+        $this->Template->submit = \Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['export']);
 
         // Create import form
-        if ('tl_export_survey_pin_tan' == \Input::post('FORM_SUBMIT') && $this->blnSave) {
+        if ('tl_export_survey_pin_tan' == \Contao\Input::post('FORM_SUBMIT') && $this->blnSave) {
             $export = [];
             $surveyPage = $this->Template->surveyPage->value;
-            $pageModel = \PageModel::findOneBy('id', $surveyPage);
+            $pageModel = \Contao\PageModel::findOneBy('id', $surveyPage);
             $pagedata = (null != $pageModel) ? $pageModel->row() : null;
-            $domain = \Environment::get('base');
+            $domain = \Contao\Environment::get('base');
 
-            $res = \Hschottm\SurveyBundle\SurveyPinTanModel::findBy('pid', \Input::get('pid'), ['order' => 'tstamp DESC, id DESC']);
+            $res = \Hschottm\SurveyBundle\SurveyPinTanModel::findBy('pid', \Contao\Input::get('pid'), ['order' => 'tstamp DESC, id DESC']);
             foreach ($res as $objPINTAN) {
                 $row = $objPINTAN->row();
                 $line = [];
@@ -65,7 +65,7 @@ class SurveyPINTAN extends \Backend
                 $line['tstamp'] = date($GLOBALS['TL_CONFIG']['datimFormat'], $row['tstamp']);
                 $line['used'] = $row['used'] ? 1 : 0;
                 if (null != $pageModel) {
-                    $line['url'] = ampersand($domain.$pageModel->getFrontendUrl('/code/'.$row['tan']));
+                    $line['url'] = \Contao\StringUtil::ampersand($pageModel->getAbsoluteUrl().(str_contains($pageModel->getAbsoluteUrl(), '?') ? '&' : '?').'code='.rawurlencode($row['tan']));
                 }
                 $export[] = $line;
             }
@@ -168,7 +168,7 @@ class SurveyPINTAN extends \Backend
                     );
                     ++$intRowCounter;
                 }
-                $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Input::get('pid'));
+                $surveyModel = \Hschottm\SurveyBundle\SurveyModel::findOneBy('id', \Contao\Input::get('pid'));
                 if (null != $surveyModel) {
                   $exporter->setFilename('TAN_'.$surveyModel->title);
                 } else {
@@ -177,7 +177,7 @@ class SurveyPINTAN extends \Backend
                 $exporter->sendFile("TAN", "TAN", "TAN", 'Contao CMS', 'Contao CMS');
                 exit;
             }
-            $this->redirect(\Backend::addToUrl('table=tl_survey_pin_tan', true, ['key', 'table']));
+            $this->redirect(\Contao\Backend::addToUrl('table=tl_survey_pin_tan', true, ['key', 'table']));
         }
 
         return $this->Template->parse();
@@ -185,30 +185,30 @@ class SurveyPINTAN extends \Backend
 
     public function createTAN(DataContainer $dc)
     {
-        if ('createtan' != \Input::get('key')) {
+        if ('createtan' != \Contao\Input::get('key')) {
             return '';
         }
 
         $this->loadLanguageFile('tl_survey_pin_tan');
-        $this->Template = new \BackendTemplate('be_survey_create_tan');
+        $this->Template = new \Contao\BackendTemplate('be_survey_create_tan');
 
         $this->Template->nrOfTAN = $this->getTANWidget();
 
-        $this->Template->hrefBack = ampersand(str_replace('&key=createtan', '', \Environment::get('request')));
+        $this->Template->hrefBack = \Contao\StringUtil::ampersand(str_replace('&key=createtan', '', \Contao\Environment::get('request')));
         $this->Template->goBack = $GLOBALS['TL_LANG']['MSC']['goBack'];
         $this->Template->headline = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'];
-        $this->Template->request = ampersand(\Environment::get('request'), ENCODE_AMPERSANDS);
-        $this->Template->submit = \StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
+        $this->Template->request = \Contao\StringUtil::ampersand(\Contao\Environment::get('request'), true);
+        $this->Template->submit = \Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_pin_tan']['create']);
 
         // Create import form
-        if ('tl_export_survey_pin_tan' == \Input::post('FORM_SUBMIT') && $this->blnSave) {
+        if ('tl_export_survey_pin_tan' == \Contao\Input::post('FORM_SUBMIT') && $this->blnSave) {
             $nrOfTAN = $this->Template->nrOfTAN->value;
             $this->import('\Hschottm\SurveyBundle\Survey', 'svy');
             for ($i = 0; $i < ceil($nrOfTAN); ++$i) {
                 $pintan = $this->svy->generatePIN_TAN();
-                $this->insertPinTan(\Input::get('id'), $pintan['PIN'], $pintan['TAN']);
+                $this->insertPinTan(\Contao\Input::get('id'), $pintan['PIN'], $pintan['TAN']);
             }
-            $this->redirect(\Backend::addToUrl('', true, ['key']));
+            $this->redirect(\Contao\Backend::addToUrl('', true, ['key']));
         }
 
         return $this->Template->parse();
@@ -234,13 +234,13 @@ class SurveyPINTAN extends \Backend
      */
     protected function getSurveyPageWidget($value = null)
     {
-        $widget = new \PageTree(\Widget::getAttributesFromDca($GLOBALS['TL_DCA']['tl_survey']['fields']['surveyPage'], 'surveyPage', $value, 'surveyPage', 'tl_survey'));
-        if ($GLOBALS['TL_CONFIG']['showHelp'] && \strlen($GLOBALS['TL_LANG']['tl_survey']['surveyPage'][1])) {
+        $widget = new \Contao\PageTree(\Contao\Widget::getAttributesFromDca($GLOBALS['TL_DCA']['tl_survey']['fields']['surveyPage'], 'surveyPage', $value, 'surveyPage', 'tl_survey'));
+        if ($GLOBALS['TL_CONFIG']['showHelp'] && \strlen((string) $GLOBALS['TL_LANG']['tl_survey']['surveyPage'][1])) {
             $widget->help = $GLOBALS['TL_LANG']['tl_survey']['surveyPage'][1];
         }
 
         // Valiate input
-        if ('tl_export_survey_pin_tan' == \Input::post('FORM_SUBMIT')) {
+        if ('tl_export_survey_pin_tan' == \Contao\Input::post('FORM_SUBMIT')) {
             $widget->validate();
 
             if ($widget->hasErrors()) {
@@ -261,7 +261,7 @@ class SurveyPINTAN extends \Backend
      */
     protected function getTANWidget($value = null)
     {
-        $widget = new \TextField();
+        $widget = new \Contao\TextField();
 
         $widget->id = 'nrOfTAN';
         $widget->name = 'nrOfTAN';
@@ -274,12 +274,12 @@ class SurveyPINTAN extends \Backend
 
         $widget->label = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][0];
 
-        if ($GLOBALS['TL_CONFIG']['showHelp'] && \strlen($GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1])) {
+        if ($GLOBALS['TL_CONFIG']['showHelp'] && \strlen((string) $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1])) {
             $widget->help = $GLOBALS['TL_LANG']['tl_survey_pin_tan']['nrOfTAN'][1];
         }
 
         // Valiate input
-        if ('tl_export_survey_pin_tan' == \Input::post('FORM_SUBMIT')) {
+        if ('tl_export_survey_pin_tan' == \Contao\Input::post('FORM_SUBMIT')) {
             $widget->validate();
 
             if ($widget->hasErrors()) {

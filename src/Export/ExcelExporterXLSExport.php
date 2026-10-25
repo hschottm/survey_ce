@@ -38,7 +38,7 @@ class ExcelExporterXLSExport extends Exporter
                 $celldata[self::CELLTYPE] = self::CELLTYPE_STRING;
             }
             if (self::CELLTYPE_STRING == $celldata[self::CELLTYPE]) {
-                $celldata[self::DATA] = utf8_decode($celldata[self::DATA]);
+                $celldata[self::DATA] = mb_convert_encoding($celldata[self::DATA], 'ISO-8859-1', 'UTF-8');
             }
             $this->sheets[$sheet][$this->getCell($row, $col)] = $celldata;
 
@@ -61,7 +61,7 @@ class ExcelExporterXLSExport extends Exporter
 
     protected function send()
     {
-        $this->spreadsheet->sendFile(\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xls');
+        $this->spreadsheet->sendFile(\Contao\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.xls');
         exit;
     }
 
@@ -70,16 +70,16 @@ class ExcelExporterXLSExport extends Exporter
         $pos = $this->getCell($cell[self::ROW] + 1, $cell[self::COL]);
         $found = false;
         foreach ($this->spreadsheet->worksheets as $sheetarray) {
-            if ($sheetarray['sheetname'] == utf8_decode($sheet)) {
+            if ($sheetarray['sheetname'] == mb_convert_encoding($sheet, 'ISO-8859-1', 'UTF-8')) {
                 $found = true;
             }
         }
 
         if (!$found) {
-            $this->spreadsheet->addworksheet(utf8_decode($sheet));
+            $this->spreadsheet->addworksheet(mb_convert_encoding($sheet, 'ISO-8859-1', 'UTF-8'));
         }
         $data = [
-      'sheetname' => utf8_decode($sheet),
+      'sheetname' => mb_convert_encoding($sheet, 'ISO-8859-1', 'UTF-8'),
       'row' => $cell[self::ROW],
       'col' => $cell[self::COL],
       'data' => $cell[self::DATA],

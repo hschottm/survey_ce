@@ -1,0 +1,13 @@
+{% block survey_content %}
+{% if (textBefore|length) %}
+<span class="before">{{ textBefore }}</span>
+{% endif %}
+{% if multiLine %}
+<textarea name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}" class="textarea{{ ctrl_class }}" {{ attributes|raw }} >{{ value }}</textarea>
+{% else %}
+<input type="text" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}" class="textarea{{ ctrl_class }}" {{ attributes|raw }} />
+{% endif %}
+{% if (textAfter|length) %}
+<span class="after">{{ textAfter }}</span>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,113 @@
+{% block survey_content %}
+{% if styleHorizontal %}
+{% if singleResponse %}
+<table>
+	<tr>
+{% set counter = 1 %}
+{% for choice in choices %}
+		<td><label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ choice }}</label></td>
+{% set counter = counter + 1 %}
+{% endfor %}
+{% if blnOther %}
+		<td><label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ otherTitle }}</label> <input type="text" name="other_{{ ctrl_name }}" class="text{{ ctrl_class }}" {% if (values["other"]|length) %}value="{{ values['other'] }}" {% endif %}/></td>
+{% endif %}
+{% set counter = 1 %}
+	</tr>
+	<tr>
+{% for choice in choices %}
+		<td><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="radio{{ ctrl_class }}" value="{{ counter }}"{% if values['value'] == counter %} checked="checked"{% endif %} /></td>
+{% set counter = counter + 1 %}
+{% endfor %}
+{% if blnOther %}
+		<td><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="radio{{ ctrl_class }}" value="{{ counter }}"{% if values['value'] == counter %} checked="checked"{% endif %} /></td>
+{% endif %}
+	</tr>
+</table>
+{% elseif dichotomous %}
+<table>
+	<tr>
+{% for counter in 1..2 %}
+		<td><label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ ((counter == 1) ? lngYes : lngNo) }}</label></td>
+{% endfor %}
+	</tr>
+	<tr>
+{% for counter in 1..2 %}
+		<td><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="radio{{ ctrl_class }}" value="{{ counter }}"{% if values['value'] == counter %} checked="checked"{% endif %} /></td>
+{% endfor %}
+	</tr>
+</table>
+{% elseif multipleResponse %}
+<table>
+	<tr>
+{% set counter = 1 %}
+{% set selectedValues = (values["value"] is iterable) ? values["value"] : [] %}
+{% for choice in choices %}
+		<td><label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ choice }}</label></td>
+{% set counter = counter + 1 %}
+{% endfor %}
+{% if blnOther %}
+		<td><label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ otherTitle }}</label> <input type="text" name="other_{{ ctrl_name }}" class="text{{ ctrl_class }}" {% if (values["other"]|length) %}value="{{ values['other'] }}" {% endif %}/></td>
+{% endif %}
+{% set counter = 1 %}
+	</tr>
+	<tr>
+{% for choice in choices %}
+		<td><input type="checkbox" name="{{ ctrl_name }}[{{ counter }}]" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="checkbox{{ ctrl_class }}" value="{{ counter }}"{% if (counter in selectedValues) %} checked="checked"{% endif %} /></td>
+{% set counter = counter + 1 %}
+{% endfor %}
+{% if blnOther %}
+		<td><input type="checkbox" name="{{ ctrl_name }}[{{ counter }}]" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="checkbox{{ ctrl_class }}" value="{{ counter }}"{% if (counter in selectedValues) %} checked="checked"{% endif %} /></td>
+{% endif %}
+	</tr>
+</table>
+{% endif %}
+{% elseif styleVertical %}
+{% if singleResponse %}
+{% set counter = 1 %}
+{% for choice in choices %}
+<div><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="radio{{ ctrl_class }}" value="{{ counter }}"{% if values['value'] == counter %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ choice }}</label></div>
+{% set counter = counter + 1 %}
+{% endfor %}
+{% if blnOther %}
+<div><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="radio{{ ctrl_class }}" value="{{ counter }}"{% if values['value'] == counter %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ otherTitle }}</label> <input type="text" name="other_{{ ctrl_name }}" class="text{{ ctrl_class }}" {% if (values["other"]|length) %}value="{{ values['other'] }}" {% endif %}/></div>
+{% endif %}
+{% elseif dichotomous %}
+{% for counter in 1..2 %}
+<div><input type="radio" name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="radio{{ ctrl_class }}" value="{{ counter }}"{% if values['value'] == counter %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ ((counter == 1) ? lngYes : lngNo) }}</label></div>
+{% endfor %}
+{% elseif multipleResponse %}
+{% set selectedValues = (values["value"] is iterable) ? values["value"] : [] %}
+{% set counter = 1 %}
+{% for choice in choices %}
+<div><input type="checkbox" name="{{ ctrl_name }}[{{ counter }}]" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="checkbox{{ ctrl_class }}" value="{{ counter }}"{% if (counter in selectedValues) %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ choice }}</label></div>
+{% set counter = counter + 1 %}
+{% endfor %}
+{% if blnOther %}
+<div><input type="checkbox" name="{{ ctrl_name }}[{{ counter }}]" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="checkbox{{ ctrl_class }}" value="{{ counter }}"{% if (counter in selectedValues) %} checked="checked"{% endif %} /> <label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ otherTitle }}</label> <input type="text" name="other_{{ ctrl_name }}" class="text{{ ctrl_class }}" {% if (values["other"]|length) %}value="{{ values['other'] }}" {% endif %}/></div>
+{% endif %}
+{% endif %}
+{% elseif styleSelect %}
+{% if singleResponse %}
+<div>
+	<select name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_select" class="select{{ ctrl_class }}">
+		<option value="0"></option>
+{% set counter = 1 %}
+{% for choice in choices %}
+		<option value="{{ counter }}"{% if values['value'] == counter %} selected="selected"{% endif %}>{{ choice }}</option>
+{% set counter = counter + 1 %}
+{% endfor %}
+	</select>
+</div>
+{% elseif dichotomous %}
+<div>
+	<select name="{{ ctrl_name }}" id="ctrl_{{ ctrl_id }}_select" class="select{{ ctrl_class }}">
+		<option value="0"></option>
+{% set counter = 1 %}
+{% for counter in 1..2 %}
+		<option value="{{ counter }}"{% if values['value'] == counter %} selected="selected"{% endif %}>{{ ((counter == 1) ? lngYes : lngNo) }}</option>
+{% endfor %}
+	</select>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}

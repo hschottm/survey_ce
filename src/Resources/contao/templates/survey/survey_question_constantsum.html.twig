@@ -1,0 +1,17 @@
+{% block survey_content %}
+<table>
+{% set counter = 1 %}
+{% for choice in choices %}
+	<tr class="{{ (counter %2 == 0) ? 'even' : 'odd' }}">
+{% if blnInputFirst %}
+		<td class="col1"><input type="text" name="{{ name }}[{{ counter }}]" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="text{{ ctrl_class }}" {% if (values[counter]|length) %}value="{{ values[counter] }}" {% endif %}/></td>
+		<td class="col0"><label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ choice }}</label></td>
+{% else %}
+		<td class="col0"><label for="ctrl_{{ ctrl_id }}_{{ counter }}">{{ choice }}</label></td>
+		<td class="col1"><input type="text" name="{{ name }}[{{ counter }}]" id="ctrl_{{ ctrl_id }}_{{ counter }}" class="text{{ ctrl_class }}" {% if (values[counter]|length) %}value="{{ values[counter] }}" {% endif %}/></td>
+{% endif %}
+	</tr>
+{% set counter = counter + 1 %}
+{% endfor %}
+</table>
+{% endblock %}

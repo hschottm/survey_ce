@@ -1,0 +1,11 @@
+{% block survey_content %}
+{% if not this.tableless %}
+  <tr class="{{ this.rowClass }}">
+    <td class="col_0 col_first">{{ this.generateLabel()|raw }}{% if this.mandatory %}<span class="mandatory">*</span>{% endif %}</td>
+    <td class="col_1 col_last">{{ this.generateWithError()|raw }}</td>
+  </tr>
+{% else %}
+  {{ this.generateLabel()|raw }}
+  {{ this.generateWithError()|raw }}<br />
+{% endif %}
+{% endblock %}

@@ -44,11 +44,11 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         switch ($strKey) {
             case 'surveydata':
                 parent::__set($strKey, $varValue);
-                $this->strClass = 'mc'.((\strlen($varValue['cssClass']) ? (' '.$varValue['cssClass']) : ''));
+                $this->strClass = 'mc'.((\strlen((string) $varValue['cssClass']) ? (' '.$varValue['cssClass']) : ''));
                 $this->strOtherTitle = $varValue['othertitle'];
                 $this->blnOther = ($varValue['addother']) ? true : false;
                 $this->strStyle = $varValue['mc_style'];
-                $this->arrChoices = deserialize($varValue['choices']);
+                $this->arrChoices = \Contao\StringUtil::deserialize($varValue['choices']);
                 if (!\is_array($this->arrChoices)) {
                     $this->arrChoices = [];
                 }
@@ -76,10 +76,10 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
             case 'empty':
                 $found = (\is_array($this->varValue['value'])) ? (\count($this->varValue['value']) > 0) : false;
                 if (!$found) {
-                    $found = (!\is_array($this->varValue['value'])) ? (\strlen($this->varValue['value']) > 0) : false;
+                    $found = (!\is_array($this->varValue['value'])) ? (\strlen((string) $this->varValue['value']) > 0) : false;
                 }
                 if (!$found) {
-                    $found = \strlen($this->varValue['other']) > 0;
+                    $found = \strlen((string) $this->varValue['other']) > 0;
                 }
 
                 return (!$found) ? true : false;
@@ -98,8 +98,8 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         $submit = $this->getPost('question');
         $submit_other = $this->getPost('other_question');
         $value = [];
-        $value['value'] = $submit[$this->id];
-        $value['other'] = $submit_other[$this->id];
+        $value['value'] = $submit[$this->id] ?? '';
+        $value['other'] = $submit_other[$this->id] ?? '';
         $varInput = $this->validator($value);
         $this->value = $varInput;
     }
@@ -119,10 +119,10 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         $strOptions = '';
 
         $this->loadLanguageFile('tl_survey_question');
-        $template = new \FrontendTemplate('survey_question_multiplechoice');
-        $template->ctrl_name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
-        $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
+        $template = new \Contao\FrontendTemplate('survey_question_multiplechoice');
+        $template->ctrl_name = $this->strName;
+        $template->ctrl_id = $this->strId;
+        $template->ctrl_class = (\strlen((string) $this->strClass) ? ' '.$this->strClass : '');
         $template->singleResponse = 0 == strcmp($this->questiontype, 'mc_singleresponse');
         $template->multipleResponse = 0 == strcmp($this->questiontype, 'mc_multipleresponse');
         $template->dichotomous = 0 == strcmp($this->questiontype, 'mc_dichotomous');
@@ -134,7 +134,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         $template->blnOther = $this->blnOther;
         $template->lngYes = $GLOBALS['TL_LANG']['tl_survey_question']['yes'];
         $template->lngNo = $GLOBALS['TL_LANG']['tl_survey_question']['no'];
-        $template->otherTitle = \StringUtil::specialchars($this->strOtherTitle);
+        $template->otherTitle = $this->strOtherTitle;
         $strOptions = $template->parse();
         $strError = $this->getErrorAsHTML();
 
@@ -148,7 +148,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
                             $strError,
                             $this->strName,
                             $this->strTagEnding,
-                            $strOptions).$this->addSubmit();
+                            $strOptions);
         }
 
         return sprintf('<fieldset id="ctrl_%s" class="radio_container%s">%s<input type="hidden" name="%s" value=""%s%s</fieldset>',
@@ -157,7 +157,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
                             $strError,
                             $this->strName,
                             $this->strTagEnding,
-                            $strOptions).$this->addSubmit();
+                            $strOptions);
     }
 
     public function generateWithError($blnSwitchOrder = false)
@@ -203,7 +203,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
      */
     protected function validator($varInput)
     {
-        if (((0 == strcmp($this->questiontype, 'mc_singleresponse')) || (0 == strcmp($this->questiontype, 'mc_dichotomous'))) && $this->mandatory && !\strlen($varInput['value'])) {
+        if (((0 == strcmp($this->questiontype, 'mc_singleresponse')) || (0 == strcmp($this->questiontype, 'mc_dichotomous'))) && $this->mandatory && !\strlen((string) $varInput['value'])) {
             $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['mandatory_mc_sr'], $this->title));
 
             return $varInput;
@@ -215,7 +215,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
         }
 
         if ((0 == strcmp($this->questiontype, 'mc_singleresponse'))) {
-            if (($varInput['value'] == \count($this->arrChoices) + 1) && (0 == \strlen($varInput['other']))) {
+            if (($varInput['value'] == \count($this->arrChoices) + 1) && (0 == \strlen((string) $varInput['other']))) {
                 $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['missing_other_value'], $this->title));
 
                 return $varInput;
@@ -233,7 +233,7 @@ class FormMultipleChoiceQuestion extends FormQuestionWidget
             }
         } elseif ((0 == strcmp($this->questiontype, 'mc_multipleresponse'))) {
             if (\is_array($varInput['value'])) {
-                if ((\in_array(\count($this->arrChoices) + 1, $varInput['value'], true)) && (0 == \strlen($varInput['other']))) {
+                if ((\in_array(\count($this->arrChoices) + 1, $varInput['value'], true)) && (0 == \strlen((string) $varInput['other']))) {
                     $this->addError(sprintf($GLOBALS['TL_LANG']['ERR']['missing_other_value'], $this->title));
 
                     return $varInput;

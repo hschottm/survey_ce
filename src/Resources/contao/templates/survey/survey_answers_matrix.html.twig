@@ -1,0 +1,26 @@
+{% block survey_content %}
+{% set counter = 1 %}
+{% for id, row in rows %}
+<h3>{{ counter }}. {{ row }}</h3>
+<table class="tl_cumulated multiplechoice" summary="{{ summary }}">
+<thead>
+	<tr>
+		<th colspan="2">{{ answer }}</th>
+		<th>{{ nrOfSelections }}</th>
+	</tr>
+</thead>
+<tbody>
+{% set colcounter = 1 %}
+{% for choiceid, choice in choices %}
+	<tr>
+		<td class="counter">{{ colcounter }}.</td>
+		<td class="answer">{{ choice }}</td>
+		<td class="selections">{{ ((statistics['cumulated'][counter][colcounter]) ? statistics['cumulated'][counter][colcounter] : 0) }}</td>
+	</tr>
+{% set colcounter = colcounter + 1 %}
+{% endfor %}
+</tbody>
+</table>
+{% set counter = counter + 1 %}
+{% endfor %}
+{% endblock %}

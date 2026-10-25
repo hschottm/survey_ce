@@ -10,7 +10,6 @@
 
 namespace Hschottm\SurveyBundle\Export;
 
-use Exporter\Writer\CsvWriter;
 
 class CSVExporter extends Exporter
 {
@@ -26,7 +25,7 @@ class CSVExporter extends Exporter
 
     public function createSpreadsheet()
     {
-        $this->spreadsheet = new CsvWriter($this->tempName, ',', '"', '\\', false);
+        $this->spreadsheet = fopen($this->tempName, 'wb');
     }
 
     public function setCellValue($sheet, $row, $col, $data)
@@ -41,9 +40,6 @@ class CSVExporter extends Exporter
             }
             if (!array_key_exists(self::CELLTYPE, $celldata)) {
                 $celldata[self::CELLTYPE] = self::CELLTYPE_STRING;
-            }
-            if (self::CELLTYPE_STRING == $celldata[self::CELLTYPE]) {
-                $celldata[self::DATA] = utf8_decode($celldata[self::DATA]);
             }
             $this->sheets[$sheet][$this->getCell($row, $col)] = $celldata;
 
@@ -66,13 +62,17 @@ class CSVExporter extends Exporter
 
     protected function send()
     {
-        $this->spreadsheet->open();
+        ksort($this->data);
         foreach ($this->data as $row) {
-            $this->spreadsheet->write($row);
+            $columns = array_fill(0, max(array_keys($row)) + 1, '');
+            foreach ($row as $column => $value) {
+                $columns[$column] = $value;
+            }
+            fputcsv($this->spreadsheet, $columns, ',', '"', '');
         }
-        $this->spreadsheet->close();
-        header('Content-type: text/csv');
-        header('Content-Disposition: attachment; filename="'.\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.csv'.'"');
+        fclose($this->spreadsheet);
+        header('Content-type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="'.\Contao\StringUtil::sanitizeFileName(htmlspecialchars_decode($this->filename)).'.csv'.'"');
         readfile($this->tempName);
         unlink($this->tempName);
         exit;

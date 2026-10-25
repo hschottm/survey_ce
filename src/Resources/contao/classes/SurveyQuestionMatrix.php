@@ -45,9 +45,9 @@ class SurveyQuestionMatrix extends SurveyQuestion
     public function getAnswersAsHTML()
     {
         if (\is_array($this->statistics['cumulated'])) {
-            $template = new \FrontendTemplate('survey_answers_matrix');
-            $template->choices = deserialize($this->arrData['matrixcolumns'], true);
-            $template->rows = deserialize($this->arrData['matrixrows'], true);
+            $template = new \Contao\FrontendTemplate('survey_answers_matrix');
+            $template->choices = \Contao\StringUtil::deserialize($this->arrData['matrixcolumns'], true);
+            $template->rows = \Contao\StringUtil::deserialize($this->arrData['matrixrows'], true);
             $template->statistics = $this->statistics;
             $template->summary = $GLOBALS['TL_LANG']['tl_survey_result']['cumulatedSummary'];
             $template->answer = $GLOBALS['TL_LANG']['tl_survey_result']['answer'];
@@ -83,8 +83,8 @@ class SurveyQuestionMatrix extends SurveyQuestion
 
         $col = 2;
         if (\is_array($this->statistics['cumulated'])) {
-            $arrRows = deserialize($this->arrData['matrixrows'], true);
-            $arrChoices = deserialize($this->arrData['matrixcolumns'], true);
+            $arrRows = \Contao\StringUtil::deserialize($this->arrData['matrixrows'], true);
+            $arrChoices = \Contao\StringUtil::deserialize($this->arrData['matrixcolumns'], true);
             $row_counter = 1;
             foreach ($arrRows as $id => $rowdata) {
                 $exporter->setCellValue($sheet, $row + $row_counter, $col, [Exporter::DATA => $rowdata, Exporter::FONTWEIGHT => Exporter::FONTWEIGHT_BOLD]);
@@ -153,7 +153,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
     protected function calculateStatistics()
     {
         if (array_key_exists('id', $this->arrData) && array_key_exists('parentID', $this->arrData)) {
-            $objResult = \Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
+            $objResult = \Contao\Database::getInstance()->prepare('SELECT * FROM tl_survey_result WHERE qid=? AND pid=?')
                 ->execute($this->arrData['id'], $this->arrData['parentID']);
             if ($objResult->numRows) {
                 $this->calculateAnsweredSkipped($objResult);
@@ -167,7 +167,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
         $cumulated = [];
         $cumulated['other'] = [];
         foreach ($this->arrStatistics['answers'] as $answer) {
-            $arrAnswer = deserialize($answer, true);
+            $arrAnswer = \Contao\StringUtil::deserialize($answer, true);
             if (\is_array($arrAnswer)) {
                 foreach ($arrAnswer as $row => $answervalue) {
                     if (\is_array($answervalue)) {
@@ -200,20 +200,20 @@ class SurveyQuestionMatrix extends SurveyQuestion
      */
     protected function exportQuestionHeadersToExcel(&$exporter, $sheet, &$row, &$col, $questionNumbers, &$rotateInfo)
     {
-        $this->subquestions = deserialize($this->arrData['matrixrows'], true);
+        $this->subquestions = \Contao\StringUtil::deserialize($this->arrData['matrixrows'], true);
         foreach ($this->subquestions as $k => $v) {
-            $this->subquestions[$k] = \StringUtil::decodeEntities($v);
+            $this->subquestions[$k] = \Contao\StringUtil::decodeEntities($v);
         }
         $numcols = \count($this->subquestions);
 
-        $this->choices = deserialize($this->arrData['matrixcolumns'], true);
+        $this->choices = \Contao\StringUtil::deserialize($this->arrData['matrixcolumns'], true);
         if ($this->arrData['addneutralcolumn']) {
             // TODO: i believe, the dash is better then the real text for the neutral column, make configurable?
             // $this->choices[] = $this->arrData['neutralcolumn'];
             $this->choices[] = '-';
         }
         foreach ($this->choices as $k => $v) {
-            $this->choices[$k] = \StringUtil::decodeEntities($v);
+            $this->choices[$k] = \Contao\StringUtil::decodeEntities($v);
         }
 
         $result = [];
@@ -294,7 +294,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
 
         // question title
         $data = [
-          Exporter::DATA => \StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
+          Exporter::DATA => \Contao\StringUtil::decodeEntities($this->title).($this->arrData['obligatory'] ? ' *' : ''),
           Exporter::CELLTYPE => Exporter::CELLTYPE_STRING,
           Exporter::ALIGNMENT => Exporter::ALIGNMENT_H_CENTER,
           Exporter::TEXTWRAP => true
@@ -365,39 +365,39 @@ class SurveyQuestionMatrix extends SurveyQuestion
         $startCol = $col;
         foreach ($participants as $key => $value) {
             $data = false;
-            if (\strlen($this->statistics['participants'][$key]['result'])) {
+            if (\strlen((string) ($this->statistics['participants'][$key]['result'] ?? ''))) {
                 // future state of survey_ce
                 $data = $this->statistics['participants'][$key]['result'];
-            } elseif (\strlen($this->statistics['participants'][$key][0]['result'])) {
+            } elseif (\strlen((string) ($this->statistics['participants'][$key][0]['result'] ?? ''))) {
                 // current state of survey_ce: additional subarray with always 1 entry
                 $data = $this->statistics['participants'][$key][0]['result'];
             }
             if ($data) {
                 $col = $startCol;
-                $arrAnswers = deserialize($data, true);
+                $arrAnswers = \Contao\StringUtil::deserialize($data, true);
                 if ('matrix_singleresponse' == $this->arrData['matrix_subtype']) {
                   $emptyAnswer = false;
                   foreach ($this->subquestions as $k => $junk) {
                       $strAnswer = '';
-                      if (array_key_exists($k + 1, $arrAnswers)) {
-                          $choice_key = $arrAnswers[$k + 1] - 1;
+                      if (false !== ($answer = filter_var($arrAnswers[$k + 1] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) && array_key_exists($answer - 1, $this->choices)) {
+                          $choice_key = $answer - 1;
                           if (array_key_exists($choice_key, $this->choices)) {
                               $strAnswer = $this->choices[$choice_key];
                           }
                       }
-                      if (strlen($strAnswer) == 0) $emptyAnswer = true;
+                      if (strlen((string) $strAnswer) == 0) $emptyAnswer = true;
                     }
 
                     foreach ($this->subquestions as $k => $junk) {
                         $strAnswer = '';
-                        if (array_key_exists($k + 1, $arrAnswers)) {
-                            $choice_key = $arrAnswers[$k + 1] - 1;
+                        if (false !== ($answer = filter_var($arrAnswers[$k + 1] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) && array_key_exists($answer - 1, $this->choices)) {
+                            $choice_key = $answer - 1;
                             if (array_key_exists($choice_key, $this->choices)) {
                                 $strAnswer = $this->choices[$choice_key];
                             }
                             if ($emptyAnswer) $strAnswer = ($k + 1) . ' - ' . $strAnswer;
                         }
-                        if (\strlen($strAnswer)) {
+                        if (\strlen((string) $strAnswer)) {
                             // Set value to numeric, when the coices are e.g. school grades '1'-'5', a common case (for me).
                             // Then the user is able to work with formulars in Excel/Calc, avarage for instance.
                             $exporter->setCellValue($sheet, $row, $col, [
@@ -421,7 +421,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
                               }
                               $strAnswer = implode(' | ', $arrTmp);
                           }
-                          if (strlen($strAnswer) == 0) $emptyAnswer = true;
+                          if (strlen((string) $strAnswer) == 0) $emptyAnswer = true;
                       }
                     }
                     foreach ($this->subquestions as $k => $junk) {
@@ -435,7 +435,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
                             $strAnswer = implode(' | ', $arrTmp);
                         }
                         if ($emptyAnswer) $strAnswer = ($k + 1) . ' - ' . $strAnswer;
-                        if (\strlen($strAnswer)) {
+                        if (\strlen((string) $strAnswer)) {
                           $exporter->setCellValue($sheet, $row, $col, [
                             Exporter::DATA => $strAnswer,
                             Exporter::CELLTYPE => is_numeric($strAnswer) ? Exporter::CELLTYPE_FLOAT : Exporter::CELLTYPE_STRING,
@@ -455,7 +455,7 @@ class SurveyQuestionMatrix extends SurveyQuestion
 
     public function resultAsString($res)
   	{
-  		$arrAnswer = deserialize($res, true);
+        $arrAnswer = \Contao\StringUtil::deserialize($res, true);
   		if (is_array($arrAnswer))
   		{
   			return implode (", ", $arrAnswer);

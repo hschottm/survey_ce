@@ -126,6 +126,97 @@ abstract class Exporter
         return false;
     }
 
+    /**
+     * Move the six metadata rows to a separate sheet, retaining question titles
+     * there for orientation. The results sheet starts with its title row.
+     */
+    public function separateQuestionOverview($sheet, $overview, $titleLabel)
+    {
+        $this->addSheet($overview);
+        $cells = $this->sheets[$sheet];
+        $this->sheets[$sheet] = [];
+        $shift = function ($cell, $rowOffset, $colOffset) {
+            $cell[self::ROW] += $rowOffset;
+            $cell[self::COL] += $colOffset;
+            if (isset($cell[self::MERGE])) {
+                $cell[self::MERGE] = preg_replace_callback('/[A-Z]+[0-9]+/', function ($match) use ($rowOffset, $colOffset) {
+                    return $this->getCell($this->getRowFromCell($match[0]) + $rowOffset, $this->getColFromCell($match[0]) + $colOffset);
+                }, $cell[self::MERGE]);
+            }
+            return $cell;
+        };
+        foreach ($cells as $cell) {
+            if ($cell[self::ROW] < 6 || ($cell[self::ROW] === 6 && $cell[self::COL] >= 5)) {
+                if ($cell[self::COL] >= 4) {
+                    $overviewRow = $cell[self::ROW] === 6 ? 1 : ($cell[self::ROW] === 0 ? 0 : $cell[self::ROW] + 1);
+                    $copy = $shift($cell, $overviewRow - $cell[self::ROW], -4);
+                    unset($copy[self::BORDERBOTTOM], $copy[self::BORDERBOTTOMCOLOR]);
+                    // Question ID, question number and response counts are integers.
+                    if ($cell[self::COL] >= 5 && in_array($cell[self::ROW], [0, 1, 4, 5], true)) {
+                        $copy[self::CELLTYPE] = self::CELLTYPE_INTEGER;
+                    }
+                    $copy[self::COLWIDTH] = 24 * 256;
+                    $copy[self::TEXTWRAP] = true;
+                    $this->sheets[$overview][$this->getCell($copy[self::ROW], $copy[self::COL])] = $copy;
+                }
+            }
+            if ($cell[self::ROW] >= 6) {
+                $copy = $shift($cell, -6, 0);
+                $this->sheets[$sheet][$this->getCell($copy[self::ROW], $copy[self::COL])] = $copy;
+            }
+        }
+        $this->setCellValue($overview, 1, 0, [
+            self::DATA => $titleLabel.':',
+            self::BGCOLOR => '#C0C0C0',
+            self::COLOR => '#000000',
+            self::ALIGNMENT => self::ALIGNMENT_H_RIGHT,
+            self::FONTWEIGHT => self::FONTWEIGHT_BOLD,
+            self::COLWIDTH => 24 * 256,
+        ]);
+    }
+
+    /**
+     * Drop an unused question subheading row and retain its separator.
+     * Coordinates are zero-based, as in setCellValue().
+     */
+    public function omitEmptySubheadingRow($sheet, $row)
+    {
+        foreach ($this->sheets[$sheet] as $cell) {
+            if ($cell[self::ROW] === $row && (string) ($cell[self::DATA] ?? '') !== '') {
+                return;
+            }
+        }
+
+        $cells = $this->sheets[$sheet];
+        foreach ($cells as $cell) {
+            if ($cell[self::ROW] !== $row) {
+                continue;
+            }
+            $above = $this->getCell($row - 1, $cell[self::COL]);
+            foreach ([self::BORDERBOTTOM, self::BORDERBOTTOMCOLOR] as $property) {
+                if (isset($cell[$property], $cells[$above])) {
+                    $cells[$above][$property] = $cell[$property];
+                }
+            }
+        }
+
+        $this->sheets[$sheet] = [];
+        foreach ($cells as $cell) {
+            if ($cell[self::ROW] === $row) {
+                continue;
+            }
+            if ($cell[self::ROW] > $row) {
+                --$cell[self::ROW];
+            }
+            if (isset($cell[self::MERGE])) {
+                $cell[self::MERGE] = preg_replace_callback('/([A-Z]+)([0-9]+)/', static function ($match) use ($row) {
+                    return $match[1].((int) $match[2] > $row + 1 ? (int) $match[2] - 1 : $match[2]);
+                }, $cell[self::MERGE]);
+            }
+            $this->sheets[$sheet][$this->getCell($cell[self::ROW], $cell[self::COL])] = $cell;
+        }
+    }
+
     public function getCellValue($sheet, $row, $col)
     {
         if (array_key_exists($sheet, $this->sheets)) {
@@ -171,9 +262,9 @@ abstract class Exporter
     protected function columnToIndex($col)
     {
         $index = 0;
-        $pow = \strlen($col) - 1;
+        $pow = \strlen((string) $col) - 1;
         $alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-        for ($i = 0; $i < \strlen($col); ++$i) {
+        for ($i = 0; $i < \strlen((string) $col); ++$i) {
             $index += pow(26, $pow) * (array_search(strtoupper($col[$i]), $alphabet, true) + 1);
             --$pow;
         }
@@ -185,7 +276,7 @@ abstract class Exporter
     {
         $col = '';
         $row = '';
-        for ($i = 0; $i < \strlen($cell); ++$i) {
+        for ($i = 0; $i < \strlen((string) $cell); ++$i) {
             $char = $cell[$i];
             if (ctype_alpha($char)) {
                 $col .= $char;
@@ -201,7 +292,7 @@ abstract class Exporter
     {
         $col = '';
         $row = '';
-        for ($i = 0; $i < \strlen($cell); ++$i) {
+        for ($i = 0; $i < \strlen((string) $cell); ++$i) {
             $char = $cell[$i];
             if (ctype_alpha($char)) {
                 $col .= $char;

@@ -8,7 +8,7 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
- $found = (\strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
+ $found = (\strlen((string) \Contao\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Contao\Input::get('id')) : null;
  $hasData = (null != $found && 0 < $found->count()) ? true : false;
 
 /*
@@ -17,7 +17,7 @@
 $GLOBALS['TL_DCA']['tl_survey'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => \Contao\DC_Table::class,
         'ctable' => ['tl_survey_page', 'tl_survey_participant', 'tl_survey_result', 'tl_survey_pin_tan'],
         'switchToEdit' => true,
         'enableVersioning' => true,
@@ -46,14 +46,21 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
                 'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store"',
             ],
         ],
         'operations' => [
-            'edit' => [
-                'label' => &$GLOBALS['TL_LANG']['tl_survey']['edit'],
+            'children' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey']['children'],
+                'showInHeader' => false,
                 'href' => 'table=tl_survey_page',
                 'icon' => 'edit.svg',
+            ],
+            'edit' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_survey']['edit'],
+                'href' => 'act=edit',
+                'icon' => 'header.svg',
+                'showInHeader' => true,
             ],
             'pintan' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
@@ -127,13 +134,13 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options' => $this->getLanguages(),
+            'options_callback' => static fn (): array => \Symfony\Component\Intl\Languages::getNames($GLOBALS['TL_LANGUAGE'] ?? 'en'),
             'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
         'author' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey']['author'],
-            'default' => BackendUser::getInstance()->id,
+            'default' => \Contao\BackendUser::getInstance()->id,
             'exclude' => true,
             'inputType' => 'select',
             'foreignKey' => 'tl_user.name',
@@ -144,14 +151,14 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey']['online_start'],
             'search' => true,
             'inputType' => 'text',
-            'eval' => ['maxlength' => 32, 'rgxp' => 'datim', 'datepicker' => $this->getDatePickerString(), 'tl_class' => 'w50 wizard'],
+            'eval' => ['maxlength' => 32, 'rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
         'online_end' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey']['online_end'],
             'search' => true,
             'inputType' => 'text',
-            'eval' => ['maxlength' => 32, 'rgxp' => 'datim', 'datepicker' => $this->getDatePickerString(), 'tl_class' => 'w50 wizard'],
+            'eval' => ['maxlength' => 32, 'rgxp' => 'datim', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
         'description' => [
@@ -261,10 +268,10 @@ $GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'sendConfirmatio
 $GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'addConfirmationMailAttachments';
 $GLOBALS['TL_DCA']['tl_survey']['palettes']['__selector__'][] = 'addConfirmationMailAlternateAttachments';
 
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('sendConfirmationMail' => 'confirmationMailRecipientField,confirmationMailRecipient,confirmationMailSender,confirmationMailReplyto,confirmationMailSubject,confirmationMailText,confirmationMailTemplate,addConfirmationMailAttachments'));
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('sendConfirmationMailAlternate' => 'confirmationMailAlternateCondition,confirmationMailAlternateRecipient,confirmationMailAlternateSender,confirmationMailAlternateReplyto,confirmationMailAlternateSubject,confirmationMailAlternateText,confirmationMailAlternateTemplate,addConfirmationMailAlternateAttachments'));
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('addConfirmationMailAttachments' => 'confirmationMailAttachments'));
-array_insert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('addConfirmationMailAlternateAttachments' => 'confirmationMailAlternateAttachments'));
+\Contao\ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('sendConfirmationMail' => 'confirmationMailRecipientField,confirmationMailRecipient,confirmationMailSender,confirmationMailReplyto,confirmationMailSubject,confirmationMailText,confirmationMailTemplate,addConfirmationMailAttachments'));
+\Contao\ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('sendConfirmationMailAlternate' => 'confirmationMailAlternateCondition,confirmationMailAlternateRecipient,confirmationMailAlternateSender,confirmationMailAlternateReplyto,confirmationMailAlternateSubject,confirmationMailAlternateText,confirmationMailAlternateTemplate,addConfirmationMailAlternateAttachments'));
+\Contao\ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('addConfirmationMailAttachments' => 'confirmationMailAttachments'));
+\Contao\ArrayUtil::arrayInsert($GLOBALS['TL_DCA']['tl_survey']['subpalettes'], count($GLOBALS['TL_DCA']['tl_survey']['subpalettes']), array('addConfirmationMailAlternateAttachments' => 'confirmationMailAlternateAttachments'));
 
 $GLOBALS['TL_DCA']['tl_survey']['fields']['sendConfirmationMail'] = array
 (
@@ -518,12 +525,12 @@ if ($hasData) {
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
-class tl_survey extends Backend
+class tl_survey extends \Contao\Backend
 {
     /**
      * Load database object.
      */
-    protected function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
@@ -548,17 +555,17 @@ class tl_survey extends Backend
   		$fields = array();
 
   		// Get all form fields which can be used to define recipient of confirmation mail
-  		$objFields = \Database::getInstance()->prepare("SELECT tl_survey_question.id,tl_survey_question.title FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? AND tl_survey_question.questiontype=? ORDER BY tl_survey_question.title ASC")
-  			->execute(\Input::get('id'), 'openended');
+        $objFields = \Contao\Database::getInstance()->prepare("SELECT tl_survey_question.id,tl_survey_question.title FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_page.pid = ? AND tl_survey_question.questiontype=? ORDER BY tl_survey_question.title ASC")
+            ->execute(\Contao\Input::get('id'), 'openended');
 
   		$fields[] = '-';
   		while ($objFields->next())
   		{
   			$k = $objFields->id;
-  			if (strlen($k))
+            if (strlen((string) $k))
   			{
   				$v = $objFields->title;
-  				$v = strlen($v) ? $v.' ['.$k.']' : $k;
+                $v = strlen((string) $v) ? $v.' ['.$k.']' : $k;
   				$fields[$k] =$v;
   			}
   		}
@@ -566,3 +573,5 @@ class tl_survey extends Backend
   		return $fields;
   	}
 }
+
+$GLOBALS['TL_DCA']['tl_survey']['config']['oncopy_callback'][] = [\Hschottm\SurveyBundle\Condition\CopyConditions::class, 'survey'];

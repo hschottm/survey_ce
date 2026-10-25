@@ -1,0 +1,10 @@
+survey-condition-editor { display: block; margin-block: 12px; }
+.survey-condition-rule { border: 1px solid var(--border, #b8b8b8); border-radius: 4px; margin: 16px 0; padding: 16px; }
+.survey-condition-rule legend { font-weight: bold; padding-inline: 6px; }
+.survey-condition-field { display: flex; flex-direction: column; gap: 6px; margin-block: 10px; min-width: 0; }
+.survey-condition-field > span { font-weight: bold; }
+.survey-condition-field .tl_select, .survey-condition-field .tl_text { width: 100%; box-sizing: border-box; }
+.survey-condition-row { display: grid; grid-template-columns: minmax(180px, 2fr) minmax(130px, 1fr) minmax(160px, 2fr) auto; align-items: end; gap: 12px; }
+.survey-condition-row > button { margin-bottom: 10px; }
+.survey-condition-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+@media (max-width: 900px) { .survey-condition-row { grid-template-columns: 1fr; border-bottom: 1px solid #aaa; padding-bottom: 12px; } }

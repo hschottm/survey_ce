@@ -18,7 +18,7 @@ namespace Hschottm\SurveyBundle;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-abstract class SurveyQuestion extends \Backend
+abstract class SurveyQuestion extends \Contao\Backend
 {
     protected $arrData;
     protected $arrStatistics;
@@ -38,7 +38,7 @@ abstract class SurveyQuestion extends \Backend
         $this->arrStatistics['answered'] = 0;
         $this->arrStatistics['skipped'] = 0;
         if ($question_id > 0) {
-            $objQuestion = \Database::getInstance()->prepare('SELECT tl_survey_question.*, tl_survey_page.title pagetitle, tl_survey_page.pid parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_question.id = ?')
+            $objQuestion = \Contao\Database::getInstance()->prepare('SELECT tl_survey_question.*, tl_survey_page.title pagetitle, tl_survey_page.pid parentID FROM tl_survey_question, tl_survey_page WHERE tl_survey_question.pid = tl_survey_page.id AND tl_survey_question.id = ?')
                 ->execute($question_id);
             if ($objQuestion->numRows) {
                 $this->data = $objQuestion->fetchAssoc();
@@ -93,7 +93,7 @@ abstract class SurveyQuestion extends \Backend
     public function getAnswersAsHTML()
     {
         if (\is_array($this->statistics['answers'])) {
-            $template = new \FrontendTemplate('survey_answers_default');
+            $template = new \Contao\FrontendTemplate('survey_answers_default');
             $template->answers = $this->statistics['answers'];
 
             return $template->parse();
@@ -119,10 +119,10 @@ abstract class SurveyQuestion extends \Backend
         $this->arrStatistics['answered'] = 0;
         $this->arrStatistics['skipped'] = 0;
         while ($objResult->next()) {
-            $id = (\strlen($objResult->pin)) ? $objResult->pin : $objResult->uid;
+            $id = (\strlen((string) $objResult->pin)) ? $objResult->pin : $objResult->uid;
             $this->arrStatistics['participants'][$id][] = $objResult->row();
             $this->arrStatistics['answers'][] = $objResult->result;
-            if (\strlen($objResult->result)) {
+            if (\strlen((string) $objResult->result)) {
                 ++$this->arrStatistics['answered'];
             } else {
                 ++$this->arrStatistics['skipped'];

@@ -1,0 +1,7 @@
+{% block survey_content %}
+<strong>{{ page }} {{ position }}:</strong>
+{{ title }}
+{% if (description|length) %}
+<div style="color:#b3b3b3; padding-top:0.25em;">{{ description|raw }}</div>
+{% endif %}
+{% endblock %}

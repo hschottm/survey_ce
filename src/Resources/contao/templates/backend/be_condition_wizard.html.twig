@@ -1,0 +1,11 @@
+{% block survey_content %}
+<survey-condition-editor data-configuration="{{ configuration }}">
+  <input type="hidden" name="{{ name }}" id="ctrl_{{ id }}" value="{{ value }}">
+  <p class="tl_help">{{ labels.help }}</p>
+  <label class="survey-condition-field"><span>{{ labels.searchQuestions }}</span><input type="search" class="tl_text" data-question-search placeholder="{{ labels.searchHelp }}"></label>
+  <div data-rules></div>
+  <button type="button" class="tl_submit" data-add-rule>{{ labels.addRule }}</button>
+  <p class="tl_help">{{ labels.fallback }}</p>
+  <noscript><p class="tl_error">{{ labels.javascript }}</p></noscript>
+</survey-condition-editor>
+{% endblock %}

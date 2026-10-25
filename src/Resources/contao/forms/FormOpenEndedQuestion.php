@@ -45,7 +45,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
         switch ($strKey) {
             case 'surveydata':
                 parent::__set($strKey, $varValue);
-                $this->strClass = 'openended'.((\strlen($varValue['cssClass']) ? (' '.$varValue['cssClass']) : ''));
+                $this->strClass = 'openended'.((\strlen((string) $varValue['cssClass']) ? (' '.$varValue['cssClass']) : ''));
                 $this->strTextBefore = $varValue['openended_textbefore'];
                 $this->strTextAfter = $varValue['openended_textafter'];
                 $this->questiontype = $varValue['openended_subtype'];
@@ -109,7 +109,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
     public function validate()
     {
         $submit = $this->getPost('question');
-        $varInput = $this->validator(deserialize($submit[$this->id]));
+        $varInput = $this->validator($submit[$this->id] ?? '');
 
         //if (!$this->hasErrors())
         //{
@@ -124,10 +124,10 @@ class FormOpenEndedQuestion extends FormQuestionWidget
      */
     public function generate()
     {
-        $template = new \FrontendTemplate('survey_question_openended');
-        $template->ctrl_name = \StringUtil::specialchars($this->strName);
-        $template->ctrl_id = \StringUtil::specialchars($this->strId);
-        $template->ctrl_class = (\strlen($this->strClass) ? ' '.$this->strClass : '');
+        $template = new \Contao\FrontendTemplate('survey_question_openended');
+        $template->ctrl_name = $this->strName;
+        $template->ctrl_id = $this->strId;
+        $template->ctrl_class = (\strlen((string) $this->strClass) ? ' '.$this->strClass : '');
         $template->multiLine = (0 == strcmp($this->questiontype, 'oe_multiline'));
         $template->singleLine = (0 == strcmp($this->questiontype, 'oe_singleline'));
         $template->value = $this->varValue;
@@ -135,26 +135,25 @@ class FormOpenEndedQuestion extends FormQuestionWidget
         $template->textAfter = $this->strTextAfter;
         $template->attributes = $this->getAttributes();
         $strError = $this->getErrorAsHTML();
-        $template->blnError = (\strlen($strError) ? true : false);
+        $template->blnError = (\strlen((string) $strError) ? true : false);
         $widget = $template->parse();
-        $widget .= $this->addSubmit();
 
         return $widget;
     }
 
     protected function setData_oe_singleline($varValue)
     {
-        if (\strlen($varValue['openended_width'])) {
-            $this->arrAttributes['size'] = \StringUtil::specialchars($varValue['openended_width']);
+        if (\strlen((string) $varValue['openended_width'])) {
+            $this->arrAttributes['size'] = \Contao\StringUtil::specialchars($varValue['openended_width']);
         }
-        if (\strlen($varValue['openended_maxlen'])) {
-            $this->arrAttributes['maxlength'] = \StringUtil::specialchars($varValue['openended_maxlen']);
+        if (\strlen((string) $varValue['openended_maxlen'])) {
+            $this->arrAttributes['maxlength'] = \Contao\StringUtil::specialchars($varValue['openended_maxlen']);
         }
-        if (\strlen($varValue['openended_textinside'])) {
-            $this->arrAttributes['value'] = \StringUtil::specialchars($varValue['openended_textinside']);
+        if (\strlen((string) $varValue['openended_textinside'])) {
+            $this->arrAttributes['value'] = \Contao\StringUtil::specialchars($varValue['openended_textinside']);
         }
-        if (\strlen($this->varValue)) {
-            $this->arrAttributes['value'] = \StringUtil::specialchars($this->varValue);
+        if (\strlen((string) $this->varValue)) {
+            $this->arrAttributes['value'] = \Contao\StringUtil::specialchars($this->varValue);
         }
     }
 
@@ -180,14 +179,14 @@ class FormOpenEndedQuestion extends FormQuestionWidget
 
     protected function setData_oe_multiline($varValue)
     {
-        if (\strlen($varValue['openended_rows'])) {
-            $this->arrAttributes['rows'] = \StringUtil::specialchars($varValue['openended_rows']);
+        if (\strlen((string) $varValue['openended_rows'])) {
+            $this->arrAttributes['rows'] = \Contao\StringUtil::specialchars($varValue['openended_rows']);
         }
-        if (\strlen($varValue['openended_cols'])) {
-            $this->arrAttributes['cols'] = \StringUtil::specialchars($varValue['openended_cols']);
+        if (\strlen((string) $varValue['openended_cols'])) {
+            $this->arrAttributes['cols'] = \Contao\StringUtil::specialchars($varValue['openended_cols']);
         }
-        if (!\strlen($this->varValue)) {
-            if (\strlen($varValue['openended_textinside'])) {
+        if (!\strlen((string) $this->varValue)) {
+            if (\strlen((string) $varValue['openended_textinside'])) {
                 $this->varValue = $varValue['openended_textinside'];
             }
         }
@@ -204,12 +203,12 @@ class FormOpenEndedQuestion extends FormQuestionWidget
     protected function validator($varInput)
     {
         $oldlabel = $this->label;
-        $label = (\strlen($this->label)) ? $this->label : $this->title;
+        $label = (\strlen((string) $this->label)) ? $this->label : $this->title;
         $this->label = $label;
         if (\is_array($varInput)) {
             $result = parent::validator($varInput);
         } else {
-            $result = parent::validator(trim($varInput));
+            $result = parent::validator(trim((string) $varInput));
             $result = $this->check_bounds($result);
         }
         $this->label = $oldlabel;
@@ -227,14 +226,14 @@ class FormOpenEndedQuestion extends FormQuestionWidget
      */
     protected function check_bounds($varInput)
     {
-        if ($this->hasErrors() || !\strlen($varInput)) {
+        if ($this->hasErrors() || !\strlen((string) $varInput)) {
             // Don't check any further, value might not be a valid string to be compared against bounds
             return $varInput;
         }
 
         $result = $varInput;
 
-        if (\strlen($this->strLowerBound)) {
+        if (\strlen((string) $this->strLowerBound)) {
             $strErrMsg = $GLOBALS['TL_LANG']['ERR']['lower_bound'];
             $lower = (int) ($this->strLowerBound);
 
@@ -257,10 +256,10 @@ class FormOpenEndedQuestion extends FormQuestionWidget
                 case 'oe_date':
                     // $varInput is a string like '25.12.2009', use the Date class to get the comparable timestamp.
                     // This is not well documented in .../Date.php
-                    $objDateValue = new Date($varInput, $GLOBALS['TL_CONFIG']['dateFormat']);
+                    $objDateValue = new \Contao\Date($varInput, $GLOBALS['TL_CONFIG']['dateFormat']);
                     $value = $objDateValue->timestamp;
                     if ($value < $lower) {
-                        $objDateLower = new Date($lower, $GLOBALS['TL_CONFIG']['dateFormat']);
+                        $objDateLower = new \Contao\Date($lower, $GLOBALS['TL_CONFIG']['dateFormat']);
                         $this->addError(sprintf($strErrMsg, $objDateValue->date, $this->label, $objDateLower->date));
                     }
                     // correct valid inputs like 31.11.2009 to 01.12.2009
@@ -268,10 +267,10 @@ class FormOpenEndedQuestion extends FormQuestionWidget
                     break;
 
                 case 'oe_time':
-                    $objDateValue = new Date($varInput, $GLOBALS['TL_CONFIG']['timeFormat']);
+                    $objDateValue = new \Contao\Date($varInput, $GLOBALS['TL_CONFIG']['timeFormat']);
                     $value = $objDateValue->timestamp;
                     if ($value < $lower) {
-                        $objDateLower = new Date($lower, $GLOBALS['TL_CONFIG']['timeFormat']);
+                        $objDateLower = new \Contao\Date($lower, $GLOBALS['TL_CONFIG']['timeFormat']);
                         $this->addError(sprintf($strErrMsg, $objDateValue->time, $this->label, $objDateLower->time));
                     }
                     // correct valid inputs like 13:59:xyz etc to 13:59
@@ -280,7 +279,7 @@ class FormOpenEndedQuestion extends FormQuestionWidget
             }
         }
 
-        if (\strlen($this->strUpperBound)) {
+        if (\strlen((string) $this->strUpperBound)) {
             $strErrMsg = $GLOBALS['TL_LANG']['ERR']['upper_bound'];
             $upper = (int) ($this->strUpperBound);
 
@@ -301,10 +300,10 @@ class FormOpenEndedQuestion extends FormQuestionWidget
                     break;
 
                 case 'oe_date':
-                    $objDateValue = new Date($varInput, $GLOBALS['TL_CONFIG']['dateFormat']);
+                    $objDateValue = new \Contao\Date($varInput, $GLOBALS['TL_CONFIG']['dateFormat']);
                     $value = $objDateValue->timestamp;
                     if ($value > $upper) {
-                        $objDateUpper = new Date($upper, $GLOBALS['TL_CONFIG']['dateFormat']);
+                        $objDateUpper = new \Contao\Date($upper, $GLOBALS['TL_CONFIG']['dateFormat']);
                         $this->addError(sprintf($strErrMsg, $objDateValue->date, $this->label, $objDateUpper->date));
                     }
                     // correct valid inputs like 31.11.2009 to 01.12.2009
@@ -312,10 +311,10 @@ class FormOpenEndedQuestion extends FormQuestionWidget
                     break;
 
                 case 'oe_time':
-                    $objDateValue = new Date($varInput, $GLOBALS['TL_CONFIG']['timeFormat']);
+                    $objDateValue = new \Contao\Date($varInput, $GLOBALS['TL_CONFIG']['timeFormat']);
                     $value = $objDateValue->timestamp;
                     if ($value > $upper) {
-                        $objDateUpper = new Date($upper, $GLOBALS['TL_CONFIG']['timeFormat']);
+                        $objDateUpper = new \Contao\Date($upper, $GLOBALS['TL_CONFIG']['timeFormat']);
                         $this->addError(sprintf($strErrMsg, $objDateValue->time, $this->label, $objDateUpper->time));
                     }
                     // correct valid inputs like 13:59:xyz etc to 13:59

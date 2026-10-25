@@ -11,7 +11,7 @@
 $GLOBALS['TL_DCA']['tl_survey_question'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => \Contao\DC_Table::class,
         'ptable' => 'tl_survey_page',
         'ctable' => [],
         'enableVersioning' => true,
@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
                 'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store"',
             ],
         ],
         'operations' => [
@@ -59,7 +59,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['cut'],
                 'href' => 'act=paste&amp;mode=cut',
                 'icon' => 'cut.svg',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store"',
             ],
             'delete' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['delete'],
@@ -151,7 +151,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
         ],
         'author' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['author'],
-            'default' => BackendUser::getInstance()->id,
+            'default' => \Contao\BackendUser::getInstance()->id,
             'filter' => true,
             'inputType' => 'select',
             'foreignKey' => 'tl_user.name',
@@ -162,7 +162,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['language'],
             'default' => $GLOBALS['TL_LANGUAGE'],
             'inputType' => 'select',
-            'options' => $this->getLanguages(),
+            'options_callback' => static fn (): array => \Symfony\Component\Intl\Languages::getNames($GLOBALS['TL_LANGUAGE'] ?? 'en'),
             'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
@@ -225,14 +225,14 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['lower_bound'],
             'search' => true,
             'inputType' => 'text',
-            'eval' => ['maxlength' => 32, 'rgxp' => 'date', 'datepicker' => $this->getDatePickerString(), 'tl_class' => 'clr w50 wizard'],
+            'eval' => ['maxlength' => 32, 'rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'clr w50 wizard'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
         'upper_bound_date' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['upper_bound'],
             'search' => true,
             'inputType' => 'text',
-            'eval' => ['maxlength' => 32, 'rgxp' => 'date', 'datepicker' => $this->getDatePickerString(), 'tl_class' => 'w50 wizard'],
+            'eval' => ['maxlength' => 32, 'rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
         'lower_bound_time' => [
@@ -339,9 +339,9 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
                 'allowHtml' => true,
                 'decodeEntities' => true,
                 'buttonTitles' => [
-                    'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_new'],
-                    'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_copy'],
-                    'delete' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_delete'],
+                    'new' => &$GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_new'],
+                    'copy' => &$GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_copy'],
+                    'delete' => &$GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_delete'],
                 ],
             ],
             'sql' => 'blob NULL',
@@ -354,9 +354,9 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
                 'allowHtml' => true,
                 'decodeEntities' => true,
                 'buttonTitles' => [
-                    'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_new'],
-                    'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_copy'],
-                    'delete' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_delete'],
+                    'new' => &$GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_new'],
+                    'copy' => &$GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_copy'],
+                    'delete' => &$GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixrow_delete'],
                 ],
             ],
             'sql' => 'blob NULL',
@@ -369,9 +369,9 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
                 'allowHtml' => true,
                 'decodeEntities' => true,
                 'buttonTitles' => [
-                    'new' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_new'],
-                    'copy' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_copy'],
-                    'delete' => $GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_delete'],
+                    'new' => &$GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_new'],
+                    'copy' => &$GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_copy'],
+                    'delete' => &$GLOBALS['TL_LANG']['tl_survey_question']['buttontitle_matrixcolumn_delete'],
                 ],
             ],
             'sql' => 'blob NULL',
@@ -475,7 +475,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
-class tl_survey_question extends Backend
+class tl_survey_question extends \Contao\Backend
 {
     /**
      * Add an image to each record.
@@ -548,11 +548,11 @@ class tl_survey_question extends Backend
   		// Generiere einen Alias wenn es keinen gibt
   		if ($varValue == '') {
   			$autoAlias = true;
-  			$varValue = StringUtil::generateAlias($dc->activeRecord->title);
+            $varValue = \Contao\StringUtil::generateAlias($dc->activeRecord->title);
   		}
   		// Die gewünschte Tabelle zuweisen, aus der ein auto- Alias generiert werden soll.
-  		// Input::get('table') lassen, wenn die Tabelle dynamisch zugeordnet werden soll.
-  		$table = Input::get('table') ? Input::get('table') : 'tl_survey_question';
+        // \Contao\Input::get('table') lassen, wenn die Tabelle dynamisch zugeordnet werden soll.
+        $table = \Contao\Input::get('table') ? \Contao\Input::get('table') : 'tl_survey_question';
   		$objAlias = $this->Database->prepare("SELECT id FROM " . $table . " WHERE alias=?")->execute($varValue);
   		// Überprüfe ob der Alias bereits existiert.
   		if ($objAlias->numRows > 1 && !$autoAlias) {
@@ -565,13 +565,13 @@ class tl_survey_question extends Backend
   		return $varValue;
   	}
 
-    public function setCompleteStatus(DataContainer $dc)
+    public function setCompleteStatus(\Contao\DataContainer $dc)
     {
         $this->Database->prepare('UPDATE tl_survey_question SET complete = ?, original = ? WHERE id=?')
             ->execute(1, 1, $dc->id);
     }
 
-    public function getMCStyleOptions(DataContainer $dc)
+    public function getMCStyleOptions(\Contao\DataContainer $dc)
     {
         $objQuestion = $this->Database->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?')
             ->limit(1)
@@ -583,13 +583,13 @@ class tl_survey_question extends Backend
         return ['vertical', 'horizontal', 'select'];
     }
 
-    public function addScaleWizard(DataContainer $dc)
+    public function addScaleWizard(\Contao\DataContainer $dc)
     {
         $objQuestion = $this->Database->prepare('SELECT multiplechoice_subtype FROM tl_survey_question WHERE id=?')
             ->limit(1)
             ->execute($dc->id);
         if (0 == strcmp($objQuestion->multiplechoice_subtype, 'mc_singleresponse')) {
-            return '<a class="tl_submit" style="margin-top: 10px;" href="'.$this->addToUrl('key=scale').'" title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]).'" onclick="Backend.getScrollOffset();">'.\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]).'</a>';
+            return '<a class="tl_submit" style="margin-top: 10px;" href="'.$this->addToUrl('key=scale').'" title="'.\Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][1]).'" data-action="contao--scroll-offset#store">'.\Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0]).'</a>';
         }
 
         return '';
@@ -602,9 +602,9 @@ class tl_survey_question extends Backend
      *
      * @return string
      */
-    public function addScale(DataContainer $dc)
+    public function addScale(\Contao\DataContainer $dc)
     {
-        if ('scale' != \Input::get('key')) {
+        if ('scale' != \Contao\Input::get('key')) {
             return '';
         }
 
@@ -617,35 +617,35 @@ class tl_survey_question extends Backend
 
         $arrScales = [];
         while ($objScales->next()) {
-            $arrScales[$objScales->id] = ['title' => $objScales->title, 'scales' => deserialize($objScales->scale, true), 'folder' => $objScales->folder];
+            $arrScales[$objScales->id] = ['title' => $objScales->title, 'scales' => \Contao\StringUtil::deserialize($objScales->scale, true), 'folder' => $objScales->folder];
         }
 
         // Add scale
-        if ('tl_add_scale' == \Input::post('FORM_SUBMIT')) {
-            if ((!\Input::post('scale') || 0 == strcmp(\Input::post('scale'), '-'))) {
+        if ('tl_add_scale' == \Contao\Input::post('FORM_SUBMIT')) {
+            if ((!\Contao\Input::post('scale') || 0 == strcmp(\Contao\Input::post('scale'), '-'))) {
                 $_SESSION['TL_ERROR'][] = $GLOBALS['TL_LANG']['ERR']['selectoption'];
                 $this->reload();
             }
 
             $this->Database->prepare('UPDATE tl_survey_question SET choices=? WHERE id=?')
-                ->execute(serialize($arrScales[\Input::post('scale')]['scales']), $dc->id);
+                ->execute(serialize($arrScales[\Contao\Input::post('scale')]['scales']), $dc->id);
 
             setcookie('BE_PAGE_OFFSET', 0, 0, '/');
-            $this->redirect(str_replace('&key=scale', '', \Environment::get('request')));
+            $this->redirect(str_replace('&key=scale', '', \Contao\Environment::get('request')));
         }
 
         // Return form
         $result = '
 <div id="tl_buttons">
-<a href="'.ampersand(str_replace('&key=scale', '', \Environment::get('request'))).'" class="header_back" title="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+<a href="'.\Contao\StringUtil::ampersand(str_replace('&key=scale', '', \Contao\Environment::get('request'))).'" class="header_back" title="'.\Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBT']).'">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
 
-'.$this->getMessages().'
+'.\Contao\Message::generate().'
 
-<form action="'.ampersand(\Environment::get('request'), ENCODE_AMPERSANDS).'" id="tl_add_scale" class="tl_form" method="post">
+<form action="'.\Contao\StringUtil::ampersand(\Contao\Environment::get('request'), true).'" id="tl_add_scale" class="tl_form" method="post">
 <div class="tl_formbody_edit">
 <input type="hidden" name="FORM_SUBMIT" value="tl_add_scale" />
-<input type="hidden" name="REQUEST_TOKEN" value="'.REQUEST_TOKEN.'" />
+<input type="hidden" name="REQUEST_TOKEN" value="'.\Contao\System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue().'" />
 <fieldset id="pal_scale_legend" class="tl_tbox">
   <legend>'.$GLOBALS['TL_LANG']['tl_survey_question']['addscale'][0].'</legend>
   <div class="widget">
@@ -655,16 +655,16 @@ class tl_survey_question extends Backend
         $lastfolder = '';
         foreach ($arrScales as $id => $scale) {
             if (0 != strcmp($scale['folder'], $lastfolder)) {
-                if (\strlen($lastfolder)) {
+                if (\strlen((string) $lastfolder)) {
                     $result .= '</optgroup>';
                 }
-                $result .= '<optgroup label="'.\StringUtil::specialchars($scale['folder']).'">';
+                $result .= '<optgroup label="'.\Contao\StringUtil::specialchars($scale['folder']).'">';
             }
-            $result .= '<option value="'.\StringUtil::specialchars($id).'">'.\StringUtil::specialchars($scale['title']).'</option>\n';
+            $result .= '<option value="'.\Contao\StringUtil::specialchars($id).'">'.\Contao\StringUtil::specialchars($scale['title']).'</option>\n';
             $lastfolder = $scale['folder'];
         }
         $result .= '</optgroup>';
-        $result .= '  </select>'.(\strlen($GLOBALS['TL_LANG']['tl_survey_question']['scale'][1]) ? '
+        $result .= '  </select>'.(\strlen((string) $GLOBALS['TL_LANG']['tl_survey_question']['scale'][1]) ? '
   <p class="tl_help">'.$GLOBALS['TL_LANG']['tl_survey_question']['scale'][1].'</p>' : '').'
 </div>
 </fieldset>
@@ -674,7 +674,7 @@ class tl_survey_question extends Backend
 <div class="tl_formbody_submit">
 
 <div class="tl_submit_container">
-<input type="submit" name="save" id="save" class="tl_submit" alt="add scale" accesskey="s" value="'.\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['save_add_scale']).'" />
+<input type="submit" name="save" id="save" class="tl_submit" alt="add scale" accesskey="s" value="'.\Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_question']['save_add_scale']).'" />
 </div>
 
 </div>
@@ -683,3 +683,5 @@ class tl_survey_question extends Backend
         return $result;
     }
 }
+
+$GLOBALS['TL_DCA']['tl_survey_question']['config']['oncopy_callback'][] = [\Hschottm\SurveyBundle\Condition\CopyConditions::class, 'question'];

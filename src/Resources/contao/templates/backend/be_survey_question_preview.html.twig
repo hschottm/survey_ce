@@ -1,0 +1,8 @@
+{% block survey_content %}
+{% if not hidetitle %}
+<p{% if (help|length) %} title="{{ help }}"{% endif %}>
+	{{ questionNumber }}. {{ title }}{% if obligatory %}<span style="color: #ff0000;">*</span>{% endif %}
+</p>
+{% endif %}
+<div>{{ question|raw }}</div>
+{% endblock %}

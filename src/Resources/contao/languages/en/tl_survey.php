@@ -82,3 +82,5 @@ $GLOBALS['TL_LANG']['tl_survey']['texts_legend'] = 'Statements';
 $GLOBALS['TL_LANG']['tl_survey']['misc_legend'] = 'General settings';
 $GLOBALS['TL_LANG']['tl_survey']['sendformattedmail_legend'] = 'Send via e-mail';
 $GLOBALS['TL_LANG']['tl_survey']['sendconfirmationmail_legend'] = 'Send confirmation via e-mail';
+
+$GLOBALS['TL_LANG']['tl_survey']['children'] = ['Edit pages', 'Edit pages (ID %s)'];

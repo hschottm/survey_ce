@@ -26,7 +26,7 @@ class SurveyResultModel extends Model
      *
      * @param array $arrIds An array of IDs
      *
-     * @return \Model\Collection|null A collection of models or null if there are no calendars
+     * @return \Contao\Model\Collection|null A collection of models or null if there are no calendars
      */
     public static function findMultipleByIds($arrIds, array $arrOptions = [])
     {
@@ -36,7 +36,7 @@ class SurveyResultModel extends Model
 
         $t = static::$strTable;
 
-        return static::findBy(["$t.id IN(".implode(',', array_map('intval', $arrIds)).')'], null, ['order' => \Database::getInstance()->findInSet("$t.id", $arrIds)]);
+        return static::findBy(["$t.id IN(".implode(',', array_map('intval', $arrIds)).')'], null, ['order' => \Contao\Database::getInstance()->findInSet("$t.id", $arrIds)]);
     }
 }
 

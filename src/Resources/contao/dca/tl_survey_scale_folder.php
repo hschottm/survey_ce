@@ -11,7 +11,7 @@
 $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => \Contao\DC_Table::class,
         'ctable' => ['tl_survey_scale'],
         'switchToEdit' => true,
         'enableVersioning' => true,
@@ -39,7 +39,7 @@ $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = [
                 'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store"',
             ],
         ],
         'operations' => [
@@ -111,6 +111,6 @@ $GLOBALS['TL_DCA']['tl_survey_scale_folder'] = [
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
-class tl_survey_scale_folder extends Backend
+class tl_survey_scale_folder extends \Contao\Backend
 {
 }

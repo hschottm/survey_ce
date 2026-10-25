@@ -1,0 +1,18 @@
+{% block survey_content %}
+<div id="tl_buttons">
+  <a href="{{ hrefBack }}" class="header_back" title="{{ back }}" accesskey="b" data-action="contao--scroll-offset#store">{{ back }}</a>
+	<a href="{{ hrefExport }}" class="header_export" title="{{ export }}" data-action="contao--scroll-offset#store">{{ export }}</a>
+</div>
+
+<div class="tl_listing_container">
+  <h2>{{ heading }}</h2>
+  <table cellpadding="0" cellspacing="0" class="tl_listing" summary="{{ summary }}">
+  {% for data in data %}
+    <tr>
+      <td class="tl_file_list"><div class="questionheader"><span class="questionnumber">{{ data["number"] }}.</span> <span class="questiontitle">{{ data["title"] }}</span> <span class="questiontype">[{{ data["type"] }}]</span></div><div class="statdata"><div>{{ lngAnswered }}: {{ data["answered"] }}</div><div>{{ lngSkipped }}: {{ data["skipped"] }}</div></div></td>
+      <td class="tl_file_list tl_right_nowrap"><a href="{{ data["hrefdetails"] }}" title="{{ data["titledetails"] }}"><img src="{{ imgdetails }}" width="16" height="16" alt="{{ data["titledetails"] }}" /></a> </td>
+    </tr>
+  {% endfor %}
+  </table>
+</div>
+{% endblock %}

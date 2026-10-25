@@ -1,76 +1,36 @@
 <?php
 
-/**
- * @copyright  Helmut Schottmüller 2008-2019
- * @author     Helmut Schottmüller <https://github.com/hschottm>
- * @package    Backend
- * @license    LGPL-3.0+, CC-BY-NC-3.0
- */
+namespace Hschottm\SurveyBundle;
 
- namespace Hschottm\SurveyBundle;
+use Contao\BackendTemplate;
+use Contao\Widget;
+use Hschottm\SurveyBundle\Condition\Editor;
 
-/**
- * Class ConditionWizard
- *
- * Provide a backend wizard to handle jump conditions
- *
- * @property integer $maxlength
- */
-class ConditionWizard extends \Widget
+class ConditionWizard extends Widget
 {
-	/**
-	 * Submit user input
-	 * @var boolean
-	 */
-	protected $blnSubmitInput = true;
+    protected $blnSubmitInput = true;
+    protected $strTemplate = 'be_widget';
 
-	/**
-	 * Template
-	 * @var string
-	 */
-	protected $strTemplate = 'be_widget';
+    protected function validator($input)
+    {
+        try {
+            Editor::validate((string) $input, (int) $this->objDca->id);
+        } catch (\InvalidArgumentException $exception) {
+            $this->addError($exception->getMessage());
+        }
+        return $input;
+    }
 
-
-	/**
-	 * Add specific attributes
-	 * @param string
-	 * @param mixed
-	 */
-	public function __set($strKey, $varValue)
-	{
-		switch ($strKey)
-		{
-      case 'maxlength':
-				if ($varValue > 0)
-				{
-					$this->arrAttributes['maxlength'] = $varValue;
-				}
-				break;
-
-			case 'value':
-				$this->varValue = deserialize($varValue);
-				break;
-
-			case 'mandatory':
-				$this->arrConfiguration['mandatory'] = $varValue ? true : false;
-				break;
-
-			default:
-				parent::__set($strKey, $varValue);
-				break;
-		}
-	}
-
-  /**
-	 * Generate the widget and return it as string
-	 *
-	 * @return string
-	 */
-	public function generate()
-	{
-    $tpl = new \BackendTemplate('be_condition_wizard');
-    return $tpl->parse();
-  }
+    public function generate()
+    {
+        $template = new BackendTemplate('be_condition_wizard');
+        $template->name = $this->strName;
+        $template->id = $this->strId;
+        $template->value = is_string($this->varValue) && $this->varValue !== '' ? $this->varValue : '[]';
+        $template->configuration = json_encode(Editor::configuration((int) $this->objDca->id), JSON_THROW_ON_ERROR);
+        $template->labels = $GLOBALS['TL_LANG']['tl_survey_page']['conditionEditor'];
+        return $template->parse();
+    }
 }
 
 class_alias(ConditionWizard::class, 'ConditionWizard');

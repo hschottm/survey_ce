@@ -16,7 +16,7 @@ namespace Hschottm\SurveyBundle;
  * @copyright  Helmut Schottmüller 2009-2010
  * @author     Helmut Schottmüller <contao@aurealis.de>
  */
-class SurveyQuestionPreview extends \Backend
+class SurveyQuestionPreview extends \Contao\Backend
 {
     /**
      * Import String library.
@@ -40,17 +40,17 @@ class SurveyQuestionPreview extends \Backend
     {
         $widget = '';
         $strClass = $GLOBALS['TL_SVY'][$row['questiontype']];
-        if ($this->classFileExists($strClass)) {
+        if (class_exists($strClass)) {
             $objWidget = new $strClass();
             $objWidget->surveydata = $row;
             $widget = $objWidget->generate();
         }
 
-        $template = new \FrontendTemplate('be_survey_question_preview');
+        $template = new \Contao\FrontendTemplate('be_survey_question_preview');
         $template->hidetitle = $row['hidetitle'];
-        $template->help = \StringUtil::specialchars($row['help']);
+        $template->help = \Contao\StringUtil::specialchars($row['help']);
         $template->questionNumber = $this->getQuestionNumber($row);
-        $template->title = \StringUtil::specialchars($row['title']);
+        $template->title = \Contao\StringUtil::specialchars($row['title']);
         $template->obligatory = $row['obligatory'];
         $template->question = $row['question'];
         $return = $template->parse();

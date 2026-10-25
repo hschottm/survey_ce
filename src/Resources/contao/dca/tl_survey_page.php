@@ -8,7 +8,7 @@
  * @see	      https://github.com/hschottm/survey_ce
  */
 
- $found = (\strlen(\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Input::get('id')) : null;
+ $found = (\strlen((string) \Contao\Input::get('id'))) ? \Hschottm\SurveyBundle\SurveyResultModel::findByPid(\Contao\Input::get('id')) : null;
  $hasData = (null != $found && 0 < $found->count()) ? true : false;
 
 if ($hasData) {
@@ -18,9 +18,9 @@ if ($hasData) {
     $GLOBALS['TL_DCA']['tl_survey_page'] = [
         // Config
         'config' => [
-            'dataContainer' => 'Table',
+            'dataContainer' => \Contao\DC_Table::class,
             'ptable' => 'tl_survey',
-            'ctable' => ['tl_survey_question'],
+            'ctable' => ['tl_survey_question', 'tl_survey_condition'],
             'notEditable' => true,
             'closed' => true,
             'sql' => [
@@ -38,9 +38,9 @@ if ($hasData) {
     $GLOBALS['TL_DCA']['tl_survey_page'] = [
         // Config
         'config' => [
-            'dataContainer' => 'Table',
+            'dataContainer' => \Contao\DC_Table::class,
             'ptable' => 'tl_survey',
-            'ctable' => ['tl_survey_question'],
+            'ctable' => ['tl_survey_question', 'tl_survey_condition'],
             'switchToEdit' => true,
             'enableVersioning' => true,
             'sql' => [
@@ -64,11 +64,18 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
         'child_record_callback' => ['\Hschottm\SurveyBundle\SurveyPagePreview', 'compilePreview'],
     ],
     'operations' => [
-        'edit' => [
-            'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['edit'],
+        'children' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['children'],
+            'showInHeader' => false,
             'href' => 'table=tl_survey_question',
             'icon' => 'edit.svg',
             'button_callback' => ['tl_survey_page', 'editPage'],
+        ],
+        'edit' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['edit'],
+            'href' => 'act=edit',
+            'icon' => 'header.svg',
+            'showInHeader' => true,
         ],
         'copy' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['copy'],
@@ -80,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['cut'],
             'href' => 'act=paste&mode=cut',
             'icon' => 'cut.svg',
-            'attributes' => 'onclick="Backend.getScrollOffset();"',
+            'attributes' => 'data-action="contao--scroll-offset#store"',
             'button_callback' => ['tl_survey_page', 'cutPage'],
         ],
         'delete' => [
@@ -100,7 +107,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
 
 // Palettes
 $GLOBALS['TL_DCA']['tl_survey_page']['palettes'] = [
-    'default' => '{title_legend},title,description;{intro_legend},introduction;{template_legend},page_template',
+    'default' => '{title_legend},title,description;{intro_legend},introduction;{condition_legend},conditions;{template_legend},page_template',
 ];
 //    'default' => '{title_legend},title,description;{intro_legend},introduction;{condition_legend},conditions;{template_legend},page_template',
 
@@ -149,9 +156,10 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
     'conditions' => [
         'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['conditions'],
         'default' => '',
-        'search' => true,
         'inputType' => 'conditionwizard',
-        'eval' => [],
+        'load_callback' => [[\Hschottm\SurveyBundle\Condition\Editor::class, 'load']],
+        'save_callback' => [[\Hschottm\SurveyBundle\Condition\Editor::class, 'stage']],
+        'eval' => ['useRawRequestData' => true, 'tl_class' => 'clr', 'doNotCopy' => true],
         'sql' => "varchar(1) NOT NULL default ''",
     ],
     'page_template' => [
@@ -175,7 +183,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['fields'] = [
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
-class tl_survey_page extends Backend
+class tl_survey_page extends \Contao\Backend
 {
     protected $hasData;
 
@@ -186,7 +194,7 @@ class tl_survey_page extends Backend
      *
      * @return array
      */
-    public function getSurveyTemplates(DataContainer $dc): array
+    public function getSurveyTemplates(\Contao\DataContainer $dc): array
     {
         return $this->getTemplateGroup('survey_');
     }
@@ -212,10 +220,10 @@ class tl_survey_page extends Backend
     public function editPage($row, $href, $label, $title, $icon, $attributes)
     {
         if ($this->hasData()) {
-            return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+            return \Contao\Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\Contao\StringUtil::specialchars($title).'"'.$attributes.'>'.\Contao\Image::getHtml($icon, $label).'</a> ';
     }
 
     /**
@@ -239,10 +247,10 @@ class tl_survey_page extends Backend
     public function copyPage($row, $href, $label, $title, $icon, $attributes)
     {
         if ($this->hasData()) {
-            return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+            return \Contao\Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\Contao\StringUtil::specialchars($title).'"'.$attributes.'>'.\Contao\Image::getHtml($icon, $label).'</a> ';
     }
 
     /**
@@ -266,10 +274,10 @@ class tl_survey_page extends Backend
     public function cutPage($row, $href, $label, $title, $icon, $attributes)
     {
         if ($this->hasData()) {
-            return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+            return \Contao\Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\Contao\StringUtil::specialchars($title).'"'.$attributes.'>'.\Contao\Image::getHtml($icon, $label).'</a> ';
     }
 
     /**
@@ -293,19 +301,23 @@ class tl_survey_page extends Backend
     public function deletePage($row, $href, $label, $title, $icon, $attributes)
     {
         if ($this->hasData()) {
-            return $this->generateImage(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+            return \Contao\Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
         }
 
-        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\StringUtil::specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
+        return '<a href="'.$this->addToUrl($href.'&id='.$row['id']).'" title="'.\Contao\StringUtil::specialchars($title).'"'.$attributes.'>'.\Contao\Image::getHtml($icon, $label).'</a> ';
     }
 
     protected function hasData()
     {
         if (null == $this->hasData) {
-          $resultModel = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?'], [\Input::get('id')]);
+          $resultModel = \Hschottm\SurveyBundle\SurveyResultModel::findBy(['pid=?'], [\Contao\Input::get('id')]);
           $this->hasData = null != $resultModel && $resultModel->count() > 0;
         }
 
         return $this->hasData;
     }
 }
+
+$GLOBALS['TL_DCA']['tl_survey_page']['config']['onsubmit_callback'][] = [\Hschottm\SurveyBundle\Condition\Editor::class, 'save'];
+
+$GLOBALS['TL_DCA']['tl_survey_page']['config']['oncopy_callback'][] = [\Hschottm\SurveyBundle\Condition\CopyConditions::class, 'page'];

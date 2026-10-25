@@ -11,6 +11,8 @@
 $GLOBALS['TL_DCA']['tl_survey_condition'] = [
     // Config
     'config' => [
+        'dataContainer' => \Contao\DC_Table::class,
+        // Copied explicitly after the new question and destination IDs are known.
         'ptable' => 'tl_survey_page',
         'doNotCopyRecords' => true,
         'sql' => [

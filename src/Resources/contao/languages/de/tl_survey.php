@@ -106,3 +106,5 @@ $GLOBALS['TL_LANG']['tl_survey']['formattedMailText'] = array('Text der E-Mail',
 $GLOBALS['TL_LANG']['tl_survey']['formattedMailTemplate'] = array('HTML-Vorlage für die E-Mail', 'Wenn die E-Mail als HTML-E-Mail versendet werden soll, wählen Sie hier die HTML-Vorlage aus dem Dateisystem.');
 $GLOBALS['TL_LANG']['tl_survey']['sendformattedmail_legend'] = 'Per E-Mail versenden';
 $GLOBALS['TL_LANG']['tl_survey']['sendconfirmationmail_legend'] = 'Bestätigung per E-Mail versenden';
+
+$GLOBALS['TL_LANG']['tl_survey']['children'] = ['Seiten bearbeiten', 'Seiten bearbeiten (ID %s)'];

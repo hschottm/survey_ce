@@ -11,7 +11,7 @@
 $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
     // Config
     'config' => [
-        'dataContainer' => 'Table',
+        'dataContainer' => \Contao\DC_Table::class,
         'ptable' => 'tl_survey',
         'doNotCopyRecords' => true,
         'closed' => true,
@@ -44,19 +44,19 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['createtan'],
                 'href' => 'key=createtan',
                 'class' => 'header_createtan',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store"',
             ],
             'exporttan' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_pin_tan']['exporttan'],
                 'href' => 'key=exporttan',
                 'class' => 'header_export',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store"',
             ],
             'all' => [
                 'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
-                'attributes' => 'onclick="Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store"',
             ],
         ],
         'operations' => [
@@ -124,7 +124,7 @@ $GLOBALS['TL_DCA']['tl_survey_pin_tan'] = [
  * @copyright  Helmut Schottmüller 2009
  * @author     Helmut Schottmüller <typolight@aurealis.de>
  */
-class tl_survey_pin_tan extends Backend
+class tl_survey_pin_tan extends \Contao\Backend
 {
     public function getLabel($row, $label)
     {

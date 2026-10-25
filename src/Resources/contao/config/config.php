@@ -25,7 +25,7 @@ use Hschottm\SurveyBundle\ConditionWizard;
 /*
  * Add survey element
  */
-array_insert($GLOBALS['TL_CTE']['includes'], 2, [
+\Contao\ArrayUtil::arrayInsert($GLOBALS['TL_CTE']['includes'], 2, [
     'survey' => ContentSurvey::class,
 ]);
 
@@ -40,7 +40,7 @@ array_insert($GLOBALS['TL_CTE']['includes'], 2, [
 /*
  * BACK END FORM FIELDS
  */
-array_insert($GLOBALS['BE_MOD'], 3, [
+\Contao\ArrayUtil::arrayInsert($GLOBALS['BE_MOD'], 3, [
     'surveys' => [
             'survey' => [
                     'tables' => [
@@ -57,16 +57,18 @@ array_insert($GLOBALS['BE_MOD'], 3, [
                     'tables' => [
                             'tl_survey_scale_folder', 'tl_survey_scale',
                         ],
-                    'icon' => 'bundles/hschottmsurvey/images/scale.png',
+                    'icon' => 'bundles/hschottmsurvey/images/scale.svg',
                 ],
         ],
 ]);
 
-if (TL_MODE == 'BE') {
+if (\Contao\System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest()) {
     $GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/survey.css|static';
+    $GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/condition-editor.css|static';
+    $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/hschottmsurvey/js/condition-editor.js|static';
 }
 
-array_insert($GLOBALS['BE_FFL'], 15, array
+\Contao\ArrayUtil::arrayInsert($GLOBALS['BE_FFL'], 15, array
 (
 	'conditionwizard'    => ConditionWizard::class
 ));
@@ -83,7 +85,13 @@ $GLOBALS['TL_SVY']['q_multiplechoice'] = SurveyQuestionMultiplechoice::class;
 $GLOBALS['TL_SVY']['q_matrix'] = SurveyQuestionMatrix::class;
 $GLOBALS['TL_SVY']['q_constantsum'] = SurveyQuestionConstantsum::class;
 
-/*
- * Set the member URL parameter as url keyword
- */
-$GLOBALS['TL_CONFIG']['urlKeywords'] .= (\strlen(trim($GLOBALS['TL_CONFIG']['urlKeywords'])) ? ',' : '').'code';
+
+// Explicit registration is required for namespaced models in Contao 5.
+$GLOBALS['TL_MODELS']['tl_survey_navigation'] = \Hschottm\SurveyBundle\SurveyNavigationModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_page'] = \Hschottm\SurveyBundle\SurveyPageModel::class;
+$GLOBALS['TL_MODELS']['tl_survey'] = \Hschottm\SurveyBundle\SurveyModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_question'] = \Hschottm\SurveyBundle\SurveyQuestionModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_condition'] = \Hschottm\SurveyBundle\SurveyConditionModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_pin_tan'] = \Hschottm\SurveyBundle\SurveyPinTanModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_result'] = \Hschottm\SurveyBundle\SurveyResultModel::class;
+$GLOBALS['TL_MODELS']['tl_survey_participant'] = \Hschottm\SurveyBundle\SurveyParticipantModel::class;

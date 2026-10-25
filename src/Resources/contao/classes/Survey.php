@@ -10,7 +10,7 @@
 
 namespace Hschottm\SurveyBundle;
 
-class Survey extends \Backend
+class Survey extends \Contao\Backend
 {
     /**
      * Import String library.
@@ -55,7 +55,7 @@ class Survey extends \Backend
      */
     public function checkPINTAN($id, $pin = '', $tan = '')
     {
-        if (\strlen($pin)) {
+        if (\strlen((string) $pin)) {
             $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'pin=?'], [$id, $pin]);
         } else {
             $pinTanModel = \Hschottm\SurveyBundle\SurveyPinTanModel::findOneBy(['pid=?', 'tan=?'], [$id, $tan]);
@@ -76,15 +76,15 @@ class Survey extends \Backend
 
     public function isUserAllowedToTakeSurvey(&$objSurvey)
     {
-        $groups = (!\strlen($objSurvey->allowed_groups)) ? [] : deserialize($objSurvey->allowed_groups, true);
+        $groups = (!\strlen((string) $objSurvey->allowed_groups)) ? [] : \Contao\StringUtil::deserialize($objSurvey->allowed_groups, true);
         if (0 == \count($groups)) {
             return false;
         }
-        $this->import('\FrontendUser', 'User');
+        $this->import(\Contao\FrontendUser::class, 'User');
         if (!$this->User->id) {
             return false;
         }
-        $usergroups = deserialize($this->User->groups, true);
+        $usergroups = \Contao\StringUtil::deserialize($this->User->groups, true);
         if (\count(array_intersect($usergroups, $groups))) {
             return true;
         }
@@ -121,7 +121,7 @@ class Survey extends \Backend
         mt_srand();
         $code = '';
         for ($i = 1; $i <= $length; ++$i) {
-            $index = mt_rand(0, \strlen($codestring) - 1);
+            $index = mt_rand(0, \strlen((string) $codestring) - 1);
             $code .= substr($codestring, $index, 1);
         }
 
