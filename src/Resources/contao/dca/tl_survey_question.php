@@ -65,7 +65,7 @@ $GLOBALS['TL_DCA']['tl_survey_question'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['delete'],
                 'href' => 'act=delete',
                 'icon' => 'delete.svg',
-                'attributes' => 'onclick="if (!confirm(\''.$GLOBALS['TL_LANG']['MSC']['deleteConfirm'].'\')) return false; Backend.getScrollOffset();"',
+                'attributes' => 'data-action="contao--scroll-offset#store" onclick="if (!confirm(\''.($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? '').'\')) return false;"',
             ],
             'show' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey_question']['show'],
