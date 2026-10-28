@@ -23,7 +23,7 @@
     "php": "^8.3",
     "contao/core-bundle": "^5.7",
     "contao/manager-plugin": "^2.0",
-    "hschottm/contao-textwizard": "^3.4"
+    "hschottm/contao-textwizard": "^3.6"
   },
   "autoload": {
     "psr-4": {
