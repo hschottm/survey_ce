@@ -74,7 +74,7 @@ table.tl_cumulated {
 .header_export
 {
   padding: 3px 0 3px 21px;
-	background-image:url("../images/export.png");
+	background-image:url("../images/export.svg");
 	background-position:left center;
 	background-repeat:no-repeat;
   margin-left: 15px;
@@ -83,7 +83,7 @@ table.tl_cumulated {
 .header_createtan
 {
   padding: 3px 0 3px 21px;
-	background-image:url("../images/createtan.png");
+	background-image:url("../images/createtan.svg");
 	background-position:left center;
 	background-repeat:no-repeat;
   margin-left: 15px;

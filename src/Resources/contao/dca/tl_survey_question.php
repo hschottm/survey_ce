@@ -489,7 +489,7 @@ class tl_survey_question extends \Contao\Backend
      */
     public function addIcon($row, $label)
     {
-        return sprintf('<div class="list_icon" style="background-image:url(\'bundles/hschottmsurvey/images/question.png\');">%s</div>', $label);
+        return sprintf('<div class="list_icon" style="background-image:url(\'bundles/hschottmsurvey/images/question.svg\');">%s</div>', $label);
     }
 
     /**

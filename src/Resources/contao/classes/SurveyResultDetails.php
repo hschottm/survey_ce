@@ -115,7 +115,7 @@ class SurveyResultDetails extends \Contao\Backend
         $this->Template->heading = \Contao\StringUtil::specialchars($GLOBALS['TL_LANG']['tl_survey_result']['cumulatedResults']);
         $this->Template->summary = 'cumulated results';
         $this->Template->data = $data;
-        $this->Template->imgdetails = 'bundles/hschottmsurvey/images/details.png';
+        $this->Template->imgdetails = 'bundles/hschottmsurvey/images/details.svg';
         $this->Template->lngAnswered = $GLOBALS['TL_LANG']['tl_survey_question']['answered'];
         $this->Template->lngSkipped = $GLOBALS['TL_LANG']['tl_survey_question']['skipped'];
 
