@@ -17,22 +17,18 @@ A special thanks goes to Georg Rehfeld for his development of the detailed surve
 * Contao 5.3 LTS (`~5.3.0`)
 * `hschottm/contao-textwizard` 3.5.6 or a compatible 3.5 patch release
 
-## Contao 5.3 branch
-
-The `contao53` branch is based on `contao57` and retains its Twig templates,
-survey functionality and translations. It uses the original survey icons from
-`contao4`, supports the Contao 5.3 request API and relies on the built-in parent
-edit action in list headers. Textwizard is restricted to the 3.5 series because
-3.6 requires Contao 5.7. Use `contao57` for Contao 5.7 installations.
-
-Install this branch with `composer require hschottm/contao-survey:dev-contao53`.
-Then follow the cache and asset update steps below.
-
 ## Release history
+
+### Contao 5.3 support
+
+* Based on the Contao 5.7 version, bringing its survey features, Twig templates and translations to Contao 5.3 LTS.
+* Supports PHP 8.1 or newer and Textwizard 3.5.6.
+* Restored the familiar icons from the Contao 4 version instead of the Lucide icons used in the Contao 5.7 version.
+* Adapted backend compatibility for Contao 5.3.
 
 ### Contao 5.7 support
 
-* Added support for Contao 5.7 and PHP 8.1 or newer.
+* Added support for Contao 5.7 and PHP 8.3 or newer.
 * Migrated all supplied frontend, widget, preview and backend templates to Twig while retaining existing survey data and saved template selections.
 * Updated both survey themes and matrix interactions to work without jQuery or MooTools.
 * Improved output escaping for answers and ordinary text while preserving rich text formatting.
