@@ -32,7 +32,7 @@ $container->set('security.token_storage', $storage);
 $matcher = new class implements Symfony\Component\HttpFoundation\RequestMatcherInterface {
     public function matches(Symfony\Component\HttpFoundation\Request $request): bool { return false; }
 };
-$scope = new Contao\CoreBundle\Routing\ScopeMatcher($matcher, $matcher, $stack);
+$scope = new Contao\CoreBundle\Routing\ScopeMatcher($matcher, $matcher);
 $container->set('contao.routing.scope_matcher', $scope);
 $container->set('contao.twig.interop.context_factory', new Contao\CoreBundle\Twig\Interop\ContextFactory($scope));
 $loader = new class extends Twig\Loader\FilesystemLoader {

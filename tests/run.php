@@ -138,7 +138,7 @@ foreach ($GLOBALS['TL_DCA'] as $table => $dca) {
     $driver = $dca['config']['dataContainer'];
     check(class_exists($driver) && is_subclass_of($driver, Contao\DataContainer::class), 'Unresolvable data container for '.$table.': '.$driver);
 }
-echo "PASS: all Survey data container classes resolve under Contao 5.7.\n";
+echo "PASS: all Survey data container classes resolve under Contao 5.3.\n";
 
 // Exercise stored answers directly without a database or backend request.
 foreach (['mc_singleresponse', 'mc_dichotomous', 'matrix_singleresponse'] as $subtype) {
@@ -293,7 +293,35 @@ require __DIR__.'/conditions.php';
 
 foreach (['tl_survey' => 'tl_survey_page', 'tl_survey_page' => 'tl_survey_question'] as $table => $child) {
     $operations = $GLOBALS['TL_DCA'][$table]['list']['operations'];
-    check($operations['edit']['href'] === 'act=edit' && $operations['edit']['showInHeader'] === true, 'Header must edit the record, not open its child list');
+    check($operations['edit']['href'] === 'act=edit' && $operations['edit']['showInHeader'] === false, 'Edit must target the record without duplicating the built-in Contao 5.3 header action');
     check($operations['children']['href'] === 'table='.$child && $operations['children']['showInHeader'] === false, 'Child navigation must be separate from header editing');
+    $dc = (new ReflectionClass(Contao\DC_Table::class))->newInstanceWithoutConstructor();
+    $headerButtons = (new ReflectionMethod(Contao\DataContainer::class, 'generateHeaderButtons'))->invoke($dc, ['id' => 1], $table);
+    check($headerButtons === '', 'Contao 5.3 must not render an additional header edit action');
 }
 echo "PASS: survey/page edit actions are separate from child navigation.\n";
+
+// Contao 5.3 requires an explicit request; console commands may have none.
+$originalScopeMatcher = $container->get('contao.routing.scope_matcher');
+$backendMatcher = new class implements Symfony\Component\HttpFoundation\RequestMatcherInterface {
+    public function matches(Symfony\Component\HttpFoundation\Request $request): bool {
+        return $request->attributes->get('_scope') === 'backend';
+    }
+};
+$container->set('contao.routing.scope_matcher', new Contao\CoreBundle\Routing\ScopeMatcher($backendMatcher, $matcher));
+$originalRequest = $stack->pop();
+foreach ([null, 'frontend', 'backend'] as $scopeName) {
+    if ($scopeName !== null) {
+        $request = Symfony\Component\HttpFoundation\Request::create('/');
+        $request->attributes->set('_scope', $scopeName);
+        $stack->push($request);
+    }
+    $GLOBALS['TL_CSS'] = [];
+    $GLOBALS['TL_JAVASCRIPT'] = [];
+    require $root.'/src/Resources/contao/config/config.php';
+    check(in_array('bundles/hschottmsurvey/css/survey.css|static', $GLOBALS['TL_CSS'], true) === ($scopeName === 'backend'), 'Backend assets loaded for the wrong request scope');
+    if ($scopeName !== null) $stack->pop();
+}
+$stack->push($originalRequest);
+$container->set('contao.routing.scope_matcher', $originalScopeMatcher);
+echo "PASS: Contao 5.3 backend, frontend and console request handling.\n";

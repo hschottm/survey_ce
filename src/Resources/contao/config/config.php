@@ -62,7 +62,8 @@ use Hschottm\SurveyBundle\ConditionWizard;
         ],
 ]);
 
-if (\Contao\System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest()) {
+if (($request = \Contao\System::getContainer()->get('request_stack')->getCurrentRequest()) !== null
+    && \Contao\System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
     $GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/survey.css|static';
     $GLOBALS['TL_CSS'][] = 'bundles/hschottmsurvey/css/condition-editor.css|static';
     $GLOBALS['TL_JAVASCRIPT'][] = 'bundles/hschottmsurvey/js/condition-editor.js|static';

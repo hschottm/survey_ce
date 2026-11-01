@@ -60,22 +60,22 @@ $GLOBALS['TL_DCA']['tl_survey'] = [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['edit'],
                 'href' => 'act=edit',
                 'icon' => 'header.svg',
-                'showInHeader' => true,
+                'showInHeader' => false,
             ],
             'pintan' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['pintan'],
                 'href' => 'table=tl_survey_pin_tan',
-                'icon' => 'bundles/hschottmsurvey/images/pintan.svg',
+                'icon' => 'bundles/hschottmsurvey/images/pintan.png',
             ],
             'participants' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['participants'],
                 'href' => 'table=tl_survey_participant',
-                'icon' => 'bundles/hschottmsurvey/images/participants.svg',
+                'icon' => 'bundles/hschottmsurvey/images/participants.png',
             ],
             'statistics' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['statistics'],
                 'href' => 'key=cumulated',
-                'icon' => 'bundles/hschottmsurvey/images/statistics.svg',
+                'icon' => 'bundles/hschottmsurvey/images/statistics.png',
             ],
             'copy' => [
                 'label' => &$GLOBALS['TL_LANG']['tl_survey']['copy'],

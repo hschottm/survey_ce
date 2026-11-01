@@ -75,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_survey_page']['list'] = [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['edit'],
             'href' => 'act=edit',
             'icon' => 'header.svg',
-            'showInHeader' => true,
+            'showInHeader' => false,
         ],
         'copy' => [
             'label' => &$GLOBALS['TL_LANG']['tl_survey_page']['copy'],

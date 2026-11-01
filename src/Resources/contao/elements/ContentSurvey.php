@@ -30,7 +30,8 @@ class ContentSurvey extends \Contao\ContentElement
      */
     public function generate()
     {
-        if (\Contao\System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest()) {
+        if (($request = \Contao\System::getContainer()->get('request_stack')->getCurrentRequest()) !== null
+            && \Contao\System::getContainer()->get('contao.routing.scope_matcher')->isBackendRequest($request)) {
             $objTemplate = new \Contao\BackendTemplate('be_wildcard');
             $objTemplate->wildcard = '### SURVEY ###';
 
