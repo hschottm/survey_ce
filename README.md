@@ -3,13 +3,101 @@
 [![Installations via composer total](http://img.shields.io/packagist/dt/hschottm/contao-survey.svg?style=flat)](https://packagist.org/packages/hschottm/contao-survey)
 
 # contao-survey
-A contao bundle to create online surveys. Supports multiple choice questions, openended questions, matrix questions and constant sum questions. Surveys can be run as anonymized or personalized surveys for specific members. Anonymized surveys can limited to TAN access only to run a representative survey.
 
-Survey results are available as cumulated and detailed results with an option to export the results.
+contao-survey lets you create and run online questionnaires in Contao. Build
+surveys with several pages, combine different question types, guide participants
+with conditional navigation and evaluate or export their answers. Surveys are
+managed in the backend and displayed on your website using the **Survey** content
+element.
 
-Exports will be in csv format. If the bundle [hschottm/contao-xls-export](https://packagist.org/packages/hschottm/contao-xls-export) is installed, exports will be in Excel xls format, if the bundle [phpoffice/phpspreadsheet](https://packagist.org/packages/phpoffice/phpspreadsheet) is installed, exports will be in Excel xlsx format.
+## Features
 
-A special thanks goes to Georg Rehfeld for his development of the detailed survey export and the enhancements of the survey tool.
+### Question types
+
+| Type | Available options |
+| --- | --- |
+| Open-ended questions | Single-line or multi-line text, integers, decimal numbers, dates and times. Depending on the subtype, configure placeholders, labels, text length or lower and upper limits. |
+| Multiple-choice questions | One answer, several answers or a Yes/No choice. Arrange choices horizontally or vertically; a dropdown is also available for single answers. Add an optional “Other” answer with a text field. |
+| Matrix questions | Define your own rows and columns with one or several answers per row. Add a neutral column such as “Don't know”, or opposite labels such as “Good” and “Bad”. |
+| Constant-sum questions | Let participants distribute values across several items, for example allocating 100 points. Require an exact total or set a maximum total. |
+
+Questions can be mandatory or optional and can include formatted question text
+and explanatory help. You can show or hide the question title independently of
+the question text.
+
+### Pages and conditional navigation
+
+Organize a questionnaire into pages, each with its own introduction and questions.
+Reorder or duplicate pages and questions to build the desired sequence.
+
+Define rules for what happens after a page: an answer can lead participants to a
+specific page, skipping sections that do not apply to them. For example, a “Yes”
+answer can open a follow-up section, while “No” continues to the next topic.
+Rules can combine several conditions and have a defined priority. Without a
+matching rule, the survey continues to the next page in sequence. See
+[Conditional page navigation](#conditional-page-navigation) for supported
+comparisons and details.
+
+### Reusable answer scales
+
+Create your own answer scales, such as “Very satisfied” through “Very
+dissatisfied”, and organize them in folders. Scales have a language and can be
+copied into the answer choices of multiple-choice questions in that language.
+This makes it easier to use consistent choices across a questionnaire. The choices
+are copied into the question; later changes to a saved scale do not automatically
+change existing questions.
+
+### Participation and access
+
+Choose the access method that fits your survey:
+
+* **Open anonymous access:** participation without a member login or TAN code.
+* **Anonymous access with TAN codes:** participation requires a valid code, with
+  one completed submission per TAN. Answers can be associated with that TAN.
+* **Personalized access:** participation requires a frontend member login, with
+  one completed submission per member. Answers can be associated with the member.
+  Access can be restricted to selected member groups.
+
+Generate TAN codes in the backend, inspect whether they have been used and export
+codes for distribution. Select the website page containing the survey to include
+participation links in the export. A cookie option can remember participants.
+
+### Survey settings
+
+For each survey, you can configure:
+
+* **Basic information:** title, author, description and language.
+* **Availability:** start and end dates for participation.
+* **Welcome and completion:** an introduction, a final message and an optional
+  redirect to a website page after completion.
+* **Navigation and display:** show the survey title or an exit link, allow going
+  back to the previous page, or start immediately without the introduction page.
+* **Confirmation e-mails:** recipients, sender, reply-to address, subject,
+  message text, an HTML template and attachments. An alternative confirmation
+  message can have its own sending condition and settings.
+* **Presentation:** select a survey template in the content element and a page
+  template for individual survey pages.
+
+### Results and export
+
+View aggregated results and detailed answers in the backend. Depending on the
+question type, statistics include answer counts, distributions and numerical
+summaries. Participant records are available separately from the questionnaire
+structure.
+
+Export results for further analysis. CSV export is included; Excel XLSX export
+is available when [PhpSpreadsheet](https://github.com/PHPOffice/PhpSpreadsheet)
+is installed. The legacy
+[hschottm/contao-xls-export](https://packagist.org/packages/hschottm/contao-xls-export)
+integration also supports XLS export. The available export format depends on the
+installed export package.
+
+Surveys can be duplicated for reuse, including their pages, questions and
+navigation rules. Participant records, submitted answers and TAN codes are not
+copied into the new survey.
+
+A special thanks goes to Georg Rehfeld for his development of the detailed survey
+export and the enhancements of the survey tool.
 
 ## Requirements
 
