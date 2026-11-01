@@ -185,3 +185,8 @@ Duplicating a survey also duplicates its navigation rules and remaps both questi
 and destination page IDs to the copied survey. Duplicating a single page remaps
 references to its copied questions and keeps references to other pages/questions
 in the same survey. Participants, answers and TANs are not copied.
+
+## License
+
+This extension is licensed under the GNU Lesser General Public License, version 3
+or (at your option) any later version (`LGPL-3.0-or-later`). See [LICENSE](LICENSE).
