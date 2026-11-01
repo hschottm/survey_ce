@@ -18,5 +18,5 @@ foreach (['tl_survey' => 3, 'tl_survey_page' => 66] as $table => $id) {
     if ($buttons !== '') throw new RuntimeException('Duplicate header actions');
     $edit = $GLOBALS['TL_DCA'][$table]['list']['operations']['edit'];
     if ($edit['href'] !== 'act=edit') throw new RuntimeException('Incorrect edit operation');
-    echo 'PASS: no duplicate Contao 5.3 header actions for '.$table.'.PHP_EOL;
+    echo 'PASS: no duplicate Contao 5.3 header actions for '.$table.'.'.PHP_EOL;
 }
