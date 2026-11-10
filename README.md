@@ -107,19 +107,9 @@ export and the enhancements of the survey tool.
 * Contao 5.7 (`^5.7`)
 * A Contao 5.7-compatible version of `hschottm/contao-textwizard`
 
-## Release history
+## Changelog
 
-### Contao 5.7 support
-
-* Added support for Contao 5.7 and PHP 8.3 or newer.
-* Migrated all supplied frontend, widget, preview and backend templates to Twig while retaining existing survey data and saved template selections.
-* Updated both survey themes and matrix interactions to work without jQuery or MooTools.
-* Improved output escaping for answers and ordinary text while preserving rich text formatting.
-* Changed CSV exports to UTF-8 and improved CSV formatting.
-* Preserved leading zeroes in numeric-looking text, such as TANs, in XLSX exports.
-* Updated generated TAN links to use the `?code=…` query parameter.
-* Updated conditional page navigation with ordered rules and support for existing navigation settings.
-* Preserved navigation rules when duplicating surveys and pages, adjusting references to copied questions and pages.
+See [CHANGELOG.md](CHANGELOG.md) for changes grouped by release tag.
 
 ## Updating existing installations
 
